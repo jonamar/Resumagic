@@ -129,8 +129,8 @@
         <h2 class="section-title">Education</h2>
         {{#each education}}
           <div class="entry">
-            <h3 class="institution" style="margin: 0; font-size: inherit;">{{institution}}</h3>
-            <div>{{area}}{{#if studyType}} - {{studyType}}{{/if}}</div>
+            <h3 class="degree" style="margin: 0; font-size: inherit;">{{area}}{{#if studyType}} - {{studyType}}{{/if}}</h3>
+            <div class="institution">{{institution}}</div>
             <div class="date">{{formatDate startDate}} - {{#if endDate}}{{formatDate endDate}}{{else}}Present{{/if}}</div>
           </div>
         {{/each}}
