@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>{{basics.name}}</title>
+    <style>
+      body {
+        font-family: Arial, Helvetica, sans-serif;
+        line-height: 1.5;
+        color: #333;
+        margin: 0;
+        padding: 0;
+        font-size: 11pt;
+      }
+      .container {
+        max-width: 100%;
+        margin: 0 auto;
+        padding: 0;
+      }
+      h1, h2, h3, h4 {
+        margin-top: 8px;
+        margin-bottom: 4px;
+        color: #000;
+      }
+      .header {
+        margin-bottom: 10px;
+      }
+      .name {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 0;
+      }
+      .contact {
+        margin-bottom: 10px;
+      }
+      .section-title {
+        margin-top: 12px;
+        margin-bottom: 8px;
+        font-size: 16px;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 3px;
+      }
+      .entry {
+        margin-bottom: 10px;
+      }
+      .company, .institution {
+        font-weight: bold;
+      }
+      .date {
+        color: #666;
+      }
+      ul {
+        padding-left: 20px;
+        margin-top: 4px;
+        margin-bottom: 4px;
+      }
+      li {
+        margin-bottom: 2px;
+      }
+      a {
+        color: #000;
+        text-decoration: none;
+      }
+      .summary {
+        margin-bottom: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- HEADER -->
+      <div class="header">
+        <h1 class="name">{{basics.name}}</h1>
+        <div class="contact">
+          {{#if basics.email}}<span>{{basics.email}}</span> | {{/if}}
+          {{#if basics.phone}}<span>{{basics.phone}}</span> | {{/if}}
+          {{#if basics.location}}<span>{{basics.location.city}}{{#if basics.location.region}}, {{basics.location.region}}{{/if}}</span>{{/if}}
+        </div>
+        {{#if basics.profiles.length}}
+          <div class="profiles">
+            {{#each basics.profiles}}
+              <span>{{network}}: {{url}}{{username}}</span>{{#unless @last}} | {{/unless}}
+            {{/each}}
+          </div>
+        {{/if}}
+      </div>
+
+      <!-- SUMMARY -->
+      {{#if basics.summary}}
+        <div class="section summary">
+          <h2 class="section-title">Summary</h2>
+          <p>{{basics.summary}}</p>
+        </div>
+      {{/if}}
+
+      <!-- WORK EXPERIENCE -->
+      <div class="section work">
+        <h2 class="section-title">Experience</h2>
+        {{#each work}}
+          <div class="entry">
+            <div>
+              <span class="company">{{name}}</span>
+              {{#if position}}<h3 class="position" style="display: inline; margin: 0; font-size: inherit;">{{position}}</h3>{{/if}}
+            </div>
+            <div class="date">{{formatDate startDate}} - {{#if endDate}}{{formatDate endDate}}{{else}}Present{{/if}}</div>
+            {{#if summary}}<div>{{summary}}</div>{{/if}}
+            {{#if highlights.length}}
+              <ul>
+                {{#each highlights}}
+                  <li>{{this}}</li>
+                {{/each}}
+              </ul>
+            {{/if}}
+          </div>
+        {{/each}}
+      </div>
+
+      <!-- SKILLS -->
+      <div class="section skills">
+        <h2 class="section-title">Skills</h2>
+        {{#each skills}}
+          <div class="entry">
+            <span class="skill-name">{{name}}</span>
+            {{#if keywords.length}}: {{join keywords}}{{/if}}
+          </div>
+        {{/each}}
+      </div>
+
+      <!-- EDUCATION -->
+      <div class="section education">
+        <h2 class="section-title">Education</h2>
+        {{#each education}}
+          <div class="entry">
+            <h3 class="institution" style="margin: 0; font-size: inherit;">{{institution}}</h3>
+            <div>{{area}}{{#if studyType}} - {{studyType}}{{/if}}</div>
+            <div class="date">{{formatDate startDate}} - {{#if endDate}}{{formatDate endDate}}{{else}}Present{{/if}}</div>
+          </div>
+        {{/each}}
+      </div>
+      
+      <!-- PROJECTS (if present) -->
+      {{#if projects.length}}
+      <div class="section projects">
+        <h2 class="section-title">Projects</h2>
+        {{#each projects}}
+          <div class="entry">
+            <div><span class="project-name">{{name}}</span></div>
+            {{#if description}}<div>{{description}}</div>{{/if}}
+            {{#if highlights.length}}
+              <ul>
+                {{#each highlights}}
+                  <li>{{this}}</li>
+                {{/each}}
+              </ul>
+            {{/if}}
+          </div>
+        {{/each}}
+      </div>
+      {{/if}}
+      
+      <!-- Add any additional sections from your resume as needed -->
+    </div>
+  </body>
+</html>
