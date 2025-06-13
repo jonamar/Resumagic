@@ -4,11 +4,11 @@ const fs = require('fs');
 const Handlebars = require('handlebars');
 
 // Get the resume data
-const resumeData = require('./input/resume.json');
+const resumeData = require('../data/input/resume.json');
 
 // Set up output file paths
-const outputHtmlPath = path.join(__dirname, 'output', 'resume-generated.html');
-const outputPdfPath = path.join(__dirname, 'output', 'resume-generated.pdf');
+const outputHtmlPath = path.join(__dirname, '../data/output', 'resume-generated.html');
+const outputPdfPath = path.join(__dirname, '../data/output', 'resume-generated.pdf');
 
 // Register Handlebars helpers
 Handlebars.registerHelper('formatDate', function(dateString) {
