@@ -5,7 +5,13 @@ body {
   font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;
   line-height: 1.5;
   color: #333333;
-  /* Ensure proper contrast for better readability and scanning */
+}
+
+/* Remove all manual page breaks and let the browser handle pagination */
+* {
+  page-break-before: auto !important;
+  page-break-after: auto !important;
+  page-break-inside: auto !important;
 }
 
 /* Ensure single-column layout for ATS parsing */

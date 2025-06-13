@@ -21,70 +21,96 @@ const fs = require('fs');
     waitUntil: 'networkidle0'
   });
 
-  // Add extra ATS-friendly CSS to ensure clean formatting
+  // Add simplified ATS-friendly CSS with minimal page break controls
   await page.addStyleTag({
     content: `
-      /* Additional ATS optimization for PDF output */
-      @page {
-        margin: 0.5in;
-      }
+      /* Basic styling for ATS compatibility */
       body {
         font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;
         font-size: 11pt;
         line-height: 1.5;
         color: #000;
+        margin: 0;
+        padding: 0;
       }
-      /* Ensure proper spacing for ATS parsing */
-      section {
+
+      /* Improve section spacing */
+      section, .section {
+        margin-bottom: 12px;
+      }
+
+      /* Reduce header spacing */
+      h1, h2, h3, h4, h5, h6 {
+        margin-top: 6px;
+        margin-bottom: 4px;
+      }
+      
+      /* Condense summary and work sections */
+      .summary {
         margin-bottom: 10px;
-        page-break-inside: avoid;
       }
-      /* Simplify links to plain text for ATS */
+      
+      /* Reduce margins for better space usage */
+      hr {
+        margin: 8px 0;
+      }
+      
+      /* Optimize list spacing */
+      ul {
+        margin-top: 2px;
+        margin-bottom: 2px;
+        padding-left: 20px;
+      }
+      
+      li {
+        margin-bottom: 2px;
+      }
+
+      /* Simplify links */
       a {
         color: #000;
         text-decoration: none;
       }
-      /* Enhanced list formatting */
-      ul {
-        margin-top: 5px;
-        padding-left: 20px;
-      }
-      li {
-        margin-bottom: 3px;
-      }
-      /* Remove any decorative elements that could confuse ATS */
+      
+      /* Hide icons for cleaner ATS parsing */
       .icon, .fa, .fab, .fas {
         display: none !important;
       }
-      /* Ensure dates are properly separated in work entries */
-      .date {
-        font-weight: normal;
-        white-space: nowrap;
-      }
-      h3, h4, h5, h6 {
-        margin-top: 8px;
-        margin-bottom: 5px;
-      }
-      /* Single column layout enforcement */
-      .container, .wrapper, .main {
+      
+      /* Ensure single column layout */
+      #resume, .container, .wrapper, .main {
         width: 100% !important;
         max-width: 100% !important;
       }
     `
   });
 
-  // Generate PDF
+  // Manipulate the DOM to condense content
+  await page.evaluate(() => {
+    // Remove unnecessary spacing elements
+    document.querySelectorAll('br').forEach(br => {
+      if (!br.nextSibling || br.nextSibling.nodeName === 'BR') {
+        br.remove();
+      }
+    });
+    
+    // Add class to help identify and compact the content
+    document.body.classList.add('compact-resume');
+  });
+
+  // Generate PDF with condensed margins
   console.log('Generating PDF...');
   await page.pdf({
     path: path.join(__dirname, 'resume-custom.pdf'),
     format: 'A4',
     printBackground: true,
     margin: {
-      top: '0.4in',
+      top: '0.3in',  // Reduced top margin
       right: '0.4in',
-      bottom: '0.4in',
+      bottom: '0.3in',  // Reduced bottom margin
       left: '0.4in'
-    }
+    },
+    displayHeaderFooter: false
   });
 
   // Clean up and exit
