@@ -13,11 +13,29 @@ This tool converts a standard JSON Resume format into a clean, professional, ATS
 
 ## Project Structure
 
-The project is organized into three main directories:
+This project uses a two-repo structure to separate code from private data:
 
-- **`input/`**: Contains your resume data in JSON format
-- **`template/`**: Contains the HTML template used to generate your resume
-- **`output/`**: Contains the generated HTML and PDF versions of your resume
+### Repository Structure
+
+```
+/resumagic/
+├── app/                          # Public code repository (this repo)
+│   ├── template/                 # Resume templates
+│   ├── generate-resume.js        # Resume generation script
+│   └── ... (other code files)
+│
+└── data/                         # Private data repository
+    ├── input/                    # Resume data files
+    │   └── resume.json           # Personal resume data
+    └── output/                   # Generated files
+        ├── resume-generated.html # HTML resume output
+        └── resume-generated.pdf  # PDF resume output
+```
+
+This structure allows you to:
+- Share the code publicly without exposing personal information
+- Track changes to your resume and personal data in a separate private repository
+- Keep the generation functionality and data separate with clear boundaries
 
 ## How to Use
 
@@ -28,7 +46,7 @@ The project is organized into three main directories:
 
 ### Updating Your Resume
 
-1. Edit the `input/resume.json` file with your personal information
+1. Edit the `../data/input/resume.json` file with your personal information
 2. Make sure dates are in ISO format (YYYY-MM-DD)
 3. Run the generation script
 
@@ -41,10 +59,10 @@ node generate-resume.js
 ```
 
 This will:
-1. Read your resume data from `input/resume.json`
+1. Read your resume data from `../data/input/resume.json`
 2. Apply the HTML template from `template/custom-template.html`
-3. Generate an HTML resume at `output/resume-generated.html`
-4. Convert that HTML to a PDF at `output/resume-generated.pdf`
+3. Generate an HTML resume at `../data/output/resume-generated.html`
+4. Convert that HTML to a PDF at `../data/output/resume-generated.pdf`
 
 ### Customizing Your Resume
 
