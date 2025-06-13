@@ -1,0 +1,68 @@
+# Node.js environment files
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+.npm/
+.yarn/
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Package files
+package-lock.json
+
+# Dependency directories
+jspm_packages/
+bower_components/
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Generated PDFs and HTML (personal data)
+*.pdf
+*.html
+
+# Keep the original template files but ignore personalized ones
+resume.json
+resume-formatted.json
+resume-*.json
+
+# Archive files
+*.zip
+*.tar.gz
+*.tgz
+*.rar
+*.7z
+
+# Log files
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editor/OS specific files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Temporary files
+.tmp/
+.temp/
+tmp/
+temp/

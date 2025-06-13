@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "@jsonresume/jsonresume-theme-class": "^0.4.2",
+    "jsonresume-theme-eloquent": "^5.0.0",
+    "jsonresume-theme-flat": "^0.3.7",
+    "jsonresume-theme-stackoverflow": "^2.1.0",
+    "puppeteer": "^24.10.1"
+  }
+}
