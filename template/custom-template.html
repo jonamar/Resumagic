@@ -98,10 +98,8 @@
         <h2 class="section-title">Experience</h2>
         {{#each work}}
           <div class="entry">
-            <div>
-              <span class="company">{{name}}</span>
-              {{#if position}}<h3 class="position" style="display: inline; margin: 0; font-size: inherit;">{{position}}</h3>{{/if}}
-            </div>
+            {{#if position}}<h3 class="position" style="margin: 0; font-size: inherit;">{{position}}</h3>{{/if}}
+            <div class="company">{{name}}</div>
             <div class="date">{{formatDate startDate}} - {{#if endDate}}{{formatDate endDate}}{{else}}Present{{/if}}</div>
             {{#if summary}}<div>{{summary}}</div>{{/if}}
             {{#if highlights.length}}
