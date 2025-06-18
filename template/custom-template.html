@@ -79,7 +79,7 @@
         {{#if basics.profiles.length}}
           <div class="profiles">
             {{#each basics.profiles}}
-              <span>{{network}}: {{url}}{{username}}</span>{{#unless @last}} | {{/unless}}
+              <span>{{network}}: <a href="{{url}}" target="_blank">{{url}}</a></span>{{#unless @last}} | {{/unless}}
             {{/each}}
           </div>
         {{/if}}
@@ -100,7 +100,7 @@
           <div class="entry">
             {{#if position}}<h3 class="position" style="margin: 0; font-size: inherit;">{{position}}</h3>{{/if}}
             <div class="company">{{name}}</div>
-            <div class="date">{{formatDate startDate}} - {{#if endDate}}{{formatDate endDate}}{{else}}Present{{/if}}</div>
+            <div class="date">{{formatDate startDate}} - {{#if endDate}}{{formatDate endDate}}{{else}}Present{{/if}}{{#if location}} · {{location}}{{/if}}</div>
             {{#if summary}}<div>{{summary}}</div>{{/if}}
             {{#if highlights.length}}
               <ul>
@@ -131,7 +131,7 @@
           <div class="entry">
             <h3 class="degree" style="margin: 0; font-size: inherit;">{{area}}{{#if studyType}} - {{studyType}}{{/if}}</h3>
             <div class="institution">{{institution}}</div>
-            <div class="date">{{formatDate startDate}} - {{#if endDate}}{{formatDate endDate}}{{else}}Present{{/if}}</div>
+            <div class="date">{{formatDate startDate}} - {{#if endDate}}{{formatDate endDate}}{{else}}Present{{/if}}{{#if location}} · {{location}}{{/if}}</div>
           </div>
         {{/each}}
       </div>
