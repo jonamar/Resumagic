@@ -11,6 +11,11 @@ yarn-error.log
 .env.test
 .env.production
 
+# macOS system files
+.DS_Store
+.AppleDouble
+.LSOverride
+
 # Package files
 package-lock.json
 
