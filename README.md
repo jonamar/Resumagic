@@ -26,10 +26,13 @@ This project uses a two-repo structure to separate code from private data:
 │
 └── data/                         # Private data repository
     ├── input/                    # Resume data files
-    │   └── resume.json           # Personal resume data
+    │   ├── resume.json           # Personal resume data
+    │   └── pointclick-resume.json # Specialized resume for specific job
     └── output/                   # Generated files
-        ├── resume-generated.html # HTML resume output
-        └── resume-generated.pdf  # PDF resume output
+        ├── resume.html           # HTML resume output
+        ├── resume.pdf            # PDF resume output
+        ├── pointclick-resume.html # HTML output for specialized resume
+        └── pointclick-resume.pdf  # PDF output for specialized resume
 ```
 
 This structure allows you to:
@@ -48,21 +51,31 @@ This structure allows you to:
 
 1. Edit the `../data/input/resume.json` file with your personal information
 2. Make sure dates are in ISO format (YYYY-MM-DD)
-3. Run the generation script
+3. Create job-specific versions by copying and customizing your resume.json (e.g., `pointclick-resume.json`)
+4. Run the generation script with the appropriate filename
 
 ### Generating Your Resume
 
 To generate both HTML and PDF versions of your resume:
 
 ```bash
+node generate-resume.js [input-filename.json]
+```
+
+Examples:
+```bash
+# Generate from default resume.json
 node generate-resume.js
+
+# Generate from a job-specific resume file
+node generate-resume.js pointclick-resume.json
 ```
 
 This will:
-1. Read your resume data from `../data/input/resume.json`
+1. Read your resume data from the specified JSON file (or `../data/input/resume.json` if no file specified)
 2. Apply the HTML template from `template/custom-template.html`
-3. Generate an HTML resume at `../data/output/resume-generated.html`
-4. Convert that HTML to a PDF at `../data/output/resume-generated.pdf`
+3. Generate an HTML resume at `../data/output/[filename].html` (e.g., `pointclick-resume.html`)
+4. Convert that HTML to a PDF at `../data/output/[filename].pdf` (e.g., `pointclick-resume.pdf`)
 
 ### Customizing Your Resume
 
