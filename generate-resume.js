@@ -1,7 +1,8 @@
-const puppeteer = require('puppeteer');
 const path = require('path');
 const fs = require('fs');
-const Handlebars = require('handlebars');
+const { Packer } = require('docx');
+const { createResumeDocx } = require('./docx-template');
+const JSZip = require('jszip');
 
 // Parse command line arguments
 const inputFile = process.argv[2] || 'resume.json';
@@ -30,81 +31,76 @@ try {
   process.exit(1);
 }
 
-// Set up output file paths
-const outputHtmlPath = path.join(__dirname, '../data/output', `${inputBaseName}.html`);
-const outputPdfPath = path.join(__dirname, '../data/output', `${inputBaseName}.pdf`);
+// Set up output file path
+const outputDocxPath = path.join(__dirname, '../data/output', `${inputBaseName}.docx`);
 
-// Register Handlebars helpers
-Handlebars.registerHelper('formatDate', function(dateString) {
-  if (!dateString) return '';
-  
-  try {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }).replace(' ', '-');
-  } catch (e) {
-    return dateString; // Return the original string if parsing fails
-  }
-});
-
-Handlebars.registerHelper('join', function(array) {
-  return array ? array.join(', ') : '';
-});
+// Note: Date formatting is handled directly in the docx-template.js file
 
 // Main function
 (async () => {
   try {
     // Log which resume file we're processing
     console.log(`\n📄 Processing resume: ${resumeDataPath}`);
-    console.log(`📝 Will generate HTML output: ${outputHtmlPath}`);
-    console.log(`📑 Will generate PDF output: ${outputPdfPath}\n`);
+    console.log(`📑 Will generate DOCX output: ${outputDocxPath}\n`);
     
-    // Read the template file
-    console.log('Reading template file...');
-    const templatePath = path.join(__dirname, 'template', 'custom-template.html');
-    const templateSource = fs.readFileSync(templatePath, 'utf8');
+    // Generate DOCX document using our template
+    console.log('Generating DOCX document...');
+    const doc = createResumeDocx(resumeData);
     
-    // Compile the template
-    console.log('Compiling template...');
-    const template = Handlebars.compile(templateSource);
+    // Use Packer to get the buffer
+    console.log('Saving DOCX file...');
+    const buffer = await Packer.toBuffer(doc);
     
-    // Process the template with resume data to generate HTML
-    console.log('Generating HTML from template...');
-    const html = template(resumeData);
+    // Post-process the DOCX file to remove compatibility mode and empty sections
+    console.log('Optimizing DOCX for ATS compatibility...');
+    const optimizedBuffer = await removeCompatibilityMode(buffer);
     
-    // Write the HTML to a file (permanent output)
-    fs.writeFileSync(outputHtmlPath, html);
-    console.log(`✅ HTML resume generated and saved to: ${outputHtmlPath}`);
+    // Save the optimized DOCX
+    fs.writeFileSync(outputDocxPath, optimizedBuffer);
     
-    // Convert HTML to PDF
-    console.log('Launching browser for PDF conversion...');
-    const browser = await puppeteer.launch();
-    const page = await browser.newPage();
-    
-    // Load the HTML file we just created
-    await page.goto(`file://${outputHtmlPath}`, { waitUntil: 'networkidle0' });
-    
-    // Generate PDF
-    console.log('Generating PDF...');
-    await page.pdf({
-      path: outputPdfPath,
-      format: 'A4',
-      printBackground: true,
-      margin: {
-        top: '0.3in',
-        right: '0.4in',
-        bottom: '0.3in',
-        left: '0.4in'
-      },
-      displayHeaderFooter: false
-    });
-    
-    // Clean up
-    await browser.close();
-    
-    console.log(`✅ PDF generated successfully: ${outputPdfPath}`);
-    console.log('\n✨ Resume generation complete! Both HTML and PDF files have been created and preserved.\n');
+    console.log(`✅ DOCX resume generated and saved to: ${outputDocxPath}`);
+    console.log('\n✨ Resume generation complete! DOCX file has been created.\n');
   } catch (error) {
     console.error('Error generating resume:', error);
     process.exit(1);
   }
 })();
+
+/**
+ * Post-processes the DOCX buffer to remove compatibility mode and empty sections
+ * This improves ATS compatibility by removing Word compatibility flags and empty sections
+ * @param {Buffer} buffer - The DOCX buffer from Packer
+ * @returns {Promise<Buffer>} - Optimized DOCX buffer
+ */
+async function removeCompatibilityMode(buffer) {
+  try {
+    // Load the docx file as a zip
+    const zip = await JSZip.loadAsync(buffer);
+    
+    // Check if settings.xml exists and modify it to remove compatibility mode
+    if (zip.files['word/settings.xml']) {
+      const settingsXml = await zip.files['word/settings.xml'].async('string');
+      
+      // Remove the compatibility section
+      const updatedSettingsXml = settingsXml.replace(/<w:compat>[\s\S]*?<\/w:compat>/g, '');
+      
+      // Update the settings file
+      zip.file('word/settings.xml', updatedSettingsXml);
+    }
+    
+    // Remove empty footnotes.xml and comments.xml if they exist
+    // These can cause issues with some ATS systems
+    ['word/footnotes.xml', 'word/comments.xml', 'word/endnotes.xml'].forEach(file => {
+      if (zip.files[file]) {
+        zip.remove(file);
+      }
+    });
+    
+    // Generate the new docx file
+    const optimizedBuffer = await zip.generateAsync({ type: 'nodebuffer' });
+    return optimizedBuffer;
+  } catch (error) {
+    console.warn('Warning: Could not optimize DOCX file. Using original version.', error);
+    return buffer; // Fall back to the original buffer if post-processing fails
+  }
+}
