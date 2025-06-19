@@ -2,64 +2,154 @@
 <html>
   <head>
     <meta charset="utf-8">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>{{basics.name}}</title>
     <style>
-      body {
-        font-family: Arial, Helvetica, sans-serif;
-        line-height: 1.5;
-        color: #333;
+      /* Root font scaling */
+      html { 
+        font-size: 16px; /* 1rem = 16px */
+      }
+
+      /* Reset and base styles */
+      * {
         margin: 0;
         padding: 0;
-        font-size: 11pt;
+        box-sizing: border-box;
       }
+      
+      :root {
+        --clr-text: #222222;
+        --clr-dim: #555555;
+        --clr-bg: #ffffff;
+      }
+      
+      html {
+        font-size: 16px; /* Base font size for rem units (if used) */
+        -webkit-text-size-adjust: 100%;
+      }
+      
+      body {
+        font-family: "Source Sans Pro", "Helvetica Neue", Arial, sans-serif;
+        color: var(--clr-text);
+        background: var(--clr-bg);
+        line-height: 1.15;
+        margin: 0;
+        padding: 20px 0;
+      }
+      
       .container {
-        max-width: 100%;
+        max-width: 750px;
         margin: 0 auto;
-        padding: 0;
+        padding: 0 20px;
       }
-      h1, h2, h3, h4 {
-        margin-top: 8px;
-        margin-bottom: 4px;
-        color: #000;
+      
+      /* Typography - v0.3 (fixed specificity) */
+      /* Force consistent font settings by using more specific selectors */
+      
+      /* Base body font - explicitly set for all common elements */
+      body, div, p, span, li, h3, ul, ol {
+        font-size: 11px;
+        line-height: 1.25;
       }
-      .header {
-        margin-bottom: 10px;
+      
+      /* Resume name */
+      .resume-name {
+        font-size: 22px !important;
+        font-weight: 700;
+        margin: 0 0 8px 0;
+        text-transform: capitalize;
+        line-height: 1.1;
       }
-      .name {
-        font-size: 24px;
-        font-weight: bold;
-        margin-bottom: 0;
-      }
-      .contact {
-        margin-bottom: 10px;
-      }
-      .section-title {
-        margin-top: 12px;
-        margin-bottom: 8px;
-        font-size: 16px;
-        border-bottom: 1px solid #ddd;
+      
+      /* Section titles */
+      h2.section-title {
+        font-size: 16px !important;
+        font-weight: 600;
+        margin: 16px 0 6px 0;
+        letter-spacing: 0.5px;
+        border-bottom: 1px solid var(--clr-dim);
         padding-bottom: 3px;
+        text-transform: uppercase;
+        line-height: 1.15;
       }
+      
+      /* H3 elements */
+      h3, h3.position, h3.skill-name, h3.degree {
+        font-size: 11px !important;
+        font-weight: 600;
+        margin: 0 0 3px 0;
+        line-height: 1.25;
+      }
+      
+      /* Body text */
+      p, p.summary, div.entry div {
+        margin: 0 0 6px 0;
+        font-size: 11px !important;
+        line-height: 1.25;
+      }
+      
+      /* List items */
+      li, ul li, ol li {
+        margin: 0 0 6px 0;
+        font-size: 11px !important;
+        line-height: 1.25;
+      }
+      
+      /* Company names */
+      .company, .institution, .skill-name {
+        font-weight: 600;
+        font-size: 11px !important;
+        line-height: 1.25;
+      }
+      
+      .date, .meta, .contact, .profiles {
+        color: var(--clr-dim);
+        font-size: 10px;
+        line-height: 1.25;
+      }
+      
+      .contact {
+        margin-bottom: 5px;
+      }
+      
       .entry {
-        margin-bottom: 10px;
+        margin-bottom: 15px;
       }
-      .company, .institution {
-        font-weight: bold;
+      
+      ul, ol {
+        padding-left: 24px;
+        margin: 10px 0;
+        font-size: 15px;
+        line-height: 1.15;
       }
-      .date {
-        color: #666;
-      }
-      ul {
-        padding-left: 20px;
-        margin-top: 4px;
-        margin-bottom: 4px;
-      }
+      
       li {
-        margin-bottom: 2px;
+        margin: 0 0 4px 0;
+        line-height: 1.15;
+        font-size: 15px;
       }
+      
       a {
-        color: #000;
+        color: var(--clr-text);
         text-decoration: none;
+      }
+      
+      /* Specific section adjustments */
+      .work .entry,
+      .education .entry,
+      .skills .entry {
+        margin-bottom: 12px;
+      }
+      
+      .work li,
+      .education li {
+        margin-bottom: 6px;
+      }
+      
+      .meta {
+        margin: 4px 0 8px 0;
       }
       .summary {
         margin-bottom: 10px;
@@ -70,7 +160,7 @@
     <div class="container">
       <!-- HEADER -->
       <div class="header">
-        <h1 class="name">{{basics.name}}</h1>
+        <h1 class="resume-name">{{basics.name}}</h1>
         <div class="contact">
           {{#if basics.email}}<span>{{basics.email}}</span> | {{/if}}
           {{#if basics.phone}}<span>{{basics.phone}}</span> | {{/if}}
@@ -98,9 +188,12 @@
         <h2 class="section-title">Experience</h2>
         {{#each work}}
           <div class="entry">
-            {{#if position}}<h3 class="position" style="margin: 0; font-size: inherit;">{{position}}</h3>{{/if}}
+            {{#if position}}<h3 class="position">{{position}}</h3>{{/if}}
             <div class="company">{{name}}</div>
-            <div class="date">{{formatDate startDate}} - {{#if endDate}}{{formatDate endDate}}{{else}}Present{{/if}}{{#if location}} · {{location}}{{/if}}</div>
+            <div class="meta">
+              <span class="date">{{formatDate startDate}} - {{#if endDate}}{{formatDate endDate}}{{else}}Present{{/if}}</span>
+              {{#if location}}<span class="location"> · {{location}}</span>{{/if}}
+            </div>
             {{#if summary}}<div>{{summary}}</div>{{/if}}
             {{#if highlights.length}}
               <ul>
@@ -118,8 +211,8 @@
         <h2 class="section-title">Skills</h2>
         {{#each skills}}
           <div class="entry">
-            <span class="skill-name">{{name}}</span>
-            {{#if keywords.length}}: {{join keywords}}{{/if}}
+            <h3 class="skill-name">{{name}}</h3>
+            {{#if keywords.length}}<div class="meta">{{join keywords}}</div>{{/if}}
           </div>
         {{/each}}
       </div>
@@ -129,9 +222,12 @@
         <h2 class="section-title">Education</h2>
         {{#each education}}
           <div class="entry">
-            <h3 class="degree" style="margin: 0; font-size: inherit;">{{area}}{{#if studyType}} - {{studyType}}{{/if}}</h3>
+            <h3 class="degree">{{area}}{{#if studyType}} - {{studyType}}{{/if}}</h3>
             <div class="institution">{{institution}}</div>
-            <div class="date">{{formatDate startDate}} - {{#if endDate}}{{formatDate endDate}}{{else}}Present{{/if}}{{#if location}} · {{location}}{{/if}}</div>
+            <div class="meta">
+              <span class="date">{{formatDate startDate}} - {{#if endDate}}{{formatDate endDate}}{{else}}Present{{/if}}</span>
+              {{#if location}}<span class="location"> · {{location}}</span>{{/if}}
+            </div>
           </div>
         {{/each}}
       </div>
