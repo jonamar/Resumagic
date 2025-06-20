@@ -620,7 +620,7 @@ function createSectionHeading(title) {
 /**
  * Format date according to ATS best practices
  * @param {String} dateStr - Date string in ISO format (YYYY-MM-DD)
- * @returns {String} Formatted date string (MMM-YYYY)
+ * @returns {String} Formatted date string (Month YYYY)
  */
 function formatDate(dateStr) {
   if (!dateStr) return '';
@@ -628,11 +628,11 @@ function formatDate(dateStr) {
   // Parse the date
   const date = new Date(dateStr);
   
-  // Format as MMM-YYYY (e.g., Jan-2022)
-  const month = date.toLocaleString('en', { month: 'short' });
+  // Format as Month YYYY (e.g., March 2019)
+  const month = date.toLocaleString('en', { month: 'long' });
   const year = date.getFullYear();
   
-  return `${month}-${year}`;
+  return `${month} ${year}`;
 }
 
 /**
