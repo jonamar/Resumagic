@@ -65,14 +65,14 @@ const outputDocxPath = path.join(__dirname, '../data/output', `${inputBaseName}.
     console.log(`✅ DOCX resume generated and saved to: ${outputDocxPath}`);
     console.log('\n✨ Resume generation complete! DOCX file has been created.\n');
     
-    // Auto-open in Pages if on macOS
+    // Auto-open with system default app if on macOS
     if (autoPreview && process.platform === 'darwin') {
       try {
-        console.log('Opening DOCX file in Pages...');
-        execSync(`open -a "Pages" "${outputDocxPath}"`);
-        console.log('✅ DOCX opened in Pages for preview');
+        console.log('Opening DOCX file with system default app...');
+        execSync(`open "${outputDocxPath}"`);
+        console.log('✅ DOCX opened with system default app for preview');
       } catch (error) {
-        console.warn(`⚠️ Could not open DOCX in Pages: ${error.message}`);
+        console.warn(`⚠️ Could not open DOCX file: ${error.message}`);
       }
     }
   } catch (error) {

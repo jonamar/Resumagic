@@ -6,7 +6,7 @@
 
 const { Document, Paragraph, TextRun, HeadingLevel, AlignmentType, Table, 
         TableRow, TableCell, BorderStyle, WidthType, TableLayoutType, 
-        UnderlineType, TableBorders, SectionType, PageBreak } = require('docx');
+        UnderlineType, TableBorders, SectionType, PageBreak, LevelFormat } = require('docx');
 const theme = require('./theme');
 
 /**
@@ -306,25 +306,21 @@ function createExperience(work) {
           new Paragraph({
             children: [
               new TextRun({
-                text: "\u2022 ", // Unicode U+2022 bullet point with space
-                size: 20, // Use normal size for bullet (10pt converted to half-points)
-                font: theme.fonts.primary,
-                color: theme.colors.text
-              }),
-              new TextRun({
                 text: highlight,
                 size: theme.fontSize.body * 2, // Convert to half-points
                 font: theme.fonts.primary,
                 color: theme.colors.text
               })
             ],
-            bullet: false, // Disable default bullet
-            
+            bullet: {
+              level: 0
+            },
             spacing: {
               after: 60 // 3pt - reduced spacing after bullets
             },
             indent: {
-              left: 0 // No indentation
+              left: 360, // 0.25 inch left indent for bullet
+              hanging: 360 // 0.25 inch hanging indent so text aligns properly
             },
             keepLines: true, // Keep long bullet points together
             keepNext: !isLastHighlight // Keep with next highlight (but not after the last one)
@@ -551,25 +547,21 @@ function createProjects(projects) {
           new Paragraph({
             children: [
               new TextRun({
-                text: "\u2022 ", // Unicode U+2022 bullet point with space
-                size: 20, // Use normal size for bullet (10pt converted to half-points)
-                font: theme.fonts.primary,
-                color: theme.colors.text
-              }),
-              new TextRun({
                 text: highlight,
                 size: theme.fontSize.body * 2, // Convert to half-points
                 font: theme.fonts.primary,
                 color: theme.colors.text
               })
             ],
-            bullet: false, // Disable default bullet
-            
+            bullet: {
+              level: 0
+            },
             spacing: {
               after: 60 // 3pt - reduced spacing after bullets
             },
             indent: {
-              left: 0 // No indentation
+              left: 360, // 0.25 inch left indent for bullet
+              hanging: 360 // 0.25 inch hanging indent so text aligns properly
             },
             keepLines: true, // Keep long bullet points together
             keepNext: !isLastHighlight // Keep with next highlight (but not after the last one)
