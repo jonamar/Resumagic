@@ -7,9 +7,8 @@
 const { Document, Paragraph, TextRun, HeadingLevel, AlignmentType, Table, 
         TableRow, TableCell, BorderStyle, WidthType, TableLayoutType, 
         UnderlineType, TableBorders, SectionType, PageBreak, LevelFormat,
-        convertInchesToTwip } = require('docx');
+        convertInchesToTwip, ExternalHyperlink } = require('docx');
 const theme = require('./theme');
-
 /**
  * Creates a DOCX document from resume JSON data
  * @param {Object} resumeData - Resume data in JSON Resume format
@@ -162,18 +161,49 @@ function createHeader(basics) {
 
   // Add profiles if any
   if (basics.profiles && basics.profiles.length > 0) {
-    const profileParts = basics.profiles.map(profile => profile.url);
+    const profileChildren = [];
     
-    paragraphs.push(
-      new Paragraph({
-        children: [
+    basics.profiles.forEach((profile, index) => {
+      // Clean up the display text by removing protocol and www
+      let displayText = profile.url
+        .replace(/^https?:\/\//, '') // Remove http:// or https://
+        .replace(/^www\./, '');       // Remove www.
+      
+      // Add the hyperlink
+      profileChildren.push(
+        new ExternalHyperlink({
+          children: [
+            new TextRun({
+              text: displayText,
+              size: theme.fontSize.meta * 2, // Convert to half-points
+              color: theme.colors.dimText,
+              font: theme.fonts.primary,
+              underline: {
+                type: UnderlineType.SINGLE,
+                color: theme.colors.dimText
+              }
+            })
+          ],
+          link: profile.url
+        })
+      );
+      
+      // Add bullet separator if not the last item
+      if (index < basics.profiles.length - 1) {
+        profileChildren.push(
           new TextRun({
-            text: profileParts.join(' • '),
-            size: theme.fontSize.meta * 2, // Convert to half-points
+            text: ' • ',
+            size: theme.fontSize.meta * 2,
             color: theme.colors.dimText,
             font: theme.fonts.primary
           })
-        ],
+        );
+      }
+    });
+    
+    paragraphs.push(
+      new Paragraph({
+        children: profileChildren,
         spacing: {
           after: 240 // 12pt
         }
