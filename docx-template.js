@@ -775,17 +775,15 @@ function createSpeakingEngagements(publications) {
       });
     }
 
-    // Add space after each speaking engagement entry (except the last one)
-    if (index < publications.length - 1) {
-      paragraphs.push(
-        new Paragraph({
-          text: "",
-          spacing: {
-            after: 180 // 9pt
-          }
-        })
-      );
-    }
+    // Add space after each speaking engagement entry
+    paragraphs.push(
+      new Paragraph({
+        text: "",
+        spacing: {
+          after: 240 // 12pt - same as education section
+        }
+      })
+    );
   });
 
   return paragraphs;
