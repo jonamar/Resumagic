@@ -198,7 +198,7 @@ function createExperience(work) {
 
   // Add each work entry
   work.forEach(job => {
-    // Position title
+    // Position title with keepNext to stick to company
     if (job.position) {
       paragraphs.push(
         new Paragraph({
@@ -213,12 +213,13 @@ function createExperience(work) {
           ],
           spacing: {
             after: 60 // 3pt
-          }
+          },
+          keepNext: true // Keep with next paragraph (company name)
         })
       );
     }
 
-    // Company name
+    // Company name with keepNext to stick to date/location
     paragraphs.push(
       new Paragraph({
         children: [
@@ -232,7 +233,8 @@ function createExperience(work) {
         ],
         spacing: {
           after: 60 // 3pt
-        }
+        },
+        keepNext: true // Keep with next paragraph (date/location)
       })
     );
 
@@ -240,6 +242,9 @@ function createExperience(work) {
     const dateParts = [];
     dateParts.push(`${formatDate(job.startDate)} - ${job.endDate ? formatDate(job.endDate) : 'Present'}`);
     if (job.location) dateParts.push(job.location);
+
+    // Determine if we should keep with next content (summary or highlights)
+    const hasMoreContent = job.summary || (job.highlights && job.highlights.length > 0);
 
     paragraphs.push(
       new Paragraph({
@@ -253,7 +258,8 @@ function createExperience(work) {
         ],
         spacing: {
           after: 80 // 4pt
-        }
+        },
+        keepNext: hasMoreContent // Keep with summary/highlights if they exist
       })
     );
 
@@ -271,14 +277,18 @@ function createExperience(work) {
           ],
           spacing: {
             after: 80 // 4pt
-          }
+          },
+          keepLines: true, // Keep summary lines together
+          keepNext: job.highlights && job.highlights.length > 0 // Keep with highlights if they exist
         })
       );
     }
 
     // Highlights as bullet points
     if (job.highlights && job.highlights.length > 0) {
-      job.highlights.forEach(highlight => {
+      job.highlights.forEach((highlight, highlightIndex) => {
+        const isLastHighlight = highlightIndex === job.highlights.length - 1;
+        
         paragraphs.push(
           new Paragraph({
             children: [
@@ -302,7 +312,9 @@ function createExperience(work) {
             },
             indent: {
               left: 0 // No indentation
-            }
+            },
+            keepLines: true, // Keep long bullet points together
+            keepNext: !isLastHighlight // Keep with next highlight (but not after the last one)
           })
         );
       });
@@ -410,7 +422,8 @@ function createEducation(education) {
         ],
         spacing: {
           after: 60 // 3pt
-        }
+        },
+        keepNext: true // Keep with institution
       })
     );
 
@@ -428,7 +441,8 @@ function createEducation(education) {
         ],
         spacing: {
           after: 60 // 3pt
-        }
+        },
+        keepNext: true // Keep with date/location
       })
     );
 
@@ -472,6 +486,9 @@ function createProjects(projects) {
 
   // Add each project entry
   projects.forEach(project => {
+    // Determine if we should keep project name with next content
+    const hasMoreContent = project.description || (project.highlights && project.highlights.length > 0);
+
     // Project name
     paragraphs.push(
       new Paragraph({
@@ -486,7 +503,8 @@ function createProjects(projects) {
         ],
         spacing: {
           after: 60 // 3pt
-        }
+        },
+        keepNext: hasMoreContent // Keep with description/highlights if they exist
       })
     );
 
@@ -504,14 +522,18 @@ function createProjects(projects) {
           ],
           spacing: {
             after: 120 // 6pt
-          }
+          },
+          keepLines: true, // Keep description lines together
+          keepNext: project.highlights && project.highlights.length > 0 // Keep with highlights if they exist
         })
       );
     }
 
     // Highlights as bullet points
     if (project.highlights && project.highlights.length > 0) {
-      project.highlights.forEach(highlight => {
+      project.highlights.forEach((highlight, highlightIndex) => {
+        const isLastHighlight = highlightIndex === project.highlights.length - 1;
+        
         paragraphs.push(
           new Paragraph({
             children: [
@@ -535,7 +557,9 @@ function createProjects(projects) {
             },
             indent: {
               left: 0 // No indentation
-            }
+            },
+            keepLines: true, // Keep long bullet points together
+            keepNext: !isLastHighlight // Keep with next highlight (but not after the last one)
           })
         );
       });
