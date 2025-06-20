@@ -125,7 +125,7 @@ function createHeader(basics) {
     new Paragraph({
       children: [
         new TextRun({
-          text: contactParts.join('  •  '),
+          text: contactParts.join(' • '),
           size: theme.fontSize.meta * 2, // Convert to half-points
           color: theme.colors.dimText,
           font: theme.fonts.primary
@@ -139,15 +139,13 @@ function createHeader(basics) {
 
   // Add profiles if any
   if (basics.profiles && basics.profiles.length > 0) {
-    const profileParts = basics.profiles.map(profile => 
-      `${profile.network}: ${profile.url}`
-    );
+    const profileParts = basics.profiles.map(profile => profile.url);
     
     paragraphs.push(
       new Paragraph({
         children: [
           new TextRun({
-            text: profileParts.join(' | '),
+            text: profileParts.join(' • '),
             size: theme.fontSize.meta * 2, // Convert to half-points
             color: theme.colors.dimText,
             font: theme.fonts.primary
