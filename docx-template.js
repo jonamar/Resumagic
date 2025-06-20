@@ -125,7 +125,7 @@ function createHeader(basics) {
   // Create contact information with ATS-friendly format
   const contactParts = [];
   
-  // Add address first with ATS-friendly label (city, province abbreviation, postal code)
+  // Add address first with ATS-friendly label (city, province abbreviation, postal code, country)
   if (basics.location) {
     let locationText = basics.location.city || '';
     
@@ -135,7 +135,12 @@ function createHeader(basics) {
       locationText += `, ${regionAbbrev}`;
     }
     
-    // Add postal code
+    // Add country
+    if (basics.location.country) {
+      locationText += `, ${basics.location.country}`;
+    }
+    
+    // Add postal code (with space before it, not comma)
     if (basics.location.postalCode) {
       locationText += ` ${basics.location.postalCode}`;
     }
