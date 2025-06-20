@@ -41,13 +41,18 @@ function createResumeDocx(resumeData, options = {}) {
           next: "Normal",
           run: {
             size: theme.fontSize.name * 2, // Convert to half-points
-            font: "Arial",
+            font: "Arial", // Set Arial as the default font for all runs
             bold: true,
+            color: theme.colors.headings,
           },
           paragraph: {
             spacing: {
               after: 240, // 12pt
             },
+            indent: {
+              left: 0 // No indentation
+            },
+            font: "Arial", // Explicitly set font at paragraph level too
           },
         },
       ],
@@ -165,11 +170,12 @@ function createSummary(basics) {
         new TextRun({
           text: basics.summary,
           size: theme.fontSize.body * 2, // Convert to half-points
-          font: theme.fonts.primary
+          font: theme.fonts.primary,
+          color: theme.colors.text
         })
       ],
       spacing: {
-        after: 240 // 12pt
+        after: 80 // 4pt
       }
     })
   );
@@ -201,7 +207,8 @@ function createExperience(work) {
               text: job.position,
               size: theme.fontSize.body * 2, // Convert to half-points
               font: theme.fonts.primary,
-              bold: true
+              bold: true,
+              color: theme.colors.text
             })
           ],
           spacing: {
@@ -219,7 +226,8 @@ function createExperience(work) {
             text: job.name,
             size: theme.fontSize.body * 2, // Convert to half-points
             font: theme.fonts.primary,
-            bold: true
+            bold: true,
+            color: theme.colors.text
           })
         ],
         spacing: {
@@ -244,8 +252,7 @@ function createExperience(work) {
           })
         ],
         spacing: {
-          after: 160, // 8pt
-          before: 80  // 4pt
+          after: 80 // 4pt
         }
       })
     );
@@ -258,11 +265,12 @@ function createExperience(work) {
             new TextRun({
               text: job.summary,
               size: theme.fontSize.body * 2, // Convert to half-points
-              font: theme.fonts.primary
+              font: theme.fonts.primary,
+              color: theme.colors.text
             })
           ],
           spacing: {
-            after: 160 // 8pt
+            after: 80 // 4pt
           }
         })
       );
@@ -275,28 +283,37 @@ function createExperience(work) {
           new Paragraph({
             children: [
               new TextRun({
+                text: "\u2022 ", // Unicode U+2022 bullet point with space
+                size: 20, // Use normal size for bullet (10pt converted to half-points)
+                font: theme.fonts.primary,
+                color: theme.colors.text
+              }),
+              new TextRun({
                 text: highlight,
                 size: theme.fontSize.body * 2, // Convert to half-points
-                font: theme.fonts.primary
+                font: theme.fonts.primary,
+                color: theme.colors.text
               })
             ],
-            bullet: {
-              level: 0
-            },
+            bullet: false, // Disable default bullet
+            
             spacing: {
-              after: 120 // 6pt
+              after: 60 // 3pt - reduced spacing after bullets
+            },
+            indent: {
+              left: 0 // No indentation
             }
           })
         );
       });
     }
 
-    // Add some space after each job entry
+    // Add minimal space after each job entry
     paragraphs.push(
       new Paragraph({
         text: "",
         spacing: {
-          after: 240 // 12pt
+          after: 80 // 4pt
         }
       })
     );
@@ -328,7 +345,8 @@ function createSkills(skills) {
             text: skill.name,
             size: theme.fontSize.body * 2, // Convert to half-points
             font: theme.fonts.primary,
-            bold: true
+            bold: true,
+            color: theme.colors.text
           })
         ],
         spacing: {
@@ -386,7 +404,8 @@ function createEducation(education) {
             text: degreeText,
             size: theme.fontSize.body * 2, // Convert to half-points
             font: theme.fonts.primary,
-            bold: true
+            bold: true,
+            color: theme.colors.text
           })
         ],
         spacing: {
@@ -403,7 +422,8 @@ function createEducation(education) {
             text: edu.institution,
             size: theme.fontSize.body * 2, // Convert to half-points
             font: theme.fonts.primary,
-            bold: true
+            bold: true,
+            color: theme.colors.text
           })
         ],
         spacing: {
@@ -460,7 +480,8 @@ function createProjects(projects) {
             text: project.name,
             size: theme.fontSize.body * 2, // Convert to half-points
             font: theme.fonts.primary,
-            bold: true
+            bold: true,
+            color: theme.colors.text
           })
         ],
         spacing: {
@@ -477,7 +498,8 @@ function createProjects(projects) {
             new TextRun({
               text: project.description,
               size: theme.fontSize.body * 2, // Convert to half-points
-              font: theme.fonts.primary
+              font: theme.fonts.primary,
+              color: theme.colors.text
             })
           ],
           spacing: {
@@ -494,16 +516,25 @@ function createProjects(projects) {
           new Paragraph({
             children: [
               new TextRun({
+                text: "\u2022 ", // Unicode U+2022 bullet point with space
+                size: 20, // Use normal size for bullet (10pt converted to half-points)
+                font: theme.fonts.primary,
+                color: theme.colors.text
+              }),
+              new TextRun({
                 text: highlight,
                 size: theme.fontSize.body * 2, // Convert to half-points
-                font: theme.fonts.primary
+                font: theme.fonts.primary,
+                color: theme.colors.text
               })
             ],
-            bullet: {
-              level: 0
-            },
+            bullet: false, // Disable default bullet
+            
             spacing: {
-              after: 120 // 6pt
+              after: 60 // 3pt - reduced spacing after bullets
+            },
+            indent: {
+              left: 0 // No indentation
             }
           })
         );
@@ -535,7 +566,8 @@ function createSectionHeading(title) {
       new TextRun({
         text: title.toUpperCase(),
         size: theme.fontSize.sectionHeading * 2, // Convert to half-points
-        font: theme.fonts.primary,
+        font: "Arial", // Set Arial as the default font for all runs
+        color: theme.colors.headings,
         bold: true
       })
     ],
@@ -544,13 +576,7 @@ function createSectionHeading(title) {
       before: 400, // 20pt
       after: 120   // 6pt
     },
-    border: {
-      bottom: {
-        color: theme.colors.dimText,
-        size: 1,
-        style: BorderStyle.SINGLE
-      }
-    }
+    // Border removed to eliminate unwanted underlines
   });
 }
 

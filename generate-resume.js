@@ -1,11 +1,15 @@
 const path = require('path');
 const fs = require('fs');
+const { execSync } = require('child_process');
 const { Packer } = require('docx');
 const { createResumeDocx } = require('./docx-template');
 const JSZip = require('jszip');
 
 // Parse command line arguments
-const inputFile = process.argv[2] || 'resume.json';
+const args = process.argv.slice(2);
+const inputFile = args.find(arg => !arg.startsWith('--')) || 'resume.json';
+const autoPreview = args.includes('--preview') || true; // Default to true for auto-preview
+
 console.log(`Command line argument received: ${inputFile}`);
 
 // Get the base name for generating output files
@@ -60,6 +64,17 @@ const outputDocxPath = path.join(__dirname, '../data/output', `${inputBaseName}.
     
     console.log(`✅ DOCX resume generated and saved to: ${outputDocxPath}`);
     console.log('\n✨ Resume generation complete! DOCX file has been created.\n');
+    
+    // Auto-open in Pages if on macOS
+    if (autoPreview && process.platform === 'darwin') {
+      try {
+        console.log('Opening DOCX file in Pages...');
+        execSync(`open -a "Pages" "${outputDocxPath}"`);
+        console.log('✅ DOCX opened in Pages for preview');
+      } catch (error) {
+        console.warn(`⚠️ Could not open DOCX in Pages: ${error.message}`);
+      }
+    }
   } catch (error) {
     console.error('Error generating resume:', error);
     process.exit(1);
@@ -79,20 +94,35 @@ async function removeCompatibilityMode(buffer) {
     
     // Check if settings.xml exists and modify it to remove compatibility mode
     if (zip.files['word/settings.xml']) {
-      const settingsXml = await zip.files['word/settings.xml'].async('string');
+      let settingsXml = await zip.files['word/settings.xml'].async('string');
       
       // Remove the compatibility section
-      const updatedSettingsXml = settingsXml.replace(/<w:compat>[\s\S]*?<\/w:compat>/g, '');
+      settingsXml = settingsXml.replace(/<w:compat>[\s\S]*?<\/w:compat>/g, '');
       
-      // Update the settings file
-      zip.file('word/settings.xml', updatedSettingsXml);
+      // Remove mc:Ignorable attribute and legacy namespace declarations
+      settingsXml = settingsXml.replace(/\s+mc:Ignorable="[^"]*"/g, '');
+      
+      // Remove w14, w15, wp14 namespace declarations
+      settingsXml = settingsXml.replace(/\s+xmlns:w14="[^"]*"/g, '');
+      settingsXml = settingsXml.replace(/\s+xmlns:w15="[^"]*"/g, '');
+      settingsXml = settingsXml.replace(/\s+xmlns:wp14="[^"]*"/g, '');
+      
+      // Create a much simpler settings.xml file
+      const cleanSettings = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+        '<w:settings xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">' +
+        '<w:displayBackgroundShape/><w:evenAndOddHeaders w:val="false"/></w:settings>';
+      
+      // Update the settings file with the clean version
+      zip.file('word/settings.xml', cleanSettings);
+      console.log('Enhanced compatibility mode removal: settings.xml optimized');
     }
     
-    // Remove empty footnotes.xml and comments.xml if they exist
+    // Remove empty footnotes.xml, comments.xml, and endnotes.xml if they exist
     // These can cause issues with some ATS systems
     ['word/footnotes.xml', 'word/comments.xml', 'word/endnotes.xml'].forEach(file => {
       if (zip.files[file]) {
         zip.remove(file);
+        console.log(`Removed unnecessary file: ${file}`);
       }
     });
     

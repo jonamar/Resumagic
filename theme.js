@@ -7,6 +7,7 @@
 const theme = {
   // Colors
   colors: {
+    headings: '#000000',  // Heading text color
     text: '#222222',      // Primary text color
     dimText: '#555555',   // Secondary text color
     background: '#FFFFFF',// Background color
@@ -23,7 +24,7 @@ const theme = {
   fontSize: {
     name: 22,             // Resume name (22px)
     sectionHeading: 16,   // Section headings (16px)
-    body: 11,             // Body text & bullets (11px)
+    body: 10,             // Body text & bullets (reduced to 10pt)
     meta: 10,             // Meta text (dates, locations, etc.) (10px)
   },
   
@@ -56,10 +57,10 @@ const theme = {
   // Margins (in twips - 1/20th of a point)
   margins: {
     document: {
-      top: 1440,          // 1 inch (72 points)
-      bottom: 1440,       // 1 inch
-      left: 1440,         // 1 inch
-      right: 1440,        // 1 inch
+      top: 720,           // 0.5 inch (36 points)
+      bottom: 720,        // 0.5 inch
+      left: 720,          // 0.5 inch
+      right: 720,         // 0.5 inch
     },
   },
   
