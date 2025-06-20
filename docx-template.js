@@ -30,6 +30,11 @@ function createResumeDocx(resumeData, options = {}) {
     children.push(...createProjects(resumeData.projects));
   }
 
+  // Add speaking engagements section if present
+  if (resumeData.publications && resumeData.publications.length > 0) {
+    children.push(...createSpeakingEngagements(resumeData.publications));
+  }
+
   // Create the document with styles and the theme's margin settings
   const doc = new Document({
     numbering: {
@@ -120,7 +125,7 @@ function createHeader(basics) {
   // Create contact information with ATS-friendly format
   const contactParts = [];
   
-  // Add location first (city, province abbreviation, postal code)
+  // Add address first with ATS-friendly label (city, province abbreviation, postal code)
   if (basics.location) {
     let locationText = basics.location.city || '';
     
@@ -135,7 +140,8 @@ function createHeader(basics) {
       locationText += ` ${basics.location.postalCode}`;
     }
     
-    if (locationText) contactParts.push(locationText);
+    // Add "Address:" label for ATS recognition
+    if (locationText) contactParts.push(`Address: ${locationText}`);
   }
   
   // Add phone and email
@@ -640,6 +646,152 @@ function createProjects(projects) {
 }
 
 /**
+ * Creates the speaking engagements section
+ * @param {Array} publications - Array of publication/speaking entries
+ * @returns {Array} Array of paragraphs for the speaking engagements section
+ */
+function createSpeakingEngagements(publications) {
+  const paragraphs = [];
+
+  // Add section heading
+  paragraphs.push(
+    createSectionHeading(theme.ats.sectionTitles.speakingEngagements)
+  );
+
+  // Add each speaking engagement
+  publications.forEach((publication, index) => {
+    // Determine if we should keep engagement name with next content
+    const hasMoreContent = publication.summary || (publication.highlights && publication.highlights.length > 0);
+
+    // Speaking engagement name/title
+    paragraphs.push(
+      new Paragraph({
+        children: [
+          new TextRun({
+            text: publication.name,
+            size: theme.fontSize.body * 2, // Convert to half-points
+            font: theme.fonts.primary,
+            bold: true,
+            color: theme.colors.text
+          })
+        ],
+        spacing: {
+          after: 60 // 3pt
+        },
+        keepNext: true // Keep with publisher
+      })
+    );
+
+    // Publisher/venue
+    paragraphs.push(
+      new Paragraph({
+        children: [
+          new TextRun({
+            text: publication.publisher,
+            size: theme.fontSize.body * 2, // Convert to half-points
+            font: theme.fonts.primary,
+            bold: true,
+            color: theme.colors.text
+          })
+        ],
+        spacing: {
+          after: 60 // 3pt
+        },
+        keepNext: true // Keep with date
+      })
+    );
+
+    // Date
+    if (publication.releaseDate) {
+      paragraphs.push(
+        new Paragraph({
+          children: [
+            new TextRun({
+              text: formatDate(publication.releaseDate),
+              size: theme.fontSize.meta * 2, // Convert to half-points
+              font: theme.fonts.primary,
+              color: theme.colors.dimText
+            })
+          ],
+          spacing: {
+            after: hasMoreContent ? 80 : 180 // 4pt if more content, 9pt if last item
+          },
+          keepNext: hasMoreContent // Keep with summary/highlights if they exist
+        })
+      );
+    }
+
+    // Summary if present
+    if (publication.summary) {
+      paragraphs.push(
+        new Paragraph({
+          children: [
+            new TextRun({
+              text: publication.summary,
+              size: theme.fontSize.body * 2, // Convert to half-points
+              font: theme.fonts.primary,
+              color: theme.colors.text
+            })
+          ],
+          spacing: {
+            after: 120 // 6pt
+          },
+          keepLines: true, // Keep summary lines together
+          keepNext: publication.highlights && publication.highlights.length > 0 // Keep with highlights if they exist
+        })
+      );
+    }
+
+    // Highlights as bullet points
+    if (publication.highlights && publication.highlights.length > 0) {
+      publication.highlights.forEach((highlight, highlightIndex) => {
+        const isLastHighlight = highlightIndex === publication.highlights.length - 1;
+        
+        paragraphs.push(
+          new Paragraph({
+            children: [
+              new TextRun({
+                text: highlight,
+                size: theme.fontSize.body * 2, // Convert to half-points
+                font: theme.fonts.primary,
+                color: theme.colors.text
+              })
+            ],
+            numbering: {
+              reference: "small-bullet",
+              level: 0
+            },
+            spacing: {
+              after: 60 // 3pt - reduced spacing after bullets
+            },
+            indent: {
+              left: 360, // 0.25 inch left indent for bullet
+              hanging: 360 // 0.25 inch hanging indent so text aligns properly
+            },
+            keepLines: true, // Keep long bullet points together
+            keepNext: !isLastHighlight // Keep with next highlight (but not after the last one)
+          })
+        );
+      });
+    }
+
+    // Add space after each speaking engagement entry (except the last one)
+    if (index < publications.length - 1) {
+      paragraphs.push(
+        new Paragraph({
+          text: "",
+          spacing: {
+            after: 180 // 9pt
+          }
+        })
+      );
+    }
+  });
+
+  return paragraphs;
+}
+
+/**
  * Helper function to create section headings
  * @param {String} title - Section title
  * @returns {Paragraph} Section heading paragraph
@@ -660,26 +812,56 @@ function createSectionHeading(title) {
       before: 400, // 20pt
       after: 120   // 6pt
     },
+    keepNext: true, // Prevent section headings from being orphaned on previous page
     // Border removed to eliminate unwanted underlines
   });
 }
 
 /**
  * Format date according to ATS best practices
- * @param {String} dateStr - Date string in ISO format (YYYY-MM-DD)
+ * @param {String} dateStr - Date string in various formats
  * @returns {String} Formatted date string (Month YYYY)
  */
 function formatDate(dateStr) {
   if (!dateStr) return '';
   
-  // Parse the date
-  const date = new Date(dateStr);
-  
-  // Format as Month YYYY (e.g., March 2019)
-  const month = date.toLocaleString('en', { month: 'long' });
-  const year = date.getFullYear();
-  
-  return `${month} ${year}`;
+  try {
+    // Handle different input formats
+    let parsedDate;
+    
+    // Format: "Sep 2022", "Jan 2021", etc.
+    if (/^[A-Za-z]{3}\s\d{4}$/.test(dateStr)) {
+      parsedDate = new Date(dateStr + ' 01'); // Add day for parsing
+    }
+    // Format: "2007-01", "2015-11", etc.
+    else if (/^\d{4}-\d{2}$/.test(dateStr)) {
+      parsedDate = new Date(dateStr + '-01'); // Add day for parsing
+    }
+    // Format: "2020", "2021", etc. (year only)
+    else if (/^\d{4}$/.test(dateStr)) {
+      return dateStr; // Return as-is for year-only dates
+    }
+    // Standard ISO format: "2020-01-15", etc.
+    else {
+      parsedDate = new Date(dateStr);
+    }
+    
+    // Check if date parsing was successful
+    if (isNaN(parsedDate.getTime())) {
+      console.warn(`⚠️  Date parsing warning: Could not parse date "${dateStr}". Using original value.`);
+      return dateStr;
+    }
+    
+    // Format as Month YYYY (e.g., March 2019)
+    const month = parsedDate.toLocaleString('en', { month: 'long' });
+    const year = parsedDate.getFullYear();
+    
+    return `${month} ${year}`;
+    
+  } catch (error) {
+    console.warn(`⚠️  Date parsing error: Failed to format date "${dateStr}". Error: ${error.message}. Using original value.`);
+    return dateStr;
+  }
 }
 
 /**

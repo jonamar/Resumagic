@@ -76,6 +76,7 @@ const theme = {
       education: "EDUCATION",
       skills: "SKILLS",
       projects: "PROJECTS",
+      speakingEngagements: "SPEAKING ENGAGEMENTS",
     },
     dateFormat: "MMM-YYYY", // ATS-friendly date format
   }
