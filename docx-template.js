@@ -6,7 +6,8 @@
 
 const { Document, Paragraph, TextRun, HeadingLevel, AlignmentType, Table, 
         TableRow, TableCell, BorderStyle, WidthType, TableLayoutType, 
-        UnderlineType, TableBorders, SectionType, PageBreak, LevelFormat } = require('docx');
+        UnderlineType, TableBorders, SectionType, PageBreak, LevelFormat,
+        convertInchesToTwip } = require('docx');
 const theme = require('./theme');
 
 /**
@@ -32,6 +33,28 @@ function createResumeDocx(resumeData, options = {}) {
 
   // Create the document with styles and the theme's margin settings
   const doc = new Document({
+    numbering: {
+      config: [
+        {
+          reference: "small-bullet",
+          levels: [
+            {
+              level: 0,
+              format: LevelFormat.BULLET,
+              text: "•",
+              alignment: AlignmentType.LEFT,
+              style: {
+                run: {
+                  font: theme.fonts.primary,
+                  size: 16, // 8pt bullet (smaller than default 10pt text)
+                  color: theme.colors.text
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
     styles: {
       paragraphStyles: [
         {
@@ -312,7 +335,8 @@ function createExperience(work) {
                 color: theme.colors.text
               })
             ],
-            bullet: {
+            numbering: {
+              reference: "small-bullet",
               level: 0
             },
             spacing: {
@@ -553,7 +577,8 @@ function createProjects(projects) {
                 color: theme.colors.text
               })
             ],
-            bullet: {
+            numbering: {
+              reference: "small-bullet",
               level: 0
             },
             spacing: {
