@@ -263,7 +263,7 @@ function createExperience(work) {
       new Paragraph({
         children: [
           new TextRun({
-            text: dateParts.join(' · '),
+            text: dateParts.join(' • '),
             size: theme.fontSize.meta * 2, // Convert to half-points
             font: theme.fonts.primary,
             color: theme.colors.dimText
@@ -468,7 +468,7 @@ function createEducation(education) {
       new Paragraph({
         children: [
           new TextRun({
-            text: dateParts.join(' · '),
+            text: dateParts.join(' • '),
             size: theme.fontSize.meta * 2, // Convert to half-points
             font: theme.fonts.primary,
             color: theme.colors.dimText
