@@ -1,12 +1,6 @@
 {
   "dependencies": {
-    "@jsonresume/jsonresume-theme-class": "^0.4.2",
     "docx": "^9.5.1",
-    "handlebars": "^4.7.8",
-    "jsonresume-theme-eloquent": "^5.0.0",
-    "jsonresume-theme-flat": "^0.3.7",
-    "jsonresume-theme-stackoverflow": "^2.1.0",
-    "jszip": "^3.10.1",
-    "puppeteer": "^24.10.1"
+    "jszip": "^3.10.1"
   }
 }
