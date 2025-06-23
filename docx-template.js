@@ -9,6 +9,25 @@ const { Document, Paragraph, TextRun, HeadingLevel, AlignmentType, Table,
         UnderlineType, TableBorders, SectionType, PageBreak, LevelFormat,
         convertInchesToTwip, ExternalHyperlink } = require('docx');
 const theme = require('./theme');
+const { parseTextWithFormatting } = require('./markdown-parser');
+
+/**
+ * Creates formatted TextRun elements from text with markdown-style formatting
+ * @param {string} text - Text with potential markdown formatting
+ * @param {Object} baseStyle - Base styling to apply to all runs
+ * @returns {Array} Array of TextRun elements
+ */
+function createFormattedTextRuns(text, baseStyle = {}) {
+  const parsedParts = parseTextWithFormatting(text);
+  
+  return parsedParts.map(part => new TextRun({
+    text: part.text,
+    bold: part.bold,
+    italics: part.italic,
+    ...baseStyle
+  }));
+}
+
 /**
  * Creates a DOCX document from resume JSON data
  * @param {Object} resumeData - Resume data in JSON Resume format
