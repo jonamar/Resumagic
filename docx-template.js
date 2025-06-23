@@ -387,14 +387,11 @@ function createExperience(work) {
         
         paragraphs.push(
           new Paragraph({
-            children: [
-              new TextRun({
-                text: highlight,
-                size: theme.fontSize.body * 2, // Convert to half-points
-                font: theme.fonts.primary,
-                color: theme.colors.text
-              })
-            ],
+            children: createFormattedTextRuns(highlight, {
+              size: theme.fontSize.body * 2, // Convert to half-points
+              font: theme.fonts.primary,
+              color: theme.colors.text
+            }),
             numbering: {
               reference: "small-bullet",
               level: 0
@@ -629,14 +626,11 @@ function createProjects(projects) {
         
         paragraphs.push(
           new Paragraph({
-            children: [
-              new TextRun({
-                text: highlight,
-                size: theme.fontSize.body * 2, // Convert to half-points
-                font: theme.fonts.primary,
-                color: theme.colors.text
-              })
-            ],
+            children: createFormattedTextRuns(highlight, {
+              size: theme.fontSize.body * 2, // Convert to half-points
+              font: theme.fonts.primary,
+              color: theme.colors.text
+            }),
             numbering: {
               reference: "small-bullet",
               level: 0
@@ -773,14 +767,11 @@ function createSpeakingEngagements(publications) {
         
         paragraphs.push(
           new Paragraph({
-            children: [
-              new TextRun({
-                text: highlight,
-                size: theme.fontSize.body * 2, // Convert to half-points
-                font: theme.fonts.primary,
-                color: theme.colors.text
-              })
-            ],
+            children: createFormattedTextRuns(highlight, {
+              size: theme.fontSize.body * 2, // Convert to half-points
+              font: theme.fonts.primary,
+              color: theme.colors.text
+            }),
             numbering: {
               reference: "small-bullet",
               level: 0
