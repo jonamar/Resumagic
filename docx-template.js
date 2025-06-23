@@ -455,14 +455,11 @@ function createSkills(skills) {
     if (skill.keywords && skill.keywords.length > 0) {
       paragraphs.push(
         new Paragraph({
-          children: [
-            new TextRun({
-              text: skill.keywords.join(', '),
-              size: theme.fontSize.meta * 2, // Convert to half-points
-              font: theme.fonts.primary,
-              color: theme.colors.dimText
-            })
-          ],
+          children: createFormattedTextRuns(skill.keywords.join(', '), {
+            size: theme.fontSize.meta * 2, // Convert to half-points
+            font: theme.fonts.primary,
+            color: theme.colors.dimText
+          }),
           spacing: {
             after: 180 // 9pt
           }
