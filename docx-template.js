@@ -262,14 +262,11 @@ function createSummary(basics) {
   // Add summary text
   paragraphs.push(
     new Paragraph({
-      children: [
-        new TextRun({
-          text: basics.summary,
-          size: theme.fontSize.body * 2, // Convert to half-points
-          font: theme.fonts.primary,
-          color: theme.colors.text
-        })
-      ],
+      children: createFormattedTextRuns(basics.summary, {
+        size: theme.fontSize.body * 2, // Convert to half-points
+        font: theme.fonts.primary,
+        color: theme.colors.text
+      }),
       spacing: {
         after: 80 // 4pt
       }
@@ -363,14 +360,11 @@ function createExperience(work) {
     if (job.summary) {
       paragraphs.push(
         new Paragraph({
-          children: [
-            new TextRun({
-              text: job.summary,
-              size: theme.fontSize.body * 2, // Convert to half-points
-              font: theme.fonts.primary,
-              color: theme.colors.text
-            })
-          ],
+          children: createFormattedTextRuns(job.summary, {
+            size: theme.fontSize.body * 2, // Convert to half-points
+            font: theme.fonts.primary,
+            color: theme.colors.text
+          }),
           spacing: {
             after: 80 // 4pt
           },
@@ -602,14 +596,11 @@ function createProjects(projects) {
     if (project.description) {
       paragraphs.push(
         new Paragraph({
-          children: [
-            new TextRun({
-              text: project.description,
-              size: theme.fontSize.body * 2, // Convert to half-points
-              font: theme.fonts.primary,
-              color: theme.colors.text
-            })
-          ],
+          children: createFormattedTextRuns(project.description, {
+            size: theme.fontSize.body * 2, // Convert to half-points
+            font: theme.fonts.primary,
+            color: theme.colors.text
+          }),
           spacing: {
             after: 120 // 6pt
           },
@@ -743,14 +734,11 @@ function createSpeakingEngagements(publications) {
     if (publication.summary) {
       paragraphs.push(
         new Paragraph({
-          children: [
-            new TextRun({
-              text: publication.summary,
-              size: theme.fontSize.body * 2, // Convert to half-points
-              font: theme.fonts.primary,
-              color: theme.colors.text
-            })
-          ],
+          children: createFormattedTextRuns(publication.summary, {
+            size: theme.fontSize.body * 2, // Convert to half-points
+            font: theme.fonts.primary,
+            color: theme.colors.text
+          }),
           spacing: {
             after: 120 // 6pt
           },
