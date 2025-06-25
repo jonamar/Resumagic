@@ -54,6 +54,11 @@ function createResumeDocx(resumeData, options = {}) {
     children.push(...createSpeakingEngagements(resumeData.publications));
   }
 
+  // Add languages section if present
+  if (resumeData.languages && resumeData.languages.length > 0) {
+    children.push(...createLanguages(resumeData.languages));
+  }
+
   // Create the document with styles and the theme's margin settings
   const doc = new Document({
     numbering: {
@@ -709,6 +714,7 @@ function createSpeakingEngagements(publications) {
 
     // Date
     if (publication.releaseDate) {
+      const isLastEntry = index === publications.length - 1;
       paragraphs.push(
         new Paragraph({
           children: [
@@ -720,7 +726,7 @@ function createSpeakingEngagements(publications) {
             })
           ],
           spacing: {
-            after: hasMoreContent ? 80 : 180 // 4pt if more content, 9pt if last item
+            after: hasMoreContent ? 80 : (isLastEntry ? 120 : 240) // 4pt if more content, 6pt if last entry, 12pt between entries
           },
           keepNext: hasMoreContent // Keep with summary/highlights if they exist
         })
@@ -749,6 +755,7 @@ function createSpeakingEngagements(publications) {
     if (publication.highlights && publication.highlights.length > 0) {
       publication.highlights.forEach((highlight, highlightIndex) => {
         const isLastHighlight = highlightIndex === publication.highlights.length - 1;
+        const isLastEntry = index === publications.length - 1;
         
         paragraphs.push(
           new Paragraph({
@@ -762,7 +769,7 @@ function createSpeakingEngagements(publications) {
               level: 0
             },
             spacing: {
-              after: 60 // 3pt - reduced spacing after bullets
+              after: isLastHighlight ? (isLastEntry ? 120 : 240) : 60 // 3pt between bullets, 6pt after last entry, 12pt between entries
             },
             indent: {
               left: 360, // 0.25 inch left indent for bullet
@@ -774,13 +781,51 @@ function createSpeakingEngagements(publications) {
         );
       });
     }
+  });
 
-    // Add space after each speaking engagement entry
+  return paragraphs;
+}
+
+/**
+ * Creates the Languages section
+ * @param {Array} languages - Array of language objects from resume data
+ * @returns {Array} Array of paragraphs for the languages section
+ */
+function createLanguages(languages) {
+  const paragraphs = [];
+
+  // Add section heading
+  paragraphs.push(
+    createSectionHeading(theme.ats.sectionTitles.languages)
+  );
+
+  // Create a simple list of languages with fluency levels
+  languages.forEach((language, index) => {
+    const languageText = language.fluency ? 
+      `${language.language}: ${language.fluency}` : 
+      language.language;
+    
     paragraphs.push(
       new Paragraph({
-        text: "",
+        children: [
+          new TextRun({
+            text: language.language,
+            size: theme.fontSize.body * 2, // Convert to half-points
+            font: theme.fonts.primary,
+            bold: true,
+            color: theme.colors.text
+          }),
+          ...(language.fluency ? [
+            new TextRun({
+              text: `: ${language.fluency}`,
+              size: theme.fontSize.body * 2, // Convert to half-points
+              font: theme.fonts.primary,
+              color: theme.colors.text
+            })
+          ] : [])
+        ],
         spacing: {
-          after: 240 // 12pt - same as education section
+          after: index < languages.length - 1 ? 80 : 240 // 4pt between items, 12pt after section
         }
       })
     );
