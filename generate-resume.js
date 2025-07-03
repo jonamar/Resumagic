@@ -2,13 +2,19 @@ const path = require('path');
 const fs = require('fs');
 const { execSync } = require('child_process');
 const { Packer } = require('docx');
-const { createResumeDocx } = require('./docx-template');
+const { createResumeDocx, createCoverLetterDocx } = require('./docx-template');
+const { parseMarkdownCoverLetter, findMarkdownFile } = require('./markdown-to-data');
 const JSZip = require('jszip');
 
 // Parse command line arguments
 const args = process.argv.slice(2);
 const inputFile = args.find(arg => !arg.startsWith('--')) || 'resume.json';
 const autoPreview = args.includes('--preview') || true; // Default to true for auto-preview
+
+// Cover letter generation flags
+const coverLetterOnly = args.includes('--cover-letter');
+const generateBoth = args.includes('--both');
+const autoDetect = args.includes('--auto');
 
 console.log(`Command line argument received: ${inputFile}`);
 
@@ -35,48 +41,115 @@ try {
   process.exit(1);
 }
 
-// Set up output file path
+// Set up output file paths
 const outputDocxPath = path.join(__dirname, '../data/output', `${inputBaseName}.docx`);
+const resumeDocxPath = path.join(__dirname, '../data/output', `${inputBaseName}-resume.docx`);
+const coverLetterDocxPath = path.join(__dirname, '../data/output', `${inputBaseName}-cover-letter.docx`);
 
-// Note: Date formatting is handled directly in the docx-template.js file
+// Check for corresponding markdown file
+const markdownFilePath = findMarkdownFile(resumeDataPath);
+const hasMarkdownFile = markdownFilePath && fs.existsSync(markdownFilePath);
+
+// Determine what to generate based on flags and file availability
+let generateResume = false;
+let generateCoverLetter = false;
+
+if (coverLetterOnly) {
+  generateCoverLetter = true;
+} else if (generateBoth) {
+  generateResume = true;
+  generateCoverLetter = true;
+} else if (autoDetect) {
+  generateResume = true;
+  generateCoverLetter = hasMarkdownFile;
+} else {
+  // Default behavior - generate resume only
+  generateResume = true;
+}
+
+// Validate requirements
+if (generateCoverLetter && !hasMarkdownFile) {
+  console.error(`❌ Error: Cover letter generation requested but no markdown file found.`);
+  console.error(`   Expected: ${markdownFilePath || `${inputBaseName}-cover-letter.md`}`);
+  process.exit(1);
+}
 
 // Main function
 (async () => {
   try {
-    // Log which resume file we're processing
-    console.log(`\n📄 Processing resume: ${resumeDataPath}`);
-    console.log(`📑 Will generate DOCX output: ${outputDocxPath}\n`);
+    const generatedFiles = [];
     
-    // Generate DOCX document using our template
-    console.log('Generating DOCX document...');
-    const doc = createResumeDocx(resumeData);
+    // Generate resume if requested
+    if (generateResume) {
+      console.log(`\n📄 Processing resume: ${resumeDataPath}`);
+      const resumeOutputPath = generateCoverLetter ? resumeDocxPath : outputDocxPath;
+      console.log(`📑 Will generate resume DOCX: ${resumeOutputPath}\n`);
+      
+      // Generate DOCX document using our template
+      console.log('Generating resume DOCX document...');
+      const resumeDoc = createResumeDocx(resumeData);
+      
+      // Use Packer to get the buffer
+      console.log('Saving resume DOCX file...');
+      const resumeBuffer = await Packer.toBuffer(resumeDoc);
+      
+      // Post-process the DOCX file to remove compatibility mode and empty sections
+      console.log('Optimizing resume DOCX for ATS compatibility...');
+      const optimizedResumeBuffer = await removeCompatibilityMode(resumeBuffer);
+      
+      // Save the optimized DOCX
+      fs.writeFileSync(resumeOutputPath, optimizedResumeBuffer);
+      
+      console.log(`✅ Resume DOCX generated and saved to: ${resumeOutputPath}`);
+      generatedFiles.push(resumeOutputPath);
+    }
     
-    // Use Packer to get the buffer
-    console.log('Saving DOCX file...');
-    const buffer = await Packer.toBuffer(doc);
+    // Generate cover letter if requested
+    if (generateCoverLetter) {
+      console.log(`\n📄 Processing cover letter: ${markdownFilePath}`);
+      console.log(`📑 Will generate cover letter DOCX: ${coverLetterDocxPath}\n`);
+      
+      // Parse markdown cover letter
+      console.log('Parsing markdown cover letter...');
+      const coverLetterData = parseMarkdownCoverLetter(markdownFilePath, resumeDataPath);
+      
+      // Generate DOCX document using our template
+      console.log('Generating cover letter DOCX document...');
+      const coverLetterDoc = createCoverLetterDocx(coverLetterData);
+      
+      // Use Packer to get the buffer
+      console.log('Saving cover letter DOCX file...');
+      const coverLetterBuffer = await Packer.toBuffer(coverLetterDoc);
+      
+      // Post-process the DOCX file to remove compatibility mode and empty sections
+      console.log('Optimizing cover letter DOCX for ATS compatibility...');
+      const optimizedCoverLetterBuffer = await removeCompatibilityMode(coverLetterBuffer);
+      
+      // Save the optimized DOCX
+      fs.writeFileSync(coverLetterDocxPath, optimizedCoverLetterBuffer);
+      
+      console.log(`✅ Cover letter DOCX generated and saved to: ${coverLetterDocxPath}`);
+      generatedFiles.push(coverLetterDocxPath);
+    }
     
-    // Post-process the DOCX file to remove compatibility mode and empty sections
-    console.log('Optimizing DOCX for ATS compatibility...');
-    const optimizedBuffer = await removeCompatibilityMode(buffer);
-    
-    // Save the optimized DOCX
-    fs.writeFileSync(outputDocxPath, optimizedBuffer);
-    
-    console.log(`✅ DOCX resume generated and saved to: ${outputDocxPath}`);
-    console.log('\n✨ Resume generation complete! DOCX file has been created.\n');
+    console.log(`\n✨ Generation complete! Created ${generatedFiles.length} file(s):\n`);
+    generatedFiles.forEach(file => console.log(`   📄 ${file}`));
+    console.log('');
     
     // Auto-open with system default app if on macOS
-    if (autoPreview && process.platform === 'darwin') {
+    if (autoPreview && process.platform === 'darwin' && generatedFiles.length > 0) {
       try {
-        console.log('Opening DOCX file with system default app...');
-        execSync(`open "${outputDocxPath}"`);
-        console.log('✅ DOCX opened with system default app for preview');
+        console.log('Opening generated files with system default app...');
+        for (const file of generatedFiles) {
+          execSync(`open "${file}"`);
+        }
+        console.log('✅ Files opened with system default app for preview');
       } catch (error) {
-        console.warn(`⚠️ Could not open DOCX file: ${error.message}`);
+        console.warn(`⚠️ Could not open files: ${error.message}`);
       }
     }
   } catch (error) {
-    console.error('Error generating resume:', error);
+    console.error('Error generating documents:', error);
     process.exit(1);
   }
 })();

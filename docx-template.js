@@ -990,6 +990,236 @@ function getRegionAbbreviation(region) {
   return canadianProvinces[region] || usStates[region] || region;
 }
 
+/**
+ * Creates a DOCX cover letter document from transformed markdown data
+ * @param {Object} coverLetterData - Cover letter data with basics and coverLetter sections
+ * @param {Object} options - Additional options for cover letter generation
+ * @returns {Document} DOCX document
+ */
+function createCoverLetterDocx(coverLetterData, options = {}) {
+  // Document sections
+  const children = [
+    ...createHeader(coverLetterData.basics),
+    ...createCoverLetterDate(coverLetterData.coverLetter.metadata),
+    ...createCoverLetterContent(coverLetterData.coverLetter.content),
+    ...createCoverLetterClosing(coverLetterData.coverLetter.metadata, coverLetterData.basics)
+  ];
+
+  // Create the document with identical styling to resume
+  const doc = new Document({
+    numbering: {
+      config: [
+        {
+          reference: "small-bullet",
+          levels: [
+            {
+              level: 0,
+              format: LevelFormat.BULLET,
+              text: "•",
+              alignment: AlignmentType.LEFT,
+              style: {
+                run: {
+                  font: theme.fonts.primary,
+                  size: 16, // 8pt bullet (smaller than default 10pt text)
+                  color: theme.colors.text
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    styles: {
+      paragraphStyles: [
+        {
+          id: "applicantName",
+          name: "Applicant Name",
+          basedOn: "Normal",
+          next: "Normal",
+          run: {
+            size: theme.fontSize.name * 2, // Convert to half-points
+            font: "Arial", // Set Arial as the default font for all runs
+            bold: true,
+            color: theme.colors.headings,
+          },
+          paragraph: {
+            spacing: {
+              after: 240, // 12pt
+            },
+            indent: {
+              left: 0 // No indentation
+            },
+            font: "Arial", // Explicitly set font at paragraph level too
+          },
+        },
+      ],
+      defaultRunProperties: {
+        font: "Arial", // Set Arial as the default font for all runs
+      },
+    },
+    sections: [{
+      properties: {
+        page: {
+          margin: theme.margins.document,
+        },
+      },
+      children: children
+    }]
+  });
+
+  return doc;
+}
+
+/**
+ * Creates the date section for cover letter
+ * @param {Object} metadata - Cover letter metadata
+ * @returns {Array} Array of paragraphs for the date section
+ */
+function createCoverLetterDate(metadata) {
+  const paragraphs = [];
+  
+  // Format the date
+  const formattedDate = formatDate(metadata.date);
+  
+  paragraphs.push(
+    new Paragraph({
+      children: [
+        new TextRun({
+          text: formattedDate,
+          size: theme.fontSize.body * 2, // Convert to half-points
+          font: theme.fonts.primary,
+          color: theme.colors.text
+        })
+      ],
+      spacing: {
+        after: 240 // 12pt
+      },
+      alignment: AlignmentType.LEFT
+    })
+  );
+  
+  return paragraphs;
+}
+
+/**
+ * Creates the main content section for cover letter
+ * @param {Array} content - Array of content paragraphs and lists
+ * @returns {Array} Array of paragraphs for the content section
+ */
+function createCoverLetterContent(content) {
+  const paragraphs = [];
+  
+  content.forEach((section, index) => {
+    if (section.type === 'paragraph') {
+      // Handle paragraph content
+      const textRuns = [];
+      
+      section.text.forEach(textPart => {
+        textRuns.push(new TextRun({
+          text: textPart.text,
+          size: theme.fontSize.body * 2, // Convert to half-points
+          font: theme.fonts.primary,
+          color: theme.colors.text,
+          bold: textPart.bold || false,
+          italics: textPart.italic || false
+        }));
+      });
+      
+      paragraphs.push(
+        new Paragraph({
+          children: textRuns,
+          spacing: {
+            after: 240 // 12pt between paragraphs
+          },
+          alignment: AlignmentType.JUSTIFIED
+        })
+      );
+      
+    } else if (section.type === 'list') {
+      // Handle bullet list content
+      section.items.forEach((item, itemIndex) => {
+        const textRuns = [];
+        
+        item.forEach(textPart => {
+          textRuns.push(new TextRun({
+            text: textPart.text,
+            size: theme.fontSize.body * 2, // Convert to half-points
+            font: theme.fonts.primary,
+            color: theme.colors.text,
+            bold: textPart.bold || false,
+            italics: textPart.italic || false
+          }));
+        });
+        
+        paragraphs.push(
+          new Paragraph({
+            children: textRuns,
+            numbering: {
+              reference: "small-bullet",
+              level: 0
+            },
+            spacing: {
+              after: itemIndex < section.items.length - 1 ? 80 : 240 // 4pt between items, 12pt after list
+            },
+            alignment: AlignmentType.LEFT
+          })
+        );
+      });
+    }
+  });
+  
+  return paragraphs;
+}
+
+/**
+ * Creates the closing section for cover letter
+ * @param {Object} metadata - Cover letter metadata
+ * @param {Object} basics - Basic contact information
+ * @returns {Array} Array of paragraphs for the closing section
+ */
+function createCoverLetterClosing(metadata, basics) {
+  const paragraphs = [];
+  
+  // Add the closing (e.g., "Sincerely,")
+  paragraphs.push(
+    new Paragraph({
+      children: [
+        new TextRun({
+          text: `${metadata.customClosing || 'Sincerely'},`,
+          size: theme.fontSize.body * 2, // Convert to half-points
+          font: theme.fonts.primary,
+          color: theme.colors.text
+        })
+      ],
+      spacing: {
+        after: 480 // 24pt for signature space
+      },
+      alignment: AlignmentType.LEFT
+    })
+  );
+  
+  // Add the name
+  paragraphs.push(
+    new Paragraph({
+      children: [
+        new TextRun({
+          text: basics.name,
+          size: theme.fontSize.body * 2, // Convert to half-points
+          font: theme.fonts.primary,
+          color: theme.colors.text
+        })
+      ],
+      spacing: {
+        after: 240 // 12pt
+      },
+      alignment: AlignmentType.LEFT
+    })
+  );
+  
+  return paragraphs;
+}
+
 module.exports = { 
-  createResumeDocx 
+  createResumeDocx,
+  createCoverLetterDocx
 };
