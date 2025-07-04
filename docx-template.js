@@ -39,7 +39,7 @@ function createResumeDocx(resumeData, options = {}) {
   const children = [
     ...createHeader(resumeData.basics),
     ...createSummary(resumeData.basics),
-    ...createExperience(resumeData.work),
+    ...createExperienceTest(resumeData.work),
     ...createSkills(resumeData.skills),
     ...createEducation(resumeData.education),
   ];
@@ -832,6 +832,217 @@ function createLanguages(languages) {
   });
 
   return paragraphs;
+}
+
+/**
+ * Generic function to create sections with similar item structures (experience, projects, speaking engagements)
+ * @param {Array} items - Array of items to process
+ * @param {Object} config - Configuration object defining how to process each item
+ * @returns {Array} Array of paragraphs for the section
+ */
+function createItemSection(items, config) {
+  const paragraphs = [];
+
+  // Add section heading
+  paragraphs.push(
+    createSectionHeading(config.sectionTitle)
+  );
+
+  // Process each item
+  items.forEach((item, itemIndex) => {
+    const isLastItem = itemIndex === items.length - 1;
+    
+    // Determine if item has additional content beyond headers
+    const hasDescription = config.descriptionField && item[config.descriptionField];
+    const hasHighlights = config.highlightsField && item[config.highlightsField] && item[config.highlightsField].length > 0;
+    const hasMoreContent = hasDescription || hasHighlights;
+
+    // Create header lines based on configuration
+    config.headerLines.forEach((headerConfig, headerIndex) => {
+      const isLastHeader = headerIndex === config.headerLines.length - 1;
+      
+      // Get the text for this header line
+      let headerText = '';
+      if (headerConfig.fields) {
+        // Combine multiple fields (e.g., startDate + endDate + location)
+        const parts = [];
+        headerConfig.fields.forEach(fieldConfig => {
+          if (fieldConfig.field && item[fieldConfig.field]) {
+            let value = item[fieldConfig.field];
+            if (fieldConfig.format) {
+              value = fieldConfig.format(value);
+            }
+            parts.push(value);
+          }
+        });
+        if (headerConfig.includeLocation && item.location) {
+          parts.push(item.location);
+        }
+        headerText = parts.join(headerConfig.separator || ' • ');
+      } else if (headerConfig.field && item[headerConfig.field]) {
+        headerText = item[headerConfig.field];
+      }
+
+      // Skip if no text to show
+      if (!headerText) return;
+
+      // Determine spacing and keepNext logic
+      let spacing = headerConfig.spacing || theme.spacingTwips.afterJobTitle;
+      let keepNext = headerConfig.keepNext !== false; // Default to true unless explicitly false
+      
+      // For the last header, determine keepNext based on additional content
+      if (isLastHeader) {
+        keepNext = hasMoreContent;
+        if (headerConfig.conditionalSpacing) {
+          spacing = hasMoreContent ? 
+            headerConfig.conditionalSpacing.withContent : 
+            headerConfig.conditionalSpacing.standalone;
+        }
+      }
+
+      paragraphs.push(
+        new Paragraph({
+          children: [
+            new TextRun({
+              text: headerText,
+              size: (headerConfig.fontSize || theme.fontSize.body) * 2, // Convert to half-points
+              font: theme.fonts.primary,
+              bold: headerConfig.bold !== false, // Default to bold unless explicitly false
+              color: headerConfig.color || theme.colors.text
+            })
+          ],
+          spacing: {
+            after: spacing
+          },
+          keepNext: keepNext
+        })
+      );
+    });
+
+    // Add description if present
+    if (hasDescription) {
+      paragraphs.push(
+        new Paragraph({
+          children: createFormattedTextRuns(item[config.descriptionField], {
+            size: theme.fontSize.body * 2, // Convert to half-points
+            font: theme.fonts.primary,
+            color: theme.colors.text
+          }),
+          spacing: {
+            after: config.descriptionSpacing || theme.spacingTwips.large // 6pt
+          },
+          keepLines: true, // Keep description lines together
+          keepNext: hasHighlights // Keep with highlights if they exist
+        })
+      );
+    }
+
+    // Add highlights as bullet points if present
+    if (hasHighlights) {
+      item[config.highlightsField].forEach((highlight, highlightIndex) => {
+        const isLastHighlight = highlightIndex === item[config.highlightsField].length - 1;
+        
+        // Calculate spacing for highlights
+        let highlightSpacing = theme.spacingTwips.afterBullet;
+        if (config.highlightSpacing && isLastHighlight) {
+          if (typeof config.highlightSpacing === 'function') {
+            highlightSpacing = config.highlightSpacing(isLastItem, itemIndex);
+          } else {
+            highlightSpacing = config.highlightSpacing;
+          }
+        }
+        
+        paragraphs.push(
+          new Paragraph({
+            children: createFormattedTextRuns(highlight, {
+              size: theme.fontSize.body * 2, // Convert to half-points
+              font: theme.fonts.primary,
+              color: theme.colors.text
+            }),
+            numbering: {
+              reference: "small-bullet",
+              level: 0
+            },
+            spacing: {
+              after: highlightSpacing
+            },
+            indent: {
+              left: theme.spacingTwips.bulletIndent, // 0.25 inch left indent for bullet
+              hanging: theme.spacingTwips.bulletHanging // 0.25 inch hanging indent so text aligns properly
+            },
+            keepLines: true, // Keep long bullet points together
+            keepNext: !isLastHighlight // Keep with next highlight (but not after the last one)
+          })
+        );
+      });
+    }
+
+    // Add spacing after each item entry
+    if (config.itemSpacing) {
+      let spacing = config.itemSpacing;
+      if (typeof spacing === 'function') {
+        spacing = spacing(isLastItem, itemIndex);
+      }
+      
+      paragraphs.push(
+        new Paragraph({
+          text: "",
+          spacing: {
+            after: spacing
+          }
+        })
+      );
+    }
+  });
+
+  return paragraphs;
+}
+
+/**
+ * Test function: Creates the experience section using the generic createItemSection function
+ * @param {Array} work - Array of work entries
+ * @returns {Array} Array of paragraphs for the experience section
+ */
+function createExperienceTest(work) {
+  const experienceConfig = {
+    sectionTitle: theme.ats.sectionTitles.experience,
+    descriptionField: 'summary',
+    highlightsField: 'highlights',
+    descriptionSpacing: theme.spacingTwips.afterSummary, // 4pt
+    headerLines: [
+      {
+        // Job title/position
+        field: 'position',
+        spacing: theme.spacingTwips.afterJobTitle,
+        keepNext: true
+      },
+      {
+        // Company name
+        field: 'name',
+        spacing: theme.spacingTwips.afterCompanyName,
+        keepNext: true
+      },
+      {
+        // Date and location
+        fields: [
+          { field: 'startDate', format: formatDate },
+          { field: 'endDate', format: (date) => date ? formatDate(date) : 'Present' }
+        ],
+        includeLocation: true,
+        separator: ' • ',
+        fontSize: theme.fontSize.meta,
+        color: theme.colors.dimText,
+        bold: false,
+        conditionalSpacing: {
+          withContent: theme.spacingTwips.minimal, // 1pt if more content
+          standalone: theme.spacingTwips.afterDate   // 4pt if standalone
+        }
+      }
+    ],
+    itemSpacing: theme.spacingTwips.afterJobEntry // 4pt after each job entry
+  };
+
+  return createItemSection(work, experienceConfig);
 }
 
 /**
