@@ -58,6 +58,7 @@ const theme = {
   // These replace the hardcoded values scattered throughout docx-template.js
   spacingTwips: {
     // Basic spacing units
+    minimal: 20,          // 1pt - minimal gaps for tight connections
     small: 60,            // 3pt - small gaps
     medium: 80,           // 4pt - medium gaps
     large: 120,           // 6pt - large gaps

@@ -355,7 +355,7 @@ function createExperience(work) {
           })
         ],
         spacing: {
-          after: theme.spacingTwips.afterDate // 4pt
+          after: hasMoreContent ? theme.spacingTwips.minimal : theme.spacingTwips.afterDate // 1pt if more content, 4pt if standalone
         },
         keepNext: hasMoreContent // Keep with summary/highlights if they exist
       })
