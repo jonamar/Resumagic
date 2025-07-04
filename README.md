@@ -27,24 +27,74 @@ This project uses a two-repo structure to separate code from private data:
 │   └── ... (other code files)
 │
 └── data/                            # Private data repository
-    ├── input/                       # Resume and cover letter source files
+    ├── applications/                # NEW: Application-specific folders
+    │   ├── relay-director-of-product/
+    │   │   ├── inputs/
+    │   │   │   ├── resume.json      # Job-specific resume data
+    │   │   │   └── cover-letter.md  # Job-specific cover letter
+    │   │   └── outputs/
+    │   │       ├── Jon-Amar-Resume-Relay.docx
+    │   │       ├── Jon-Amar-Cover-Letter-Relay.docx
+    │   │       └── Jon-Amar-Cover-Letter-and-Resume-Relay.docx
+    │   │
+    │   ├── openai-product-manager/
+    │   │   ├── inputs/
+    │   │   │   ├── resume.json
+    │   │   │   └── cover-letter.md
+    │   │   └── outputs/
+    │   │       └── ... (HR-friendly named files)
+    │   │
+    │   └── template/                # Template for new applications
+    │       ├── inputs/
+    │       │   ├── resume.json      # Template resume
+    │       │   └── cover-letter.md  # Template cover letter
+    │       └── README.md            # Usage instructions
+    │
+    ├── input/                       # LEGACY: Original flat structure
     │   ├── resume.json              # Personal resume data
     │   ├── resume-cover-letter.md   # Cover letter for general applications
     │   ├── pointclick-resume.json   # Specialized resume for specific job
-    │   ├── pointclick-cover-letter.md # Cover letter for specific job
-    │   └── cover-letter-template.md # Template for creating new cover letters
-    └── output/                      # Generated DOCX files
+    │   └── ... (other legacy files)
+    │
+    └── output/                      # LEGACY: Original output folder
         ├── resume.docx              # Resume-only generation (legacy)
         ├── resume-resume.docx       # Resume (when generating both)
-        ├── resume-cover-letter.docx # Cover letter (when generating both)
-        ├── pointclick-resume.docx   # Specialized resume
-        └── pointclick-cover-letter.docx # Specialized cover letter
+        └── ... (other legacy files)
 ```
 
 This structure allows you to:
 - Share the code publicly without exposing personal information
 - Track changes to your resume and personal data in a separate private repository
 - Keep the generation functionality and data separate with clear boundaries
+
+## New vs Legacy Structure
+
+### New Application Folder Structure (Recommended)
+
+**Benefits:**
+- **HR-Friendly**: Files named `Jon-Amar-Resume-Company.docx` for easy identification
+- **Organized**: Each application has its own folder with inputs and outputs
+- **Professional**: Clean file naming that looks professional to HR departments
+- **Scalable**: Easy to manage many applications without file name conflicts
+- **Template-Based**: Quick setup for new applications using template folder
+
+**Best For:**
+- New job applications
+- Professional submissions to HR departments
+- Managing multiple applications simultaneously
+- Long-term organization and tracking
+
+### Legacy File Structure (Still Supported)
+
+**Benefits:**
+- **Backward Compatible**: Existing workflows continue to work
+- **Simple**: Direct file-based approach
+- **Quick**: No folder setup required
+
+**Best For:**
+- Existing workflows that you don't want to change
+- Quick one-off resume generation
+- Testing and development
 
 ## How to Use
 
@@ -82,32 +132,84 @@ This structure allows you to:
 
 ### Generating Documents
 
-#### Generate Resume Only (Default)
+#### New Application Folder Structure (Recommended)
+
+For new applications, use the application folder structure for better organization:
+
 ```bash
+# Create a new application from template
+cp -r data/applications/template data/applications/company-role-name
+
+# Generate resume only
+node generate-resume.js company-role-name
+# Output: data/applications/company-role-name/outputs/Jon-Amar-Resume-Company.docx
+
+# Generate cover letter only
+node generate-resume.js company-role-name --cover-letter
+# Output: data/applications/company-role-name/outputs/Jon-Amar-Cover-Letter-Company.docx
+
+# Generate both resume and cover letter
+node generate-resume.js company-role-name --both
+# Output: data/applications/company-role-name/outputs/Jon-Amar-Resume-Company.docx
+#         data/applications/company-role-name/outputs/Jon-Amar-Cover-Letter-Company.docx
+
+# Generate combined document (cover letter + resume in single file)
+node generate-resume.js company-role-name --cover-letter-and-resume
+# Output: data/applications/company-role-name/outputs/Jon-Amar-Cover-Letter-and-Resume-Company.docx
+
+# Auto-generate (resume + cover letter if markdown file exists)
+node generate-resume.js company-role-name --auto
+```
+
+#### Legacy File Structure (Still Supported)
+
+For backward compatibility, the old file-based structure still works:
+
+```bash
+# Generate resume only (legacy behavior)
 node generate-resume.js [input-filename.json]
-```
+# Output: ../data/output/filename.docx
 
-#### Generate Cover Letter Only
-```bash
+# Generate cover letter only
 node generate-resume.js [input-filename.json] --cover-letter
-```
+# Output: ../data/output/filename-cover-letter.docx
 
-#### Generate Both Resume and Cover Letter
-```bash
+# Generate both resume and cover letter
 node generate-resume.js [input-filename.json] --both
-```
+# Output: ../data/output/filename-resume.docx
+#         ../data/output/filename-cover-letter.docx
 
-#### Auto-Generate (Resume + Cover Letter if markdown file exists)
-```bash
+# Generate combined document
+node generate-resume.js [input-filename.json] --cover-letter-and-resume
+# Output: ../data/output/filename-cover-letter-and-resume.docx
+
+# Auto-generate
 node generate-resume.js [input-filename.json] --auto
 ```
 
-#### Generate Combined Document (Cover Letter + Resume in single file)
+### Examples
+
+#### New Application Folder Examples
+
 ```bash
-node generate-resume.js [input-filename.json] --combined
+# Create application for Relay Director of Product role
+cp -r data/applications/template data/applications/relay-director-of-product
+
+# Edit the input files:
+# - data/applications/relay-director-of-product/inputs/resume.json
+# - data/applications/relay-director-of-product/inputs/cover-letter.md
+
+# Generate both documents
+node generate-resume.js relay-director-of-product --both
+# Output: data/applications/relay-director-of-product/outputs/Jon-Amar-Resume-Relay.docx
+#         data/applications/relay-director-of-product/outputs/Jon-Amar-Cover-Letter-Relay.docx
+
+# Generate combined document for submission
+node generate-resume.js relay-director-of-product --cover-letter-and-resume
+# Output: data/applications/relay-director-of-product/outputs/Jon-Amar-Cover-Letter-and-Resume-Relay.docx
 ```
 
-### Examples
+#### Legacy Structure Examples
 
 ```bash
 # Generate resume only (legacy behavior)
@@ -119,20 +221,9 @@ node generate-resume.js resume.json --both
 # Output: ../data/output/resume-resume.docx
 #         ../data/output/resume-cover-letter.docx
 
-# Generate cover letter only
-node generate-resume.js pointclick-resume.json --cover-letter
-# Output: ../data/output/pointclick-cover-letter.docx
-
-# Auto-detect and generate both if markdown file exists
-node generate-resume.js pointclick-resume.json --auto
-# Looks for: ../data/input/pointclick-cover-letter.md
-# If found: generates both resume and cover letter
-# If not found: generates resume only
-
-# Generate combined document (cover letter + resume in single file)
-node generate-resume.js relay.json --combined
-# Output: ../data/output/relay-combined.docx
-# Contains: Cover letter on page 1, resume starting on page 2
+# Generate combined document
+node generate-resume.js relay.json --cover-letter-and-resume
+# Output: ../data/output/relay-cover-letter-and-resume.docx
 ```
 
 ### Customizing Your Documents
@@ -168,6 +259,9 @@ To change how your resume and cover letters look:
 - **Auto-Detection**: Automatically finds and processes matching files
 - **Backward Compatible**: Existing resume-only workflows unchanged
 - **Professional Quality**: Same high-quality output for both documents
+- **HR-Friendly Naming**: Files named for easy identification (Jon-Amar-Resume-Company.docx)
+- **Organized Structure**: Application-specific folders keep everything organized
+- **Template System**: Easy setup for new applications using template folder
 
 ## Technical Details
 
