@@ -46,12 +46,48 @@ const theme = {
     },
   },
   
-  // Spacing (in points)
+  // Spacing (in points - legacy values for backward compatibility)
   spacing: {
     sectionBefore: 20,    // Space before sections
     sectionAfter: 10,     // Space after sections
     paragraphAfter: 10,   // Space after paragraphs
     bulletAfter: 5,       // Space after bullet points
+  },
+
+  // Detailed spacing values (in twips - 1/20th of a point)
+  // These replace the hardcoded values scattered throughout docx-template.js
+  spacingTwips: {
+    // Basic spacing units
+    small: 60,            // 3pt - small gaps
+    medium: 80,           // 4pt - medium gaps
+    large: 120,           // 6pt - large gaps
+    xlarge: 180,          // 9pt - extra large gaps
+    section: 240,         // 12pt - section spacing
+    page: 480,            // 24pt - page-level spacing
+    
+    // Indentation
+    bulletIndent: 360,    // 0.25 inch - bullet indentation
+    bulletHanging: 360,   // 0.25 inch - bullet hanging indent
+    
+    // Line spacing multipliers (240 = 1.0x, 360 = 1.5x)
+    singleLine: 240,      // 1.0 line spacing
+    oneAndHalfLine: 360,  // 1.5 line spacing
+    
+    // Specific use cases
+    afterHeader: 240,     // 12pt after header elements
+    afterContact: 100,    // 5pt after contact info
+    afterJobTitle: 60,    // 3pt after job titles
+    afterCompanyName: 60, // 3pt after company names
+    afterDate: 80,        // 4pt after date lines
+    afterSummary: 80,     // 4pt after summary paragraphs
+    afterBullet: 60,      // 3pt after bullet points
+    afterJobEntry: 80,    // 4pt after job entries
+    afterProjectEntry: 180, // 9pt after project entries
+    afterSectionEntry: 240, // 12pt after section entries
+    beforeDate: 240,      // 12pt before date in cover letter
+    afterDate: 480,       // 24pt after date in cover letter
+    coverLetterParagraph: 240, // 12pt between cover letter paragraphs
+    beforeContact: 240,   // 12pt before contact info in cover letter
   },
   
   // Margins (in twips - 1/20th of a point)
@@ -67,6 +103,107 @@ const theme = {
   // Layout
   layout: {
     maxWidth: 750,        // Max content width per spec (750px)
+  },
+  
+  // File naming patterns
+  fileNaming: {
+    resumePattern: 'Jon-Amar-Resume-{company}.docx',
+    coverLetterPattern: 'Jon-Amar-Cover-Letter-{company}.docx',
+    combinedPattern: 'Jon-Amar-Cover-Letter-and-Resume-{company}.docx',
+    
+    // Directory structure
+    dataDir: '../data',
+    applicationsDir: 'applications',
+    templateDir: 'template',
+    inputsDir: 'inputs',
+    outputsDir: 'outputs',
+    
+    // File names
+    resumeFile: 'resume.json',
+    coverLetterFile: 'cover-letter.md',
+    markdownSuffix: '-cover-letter.md',
+  },
+  
+  // CLI configuration
+  cli: {
+    flags: {
+      preview: '--preview',
+      coverLetter: '--cover-letter',
+      both: '--both',
+      auto: '--auto',
+      combined: '--cover-letter-and-resume',
+    },
+    
+    defaults: {
+      autoPreview: true,
+      maxModificationsPerSection: 2,
+      highPriorityThreshold: 7,
+    },
+  },
+  
+  // User-facing messages
+  messages: {
+    // Emojis
+    emojis: {
+      error: '❌',
+      success: '✅',
+      warning: '⚠️',
+      processing: '📄',
+      document: '📑',
+      company: '🏢',
+      folder: '📁',
+    },
+    
+    // Error messages
+    errors: {
+      noApplicationName: 'Error: Please specify an application folder name.',
+      applicationNotFound: 'Error: Application folder not found at {path}',
+      resumeNotFound: 'Error: Resume file not found at {path}',
+      coverLetterNotFound: 'Error: Cover letter generation requested but no markdown file found.',
+      resumeRequired: 'Make sure you have a resume.json file in the inputs folder.',
+      coverLetterRequired: 'Expected: {path}',
+    },
+    
+    // Success messages
+    success: {
+      resumeGenerated: 'Resume DOCX generated and saved to: {path}',
+      coverLetterGenerated: 'Cover letter DOCX generated and saved to: {path}',
+      combinedGenerated: 'Cover letter + resume DOCX generated and saved to: {path}',
+      filesOpened: 'Files opened with system default app for preview',
+      testsPass: 'All markdown parser tests passed!',
+    },
+    
+    // Processing messages
+    processing: {
+      processingResume: 'Processing resume: {path}',
+      processingCoverLetter: 'Processing cover letter: {path}',
+      processingCombined: 'Processing cover letter + resume document: {resumePath} + {coverPath}',
+      willGenerateResume: 'Will generate resume DOCX: {path}',
+      willGenerateCoverLetter: 'Will generate cover letter DOCX: {path}',
+      willGenerateCombined: 'Will generate cover letter + resume DOCX: {path}',
+      generatingResume: 'Generating resume DOCX document...',
+      generatingCoverLetter: 'Generating cover letter DOCX document...',
+      savingResume: 'Saving resume DOCX file...',
+      savingCoverLetter: 'Saving cover letter DOCX file...',
+      optimizing: 'Optimizing resume DOCX for ATS compatibility...',
+      optimizingCoverLetter: 'Optimizing cover letter DOCX for ATS compatibility...',
+      parsingMarkdown: 'Parsing markdown cover letter...',
+      usingFolder: 'Using application folder: {path}',
+      companyName: 'Company name: {company}',
+    },
+    
+    // Usage messages
+    usage: {
+      command: 'Usage: node generate-resume.js <application-folder-name> [flags]',
+      example: 'Example: node generate-resume.js relay-director-of-product',
+      createApplication: 'To create a new application:',
+      createCommand: 'cp -r data/applications/template data/applications/{name}',
+      availableApplications: 'Available applications:',
+      noApplications: '  (No applications found)',
+      generatedFiles: 'Generated files:',
+      defaultBehavior: 'Default behavior: Both resume and cover letter content available - generating all three formats',
+      defaultResumeOnly: 'Default behavior: Only resume content available - generating resume only',
+    },
   },
   
   // ATS best practices
