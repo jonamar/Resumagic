@@ -396,11 +396,11 @@ function createExperience(work) {
               level: 0
             },
             spacing: {
-              after: 60 // 3pt - reduced spacing after bullets
+              after: theme.spacingTwips.afterBullet // 3pt - reduced spacing after bullets
             },
             indent: {
-              left: 360, // 0.25 inch left indent for bullet
-              hanging: 360 // 0.25 inch hanging indent so text aligns properly
+              left: theme.spacingTwips.bulletIndent, // 0.25 inch left indent for bullet
+              hanging: theme.spacingTwips.bulletHanging // 0.25 inch hanging indent so text aligns properly
             },
             keepLines: true, // Keep long bullet points together
             keepNext: !isLastHighlight // Keep with next highlight (but not after the last one)
@@ -414,7 +414,7 @@ function createExperience(work) {
       new Paragraph({
         text: "",
         spacing: {
-          after: 80 // 4pt
+          after: theme.spacingTwips.afterJobEntry // 4pt
         }
       })
     );
@@ -451,7 +451,7 @@ function createSkills(skills) {
           })
         ],
         spacing: {
-          after: 60 // 3pt
+          after: theme.spacingTwips.afterJobTitle // 3pt
         }
       })
     );
@@ -466,7 +466,7 @@ function createSkills(skills) {
             color: theme.colors.dimText
           }),
           spacing: {
-            after: 180 // 9pt
+            after: theme.spacingTwips.xlarge // 9pt
           }
         })
       );
@@ -507,7 +507,7 @@ function createEducation(education) {
           })
         ],
         spacing: {
-          after: 60 // 3pt
+          after: theme.spacingTwips.afterJobTitle // 3pt
         },
         keepNext: true // Keep with institution
       })
@@ -526,7 +526,7 @@ function createEducation(education) {
           })
         ],
         spacing: {
-          after: 60 // 3pt
+          after: theme.spacingTwips.afterCompanyName // 3pt
         },
         keepNext: true // Keep with date/location
       })
@@ -548,7 +548,7 @@ function createEducation(education) {
           })
         ],
         spacing: {
-          after: 240 // 12pt
+          after: theme.spacingTwips.afterSectionEntry // 12pt
         }
       })
     );
