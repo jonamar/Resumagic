@@ -1182,19 +1182,57 @@ function createCoverLetterContent(content) {
 function createCoverLetterClosing(metadata) {
   const paragraphs = [];
   
-  // Add the closing (e.g., "Sincerely,") - no name
+  // Add the closing (e.g., "Warmly,")
   paragraphs.push(
     new Paragraph({
       children: [
         new TextRun({
-          text: `${metadata.customClosing || 'Sincerely'},`,
+          text: `${metadata.customClosing || 'Warmly'},`,
           size: theme.fontSize.body * 2, // Convert to half-points
           font: theme.fonts.primary,
           color: theme.colors.text
         })
       ],
       spacing: {
-        after: 720, // 36pt extra space before footer
+        after: 0, // No extra paragraph spacing
+        line: 360   // 1.5 line spacing
+      },
+      alignment: AlignmentType.LEFT
+    })
+  );
+  
+  // Add the name
+  paragraphs.push(
+    new Paragraph({
+      children: [
+        new TextRun({
+          text: 'Jon Amar',
+          size: theme.fontSize.body * 2, // Convert to half-points
+          font: theme.fonts.primary,
+          color: theme.colors.text
+        })
+      ],
+      spacing: {
+        after: 0, // No extra paragraph spacing
+        line: 360   // 1.5 line spacing
+      },
+      alignment: AlignmentType.LEFT
+    })
+  );
+  
+  // Add the pronouns
+  paragraphs.push(
+    new Paragraph({
+      children: [
+        new TextRun({
+          text: 'they/them',
+          size: theme.fontSize.body * 2, // Convert to half-points
+          font: theme.fonts.primary,
+          color: theme.colors.text
+        })
+      ],
+      spacing: {
+        after: 480, // 24pt extra space before next section
         line: 360   // 1.5 line spacing
       },
       alignment: AlignmentType.LEFT
@@ -1207,10 +1245,16 @@ function createCoverLetterClosing(metadata) {
 /**
  * Creates the footer section with contact information for cover letter
  * @param {Object} basics - Basic contact information
+ * @param {boolean} isComboMode - Whether this is part of a combined document
  * @returns {Array} Array of paragraphs for the footer section
  */
-function createCoverLetterFooter(basics) {
+function createCoverLetterFooter(basics, isComboMode = false) {
   const paragraphs = [];
+  
+  // Skip contact info in combo mode since resume already has it
+  if (isComboMode) {
+    return paragraphs;
+  }
 
   // Create contact information with ATS-friendly format
   const contactParts = [];
@@ -1322,7 +1366,7 @@ function createCombinedDocx(coverLetterData, resumeData, options = {}) {
     ...createCoverLetterDate(coverLetterData.coverLetter.metadata),
     ...createCoverLetterContent(coverLetterData.coverLetter.content),
     ...createCoverLetterClosing(coverLetterData.coverLetter.metadata),
-    ...createCoverLetterFooter(coverLetterData.basics)
+    ...createCoverLetterFooter(coverLetterData.basics, true) // Pass true for combo mode
   ];
 
   // Resume sections
