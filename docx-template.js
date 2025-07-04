@@ -853,7 +853,7 @@ function createSectionHeading(title) {
     heading: HeadingLevel.HEADING_2,
     spacing: {
       before: 400, // 20pt
-      after: 120   // 6pt
+      after: theme.spacingTwips.large   // 6pt
     },
     keepNext: true, // Prevent section headings from being orphaned on previous page
     // Border removed to eliminate unwanted underlines
@@ -1044,7 +1044,7 @@ function createCoverLetterDocx(coverLetterData, options = {}) {
           },
           paragraph: {
             spacing: {
-              after: 240, // 12pt
+              after: theme.spacingTwips.afterHeader, // 12pt
             },
             indent: {
               left: 0 // No indentation
@@ -1092,8 +1092,8 @@ function createCoverLetterDate(metadata) {
         })
       ],
       spacing: {
-        before: 240, // 12pt breathing room before
-        after: 480   // 24pt breathing room after
+        before: theme.spacingTwips.beforeDate, // 12pt breathing room before
+        after: theme.spacingTwips.afterDate   // 24pt breathing room after
       },
       alignment: AlignmentType.RIGHT
     })
@@ -1130,8 +1130,8 @@ function createCoverLetterContent(content) {
         new Paragraph({
           children: textRuns,
           spacing: {
-            after: 240, // 12pt between paragraphs
-            line: 360   // 1.5 line spacing (240 = 1.0, 360 = 1.5)
+            after: theme.spacingTwips.coverLetterParagraph, // 12pt between paragraphs
+            line: theme.spacingTwips.oneAndHalfLine   // 1.5 line spacing (240 = 1.0, 360 = 1.5)
           },
           alignment: AlignmentType.JUSTIFIED
         })
@@ -1161,8 +1161,8 @@ function createCoverLetterContent(content) {
               level: 0
             },
             spacing: {
-              after: itemIndex < section.items.length - 1 ? 80 : 240, // 4pt between items, 12pt after list
-              line: 360   // 1.5 line spacing
+              after: itemIndex < section.items.length - 1 ? theme.spacingTwips.medium : theme.spacingTwips.coverLetterParagraph, // 4pt between items, 12pt after list
+              line: theme.spacingTwips.oneAndHalfLine   // 1.5 line spacing
             },
             alignment: AlignmentType.LEFT
           })
@@ -1195,7 +1195,7 @@ function createCoverLetterClosing(metadata) {
       ],
       spacing: {
         after: 0, // No extra paragraph spacing
-        line: 360   // 1.5 line spacing
+        line: theme.spacingTwips.oneAndHalfLine   // 1.5 line spacing
       },
       alignment: AlignmentType.LEFT
     })
@@ -1214,7 +1214,7 @@ function createCoverLetterClosing(metadata) {
       ],
       spacing: {
         after: 0, // No extra paragraph spacing
-        line: 360   // 1.5 line spacing
+        line: theme.spacingTwips.oneAndHalfLine   // 1.5 line spacing
       },
       alignment: AlignmentType.LEFT
     })
@@ -1232,8 +1232,8 @@ function createCoverLetterClosing(metadata) {
         })
       ],
       spacing: {
-        after: 480, // 24pt extra space before next section
-        line: 360   // 1.5 line spacing
+        after: theme.spacingTwips.page, // 24pt extra space before next section
+        line: theme.spacingTwips.oneAndHalfLine   // 1.5 line spacing
       },
       alignment: AlignmentType.LEFT
     })
@@ -1299,8 +1299,8 @@ function createCoverLetterFooter(basics, isComboMode = false) {
         })
       ],
       spacing: {
-        before: 240, // 12pt before contact info
-        after: 100   // 5pt
+        before: theme.spacingTwips.beforeContact, // 12pt before contact info
+        after: theme.spacingTwips.afterContact   // 5pt
       }
     })
   );
@@ -1344,7 +1344,7 @@ function createCoverLetterFooter(basics, isComboMode = false) {
       new Paragraph({
         children: profileChildren,
         spacing: {
-          after: 100 // 5pt
+          after: theme.spacingTwips.afterContact // 5pt
         }
       })
     );
@@ -1430,7 +1430,7 @@ function createCombinedDocx(coverLetterData, resumeData, options = {}) {
           },
           paragraph: {
             spacing: {
-              after: 240, // 12pt
+              after: theme.spacingTwips.afterHeader, // 12pt
             },
             indent: {
               left: 0 // No indentation
