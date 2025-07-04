@@ -3,12 +3,12 @@ const fs = require('fs');
 const { execSync } = require('child_process');
 const { Packer } = require('docx');
 const { createResumeDocx, createCoverLetterDocx, createCombinedDocx } = require('./docx-template');
-const { parseMarkdownCoverLetter, findMarkdownFile } = require('./markdown-to-data');
+const { parseMarkdownCoverLetter } = require('./markdown-to-data');
 const JSZip = require('jszip');
 
 // Parse command line arguments
 const args = process.argv.slice(2);
-const inputFile = args.find(arg => !arg.startsWith('--')) || 'resume.json';
+const applicationName = args.find(arg => !arg.startsWith('--'));
 const autoPreview = args.includes('--preview') || true; // Default to true for auto-preview
 
 // Cover letter generation flags
@@ -17,53 +17,55 @@ const generateBoth = args.includes('--both');
 const autoDetect = args.includes('--auto');
 const generateCombined = args.includes('--cover-letter-and-resume');
 
-console.log(`Command line argument received: ${inputFile}`);
-
-// Detect if input is an application folder or legacy file
-let isApplicationFolder = false;
-let applicationFolderPath = null;
-let companyName = null;
-let resumeDataPath = null;
-let inputBaseName = null;
-let outputBasePath = null;
-let markdownFilePath = null;
-
-// Check if input is a path to an application folder
-const potentialAppFolderPath = path.resolve(__dirname, '../data/applications', inputFile);
-if (fs.existsSync(potentialAppFolderPath) && fs.statSync(potentialAppFolderPath).isDirectory()) {
-  // New application folder structure
-  isApplicationFolder = true;
-  applicationFolderPath = potentialAppFolderPath;
-  companyName = extractCompanyFromFolderName(inputFile);
-  resumeDataPath = path.join(applicationFolderPath, 'inputs', 'resume.json');
-  markdownFilePath = path.join(applicationFolderPath, 'inputs', 'cover-letter.md');
-  inputBaseName = inputFile;
-  outputBasePath = path.join(applicationFolderPath, 'outputs');
-  
-  console.log(`📁 Using application folder: ${applicationFolderPath}`);
-  console.log(`🏢 Company name: ${companyName}`);
-  
-  // Ensure outputs directory exists
-  if (!fs.existsSync(outputBasePath)) {
-    fs.mkdirSync(outputBasePath, { recursive: true });
-  }
-} else {
-  // Legacy file-based structure
-  isApplicationFolder = false;
-  inputBaseName = path.basename(inputFile, '.json');
-  resumeDataPath = path.resolve(__dirname, '../data/input', inputFile);
-  outputBasePath = path.join(__dirname, '../data/output');
-  markdownFilePath = findMarkdownFile(resumeDataPath);
-  
-  console.log(`📄 Using legacy file structure`);
+if (!applicationName) {
+  console.error('❌ Error: Please specify an application folder name.');
+  console.error('Usage: node generate-resume.js <application-folder-name> [flags]');
+  console.error('Example: node generate-resume.js relay-director-of-product');
+  process.exit(1);
 }
 
-console.log(`Base filename for outputs: ${inputBaseName}`);
-console.log(`Resume data path: ${resumeDataPath}`);
+console.log(`Command line argument received: ${applicationName}`);
+
+// Set up application folder paths
+const applicationFolderPath = path.resolve(__dirname, '../data/applications', applicationName);
+const resumeDataPath = path.join(applicationFolderPath, 'inputs', 'resume.json');
+const markdownFilePath = path.join(applicationFolderPath, 'inputs', 'cover-letter.md');
+const outputBasePath = path.join(applicationFolderPath, 'outputs');
+
+// Verify the application folder exists
+if (!fs.existsSync(applicationFolderPath) || !fs.statSync(applicationFolderPath).isDirectory()) {
+  console.error(`❌ Error: Application folder not found at ${applicationFolderPath}`);
+  console.error('Available applications:');
+  
+  const applicationsDir = path.resolve(__dirname, '../data/applications');
+  if (fs.existsSync(applicationsDir)) {
+    const folders = fs.readdirSync(applicationsDir)
+      .filter(item => fs.statSync(path.join(applicationsDir, item)).isDirectory() && item !== 'template')
+      .map(folder => `  - ${folder}`)
+      .join('\n');
+    console.error(folders || '  (No applications found)');
+  }
+  
+  console.error('\nTo create a new application:');
+  console.error(`cp -r data/applications/template data/applications/${applicationName}`);
+  process.exit(1);
+}
+
+// Extract company name for file naming
+const companyName = extractCompanyFromFolderName(applicationName);
+
+console.log(`📁 Using application folder: ${applicationFolderPath}`);
+console.log(`🏢 Company name: ${companyName}`);
+
+// Ensure outputs directory exists
+if (!fs.existsSync(outputBasePath)) {
+  fs.mkdirSync(outputBasePath, { recursive: true });
+}
 
 // Verify the resume file exists
 if (!fs.existsSync(resumeDataPath)) {
-  console.error(`Error: Resume file not found at ${resumeDataPath}`);
+  console.error(`❌ Error: Resume file not found at ${resumeDataPath}`);
+  console.error('Make sure you have a resume.json file in the inputs folder.');
   process.exit(1);
 }
 
@@ -76,25 +78,13 @@ try {
   process.exit(1);
 }
 
-// Set up output file paths based on structure type
-let outputDocxPath, resumeDocxPath, coverLetterDocxPath, combinedDocxPath;
-
-if (isApplicationFolder) {
-  // HR-friendly naming for application folders
-  outputDocxPath = path.join(outputBasePath, `Jon-Amar-Resume-${companyName}.docx`);
-  resumeDocxPath = path.join(outputBasePath, `Jon-Amar-Resume-${companyName}.docx`);
-  coverLetterDocxPath = path.join(outputBasePath, `Jon-Amar-Cover-Letter-${companyName}.docx`);
-  combinedDocxPath = path.join(outputBasePath, `Jon-Amar-Cover-Letter-and-Resume-${companyName}.docx`);
-} else {
-  // Legacy naming for old structure
-  outputDocxPath = path.join(outputBasePath, `${inputBaseName}.docx`);
-  resumeDocxPath = path.join(outputBasePath, `${inputBaseName}-resume.docx`);
-  coverLetterDocxPath = path.join(outputBasePath, `${inputBaseName}-cover-letter.docx`);
-  combinedDocxPath = path.join(outputBasePath, `${inputBaseName}-cover-letter-and-resume.docx`);
-}
+// Set up output file paths with HR-friendly naming
+const resumeDocxPath = path.join(outputBasePath, `Jon-Amar-Resume-${companyName}.docx`);
+const coverLetterDocxPath = path.join(outputBasePath, `Jon-Amar-Cover-Letter-${companyName}.docx`);
+const combinedDocxPath = path.join(outputBasePath, `Jon-Amar-Cover-Letter-and-Resume-${companyName}.docx`);
 
 // Check for corresponding markdown file
-const hasMarkdownFile = markdownFilePath && fs.existsSync(markdownFilePath);
+const hasMarkdownFile = fs.existsSync(markdownFilePath);
 
 /**
  * Extracts company name from folder name (e.g., "relay-director-of-product" -> "Relay")
@@ -139,7 +129,7 @@ if (coverLetterOnly) {
 // Validate requirements
 if ((generateCoverLetter || generateCombinedDoc) && !hasMarkdownFile) {
   console.error(`❌ Error: Cover letter generation requested but no markdown file found.`);
-  console.error(`   Expected: ${markdownFilePath || `${inputBaseName}-cover-letter.md`}`);
+  console.error(`   Expected: ${markdownFilePath}`);
   process.exit(1);
 }
 
@@ -151,8 +141,7 @@ if ((generateCoverLetter || generateCombinedDoc) && !hasMarkdownFile) {
     // Generate resume if requested
     if (generateResume) {
       console.log(`\n📄 Processing resume: ${resumeDataPath}`);
-      const resumeOutputPath = (generateCoverLetter || generateCombinedDoc) ? resumeDocxPath : outputDocxPath;
-      console.log(`📑 Will generate resume DOCX: ${resumeOutputPath}\n`);
+      console.log(`📑 Will generate resume DOCX: ${resumeDocxPath}\n`);
       
       // Generate DOCX document using our template
       console.log('Generating resume DOCX document...');
@@ -167,10 +156,10 @@ if ((generateCoverLetter || generateCombinedDoc) && !hasMarkdownFile) {
       const optimizedResumeBuffer = await removeCompatibilityMode(resumeBuffer);
       
       // Save the optimized DOCX
-      fs.writeFileSync(resumeOutputPath, optimizedResumeBuffer);
+      fs.writeFileSync(resumeDocxPath, optimizedResumeBuffer);
       
-      console.log(`✅ Resume DOCX generated and saved to: ${resumeOutputPath}`);
-      generatedFiles.push(resumeOutputPath);
+      console.log(`✅ Resume DOCX generated and saved to: ${resumeDocxPath}`);
+      generatedFiles.push(resumeDocxPath);
     }
     
     // Generate cover letter if requested
