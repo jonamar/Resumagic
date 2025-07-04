@@ -588,7 +588,7 @@ function createProjects(projects) {
           })
         ],
         spacing: {
-          after: 60 // 3pt
+          after: theme.spacingTwips.afterJobTitle // 3pt
         },
         keepNext: hasMoreContent // Keep with description/highlights if they exist
       })
@@ -604,7 +604,7 @@ function createProjects(projects) {
             color: theme.colors.text
           }),
           spacing: {
-            after: 120 // 6pt
+            after: theme.spacingTwips.large // 6pt
           },
           keepLines: true, // Keep description lines together
           keepNext: project.highlights && project.highlights.length > 0 // Keep with highlights if they exist
@@ -629,11 +629,11 @@ function createProjects(projects) {
               level: 0
             },
             spacing: {
-              after: 60 // 3pt - reduced spacing after bullets
+              after: theme.spacingTwips.afterBullet // 3pt - reduced spacing after bullets
             },
             indent: {
-              left: 360, // 0.25 inch left indent for bullet
-              hanging: 360 // 0.25 inch hanging indent so text aligns properly
+              left: theme.spacingTwips.bulletIndent, // 0.25 inch left indent for bullet
+              hanging: theme.spacingTwips.bulletHanging // 0.25 inch hanging indent so text aligns properly
             },
             keepLines: true, // Keep long bullet points together
             keepNext: !isLastHighlight // Keep with next highlight (but not after the last one)
@@ -647,7 +647,7 @@ function createProjects(projects) {
       new Paragraph({
         text: "",
         spacing: {
-          after: 180 // 9pt
+          after: theme.spacingTwips.afterProjectEntry // 9pt
         }
       })
     );
@@ -687,7 +687,7 @@ function createSpeakingEngagements(publications) {
           })
         ],
         spacing: {
-          after: 60 // 3pt
+          after: theme.spacingTwips.afterJobTitle // 3pt
         },
         keepNext: true // Keep with publisher
       })
@@ -706,7 +706,7 @@ function createSpeakingEngagements(publications) {
           })
         ],
         spacing: {
-          after: 60 // 3pt
+          after: theme.spacingTwips.afterCompanyName // 3pt
         },
         keepNext: true // Keep with date
       })
@@ -726,7 +726,7 @@ function createSpeakingEngagements(publications) {
             })
           ],
           spacing: {
-            after: hasMoreContent ? 80 : (isLastEntry ? 120 : 240) // 4pt if more content, 6pt if last entry, 12pt between entries
+            after: hasMoreContent ? theme.spacingTwips.afterDate : (isLastEntry ? theme.spacingTwips.large : theme.spacingTwips.afterSectionEntry) // 4pt if more content, 6pt if last entry, 12pt between entries
           },
           keepNext: hasMoreContent // Keep with summary/highlights if they exist
         })
@@ -743,7 +743,7 @@ function createSpeakingEngagements(publications) {
             color: theme.colors.text
           }),
           spacing: {
-            after: 120 // 6pt
+            after: theme.spacingTwips.large // 6pt
           },
           keepLines: true, // Keep summary lines together
           keepNext: publication.highlights && publication.highlights.length > 0 // Keep with highlights if they exist
@@ -769,11 +769,11 @@ function createSpeakingEngagements(publications) {
               level: 0
             },
             spacing: {
-              after: isLastHighlight ? (isLastEntry ? 120 : 240) : 60 // 3pt between bullets, 6pt after last entry, 12pt between entries
+              after: isLastHighlight ? (isLastEntry ? theme.spacingTwips.large : theme.spacingTwips.afterSectionEntry) : theme.spacingTwips.afterBullet // 3pt between bullets, 6pt after last entry, 12pt between entries
             },
             indent: {
-              left: 360, // 0.25 inch left indent for bullet
-              hanging: 360 // 0.25 inch hanging indent so text aligns properly
+              left: theme.spacingTwips.bulletIndent, // 0.25 inch left indent for bullet
+              hanging: theme.spacingTwips.bulletHanging // 0.25 inch hanging indent so text aligns properly
             },
             keepLines: true, // Keep long bullet points together
             keepNext: !isLastHighlight // Keep with next highlight (but not after the last one)
