@@ -123,8 +123,17 @@ if (coverLetterOnly) {
   generateResume = true;
   generateCoverLetter = hasMarkdownFile;
 } else {
-  // Default behavior - generate resume only
-  generateResume = true;
+  // Default behavior - generate all three formats if both content types are available
+  if (hasMarkdownFile) {
+    generateResume = true;
+    generateCoverLetter = true;
+    generateCombinedDoc = true;
+    console.log('📋 Default behavior: Both resume and cover letter content available - generating all three formats');
+  } else {
+    // Only resume content available - generate resume only
+    generateResume = true;
+    console.log('📋 Default behavior: Only resume content available - generating resume only');
+  }
 }
 
 // Validate requirements
@@ -142,7 +151,7 @@ if ((generateCoverLetter || generateCombinedDoc) && !hasMarkdownFile) {
     // Generate resume if requested
     if (generateResume) {
       console.log(`\n📄 Processing resume: ${resumeDataPath}`);
-      const resumeOutputPath = generateCoverLetter ? resumeDocxPath : outputDocxPath;
+      const resumeOutputPath = (generateCoverLetter || generateCombinedDoc) ? resumeDocxPath : outputDocxPath;
       console.log(`📑 Will generate resume DOCX: ${resumeOutputPath}\n`);
       
       // Generate DOCX document using our template
