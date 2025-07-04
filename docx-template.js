@@ -488,133 +488,50 @@ function createProjects(projects) {
 }
 
 /**
- * Creates the speaking engagements section
+ * Creates the speaking engagements section using the generic createItemSection function
  * @param {Array} publications - Array of publication/speaking entries
  * @returns {Array} Array of paragraphs for the speaking engagements section
  */
 function createSpeakingEngagements(publications) {
-  const paragraphs = [];
-
-  // Add section heading
-  paragraphs.push(
-    createSectionHeading(theme.ats.sectionTitles.speakingEngagements)
-  );
-
-  // Add each speaking engagement
-  publications.forEach((publication, index) => {
-    // Determine if we should keep engagement name with next content
-    const hasMoreContent = publication.summary || (publication.highlights && publication.highlights.length > 0);
-
-    // Speaking engagement name/title
-    paragraphs.push(
-      new Paragraph({
-        children: [
-          new TextRun({
-            text: publication.name,
-            size: theme.fontSize.body * 2, // Convert to half-points
-            font: theme.fonts.primary,
-            bold: true,
-            color: theme.colors.text
-          })
-        ],
-        spacing: {
-          after: theme.spacingTwips.afterJobTitle // 3pt
-        },
-        keepNext: true // Keep with publisher
-      })
-    );
-
-    // Publisher/venue
-    paragraphs.push(
-      new Paragraph({
-        children: [
-          new TextRun({
-            text: publication.publisher,
-            size: theme.fontSize.body * 2, // Convert to half-points
-            font: theme.fonts.primary,
-            bold: true,
-            color: theme.colors.text
-          })
-        ],
-        spacing: {
-          after: theme.spacingTwips.afterCompanyName // 3pt
-        },
-        keepNext: true // Keep with date
-      })
-    );
-
-    // Date
-    if (publication.releaseDate) {
-      const isLastEntry = index === publications.length - 1;
-      paragraphs.push(
-        new Paragraph({
-          children: [
-            new TextRun({
-              text: formatDate(publication.releaseDate),
-              size: theme.fontSize.meta * 2, // Convert to half-points
-              font: theme.fonts.primary,
-              color: theme.colors.dimText
-            })
-          ],
-          spacing: {
-            after: hasMoreContent ? theme.spacingTwips.afterDate : (isLastEntry ? theme.spacingTwips.large : theme.spacingTwips.afterSectionEntry) // 4pt if more content, 6pt if last entry, 12pt between entries
-          },
-          keepNext: hasMoreContent // Keep with summary/highlights if they exist
-        })
-      );
+  const speakingConfig = {
+    sectionTitle: theme.ats.sectionTitles.speakingEngagements,
+    descriptionField: 'summary',
+    highlightsField: 'highlights',
+    descriptionSpacing: theme.spacingTwips.large, // 6pt
+    headerLines: [
+      {
+        // Speaking engagement name/title
+        field: 'name',
+        spacing: theme.spacingTwips.afterJobTitle, // 3pt
+        keepNext: true
+      },
+      {
+        // Publisher/venue
+        field: 'publisher',
+        spacing: theme.spacingTwips.afterCompanyName, // 3pt
+        keepNext: true
+      },
+      {
+        // Date
+        field: 'releaseDate',
+        format: formatDate,
+        fontSize: theme.fontSize.meta,
+        color: theme.colors.dimText,
+        bold: false,
+        conditionalSpacing: {
+          withContent: theme.spacingTwips.afterDate, // 4pt if more content
+          standalone: (isLastItem) => isLastItem ? theme.spacingTwips.large : theme.spacingTwips.afterSectionEntry // 6pt if last entry, 12pt between entries
+        }
+      }
+    ],
+    // Complex highlight spacing for speaking engagements
+    highlightSpacing: (isLastItem, itemIndex) => {
+      return isLastItem ? theme.spacingTwips.large : theme.spacingTwips.afterSectionEntry; // 6pt after last entry, 12pt between entries
     }
+    // No itemSpacing - speaking engagements don't add extra space after each entry
+  };
 
-    // Summary if present
-    if (publication.summary) {
-      paragraphs.push(
-        new Paragraph({
-          children: createFormattedTextRuns(publication.summary, {
-            size: theme.fontSize.body * 2, // Convert to half-points
-            font: theme.fonts.primary,
-            color: theme.colors.text
-          }),
-          spacing: {
-            after: theme.spacingTwips.large // 6pt
-          },
-          keepLines: true, // Keep summary lines together
-          keepNext: publication.highlights && publication.highlights.length > 0 // Keep with highlights if they exist
-        })
-      );
-    }
-
-    // Highlights as bullet points
-    if (publication.highlights && publication.highlights.length > 0) {
-      publication.highlights.forEach((highlight, highlightIndex) => {
-        const isLastHighlight = highlightIndex === publication.highlights.length - 1;
-        const isLastEntry = index === publications.length - 1;
-        
-        paragraphs.push(
-          new Paragraph({
-            children: createFormattedTextRuns(highlight, {
-              size: theme.fontSize.body * 2, // Convert to half-points
-              font: theme.fonts.primary,
-              color: theme.colors.text
-            }),
-            numbering: {
-              reference: "small-bullet",
-              level: 0
-            },
-            spacing: {
-              after: isLastHighlight ? (isLastEntry ? theme.spacingTwips.large : theme.spacingTwips.afterSectionEntry) : theme.spacingTwips.afterBullet // 3pt between bullets, 6pt after last entry, 12pt between entries
-            },
-            indent: {
-              left: theme.spacingTwips.bulletIndent, // 0.25 inch left indent for bullet
-              hanging: theme.spacingTwips.bulletHanging // 0.25 inch hanging indent so text aligns properly
-            },
-            keepLines: true, // Keep long bullet points together
-            keepNext: !isLastHighlight // Keep with next highlight (but not after the last one)
-          })
-        );
-      });
-    }
-  });
-
-  return paragraphs;
+  return createItemSection(publications, speakingConfig);
 }
 
 /**
@@ -725,9 +642,13 @@ function createItemSection(items, config) {
       if (isLastHeader) {
         keepNext = hasMoreContent;
         if (headerConfig.conditionalSpacing) {
-          spacing = hasMoreContent ? 
-            headerConfig.conditionalSpacing.withContent : 
-            headerConfig.conditionalSpacing.standalone;
+          if (hasMoreContent) {
+            spacing = headerConfig.conditionalSpacing.withContent;
+          } else {
+            spacing = typeof headerConfig.conditionalSpacing.standalone === 'function' ? 
+              headerConfig.conditionalSpacing.standalone(isLastItem, itemIndex) :
+              headerConfig.conditionalSpacing.standalone;
+          }
         }
       }
 
