@@ -463,102 +463,28 @@ function createEducation(education) {
 }
 
 /**
- * Creates the projects section
+ * Creates the projects section using the generic createItemSection function
  * @param {Array} projects - Array of project entries
  * @returns {Array} Array of paragraphs for the projects section
  */
 function createProjects(projects) {
-  const paragraphs = [];
+  const projectsConfig = {
+    sectionTitle: theme.ats.sectionTitles.projects,
+    descriptionField: 'description',
+    highlightsField: 'highlights',
+    descriptionSpacing: theme.spacingTwips.large, // 6pt
+    headerLines: [
+      {
+        // Project name
+        field: 'name',
+        spacing: theme.spacingTwips.afterJobTitle, // 3pt
+        keepNext: true
+      }
+    ],
+    itemSpacing: theme.spacingTwips.afterProjectEntry // 9pt after each project entry
+  };
 
-  // Add section heading
-  paragraphs.push(
-    createSectionHeading(theme.ats.sectionTitles.projects)
-  );
-
-  // Add each project entry
-  projects.forEach(project => {
-    // Determine if we should keep project name with next content
-    const hasMoreContent = project.description || (project.highlights && project.highlights.length > 0);
-
-    // Project name
-    paragraphs.push(
-      new Paragraph({
-        children: [
-          new TextRun({
-            text: project.name,
-            size: theme.fontSize.body * 2, // Convert to half-points
-            font: theme.fonts.primary,
-            bold: true,
-            color: theme.colors.text
-          })
-        ],
-        spacing: {
-          after: theme.spacingTwips.afterJobTitle // 3pt
-        },
-        keepNext: hasMoreContent // Keep with description/highlights if they exist
-      })
-    );
-
-    // Description if present
-    if (project.description) {
-      paragraphs.push(
-        new Paragraph({
-          children: createFormattedTextRuns(project.description, {
-            size: theme.fontSize.body * 2, // Convert to half-points
-            font: theme.fonts.primary,
-            color: theme.colors.text
-          }),
-          spacing: {
-            after: theme.spacingTwips.large // 6pt
-          },
-          keepLines: true, // Keep description lines together
-          keepNext: project.highlights && project.highlights.length > 0 // Keep with highlights if they exist
-        })
-      );
-    }
-
-    // Highlights as bullet points
-    if (project.highlights && project.highlights.length > 0) {
-      project.highlights.forEach((highlight, highlightIndex) => {
-        const isLastHighlight = highlightIndex === project.highlights.length - 1;
-        
-        paragraphs.push(
-          new Paragraph({
-            children: createFormattedTextRuns(highlight, {
-              size: theme.fontSize.body * 2, // Convert to half-points
-              font: theme.fonts.primary,
-              color: theme.colors.text
-            }),
-            numbering: {
-              reference: "small-bullet",
-              level: 0
-            },
-            spacing: {
-              after: theme.spacingTwips.afterBullet // 3pt - reduced spacing after bullets
-            },
-            indent: {
-              left: theme.spacingTwips.bulletIndent, // 0.25 inch left indent for bullet
-              hanging: theme.spacingTwips.bulletHanging // 0.25 inch hanging indent so text aligns properly
-            },
-            keepLines: true, // Keep long bullet points together
-            keepNext: !isLastHighlight // Keep with next highlight (but not after the last one)
-          })
-        );
-      });
-    }
-
-    // Add some space after each project entry
-    paragraphs.push(
-      new Paragraph({
-        text: "",
-        spacing: {
-          after: theme.spacingTwips.afterProjectEntry // 9pt
-        }
-      })
-    );
-  });
-
-  return paragraphs;
+  return createItemSection(projects, projectsConfig);
 }
 
 /**
