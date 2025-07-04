@@ -2,7 +2,7 @@ const path = require('path');
 const fs = require('fs');
 const { execSync } = require('child_process');
 const { Packer } = require('docx');
-const { createResumeDocx, createCoverLetterDocx } = require('./docx-template');
+const { createResumeDocx, createCoverLetterDocx, createCombinedDocx } = require('./docx-template');
 const { parseMarkdownCoverLetter, findMarkdownFile } = require('./markdown-to-data');
 const JSZip = require('jszip');
 
@@ -15,6 +15,7 @@ const autoPreview = args.includes('--preview') || true; // Default to true for a
 const coverLetterOnly = args.includes('--cover-letter');
 const generateBoth = args.includes('--both');
 const autoDetect = args.includes('--auto');
+const generateCombined = args.includes('--combined');
 
 console.log(`Command line argument received: ${inputFile}`);
 
@@ -45,6 +46,7 @@ try {
 const outputDocxPath = path.join(__dirname, '../data/output', `${inputBaseName}.docx`);
 const resumeDocxPath = path.join(__dirname, '../data/output', `${inputBaseName}-resume.docx`);
 const coverLetterDocxPath = path.join(__dirname, '../data/output', `${inputBaseName}-cover-letter.docx`);
+const combinedDocxPath = path.join(__dirname, '../data/output', `${inputBaseName}-combined.docx`);
 
 // Check for corresponding markdown file
 const markdownFilePath = findMarkdownFile(resumeDataPath);
@@ -53,12 +55,15 @@ const hasMarkdownFile = markdownFilePath && fs.existsSync(markdownFilePath);
 // Determine what to generate based on flags and file availability
 let generateResume = false;
 let generateCoverLetter = false;
+let generateCombinedDoc = false;
 
 if (coverLetterOnly) {
   generateCoverLetter = true;
 } else if (generateBoth) {
   generateResume = true;
   generateCoverLetter = true;
+} else if (generateCombined) {
+  generateCombinedDoc = true;
 } else if (autoDetect) {
   generateResume = true;
   generateCoverLetter = hasMarkdownFile;
@@ -68,7 +73,7 @@ if (coverLetterOnly) {
 }
 
 // Validate requirements
-if (generateCoverLetter && !hasMarkdownFile) {
+if ((generateCoverLetter || generateCombinedDoc) && !hasMarkdownFile) {
   console.error(`❌ Error: Cover letter generation requested but no markdown file found.`);
   console.error(`   Expected: ${markdownFilePath || `${inputBaseName}-cover-letter.md`}`);
   process.exit(1);
@@ -130,6 +135,34 @@ if (generateCoverLetter && !hasMarkdownFile) {
       
       console.log(`✅ Cover letter DOCX generated and saved to: ${coverLetterDocxPath}`);
       generatedFiles.push(coverLetterDocxPath);
+    }
+    
+    // Generate combined document if requested
+    if (generateCombinedDoc) {
+      console.log(`\n📄 Processing combined document: ${resumeDataPath} + ${markdownFilePath}`);
+      console.log(`📑 Will generate combined DOCX: ${combinedDocxPath}\n`);
+      
+      // Parse markdown cover letter
+      console.log('Parsing markdown cover letter...');
+      const coverLetterData = parseMarkdownCoverLetter(markdownFilePath, resumeDataPath);
+      
+      // Generate combined DOCX document
+      console.log('Generating combined DOCX document (cover letter + resume)...');
+      const combinedDoc = createCombinedDocx(coverLetterData, resumeData);
+      
+      // Use Packer to get the buffer
+      console.log('Saving combined DOCX file...');
+      const combinedBuffer = await Packer.toBuffer(combinedDoc);
+      
+      // Post-process the DOCX file to remove compatibility mode and empty sections
+      console.log('Optimizing combined DOCX for ATS compatibility...');
+      const optimizedCombinedBuffer = await removeCompatibilityMode(combinedBuffer);
+      
+      // Save the optimized DOCX
+      fs.writeFileSync(combinedDocxPath, optimizedCombinedBuffer);
+      
+      console.log(`✅ Combined DOCX generated and saved to: ${combinedDocxPath}`);
+      generatedFiles.push(combinedDocxPath);
     }
     
     console.log(`\n✨ Generation complete! Created ${generatedFiles.length} file(s):\n`);

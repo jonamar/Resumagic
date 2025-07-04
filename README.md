@@ -102,6 +102,11 @@ node generate-resume.js [input-filename.json] --both
 node generate-resume.js [input-filename.json] --auto
 ```
 
+#### Generate Combined Document (Cover Letter + Resume in single file)
+```bash
+node generate-resume.js [input-filename.json] --combined
+```
+
 ### Examples
 
 ```bash
@@ -123,6 +128,11 @@ node generate-resume.js pointclick-resume.json --auto
 # Looks for: ../data/input/pointclick-cover-letter.md
 # If found: generates both resume and cover letter
 # If not found: generates resume only
+
+# Generate combined document (cover letter + resume in single file)
+node generate-resume.js relay.json --combined
+# Output: ../data/output/relay-combined.docx
+# Contains: Cover letter on page 1, resume starting on page 2
 ```
 
 ### Customizing Your Documents

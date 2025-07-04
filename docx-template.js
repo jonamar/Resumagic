@@ -997,12 +997,12 @@ function getRegionAbbreviation(region) {
  * @returns {Document} DOCX document
  */
 function createCoverLetterDocx(coverLetterData, options = {}) {
-  // Document sections
+  // Document sections (no header for cover letter)
   const children = [
-    ...createHeader(coverLetterData.basics),
     ...createCoverLetterDate(coverLetterData.coverLetter.metadata),
     ...createCoverLetterContent(coverLetterData.coverLetter.content),
-    ...createCoverLetterClosing(coverLetterData.coverLetter.metadata, coverLetterData.basics)
+    ...createCoverLetterClosing(coverLetterData.coverLetter.metadata),
+    ...createCoverLetterFooter(coverLetterData.basics)
   ];
 
   // Create the document with identical styling to resume
@@ -1092,9 +1092,10 @@ function createCoverLetterDate(metadata) {
         })
       ],
       spacing: {
-        after: 240 // 12pt
+        before: 240, // 12pt breathing room before
+        after: 480   // 24pt breathing room after
       },
-      alignment: AlignmentType.LEFT
+      alignment: AlignmentType.RIGHT
     })
   );
   
@@ -1129,7 +1130,8 @@ function createCoverLetterContent(content) {
         new Paragraph({
           children: textRuns,
           spacing: {
-            after: 240 // 12pt between paragraphs
+            after: 240, // 12pt between paragraphs
+            line: 360   // 1.5 line spacing (240 = 1.0, 360 = 1.5)
           },
           alignment: AlignmentType.JUSTIFIED
         })
@@ -1159,7 +1161,8 @@ function createCoverLetterContent(content) {
               level: 0
             },
             spacing: {
-              after: itemIndex < section.items.length - 1 ? 80 : 240 // 4pt between items, 12pt after list
+              after: itemIndex < section.items.length - 1 ? 80 : 240, // 4pt between items, 12pt after list
+              line: 360   // 1.5 line spacing
             },
             alignment: AlignmentType.LEFT
           })
@@ -1174,13 +1177,12 @@ function createCoverLetterContent(content) {
 /**
  * Creates the closing section for cover letter
  * @param {Object} metadata - Cover letter metadata
- * @param {Object} basics - Basic contact information
  * @returns {Array} Array of paragraphs for the closing section
  */
-function createCoverLetterClosing(metadata, basics) {
+function createCoverLetterClosing(metadata) {
   const paragraphs = [];
   
-  // Add the closing (e.g., "Sincerely,")
+  // Add the closing (e.g., "Sincerely,") - no name
   paragraphs.push(
     new Paragraph({
       children: [
@@ -1192,25 +1194,8 @@ function createCoverLetterClosing(metadata, basics) {
         })
       ],
       spacing: {
-        after: 480 // 24pt for signature space
-      },
-      alignment: AlignmentType.LEFT
-    })
-  );
-  
-  // Add the name
-  paragraphs.push(
-    new Paragraph({
-      children: [
-        new TextRun({
-          text: basics.name,
-          size: theme.fontSize.body * 2, // Convert to half-points
-          font: theme.fonts.primary,
-          color: theme.colors.text
-        })
-      ],
-      spacing: {
-        after: 240 // 12pt
+        after: 720, // 36pt extra space before footer
+        line: 360   // 1.5 line spacing
       },
       alignment: AlignmentType.LEFT
     })
@@ -1219,7 +1204,229 @@ function createCoverLetterClosing(metadata, basics) {
   return paragraphs;
 }
 
+/**
+ * Creates the footer section with contact information for cover letter
+ * @param {Object} basics - Basic contact information
+ * @returns {Array} Array of paragraphs for the footer section
+ */
+function createCoverLetterFooter(basics) {
+  const paragraphs = [];
+
+  // Create contact information with ATS-friendly format
+  const contactParts = [];
+  
+  // Add address first with ATS-friendly label (city, province abbreviation, postal code, country)
+  if (basics.location) {
+    let locationText = basics.location.city || '';
+    
+    // Add abbreviated region/province
+    if (basics.location.region) {
+      const regionAbbrev = getRegionAbbreviation(basics.location.region);
+      locationText += `, ${regionAbbrev}`;
+    }
+    
+    // Add country
+    if (basics.location.country) {
+      locationText += `, ${basics.location.country}`;
+    }
+    
+    // Add postal code (with space before it, not comma)
+    if (basics.location.postalCode) {
+      locationText += ` ${basics.location.postalCode}`;
+    }
+    
+    // Add "Address:" label for ATS recognition
+    if (locationText) contactParts.push(`Address: ${locationText}`);
+  }
+  
+  // Add phone and email
+  if (basics.phone) contactParts.push(basics.phone);
+  if (basics.email) contactParts.push(basics.email);
+
+  // Add contact info line with bullet separators
+  paragraphs.push(
+    new Paragraph({
+      children: [
+        new TextRun({
+          text: contactParts.join(' • '),
+          size: theme.fontSize.meta * 2, // Convert to half-points
+          color: theme.colors.dimText,
+          font: theme.fonts.primary
+        })
+      ],
+      spacing: {
+        before: 240, // 12pt before contact info
+        after: 100   // 5pt
+      }
+    })
+  );
+
+  // Add profiles if any
+  if (basics.profiles && basics.profiles.length > 0) {
+    const profileChildren = [];
+    
+    basics.profiles.forEach((profile, index) => {
+      // Add bullet separator between profiles (not before first)
+      if (index > 0) {
+        profileChildren.push(new TextRun({
+          text: ' • ',
+          size: theme.fontSize.meta * 2, // Convert to half-points
+          color: theme.colors.dimText,
+          font: theme.fonts.primary
+        }));
+      }
+      
+      // Add profile as hyperlink
+      profileChildren.push(
+        new ExternalHyperlink({
+          children: [
+            new TextRun({
+              text: profile.url.replace(/^https?:\/\//, ''), // Remove protocol for cleaner display
+              size: theme.fontSize.meta * 2, // Convert to half-points
+              color: theme.colors.dimText,
+              font: theme.fonts.primary,
+              underline: {
+                type: UnderlineType.SINGLE,
+                color: theme.colors.dimText
+              }
+            })
+          ],
+          link: profile.url
+        })
+      );
+    });
+
+    paragraphs.push(
+      new Paragraph({
+        children: profileChildren,
+        spacing: {
+          after: 100 // 5pt
+        }
+      })
+    );
+  }
+  
+  return paragraphs;
+}
+
+/**
+ * Creates a combined DOCX document with cover letter followed by resume
+ * @param {Object} coverLetterData - Cover letter data with basics and coverLetter sections
+ * @param {Object} resumeData - Resume data in JSON Resume format
+ * @param {Object} options - Additional options
+ * @returns {Document} DOCX document with both cover letter and resume
+ */
+function createCombinedDocx(coverLetterData, resumeData, options = {}) {
+  // Cover letter sections
+  const coverLetterChildren = [
+    ...createCoverLetterDate(coverLetterData.coverLetter.metadata),
+    ...createCoverLetterContent(coverLetterData.coverLetter.content),
+    ...createCoverLetterClosing(coverLetterData.coverLetter.metadata),
+    ...createCoverLetterFooter(coverLetterData.basics)
+  ];
+
+  // Resume sections
+  const resumeChildren = [
+    ...createHeader(resumeData.basics),
+    ...createSummary(resumeData.basics),
+    ...createExperience(resumeData.work),
+    ...createSkills(resumeData.skills),
+    ...createEducation(resumeData.education),
+  ];
+
+  // Add optional resume sections
+  if (resumeData.projects && resumeData.projects.length > 0) {
+    resumeChildren.push(...createProjects(resumeData.projects));
+  }
+
+  if (resumeData.publications && resumeData.publications.length > 0) {
+    resumeChildren.push(...createSpeakingEngagements(resumeData.publications));
+  }
+
+  if (resumeData.languages && resumeData.languages.length > 0) {
+    resumeChildren.push(...createLanguages(resumeData.languages));
+  }
+
+  // Create the document with two sections
+  const doc = new Document({
+    numbering: {
+      config: [
+        {
+          reference: "small-bullet",
+          levels: [
+            {
+              level: 0,
+              format: LevelFormat.BULLET,
+              text: "•",
+              alignment: AlignmentType.LEFT,
+              style: {
+                run: {
+                  font: theme.fonts.primary,
+                  size: 16, // 8pt bullet (smaller than default 10pt text)
+                  color: theme.colors.text
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    styles: {
+      paragraphStyles: [
+        {
+          id: "applicantName",
+          name: "Applicant Name",
+          basedOn: "Normal",
+          next: "Normal",
+          run: {
+            size: theme.fontSize.name * 2, // Convert to half-points
+            font: "Arial",
+            bold: true,
+            color: theme.colors.headings,
+          },
+          paragraph: {
+            spacing: {
+              after: 240, // 12pt
+            },
+            indent: {
+              left: 0 // No indentation
+            },
+            font: "Arial",
+          },
+        },
+      ],
+      defaultRunProperties: {
+        font: "Arial",
+      },
+    },
+    sections: [
+      {
+        // Cover letter section
+        properties: {
+          page: {
+            margin: theme.margins.document,
+          },
+        },
+        children: coverLetterChildren
+      },
+      {
+        // Resume section (starts on new page)
+        properties: {
+          page: {
+            margin: theme.margins.document,
+          },
+          type: SectionType.NEXT_PAGE, // Force new page
+        },
+        children: resumeChildren
+      }
+    ]
+  });
+
+  return doc;
+}
+
 module.exports = { 
   createResumeDocx,
-  createCoverLetterDocx
+  createCoverLetterDocx,
+  createCombinedDocx
 };
