@@ -39,7 +39,7 @@ function createResumeDocx(resumeData, options = {}) {
   const children = [
     ...createHeader(resumeData.basics),
     ...createSummary(resumeData.basics),
-    ...createExperienceTest(resumeData.work),
+    ...createExperience(resumeData.work),
     ...createSkills(resumeData.skills),
     ...createEducation(resumeData.education),
   ];
@@ -282,145 +282,50 @@ function createSummary(basics) {
 }
 
 /**
- * Creates the experience section
+ * Creates the experience section using the generic createItemSection function
  * @param {Array} work - Array of work experiences
  * @returns {Array} Array of paragraphs for the experience section
  */
 function createExperience(work) {
-  const paragraphs = [];
-
-  // Add section heading
-  paragraphs.push(
-    createSectionHeading(theme.ats.sectionTitles.experience)
-  );
-
-  // Add each work entry
-  work.forEach(job => {
-    // Position title with keepNext to stick to company
-    if (job.position) {
-      paragraphs.push(
-        new Paragraph({
-          children: [
-            new TextRun({
-              text: job.position,
-              size: theme.fontSize.body * 2, // Convert to half-points
-              font: theme.fonts.primary,
-              bold: true,
-              color: theme.colors.text
-            })
-          ],
-          spacing: {
-            after: theme.spacingTwips.afterJobTitle // 3pt
-          },
-          keepNext: true // Keep with next paragraph (company name)
-        })
-      );
-    }
-
-    // Company name with keepNext to stick to date/location
-    paragraphs.push(
-      new Paragraph({
-        children: [
-          new TextRun({
-            text: job.name,
-            size: theme.fontSize.body * 2, // Convert to half-points
-            font: theme.fonts.primary,
-            bold: true,
-            color: theme.colors.text
-          })
+  const experienceConfig = {
+    sectionTitle: theme.ats.sectionTitles.experience,
+    descriptionField: 'summary',
+    highlightsField: 'highlights',
+    descriptionSpacing: theme.spacingTwips.afterSummary, // 4pt
+    headerLines: [
+      {
+        // Job title/position
+        field: 'position',
+        spacing: theme.spacingTwips.afterJobTitle,
+        keepNext: true
+      },
+      {
+        // Company name
+        field: 'name',
+        spacing: theme.spacingTwips.afterCompanyName,
+        keepNext: true
+      },
+      {
+        // Date and location
+        fields: [
+          { field: 'startDate', format: formatDate },
+          { field: 'endDate', format: (date) => date ? formatDate(date) : 'Present' }
         ],
-        spacing: {
-          after: theme.spacingTwips.afterCompanyName // 3pt
-        },
-        keepNext: true // Keep with next paragraph (date/location)
-      })
-    );
-
-    // Date and location
-    const dateParts = [];
-    dateParts.push(`${formatDate(job.startDate)} - ${job.endDate ? formatDate(job.endDate) : 'Present'}`);
-    if (job.location) dateParts.push(job.location);
-
-    // Determine if we should keep with next content (summary or highlights)
-    const hasMoreContent = job.summary || (job.highlights && job.highlights.length > 0);
-
-    paragraphs.push(
-      new Paragraph({
-        children: [
-          new TextRun({
-            text: dateParts.join(' • '),
-            size: theme.fontSize.meta * 2, // Convert to half-points
-            font: theme.fonts.primary,
-            color: theme.colors.dimText
-          })
-        ],
-        spacing: {
-          after: hasMoreContent ? theme.spacingTwips.minimal : theme.spacingTwips.afterDate // 1pt if more content, 4pt if standalone
-        },
-        keepNext: hasMoreContent // Keep with summary/highlights if they exist
-      })
-    );
-
-    // Summary if present
-    if (job.summary) {
-      paragraphs.push(
-        new Paragraph({
-          children: createFormattedTextRuns(job.summary, {
-            size: theme.fontSize.body * 2, // Convert to half-points
-            font: theme.fonts.primary,
-            color: theme.colors.text
-                  }),
-        spacing: {
-          after: theme.spacingTwips.afterSummary // 4pt
-        },
-        keepLines: true, // Keep summary lines together
-        keepNext: job.highlights && job.highlights.length > 0 // Keep with highlights if they exist
-        })
-      );
-    }
-
-    // Highlights as bullet points
-    if (job.highlights && job.highlights.length > 0) {
-      job.highlights.forEach((highlight, highlightIndex) => {
-        const isLastHighlight = highlightIndex === job.highlights.length - 1;
-        
-        paragraphs.push(
-          new Paragraph({
-            children: createFormattedTextRuns(highlight, {
-              size: theme.fontSize.body * 2, // Convert to half-points
-              font: theme.fonts.primary,
-              color: theme.colors.text
-            }),
-            numbering: {
-              reference: "small-bullet",
-              level: 0
-            },
-            spacing: {
-              after: theme.spacingTwips.afterBullet // 3pt - reduced spacing after bullets
-            },
-            indent: {
-              left: theme.spacingTwips.bulletIndent, // 0.25 inch left indent for bullet
-              hanging: theme.spacingTwips.bulletHanging // 0.25 inch hanging indent so text aligns properly
-            },
-            keepLines: true, // Keep long bullet points together
-            keepNext: !isLastHighlight // Keep with next highlight (but not after the last one)
-          })
-        );
-      });
-    }
-
-    // Add minimal space after each job entry
-    paragraphs.push(
-      new Paragraph({
-        text: "",
-        spacing: {
-          after: theme.spacingTwips.afterJobEntry // 4pt
+        includeLocation: true,
+        separator: ' • ',
+        fontSize: theme.fontSize.meta,
+        color: theme.colors.dimText,
+        bold: false,
+        conditionalSpacing: {
+          withContent: theme.spacingTwips.minimal, // 1pt if more content
+          standalone: theme.spacingTwips.afterDate   // 4pt if standalone
         }
-      })
-    );
-  });
+      }
+    ],
+    itemSpacing: theme.spacingTwips.afterJobEntry // 4pt after each job entry
+  };
 
-  return paragraphs;
+  return createItemSection(work, experienceConfig);
 }
 
 /**
@@ -998,52 +903,6 @@ function createItemSection(items, config) {
   return paragraphs;
 }
 
-/**
- * Test function: Creates the experience section using the generic createItemSection function
- * @param {Array} work - Array of work entries
- * @returns {Array} Array of paragraphs for the experience section
- */
-function createExperienceTest(work) {
-  const experienceConfig = {
-    sectionTitle: theme.ats.sectionTitles.experience,
-    descriptionField: 'summary',
-    highlightsField: 'highlights',
-    descriptionSpacing: theme.spacingTwips.afterSummary, // 4pt
-    headerLines: [
-      {
-        // Job title/position
-        field: 'position',
-        spacing: theme.spacingTwips.afterJobTitle,
-        keepNext: true
-      },
-      {
-        // Company name
-        field: 'name',
-        spacing: theme.spacingTwips.afterCompanyName,
-        keepNext: true
-      },
-      {
-        // Date and location
-        fields: [
-          { field: 'startDate', format: formatDate },
-          { field: 'endDate', format: (date) => date ? formatDate(date) : 'Present' }
-        ],
-        includeLocation: true,
-        separator: ' • ',
-        fontSize: theme.fontSize.meta,
-        color: theme.colors.dimText,
-        bold: false,
-        conditionalSpacing: {
-          withContent: theme.spacingTwips.minimal, // 1pt if more content
-          standalone: theme.spacingTwips.afterDate   // 4pt if standalone
-        }
-      }
-    ],
-    itemSpacing: theme.spacingTwips.afterJobEntry // 4pt after each job entry
-  };
-
-  return createItemSection(work, experienceConfig);
-}
 
 /**
  * Helper function to create section headings
