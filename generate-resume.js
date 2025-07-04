@@ -15,19 +15,53 @@ const autoPreview = args.includes('--preview') || true; // Default to true for a
 const coverLetterOnly = args.includes('--cover-letter');
 const generateBoth = args.includes('--both');
 const autoDetect = args.includes('--auto');
-const generateCombined = args.includes('--combined');
+const generateCombined = args.includes('--cover-letter-and-resume');
 
 console.log(`Command line argument received: ${inputFile}`);
 
-// Get the base name for generating output files
-const inputBaseName = path.basename(inputFile, '.json');
+// Detect if input is an application folder or legacy file
+let isApplicationFolder = false;
+let applicationFolderPath = null;
+let companyName = null;
+let resumeDataPath = null;
+let inputBaseName = null;
+let outputBasePath = null;
+let markdownFilePath = null;
+
+// Check if input is a path to an application folder
+const potentialAppFolderPath = path.resolve(__dirname, '../data/applications', inputFile);
+if (fs.existsSync(potentialAppFolderPath) && fs.statSync(potentialAppFolderPath).isDirectory()) {
+  // New application folder structure
+  isApplicationFolder = true;
+  applicationFolderPath = potentialAppFolderPath;
+  companyName = extractCompanyFromFolderName(inputFile);
+  resumeDataPath = path.join(applicationFolderPath, 'inputs', 'resume.json');
+  markdownFilePath = path.join(applicationFolderPath, 'inputs', 'cover-letter.md');
+  inputBaseName = inputFile;
+  outputBasePath = path.join(applicationFolderPath, 'outputs');
+  
+  console.log(`📁 Using application folder: ${applicationFolderPath}`);
+  console.log(`🏢 Company name: ${companyName}`);
+  
+  // Ensure outputs directory exists
+  if (!fs.existsSync(outputBasePath)) {
+    fs.mkdirSync(outputBasePath, { recursive: true });
+  }
+} else {
+  // Legacy file-based structure
+  isApplicationFolder = false;
+  inputBaseName = path.basename(inputFile, '.json');
+  resumeDataPath = path.resolve(__dirname, '../data/input', inputFile);
+  outputBasePath = path.join(__dirname, '../data/output');
+  markdownFilePath = findMarkdownFile(resumeDataPath);
+  
+  console.log(`📄 Using legacy file structure`);
+}
+
 console.log(`Base filename for outputs: ${inputBaseName}`);
+console.log(`Resume data path: ${resumeDataPath}`);
 
-// Get the resume data
-const resumeDataPath = path.resolve(__dirname, '../data/input', inputFile);
-console.log(`Full path to resume data: ${resumeDataPath}`);
-
-// Verify the file exists
+// Verify the resume file exists
 if (!fs.existsSync(resumeDataPath)) {
   console.error(`Error: Resume file not found at ${resumeDataPath}`);
   process.exit(1);
@@ -42,15 +76,36 @@ try {
   process.exit(1);
 }
 
-// Set up output file paths
-const outputDocxPath = path.join(__dirname, '../data/output', `${inputBaseName}.docx`);
-const resumeDocxPath = path.join(__dirname, '../data/output', `${inputBaseName}-resume.docx`);
-const coverLetterDocxPath = path.join(__dirname, '../data/output', `${inputBaseName}-cover-letter.docx`);
-const combinedDocxPath = path.join(__dirname, '../data/output', `${inputBaseName}-combined.docx`);
+// Set up output file paths based on structure type
+let outputDocxPath, resumeDocxPath, coverLetterDocxPath, combinedDocxPath;
+
+if (isApplicationFolder) {
+  // HR-friendly naming for application folders
+  outputDocxPath = path.join(outputBasePath, `Jon-Amar-Resume-${companyName}.docx`);
+  resumeDocxPath = path.join(outputBasePath, `Jon-Amar-Resume-${companyName}.docx`);
+  coverLetterDocxPath = path.join(outputBasePath, `Jon-Amar-Cover-Letter-${companyName}.docx`);
+  combinedDocxPath = path.join(outputBasePath, `Jon-Amar-Cover-Letter-and-Resume-${companyName}.docx`);
+} else {
+  // Legacy naming for old structure
+  outputDocxPath = path.join(outputBasePath, `${inputBaseName}.docx`);
+  resumeDocxPath = path.join(outputBasePath, `${inputBaseName}-resume.docx`);
+  coverLetterDocxPath = path.join(outputBasePath, `${inputBaseName}-cover-letter.docx`);
+  combinedDocxPath = path.join(outputBasePath, `${inputBaseName}-cover-letter-and-resume.docx`);
+}
 
 // Check for corresponding markdown file
-const markdownFilePath = findMarkdownFile(resumeDataPath);
 const hasMarkdownFile = markdownFilePath && fs.existsSync(markdownFilePath);
+
+/**
+ * Extracts company name from folder name (e.g., "relay-director-of-product" -> "Relay")
+ * @param {string} folderName - The application folder name
+ * @returns {string} - Formatted company name
+ */
+function extractCompanyFromFolderName(folderName) {
+  // Take the first part before the first hyphen and capitalize it
+  const companyPart = folderName.split('-')[0];
+  return companyPart.charAt(0).toUpperCase() + companyPart.slice(1);
+}
 
 // Determine what to generate based on flags and file availability
 let generateResume = false;
@@ -139,29 +194,29 @@ if ((generateCoverLetter || generateCombinedDoc) && !hasMarkdownFile) {
     
     // Generate combined document if requested
     if (generateCombinedDoc) {
-      console.log(`\n📄 Processing combined document: ${resumeDataPath} + ${markdownFilePath}`);
-      console.log(`📑 Will generate combined DOCX: ${combinedDocxPath}\n`);
+      console.log(`\n📄 Processing cover letter + resume document: ${resumeDataPath} + ${markdownFilePath}`);
+      console.log(`📑 Will generate cover letter + resume DOCX: ${combinedDocxPath}\n`);
       
       // Parse markdown cover letter
       console.log('Parsing markdown cover letter...');
       const coverLetterData = parseMarkdownCoverLetter(markdownFilePath, resumeDataPath);
       
       // Generate combined DOCX document
-      console.log('Generating combined DOCX document (cover letter + resume)...');
+      console.log('Generating cover letter + resume DOCX document...');
       const combinedDoc = createCombinedDocx(coverLetterData, resumeData);
       
       // Use Packer to get the buffer
-      console.log('Saving combined DOCX file...');
+      console.log('Saving cover letter + resume DOCX file...');
       const combinedBuffer = await Packer.toBuffer(combinedDoc);
       
       // Post-process the DOCX file to remove compatibility mode and empty sections
-      console.log('Optimizing combined DOCX for ATS compatibility...');
+      console.log('Optimizing cover letter + resume DOCX for ATS compatibility...');
       const optimizedCombinedBuffer = await removeCompatibilityMode(combinedBuffer);
       
       // Save the optimized DOCX
       fs.writeFileSync(combinedDocxPath, optimizedCombinedBuffer);
       
-      console.log(`✅ Combined DOCX generated and saved to: ${combinedDocxPath}`);
+      console.log(`✅ Cover letter + resume DOCX generated and saved to: ${combinedDocxPath}`);
       generatedFiles.push(combinedDocxPath);
     }
     
