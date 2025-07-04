@@ -83,6 +83,7 @@ This structure allows you to:
 - Professional submissions to HR departments
 - Managing multiple applications simultaneously
 - Long-term organization and tracking
+- Maximum flexibility (default generates all formats so you can grab what you need)
 
 ### Legacy File Structure (Still Supported)
 
@@ -140,20 +141,20 @@ For new applications, use the application folder structure for better organizati
 # Create a new application from template
 cp -r data/applications/template data/applications/company-role-name
 
-# Generate resume only
+# Generate all three formats (DEFAULT - when both resume and cover letter content are available)
 node generate-resume.js company-role-name
 # Output: data/applications/company-role-name/outputs/Jon-Amar-Resume-Company.docx
+#         data/applications/company-role-name/outputs/Jon-Amar-Cover-Letter-Company.docx
+#         data/applications/company-role-name/outputs/Jon-Amar-Cover-Letter-and-Resume-Company.docx
 
-# Generate cover letter only
+# Generate specific formats only
 node generate-resume.js company-role-name --cover-letter
 # Output: data/applications/company-role-name/outputs/Jon-Amar-Cover-Letter-Company.docx
 
-# Generate both resume and cover letter
 node generate-resume.js company-role-name --both
 # Output: data/applications/company-role-name/outputs/Jon-Amar-Resume-Company.docx
 #         data/applications/company-role-name/outputs/Jon-Amar-Cover-Letter-Company.docx
 
-# Generate combined document (cover letter + resume in single file)
 node generate-resume.js company-role-name --cover-letter-and-resume
 # Output: data/applications/company-role-name/outputs/Jon-Amar-Cover-Letter-and-Resume-Company.docx
 
@@ -199,14 +200,16 @@ cp -r data/applications/template data/applications/relay-director-of-product
 # - data/applications/relay-director-of-product/inputs/resume.json
 # - data/applications/relay-director-of-product/inputs/cover-letter.md
 
-# Generate both documents
-node generate-resume.js relay-director-of-product --both
+# Generate all three formats (DEFAULT behavior)
+node generate-resume.js relay-director-of-product
 # Output: data/applications/relay-director-of-product/outputs/Jon-Amar-Resume-Relay.docx
 #         data/applications/relay-director-of-product/outputs/Jon-Amar-Cover-Letter-Relay.docx
+#         data/applications/relay-director-of-product/outputs/Jon-Amar-Cover-Letter-and-Resume-Relay.docx
 
-# Generate combined document for submission
-node generate-resume.js relay-director-of-product --cover-letter-and-resume
-# Output: data/applications/relay-director-of-product/outputs/Jon-Amar-Cover-Letter-and-Resume-Relay.docx
+# Now you have all three formats ready for any submission scenario!
+# - Use Jon-Amar-Resume-Relay.docx for resume-only applications
+# - Use Jon-Amar-Cover-Letter-Relay.docx for cover letter-only requests
+# - Use Jon-Amar-Cover-Letter-and-Resume-Relay.docx for complete application packages
 ```
 
 #### Legacy Structure Examples
