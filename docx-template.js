@@ -98,7 +98,7 @@ function createResumeDocx(resumeData, options = {}) {
           },
           paragraph: {
             spacing: {
-              after: 240, // 12pt
+              after: theme.spacingTwips.afterHeader, // 12pt
             },
             indent: {
               left: 0 // No indentation
@@ -140,7 +140,7 @@ function createHeader(basics) {
       style: "applicantName",
       alignment: AlignmentType.LEFT,
       spacing: {
-        after: 240, // 12pt
+        after: theme.spacingTwips.afterHeader, // 12pt
       },
       thematicBreak: false
     })
@@ -189,7 +189,7 @@ function createHeader(basics) {
         })
       ],
       spacing: {
-        after: 100 // 5pt
+        after: theme.spacingTwips.afterContact // 5pt
       }
     })
   );
@@ -240,7 +240,7 @@ function createHeader(basics) {
       new Paragraph({
         children: profileChildren,
         spacing: {
-          after: 240 // 12pt
+          after: theme.spacingTwips.afterHeader // 12pt
         }
       })
     );
@@ -273,7 +273,7 @@ function createSummary(basics) {
         color: theme.colors.text
       }),
       spacing: {
-        after: 80 // 4pt
+        after: theme.spacingTwips.afterSummary // 4pt
       }
     })
   );
@@ -310,7 +310,7 @@ function createExperience(work) {
             })
           ],
           spacing: {
-            after: 60 // 3pt
+            after: theme.spacingTwips.afterJobTitle // 3pt
           },
           keepNext: true // Keep with next paragraph (company name)
         })
@@ -330,7 +330,7 @@ function createExperience(work) {
           })
         ],
         spacing: {
-          after: 60 // 3pt
+          after: theme.spacingTwips.afterCompanyName // 3pt
         },
         keepNext: true // Keep with next paragraph (date/location)
       })
@@ -355,7 +355,7 @@ function createExperience(work) {
           })
         ],
         spacing: {
-          after: 80 // 4pt
+          after: theme.spacingTwips.afterDate // 4pt
         },
         keepNext: hasMoreContent // Keep with summary/highlights if they exist
       })
@@ -369,12 +369,12 @@ function createExperience(work) {
             size: theme.fontSize.body * 2, // Convert to half-points
             font: theme.fonts.primary,
             color: theme.colors.text
-          }),
-          spacing: {
-            after: 80 // 4pt
-          },
-          keepLines: true, // Keep summary lines together
-          keepNext: job.highlights && job.highlights.length > 0 // Keep with highlights if they exist
+                  }),
+        spacing: {
+          after: theme.spacingTwips.afterSummary // 4pt
+        },
+        keepLines: true, // Keep summary lines together
+        keepNext: job.highlights && job.highlights.length > 0 // Keep with highlights if they exist
         })
       );
     }
