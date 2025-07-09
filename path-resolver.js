@@ -115,7 +115,16 @@ function hasMarkdownFile(markdownFilePath) {
  */
 function loadResumeData(resumeDataPath) {
   try {
-    const resumeData = require(resumeDataPath);
+    // Clear require cache to prevent cross-application contamination
+    delete require.cache[require.resolve(resumeDataPath)];
+    
+    // Log the file being loaded for debugging
+    console.log(`🔍 Loading resume data from: ${resumeDataPath}`);
+    
+    // Use fs.readFileSync instead of require() to avoid caching issues
+    const resumeDataRaw = fs.readFileSync(resumeDataPath, 'utf8');
+    const resumeData = JSON.parse(resumeDataRaw);
+    
     return {
       isValid: true,
       data: resumeData

@@ -88,6 +88,7 @@ async function generateResumeDocument(resumeData, outputPath) {
   const optimizedResumeBuffer = await removeCompatibilityMode(resumeBuffer);
   
   // Save the optimized DOCX
+  console.log(`💾 Writing resume file: ${outputPath}`);
   fs.writeFileSync(outputPath, optimizedResumeBuffer);
   
   console.log(`${theme.messages.emojis.success} ${theme.messages.success.resumeGenerated.replace('{path}', outputPath)}`);
@@ -122,6 +123,7 @@ async function generateCoverLetterDocument(markdownFilePath, resumeDataPath, out
   const optimizedCoverLetterBuffer = await removeCompatibilityMode(coverLetterBuffer);
   
   // Save the optimized DOCX
+  console.log(`💾 Writing cover letter file: ${outputPath}`);
   fs.writeFileSync(outputPath, optimizedCoverLetterBuffer);
   
   console.log(`${theme.messages.emojis.success} ${theme.messages.success.coverLetterGenerated.replace('{path}', outputPath)}`);
@@ -157,6 +159,7 @@ async function generateCombinedDocument(markdownFilePath, resumeDataPath, resume
   const optimizedCombinedBuffer = await removeCompatibilityMode(combinedBuffer);
   
   // Save the optimized DOCX
+  console.log(`💾 Writing combined file: ${outputPath}`);
   fs.writeFileSync(outputPath, optimizedCombinedBuffer);
   
   console.log(`${theme.messages.emojis.success} ${theme.messages.success.combinedGenerated.replace('{path}', outputPath)}`);
