@@ -17,15 +17,15 @@ import numpy as np
 
 # Role weight constants
 ROLE_WEIGHTS = {
-    'core': 1.0,
+    'core': 1.2,
     'important': 0.6,
     'culture': 0.3
 }
 
 # Scoring weights
-TFIDF_WEIGHT = 0.6
+TFIDF_WEIGHT = 0.4
 SECTION_WEIGHT = 0.25
-ROLE_WEIGHT = 0.15
+ROLE_WEIGHT = 0.35
 
 # Buzzword dampening (30-term generic PM buzzwords)
 BUZZWORDS = {
@@ -70,8 +70,8 @@ Examples:
     parser.add_argument('job_file', help='Path to job posting file (markdown or text)')
     parser.add_argument('--drop-buzz', action='store_true', 
                        help='Drop buzzwords entirely instead of penalizing (default: penalize)')
-    parser.add_argument('--cluster-thresh', type=float, default=0.25,
-                       help='Clustering threshold for alias detection (default: 0.25)')
+    parser.add_argument('--cluster-thresh', type=float, default=0.35,
+                       help='Clustering threshold for alias detection (default: 0.35)')
     parser.add_argument('--top', type=int, default=5,
                        help='Number of top keywords to output (default: 5)')
     parser.add_argument('--out', type=str, default='top5.json',
@@ -147,6 +147,10 @@ def calculate_section_boost(job_text, keyword):
                 if re.search(pattern, line, re.IGNORECASE):
                     boost_score = max(boost_score, SECTION_BOOSTS[section_name])
                     break
+    
+    # Additional boost for requirement keywords (containing 'years' or 'experience')
+    if 'years' in keyword.lower() or 'experience' in keyword.lower():
+        boost_score = max(boost_score, 0.9)  # Strong boost for requirement keywords
     
     return boost_score
 
