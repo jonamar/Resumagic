@@ -126,6 +126,66 @@ This structure allows you to:
 
 - Node.js installed on your system
 - Required NPM packages installed (run `npm install` to install them)
+- Python 3.11+ and virtual environment for keyword ranking tool
+- Python dependencies: `pip install -r requirements.txt`
+
+## Keyword Priority Ranking Tool
+
+Resumagic includes a Python-based keyword ranking tool that analyzes job postings and ranks keywords by importance using TF-IDF, section boost, and role weights.
+
+### Setup
+
+```bash
+# Create and activate virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
+```
+
+### Usage
+
+#### Basic Usage
+```bash
+python kw_rank.py keywords.json job_posting.md
+```
+
+#### Enhanced Top-N Selection
+```bash
+python kw_rank.py keywords.json job_posting.md --top 5 --out top5.json
+```
+
+#### Available Options
+- `--drop-buzz`: Drop buzzwords entirely instead of penalizing (default: penalize)
+- `--cluster-thresh 0.25`: Clustering threshold for alias detection (default: 0.25)
+- `--top 5`: Number of top keywords to output (default: 5)
+- `--out top5.json`: Output filename for top keywords (default: top5.json)
+
+#### Output Files
+- `kw_rank.json`: Original full ranking (legacy compatibility)
+- `kw_rank_post.json`: Full ranking after buzzword dampening and alias clustering
+- `top5.json`: Clean top-N shortlist with canonical keywords and aliases
+
+### Enhanced Features
+
+#### 1. Buzzword Dampening
+Generic PM buzzwords are automatically detected and penalized (0.7x score) or dropped entirely:
+- vision, strategy, roadmap, delivery, execution, discovery, innovation
+- data-driven, metrics, scalable, alignment, stakeholders, collaboration
+- agile, prioritization, user-centric, outcomes, cross-functional, etc.
+
+#### 2. Alias Clustering
+Similar keywords are clustered using semantic embeddings (SentenceTransformer):
+- "leading Product Managers" clusters with "managing Product Managers"
+- "home services industry" clusters with "home service businesses"
+- "b2b" clusters with "b2b2c"
+
+#### 3. Median-Based Trimming
+Keywords below 1.2x median score are filtered out, ensuring only high-signal terms remain.
+
+#### 4. Top-N Selection
+Clean shortlist of the highest-scoring canonical keywords with their aliases.
 
 ### Updating Your Resume
 

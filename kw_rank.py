@@ -10,7 +10,10 @@ import re
 import os
 from pathlib import Path
 from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.cluster import AgglomerativeClustering
+from sentence_transformers import SentenceTransformer
 import argparse
+import numpy as np
 
 # Role weight constants
 ROLE_WEIGHTS = {
@@ -23,6 +26,18 @@ ROLE_WEIGHTS = {
 TFIDF_WEIGHT = 0.6
 SECTION_WEIGHT = 0.25
 ROLE_WEIGHT = 0.15
+
+# Buzzword dampening (30-term generic PM buzzwords)
+BUZZWORDS = {
+    'vision', 'strategy', 'strategic', 'roadmap', 'delivery', 'execution', 
+    'discovery', 'innovation', 'data-driven', 'metrics', 'kpis', 'scalable', 
+    'alignment', 'ownership', 'stakeholders', 'go-to-market', 'collaboration', 
+    'agile', 'sprint', 'backlog', 'prioritization', 'user-centric', 
+    'customer-centric', 'outcomes', 'best practices', 'cross-functional', 
+    'communication', 'leadership', 'fast-paced', 'results-oriented', 
+    'growth hacking', 'roi', 'north star', 'market research', 'ecosystem'
+}
+BUZZWORD_PENALTY = 0.7
 
 # Section boost patterns
 SECTION_PATTERNS = {
@@ -53,6 +68,14 @@ Examples:
     )
     parser.add_argument('keywords_file', help='Path to keywords JSON file')
     parser.add_argument('job_file', help='Path to job posting file (markdown or text)')
+    parser.add_argument('--drop-buzz', action='store_true', 
+                       help='Drop buzzwords entirely instead of penalizing (default: penalize)')
+    parser.add_argument('--cluster-thresh', type=float, default=0.25,
+                       help='Clustering threshold for alias detection (default: 0.25)')
+    parser.add_argument('--top', type=int, default=5,
+                       help='Number of top keywords to output (default: 5)')
+    parser.add_argument('--out', type=str, default='top5.json',
+                       help='Output filename for top keywords (default: top5.json)')
     
     return parser.parse_args()
 
@@ -127,7 +150,83 @@ def calculate_section_boost(job_text, keyword):
     
     return boost_score
 
-def rank_keywords(keywords, job_text):
+def is_buzzword(keyword_text):
+    """Check if a keyword matches any buzzword (case-insensitive)."""
+    keyword_lower = keyword_text.lower().strip()
+    return keyword_lower in BUZZWORDS
+
+def cluster_aliases(ranked_keywords, cluster_threshold=0.25):
+    """
+    Cluster similar keywords using semantic embeddings.
+    Returns canonical keywords with their aliases.
+    """
+    if len(ranked_keywords) <= 1:
+        return ranked_keywords
+    
+    # Load SentenceTransformer model
+    model = SentenceTransformer('all-MiniLM-L6-v2')
+    
+    # Extract keyword texts and compute embeddings
+    keyword_texts = [kw['kw'] for kw in ranked_keywords]
+    embeddings = model.encode(keyword_texts, normalize_embeddings=True)
+    
+    # Run hierarchical clustering
+    clustering = AgglomerativeClustering(
+        distance_threshold=cluster_threshold,
+        n_clusters=None,
+        linkage='average',
+        metric='cosine'
+    )
+    
+    cluster_labels = clustering.fit_predict(embeddings)
+    
+    # Group keywords by cluster
+    clusters = {}
+    for i, label in enumerate(cluster_labels):
+        if label not in clusters:
+            clusters[label] = []
+        clusters[label].append(ranked_keywords[i])
+    
+    # For each cluster, keep highest scoring keyword as canonical
+    canonical_keywords = []
+    for cluster_id, cluster_keywords in clusters.items():
+        # Sort by score (descending) and take the highest
+        cluster_keywords.sort(key=lambda x: x['score'], reverse=True)
+        canonical = cluster_keywords[0].copy()
+        
+        # Add aliases (all other keywords in the cluster)
+        aliases = [kw['kw'] for kw in cluster_keywords[1:]]
+        canonical['aliases'] = aliases
+        
+        canonical_keywords.append(canonical)
+    
+    return canonical_keywords
+
+def trim_by_median(canonical_keywords, median_multiplier=1.2, min_keywords=10):
+    """
+    Trim keywords based on median score threshold.
+    Keep keywords with score > median_multiplier * median.
+    Ensure at least min_keywords survive.
+    """
+    if len(canonical_keywords) <= min_keywords:
+        return canonical_keywords
+    
+    scores = [kw['score'] for kw in canonical_keywords]
+    median_score = np.median(scores)
+    threshold = median_multiplier * median_score
+    
+    # Keep keywords above threshold
+    filtered_keywords = [kw for kw in canonical_keywords if kw['score'] > threshold]
+    
+    # Ensure we have at least min_keywords
+    if len(filtered_keywords) < min_keywords:
+        # Sort by score and take top min_keywords
+        sorted_keywords = sorted(canonical_keywords, key=lambda x: x['score'], reverse=True)
+        filtered_keywords = sorted_keywords[:min_keywords]
+    
+    return filtered_keywords
+
+def rank_keywords(keywords, job_text, drop_buzz=False):
     """Rank keywords using TF-IDF, section boost, and role weights."""
     
     # Prepare keyword list for TF-IDF (convert to lowercase to avoid warning)
@@ -185,12 +284,21 @@ def rank_keywords(keywords, job_text):
             ROLE_WEIGHT * role_score
         )
         
+        # Apply buzzword dampening
+        is_buzz = is_buzzword(kw_text)
+        if is_buzz:
+            if drop_buzz:
+                continue  # Skip buzzwords entirely
+            else:
+                final_score *= BUZZWORD_PENALTY  # Apply penalty
+        
         results.append({
             'kw': kw_text,
             'tfidf': round(float(tfidf_score), 3),
             'section': round(float(section_score), 3),
             'role': round(float(role_score), 3),
-            'score': round(final_score, 3)
+            'score': round(final_score, 3),
+            'is_buzzword': is_buzz
         })
     
     # Sort by final score (descending)
@@ -232,12 +340,46 @@ def main():
     job_text = load_job_posting(args.job_file)
     
     print(f"⚙️ Processing {len(keywords)} keywords...")
-    results = rank_keywords(keywords, job_text)
+    results = rank_keywords(keywords, job_text, args.drop_buzz)
+    
+    if args.drop_buzz:
+        print(f"🚫 Buzzword filtering: dropped buzzwords entirely")
+    else:
+        print(f"📉 Buzzword dampening: applied {BUZZWORD_PENALTY}x penalty to buzzwords")
+    
+    print(f"🔗 Clustering aliases (threshold: {args.cluster_thresh})...")
+    canonical_keywords = cluster_aliases(results, args.cluster_thresh)
+    
+    print(f"✂️ Trimming by median score...")
+    trimmed_keywords = trim_by_median(canonical_keywords)
+    
+    print(f"🏆 Selecting top {args.top} keywords...")
+    top_keywords = sorted(trimmed_keywords, key=lambda x: x['score'], reverse=True)[:args.top]
     
     print(f"💾 Saving results...")
-    output_file = save_results(results, args.keywords_file)
     
-    print(f"\n✨ Complete! Run time: <2s")
+    # Save full results (post-processing)
+    output_dir = Path(args.keywords_file).parent
+    full_output_file = output_dir / "kw_rank_post.json"
+    with open(full_output_file, 'w') as f:
+        json.dump(canonical_keywords, f, indent=2)
+    
+    # Save top results
+    top_output_file = output_dir / args.out
+    with open(top_output_file, 'w') as f:
+        json.dump(top_keywords, f, indent=2)
+    
+    print(f"✅ Full ranking saved to: {full_output_file}")
+    print(f"✅ Top {args.top} keywords saved to: {top_output_file}")
+    print(f"📊 Processed {len(results)} → {len(canonical_keywords)} canonical → {len(top_keywords)} top")
+    
+    # Show top results
+    print(f"\n🏆 Top {len(top_keywords)} ranked keywords:")
+    for i, result in enumerate(top_keywords, 1):
+        aliases_str = f" (aliases: {', '.join(result['aliases'])})" if result.get('aliases') else ""
+        print(f"  {i}. {result['kw']} (score: {result['score']}){aliases_str}")
+    
+    print(f"\n✨ Complete! Run time: <3s")
 
 if __name__ == '__main__':
     main() 
