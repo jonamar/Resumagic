@@ -127,37 +127,154 @@ def load_job_posting(job_file):
         print(f"Error loading job posting: {e}")
         sys.exit(1)
 
+def detect_section_type(line):
+    """Detect what type of section a line represents."""
+    line_lower = line.strip().lower()
+    
+    # Requirements section patterns
+    requirements_patterns = [
+        r'what you bring',
+        r'what you.ll need',
+        r'what we.re looking for',
+        r'requirements',
+        r'qualifications',
+        r'must have',
+        r'experience',
+        r'skills'
+    ]
+    
+    # Responsibilities section patterns  
+    responsibilities_patterns = [
+        r'what you.ll do',
+        r'what you.ll be doing',
+        r'responsibilities',
+        r'role',
+        r'opportunity',
+        r'day to day'
+    ]
+    
+    # Company section patterns
+    company_patterns = [
+        r'about',
+        r'why join',
+        r'benefits',
+        r'culture',
+        r'perks',
+        r'our mission'
+    ]
+    
+    for pattern in requirements_patterns:
+        if re.search(pattern, line_lower):
+            return 'requirements'
+    
+    for pattern in responsibilities_patterns:
+        if re.search(pattern, line_lower):
+            return 'responsibilities'
+            
+    for pattern in company_patterns:
+        if re.search(pattern, line_lower):
+            return 'company'
+    
+    return None
+
+def check_title_section(job_text, keyword):
+    """Check if keyword appears in job title (first 150 words)."""
+    first_150_words = ' '.join(job_text.split()[:150])
+    if keyword.lower() in first_150_words.lower():
+        return SECTION_BOOSTS['title']
+    return 0.0
+
 def calculate_section_boost(job_text, keyword):
     """Calculate section boost score for a keyword based on where it appears."""
     boost_score = 0.0
     
-    # Split job text into lines for section analysis
+    # Check title section first
+    boost_score = max(boost_score, check_title_section(job_text, keyword))
+    
+    # Analyze each line for section context
     lines = job_text.split('\n')
+    current_section = 'company'  # Default section
     
-    # Check title (first 150 words)
-    first_150_words = ' '.join(job_text.split()[:150])
-    if keyword.lower() in first_150_words:
-        boost_score = max(boost_score, SECTION_BOOSTS['title'])
-    
-    # Check each line against section patterns
     for line in lines:
-        line = line.strip().lower()
-        if keyword.lower() in line:
-            for section_name, pattern in SECTION_PATTERNS.items():
-                if re.search(pattern, line, re.IGNORECASE):
-                    boost_score = max(boost_score, SECTION_BOOSTS[section_name])
-                    break
+        line = line.strip()
+        if not line:
+            continue
+            
+        # Check if this line is a section header
+        detected_section = detect_section_type(line)
+        if detected_section:
+            current_section = detected_section
+        
+        # Check if keyword appears in this line
+        if keyword.lower() in line.lower():
+            section_boost = SECTION_BOOSTS.get(current_section, 0.0)
+            boost_score = max(boost_score, section_boost)
     
     # Additional boost for requirement keywords (containing 'years' or 'experience')
     if 'years' in keyword.lower() or 'experience' in keyword.lower():
-        boost_score = max(boost_score, 0.9)  # Strong boost for requirement keywords
+        boost_score = max(boost_score, 0.9)
     
     return boost_score
+
+def extract_job_title(job_text):
+    """Extract job title from posting header."""
+    lines = job_text.split('\n')[:10]  # Check first 10 lines
+    
+    title_patterns = [
+        r'(director|vp|vice president|head of|lead|manager|senior|principal)\s+.*?(product|engineering|growth)',
+        r'(product|engineering|growth)\s+.*?(director|vp|vice president|head of|lead|manager)'
+    ]
+    
+    for line in lines:
+        line = line.strip()
+        if not line:
+            continue
+            
+        for pattern in title_patterns:
+            match = re.search(pattern, line.lower())
+            if match:
+                return match.group(0).strip()
+    
+    return None
+
+def is_job_title_keyword(keyword_text, job_title):
+    """Check if keyword matches extracted job title."""
+    if not job_title:
+        return False
+    
+    # Simple substring matching
+    keyword_lower = keyword_text.lower().strip()
+    job_title_lower = job_title.lower().strip()
+    
+    return keyword_lower in job_title_lower or job_title_lower in keyword_lower
 
 def is_buzzword(keyword_text):
     """Check if a keyword matches any buzzword (case-insensitive)."""
     keyword_lower = keyword_text.lower().strip()
     return keyword_lower in BUZZWORDS
+
+def is_experience_keyword(keyword_text):
+    """Check if keyword contains experience/years requirements."""
+    experience_patterns = [
+        r'\d+\+?\s*years?\s+in\s+',
+        r'\d+\+?\s*years?\s+of\s+',
+        r'\d+\+?\s*years?\s+experience',
+        r'\d+\+?\s*years?\s+leading',
+        r'\d+\+?\s*years?\s+managing'
+    ]
+    
+    keyword_lower = keyword_text.lower()
+    return any(re.search(pattern, keyword_lower) for pattern in experience_patterns)
+
+def select_canonical_keyword(cluster_keywords):
+    """Select the canonical keyword from a cluster, prioritizing experience keywords."""
+    # Sort by experience priority first, then by score
+    def priority_key(kw):
+        is_exp = is_experience_keyword(kw['kw'])
+        return (is_exp, kw['score'])
+    
+    cluster_keywords.sort(key=priority_key, reverse=True)
+    return cluster_keywords[0]
 
 def cluster_aliases(ranked_keywords, cluster_threshold=0.25):
     """
@@ -191,15 +308,13 @@ def cluster_aliases(ranked_keywords, cluster_threshold=0.25):
             clusters[label] = []
         clusters[label].append(ranked_keywords[i])
     
-    # For each cluster, keep highest scoring keyword as canonical
+    # For each cluster, select canonical keyword with experience priority
     canonical_keywords = []
-    for cluster_id, cluster_keywords in clusters.items():
-        # Sort by score (descending) and take the highest
-        cluster_keywords.sort(key=lambda x: x['score'], reverse=True)
-        canonical = cluster_keywords[0].copy()
+    for cluster_keywords in clusters.values():
+        canonical = select_canonical_keyword(cluster_keywords).copy()
         
         # Add aliases (all other keywords in the cluster)
-        aliases = [kw['kw'] for kw in cluster_keywords[1:]]
+        aliases = [kw['kw'] for kw in cluster_keywords if kw['kw'] != canonical['kw']]
         canonical['aliases'] = aliases
         
         canonical_keywords.append(canonical)
@@ -229,6 +344,23 @@ def trim_by_median(canonical_keywords, median_multiplier=1.2, min_keywords=10):
         filtered_keywords = sorted_keywords[:min_keywords]
     
     return filtered_keywords
+
+def apply_enhancements(base_score, keyword_text, job_text, keyword_metadata=None):
+    """Single enhancement point for all future improvements."""
+    enhanced_score = base_score
+    
+    # MVP: Job title boost
+    job_title = extract_job_title(job_text)
+    if job_title and is_job_title_keyword(keyword_text, job_title):
+        enhanced_score *= 1.2
+    
+    # Future enhancements will be added here
+    # - Executive vocabulary boost
+    # - Compound keyword prioritization  
+    # - Technical sophistication scoring
+    # - Context-aware requirement analysis
+    
+    return enhanced_score
 
 def rank_keywords(keywords, job_text, drop_buzz=False):
     """Rank keywords using TF-IDF, section boost, and role weights."""
@@ -281,12 +413,15 @@ def rank_keywords(keywords, job_text, drop_buzz=False):
         # Get role weight
         role_score = ROLE_WEIGHTS.get(role, 0.3)
         
-        # Calculate final score
-        final_score = (
+        # Calculate base score
+        base_score = (
             TFIDF_WEIGHT * tfidf_score +
             SECTION_WEIGHT * section_score +
             ROLE_WEIGHT * role_score
         )
+        
+        # Apply enhancements
+        enhanced_score = apply_enhancements(base_score, kw_text, job_text)
         
         # Apply buzzword dampening
         is_buzz = is_buzzword(kw_text)
@@ -294,7 +429,9 @@ def rank_keywords(keywords, job_text, drop_buzz=False):
             if drop_buzz:
                 continue  # Skip buzzwords entirely
             else:
-                final_score *= BUZZWORD_PENALTY  # Apply penalty
+                enhanced_score *= BUZZWORD_PENALTY  # Apply penalty
+        
+        final_score = enhanced_score
         
         results.append({
             'kw': kw_text,
