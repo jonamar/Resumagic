@@ -55,6 +55,37 @@ SECTION_BOOSTS = {
     'company': 0.3
 }
 
+# Executive-level vocabulary and buzzword filtering
+EXECUTIVE_VOCABULARY = {
+    # Authentic executive terms
+    'p&l', 'p&l responsibility', 'revenue ownership', 'business outcomes', 
+    'portfolio management', 'cross-functional leadership', 'organizational design',
+    'board reporting', 'investor relations', 'market expansion', 'acquisition integration',
+    'team scaling', 'hiring plans', 'culture building', 'succession planning',
+    'executive presence', 'strategic partnerships', 'competitive positioning',
+    'go-to-market execution', 'budget ownership', 'headcount planning',
+    'performance management', 'talent development', 'executive coaching',
+    
+    # Role-specific executive terms
+    'vp of product', 'director of product', 'head of product', 'chief product officer',
+    'product portfolio', 'platform strategy', 'product vision', 'product leadership',
+    'executive team', 'leadership team', 'senior leadership', 'c-suite'
+}
+
+EXECUTIVE_BUZZWORDS = {
+    # Overused executive buzzwords that should be penalized
+    'thought leadership', 'best-in-class', 'world-class', 'cutting-edge', 'bleeding-edge',
+    'paradigm shift', 'game-changer', 'disruptive', 'revolutionary', 'transformational',
+    'synergies', 'low-hanging fruit', 'move the needle', 'boil the ocean', 'circle back',
+    'touch base', 'drill down', 'deep dive', 'take offline', 'leverage synergies',
+    'actionable insights', 'holistic approach', 'end-to-end solution', 'turn-key',
+    'enterprise-grade', 'mission-critical', 'scalable solution', 'robust framework',
+    'seamless integration', 'optimize efficiency', 'maximize roi', 'drive value'
+}
+
+EXECUTIVE_VOCAB_BOOST = 1.15  # Boost authentic executive vocabulary
+EXECUTIVE_BUZZWORD_PENALTY = 0.8  # Penalize executive buzzwords
+
 def parse_arguments():
     """Parse command line arguments."""
     parser = argparse.ArgumentParser(
@@ -372,6 +403,24 @@ def calculate_compound_boost(keyword_text):
     
     return 1.0
 
+def is_executive_vocabulary(keyword_text):
+    """Check if keyword represents authentic executive vocabulary."""
+    keyword_lower = keyword_text.lower().strip()
+    return keyword_lower in EXECUTIVE_VOCABULARY
+
+def is_executive_buzzword(keyword_text):
+    """Check if keyword is an overused executive buzzword."""
+    keyword_lower = keyword_text.lower().strip()
+    return keyword_lower in EXECUTIVE_BUZZWORDS
+
+def calculate_executive_adjustment(keyword_text):
+    """Calculate executive vocabulary adjustment factor."""
+    if is_executive_vocabulary(keyword_text):
+        return EXECUTIVE_VOCAB_BOOST
+    elif is_executive_buzzword(keyword_text):
+        return EXECUTIVE_BUZZWORD_PENALTY
+    return 1.0
+
 def apply_enhancements(base_score, keyword_text, job_text, keyword_metadata=None):
     """Single enhancement point for all future improvements."""
     enhanced_score = base_score
@@ -385,8 +434,11 @@ def apply_enhancements(base_score, keyword_text, job_text, keyword_metadata=None
     compound_multiplier = calculate_compound_boost(keyword_text)
     enhanced_score *= compound_multiplier
     
+    # Enhancement 2: Executive-aware buzzword filtering
+    executive_adjustment = calculate_executive_adjustment(keyword_text)
+    enhanced_score *= executive_adjustment
+    
     # Future enhancements will be added here
-    # - Executive vocabulary boost
     # - Technical sophistication scoring
     # - Context-aware requirement analysis
     
