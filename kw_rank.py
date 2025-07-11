@@ -135,6 +135,7 @@ def detect_section_type(line):
     requirements_patterns = [
         r'what you bring',
         r'what you.ll need',
+        r'what you.ll need',
         r'what we.re looking for',
         r'requirements',
         r'qualifications',
