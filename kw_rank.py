@@ -346,6 +346,32 @@ def trim_by_median(canonical_keywords, median_multiplier=1.2, min_keywords=10):
     
     return filtered_keywords
 
+def calculate_compound_boost(keyword_text):
+    """Boost compound keywords over solo terms."""
+    words = keyword_text.split()
+    word_count = len(words)
+    
+    # Base compound boost
+    if word_count == 1:
+        return 1.0  # No boost for solo terms
+    elif word_count == 2:
+        return 1.3  # "product strategy", "B2B SaaS"
+    elif word_count >= 3:
+        return 1.5  # "7+ years in product management"
+    
+    # Executive-specific compounds get additional boost
+    exec_compounds = {
+        'product strategy', 'go-to-market', 'product-market fit',
+        'revenue expansion', 'customer-driven growth', 'vertical saas',
+        'b2b saas', 'high-growth phases', 'portfolio management',
+        'stakeholder alignment', 'cross-functional leadership'
+    }
+    
+    if keyword_text.lower() in exec_compounds:
+        return 1.6  # Strong boost for executive compounds
+    
+    return 1.0
+
 def apply_enhancements(base_score, keyword_text, job_text, keyword_metadata=None):
     """Single enhancement point for all future improvements."""
     enhanced_score = base_score
@@ -355,9 +381,12 @@ def apply_enhancements(base_score, keyword_text, job_text, keyword_metadata=None
     if job_title and is_job_title_keyword(keyword_text, job_title):
         enhanced_score *= 1.2
     
+    # Enhancement 1: Compound keyword prioritization
+    compound_multiplier = calculate_compound_boost(keyword_text)
+    enhanced_score *= compound_multiplier
+    
     # Future enhancements will be added here
     # - Executive vocabulary boost
-    # - Compound keyword prioritization  
     # - Technical sophistication scoring
     # - Context-aware requirement analysis
     
