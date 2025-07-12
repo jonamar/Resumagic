@@ -86,86 +86,73 @@ EXECUTIVE_BUZZWORDS = {
 EXECUTIVE_VOCAB_BOOST = 1.15  # Boost authentic executive vocabulary
 EXECUTIVE_BUZZWORD_PENALTY = 0.8  # Penalize executive buzzwords
 
-def categorize_keyword(keyword, score, tfidf_score, role_weight):
-    """
-    Intelligently categorize a scored keyword as knockout requirement or skill.
+# Knockout categorization patterns
+HARD_KNOCKOUT_PATTERNS = [
+    # Specific years of experience (must be specific number)
+    r'\d+\+?\s*years?\s*(of\s+)?(experience|leadership|management)',
+    r'\d+\+?\s*years?\s*in\s+(product\s+management|leadership|management)',
+    r'\d+\+?\s*years?\s*(in\s+)?(a\s+)?(senior|leadership|management)',
     
-    Args:
-        keyword (str): The keyword text
-        score (float): The final composite score
-        tfidf_score (float): The TF-IDF component score
-        role_weight (float): The role weight used in scoring
-        
-    Returns:
-        str: 'knockout' or 'skill'
-    """
-    kw_lower = keyword.lower()
+    # Education degrees (actual degree requirements)
+    r'bachelor\'?s?\s*degree',
+    r'master\'?s?\s*degree',
+    r'\bmba\b',
+    r'\bphd\b',
+    r'\b(bs|ms|ba|ma)\s+(degree|in)',
+    r'degree\s+in\s+\w+',  # "degree in Business"
     
-    # Hard knockout patterns - specific, measurable requirements
-    hard_knockout_patterns = [
-        # Specific years of experience (must be specific number)
-        r'\d+\+?\s*years?\s*(of\s+)?(experience|leadership|management)',
-        r'\d+\+?\s*years?\s*in\s+(product\s+management|leadership|management)',
-        r'\d+\+?\s*years?\s*(in\s+)?(a\s+)?(senior|leadership|management)',
-        
-        # Education degrees (actual degree requirements)
-        r'bachelor\'?s?\s*degree',
-        r'master\'?s?\s*degree',
-        r'\bmba\b',
-        r'\bphd\b',
-        r'\b(bs|ms|ba|ma)\s+(degree|in)',
-        r'degree\s+in\s+\w+',  # "degree in Business"
-        
-        # Specific job title requirements when mentioned as requirements
-        r'(director|vp|vice\s+president|chief)\s+(of\s+)?(product|marketing)',
-    ]
+    # Specific job title requirements when mentioned as requirements
+    r'(director|vp|vice\s+president|chief)\s+(of\s+)?(product|marketing)',
+]
+
+MEDIUM_KNOCKOUT_PATTERNS = [
+    # Required/preferred language with education
+    r'(required|preferred|must\s+have).*\b(degree|education|bachelor|master|mba)',
+    r'\b(degree|bachelor|master|mba).*(required|preferred)',
     
-    # Medium knockout patterns - less specific but still requirements
-    medium_knockout_patterns = [
-        # Required/preferred language with education
-        r'(required|preferred|must\s+have).*\b(degree|education|bachelor|master|mba)',
-        r'\b(degree|bachelor|master|mba).*(required|preferred)',
-        
-        # Leadership experience requirements  
-        r'leadership\s+experience.*\d+\+?\s*years?',
-        r'\d+\+?\s*years?.*leadership\s+experience',
-    ]
+    # Leadership experience requirements  
+    r'leadership\s+experience.*\d+\+?\s*years?',
+    r'\d+\+?\s*years?.*leadership\s+experience',
+]
+
+SOFT_SKILL_EXCLUSIONS = [
+    r'leadership\s+style',
+    r'communication\s+skills',
+    r'strategic\s+thinking',
+    r'problem\s+solving',
+    r'team\s+player',
+    r'passion',
+    r'enthusiasm',
+    r'mindset',
+    r'empathy',
+    r'collaborative',
+    r'innovative',
+    r'customer-obsessed',
+    r'results-oriented',
+    r'data-driven',
+    r'fast-paced'
+]
+
+def is_soft_skill(keyword_lower):
+    """Check if keyword is a soft skill that should not be a knockout."""
+    return any(re.search(pattern, keyword_lower) for pattern in SOFT_SKILL_EXCLUSIONS)
+
+def count_pattern_matches(keyword_lower, patterns):
+    """Count how many patterns match the keyword."""
+    return sum(1 for pattern in patterns if re.search(pattern, keyword_lower))
+
+def calculate_knockout_confidence(keyword_lower, role_weight):
+    """Calculate confidence score for knockout classification."""
+    knockout_confidence = 0
     
-    # Soft skill patterns that should NOT be knockouts
-    soft_skill_exclusions = [
-        r'leadership\s+style',
-        r'communication\s+skills',
-        r'strategic\s+thinking',
-        r'problem\s+solving',
-        r'team\s+player',
-        r'passion',
-        r'enthusiasm',
-        r'mindset',
-        r'empathy',
-        r'collaborative',
-        r'innovative',
-        r'customer-obsessed',
-        r'results-oriented',
-        r'data-driven',
-        r'fast-paced'
-    ]
-    
-    # Check if this is a soft skill that should not be a knockout
-    is_soft_skill = any(re.search(pattern, kw_lower) for pattern in soft_skill_exclusions)
-    if is_soft_skill:
-        return 'skill'
-    
-    # Check for hard knockout patterns
-    hard_matches = sum(1 for pattern in hard_knockout_patterns if re.search(pattern, kw_lower))
-    medium_matches = sum(1 for pattern in medium_knockout_patterns if re.search(pattern, kw_lower))
+    # Check pattern matches
+    hard_matches = count_pattern_matches(keyword_lower, HARD_KNOCKOUT_PATTERNS)
+    medium_matches = count_pattern_matches(keyword_lower, MEDIUM_KNOCKOUT_PATTERNS)
     
     # Strong signals for knockout
-    has_years_and_high_role = bool(re.search(r'\d+\+?\s*years?', kw_lower)) and role_weight >= 1.0
-    has_degree_mention = bool(re.search(r'\b(degree|bachelor|master|mba|phd)\b', kw_lower))
-    has_required_language = any(req_word in kw_lower for req_word in ['required', 'must have', 'minimum'])
-    
-    # Knockout decision logic - much more restrictive
-    knockout_confidence = 0
+    has_years_and_high_role = bool(re.search(r'\d+\+?\s*years?', keyword_lower)) and role_weight >= 1.0
+    has_degree_mention = bool(re.search(r'\b(degree|bachelor|master|mba|phd)\b', keyword_lower))
+    has_required_language = any(req_word in keyword_lower for req_word in ['required', 'must have', 'minimum'])
     
     # Hard patterns are strong indicators
     if hard_matches >= 1:
@@ -186,6 +173,30 @@ def categorize_keyword(keyword, score, tfidf_score, role_weight):
     # Required language strengthens the case
     if has_required_language:
         knockout_confidence += 0.2
+    
+    return knockout_confidence
+
+def categorize_keyword(keyword, score, tfidf_score, role_weight):
+    """
+    Intelligently categorize a scored keyword as knockout requirement or skill.
+    
+    Args:
+        keyword (str): The keyword text
+        score (float): The final composite score (unused but kept for API compatibility)
+        tfidf_score (float): The TF-IDF component score (unused but kept for API compatibility)
+        role_weight (float): The role weight used in scoring
+        
+    Returns:
+        str: 'knockout' or 'skill'
+    """
+    kw_lower = keyword.lower()
+    
+    # Check if this is a soft skill that should not be a knockout
+    if is_soft_skill(kw_lower):
+        return 'skill'
+    
+    # Calculate knockout confidence
+    knockout_confidence = calculate_knockout_confidence(kw_lower, role_weight)
     
     # Lower threshold to catch more legitimate knockouts
     if knockout_confidence >= 0.6:
