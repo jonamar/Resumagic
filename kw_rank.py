@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """
-Keyword Priority Ranking Tool
-Ranks job-specific keywords by importance using TF-IDF, section boost, and role weights.
+Intelligent Keyword Analysis Tool
+Ranks job-specific keywords using TF-IDF scoring and intelligently categorizes them into 
+knockout requirements vs. skills for optimal resume targeting.
 """
 
 import sys
 import json
 import re
-import os
 from pathlib import Path
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.cluster import AgglomerativeClustering
@@ -86,6 +86,113 @@ EXECUTIVE_BUZZWORDS = {
 EXECUTIVE_VOCAB_BOOST = 1.15  # Boost authentic executive vocabulary
 EXECUTIVE_BUZZWORD_PENALTY = 0.8  # Penalize executive buzzwords
 
+def categorize_keyword(keyword, score, tfidf_score, role_weight):
+    """
+    Intelligently categorize a scored keyword as knockout requirement or skill.
+    
+    Args:
+        keyword (str): The keyword text
+        score (float): The final composite score
+        tfidf_score (float): The TF-IDF component score
+        role_weight (float): The role weight used in scoring
+        
+    Returns:
+        str: 'knockout' or 'skill'
+    """
+    kw_lower = keyword.lower()
+    
+    # Hard knockout patterns - specific, measurable requirements
+    hard_knockout_patterns = [
+        # Specific years of experience (must be specific number)
+        r'\d+\+?\s*years?\s*(of\s+)?(experience|leadership|management)',
+        r'\d+\+?\s*years?\s*in\s+(product\s+management|leadership|management)',
+        r'\d+\+?\s*years?\s*(in\s+)?(a\s+)?(senior|leadership|management)',
+        
+        # Education degrees (actual degree requirements)
+        r'bachelor\'?s?\s*degree',
+        r'master\'?s?\s*degree',
+        r'\bmba\b',
+        r'\bphd\b',
+        r'\b(bs|ms|ba|ma)\s+(degree|in)',
+        r'degree\s+in\s+\w+',  # "degree in Business"
+        
+        # Specific job title requirements when mentioned as requirements
+        r'(director|vp|vice\s+president|chief)\s+(of\s+)?(product|marketing)',
+    ]
+    
+    # Medium knockout patterns - less specific but still requirements
+    medium_knockout_patterns = [
+        # Required/preferred language with education
+        r'(required|preferred|must\s+have).*\b(degree|education|bachelor|master|mba)',
+        r'\b(degree|bachelor|master|mba).*(required|preferred)',
+        
+        # Leadership experience requirements  
+        r'leadership\s+experience.*\d+\+?\s*years?',
+        r'\d+\+?\s*years?.*leadership\s+experience',
+    ]
+    
+    # Soft skill patterns that should NOT be knockouts
+    soft_skill_exclusions = [
+        r'leadership\s+style',
+        r'communication\s+skills',
+        r'strategic\s+thinking',
+        r'problem\s+solving',
+        r'team\s+player',
+        r'passion',
+        r'enthusiasm',
+        r'mindset',
+        r'empathy',
+        r'collaborative',
+        r'innovative',
+        r'customer-obsessed',
+        r'results-oriented',
+        r'data-driven',
+        r'fast-paced'
+    ]
+    
+    # Check if this is a soft skill that should not be a knockout
+    is_soft_skill = any(re.search(pattern, kw_lower) for pattern in soft_skill_exclusions)
+    if is_soft_skill:
+        return 'skill'
+    
+    # Check for hard knockout patterns
+    hard_matches = sum(1 for pattern in hard_knockout_patterns if re.search(pattern, kw_lower))
+    medium_matches = sum(1 for pattern in medium_knockout_patterns if re.search(pattern, kw_lower))
+    
+    # Strong signals for knockout
+    has_years_and_high_role = bool(re.search(r'\d+\+?\s*years?', kw_lower)) and role_weight >= 1.0
+    has_degree_mention = bool(re.search(r'\b(degree|bachelor|master|mba|phd)\b', kw_lower))
+    has_required_language = any(req_word in kw_lower for req_word in ['required', 'must have', 'minimum'])
+    
+    # Knockout decision logic - much more restrictive
+    knockout_confidence = 0
+    
+    # Hard patterns are strong indicators
+    if hard_matches >= 1:
+        knockout_confidence += 0.6
+    
+    # Medium patterns with supporting evidence
+    if medium_matches >= 1:
+        knockout_confidence += 0.3
+        
+    # Years + high role weight is a good signal
+    if has_years_and_high_role:
+        knockout_confidence += 0.4
+        
+    # Education requirements are typically knockouts
+    if has_degree_mention and role_weight >= 1.0:
+        knockout_confidence += 0.4
+        
+    # Required language strengthens the case
+    if has_required_language:
+        knockout_confidence += 0.2
+    
+    # Lower threshold to catch more legitimate knockouts
+    if knockout_confidence >= 0.6:
+        return 'knockout'
+    else:
+        return 'skill'
+
 def parse_arguments():
     """Parse command line arguments."""
     parser = argparse.ArgumentParser(
@@ -113,18 +220,14 @@ Examples:
     return parser.parse_args()
 
 def load_keywords(keywords_file):
-    """Load keywords from JSON file (supports both legacy and two-tier format)."""
+    """Load keywords from JSON file."""
     try:
         with open(keywords_file, 'r', encoding='utf-8') as f:
             keywords_data = json.load(f)
         
-        # Check if new two-tier format
-        if isinstance(keywords_data, dict) and 'skills_keywords' in keywords_data:
-            print("📊 Loading two-tier keyword format")
-            return keywords_data
+        print(f"📊 Loading {len(keywords_data)} keywords")
         
-        # Legacy format - convert to two-tier
-        print("📊 Converting legacy keyword format")
+        # Convert to standard format
         keywords = []
         for item in keywords_data:
             if isinstance(item, dict) and 'kw' in item and 'role' in item:
@@ -135,8 +238,7 @@ def load_keywords(keywords_file):
             else:
                 print(f"Warning: Skipping invalid keyword entry: {item}")
         
-        # Return as legacy format for backward compatibility
-        return {'skills_keywords': keywords, 'knockout_requirements': []}
+        return keywords
         
     except FileNotFoundError:
         print(f"Error: Keywords file not found: {keywords_file}")
@@ -146,7 +248,7 @@ def load_keywords(keywords_file):
         sys.exit(1)
     except Exception as e:
         print(f"Error loading keywords: {e}")
-        return {'skills_keywords': [], 'knockout_requirements': []}
+        return []
 
 def load_job_posting(job_file):
     """Load and preprocess job posting text."""
@@ -413,93 +515,6 @@ def calculate_compound_boost(keyword_text):
     
     return 1.0
 
-def process_knockouts(knockouts, resume_text, job_text):
-    """Process knockout requirements with simple exact matching."""
-    if not knockouts:
-        return []
-    
-    results = []
-    for knockout in knockouts:
-        # Exact phrase matching in both resume and job posting
-        kw_lower = knockout['kw'].lower()
-        resume_match = kw_lower in resume_text.lower()
-        job_match = kw_lower in job_text.lower()
-        
-        results.append({
-            'requirement': knockout['kw'],
-            'type': knockout['type'],
-            'priority': knockout['priority'],
-            'in_resume': resume_match,
-            'in_job_posting': job_match,
-            'status': 'MATCH' if resume_match and job_match else 'MISSING',
-            'resume_critical': resume_match and knockout['priority'] in ['critical', 'required']
-        })
-    
-    return results
-
-def generate_summary(knockouts, top_skills, top_n=5):
-    """Generate comprehensive summary with knockout status and top skills."""
-    
-    # Analyze knockout status
-    critical_missing = [k for k in knockouts if k['priority'] == 'critical' and k['status'] == 'MISSING']
-    required_missing = [k for k in knockouts if k['priority'] == 'required' and k['status'] == 'MISSING']
-    all_requirements_met = len(critical_missing) == 0 and len(required_missing) == 0
-    
-    # Create summary
-    summary = {
-        'knockout_status': {
-            'total_knockouts': len(knockouts),
-            'critical_missing': [k['requirement'] for k in critical_missing],
-            'required_missing': [k['requirement'] for k in required_missing],
-            'all_requirements_met': all_requirements_met,
-            'recommendation': 'PROCEED' if all_requirements_met else 'REVIEW_REQUIREMENTS'
-        },
-        'top_skills': [
-            {
-                'keyword': skill['kw'],
-                'score': round(skill['score'], 3),
-                'tfidf': round(skill['tfidf'], 3),
-                'in_job_posting': skill['tfidf'] > 0
-            }
-            for skill in top_skills[:top_n]
-        ],
-        'knockouts_detail': knockouts
-    }
-    
-    return summary
-
-def print_summary(summary):
-    """Print formatted summary to console."""
-    
-    print("\n" + "="*60)
-    print("🎯 KNOCKOUT REQUIREMENTS STATUS")
-    print("="*60)
-    
-    knockouts = summary['knockout_status']
-    if knockouts['all_requirements_met']:
-        print("✅ ALL REQUIREMENTS MET")
-    else:
-        if knockouts['critical_missing']:
-            print(f"❌ CRITICAL MISSING ({len(knockouts['critical_missing'])}):")
-            for req in knockouts['critical_missing']:
-                print(f"   • {req}")
-        
-        if knockouts['required_missing']:
-            print(f"⚠️  REQUIRED MISSING ({len(knockouts['required_missing'])}):")
-            for req in knockouts['required_missing']:
-                print(f"   • {req}")
-    
-    print(f"\n📊 Recommendation: {knockouts['recommendation']}")
-    
-    print("\n" + "="*60)
-    print("🏆 TOP SKILLS KEYWORDS")
-    print("="*60)
-    
-    for i, skill in enumerate(summary['top_skills'], 1):
-        status = "✓" if skill['in_job_posting'] else "○"
-        print(f"{i:2}. {status} {skill['keyword']} (score: {skill['score']})")
-    
-    print("\n" + "="*60)
 
 def is_executive_vocabulary(keyword_text):
     """Check if keyword represents authentic executive vocabulary."""
@@ -519,7 +534,90 @@ def calculate_executive_adjustment(keyword_text):
         return EXECUTIVE_BUZZWORD_PENALTY
     return 1.0
 
-def apply_enhancements(base_score, keyword_text, job_text, keyword_metadata=None):
+def calculate_tfidf_scores(keywords, job_text):
+    """Calculate TF-IDF scores for keywords with fallback to frequency count."""
+    keyword_texts = [kw['text'].lower() for kw in keywords]
+    
+    # Create TF-IDF vectorizer with fixed vocabulary
+    vectorizer = TfidfVectorizer(
+        vocabulary=keyword_texts,
+        ngram_range=(1, 3),
+        stop_words='english',
+        lowercase=True
+    )
+    
+    # Fit and transform the job posting
+    try:
+        tfidf_matrix = vectorizer.fit_transform([job_text])
+        feature_names = vectorizer.get_feature_names_out()
+    except Exception as e:
+        print(f"Error in TF-IDF calculation: {e}")
+        # Fallback to simple frequency count
+        tfidf_scores = {}
+        for keyword_obj in keywords:
+            count = job_text.lower().count(keyword_obj['text'].lower())
+            tfidf_scores[keyword_obj['text']] = min(count / 10.0, 1.0)  # Normalize to 0-1
+        return tfidf_scores
+    
+    # Get TF-IDF scores (map back to original keyword text)
+    tfidf_scores = {}
+    for keyword_obj in keywords:
+        keyword_lower = keyword_obj['text'].lower()
+        if keyword_lower in feature_names:
+            feature_idx = list(feature_names).index(keyword_lower)
+            tfidf_scores[keyword_obj['text']] = tfidf_matrix[0, feature_idx]
+        else:
+            tfidf_scores[keyword_obj['text']] = 0.0
+    
+    return tfidf_scores
+
+def score_single_keyword(keyword, tfidf_scores, job_text, drop_buzz=False):
+    """Calculate score for a single keyword with all enhancements."""
+    kw_text = keyword['text']
+    role = keyword['role']
+    
+    # Get TF-IDF score
+    tfidf_score = tfidf_scores.get(kw_text, 0.0)
+    
+    # Calculate section boost
+    section_score = calculate_section_boost(job_text, kw_text)
+    
+    # Get role weight
+    role_score = ROLE_WEIGHTS.get(role, 0.3)
+    
+    # Calculate base score
+    base_score = (
+        TFIDF_WEIGHT * tfidf_score +
+        SECTION_WEIGHT * section_score +
+        ROLE_WEIGHT * role_score
+    )
+    
+    # Apply enhancements
+    enhanced_score = apply_enhancements(base_score, kw_text, job_text)
+    
+    # Apply buzzword dampening
+    is_buzz = is_buzzword(kw_text)
+    if is_buzz and drop_buzz:
+        return None  # Skip buzzwords entirely
+    elif is_buzz:
+        enhanced_score *= BUZZWORD_PENALTY  # Apply penalty
+    
+    final_score = enhanced_score
+    
+    # Categorize keyword using intelligent classification
+    category = categorize_keyword(kw_text, final_score, tfidf_score, role_score)
+    
+    return {
+        'kw': kw_text,
+        'tfidf': round(float(tfidf_score), 3),
+        'section': round(float(section_score), 3),
+        'role': round(float(role_score), 3),
+        'score': round(final_score, 3),
+        'is_buzzword': is_buzz,
+        'category': category
+    }
+
+def apply_enhancements(base_score, keyword_text, job_text):
     """Single enhancement point for all future improvements."""
     enhanced_score = base_score
     
@@ -545,82 +643,15 @@ def apply_enhancements(base_score, keyword_text, job_text, keyword_metadata=None
 def rank_keywords(keywords, job_text, drop_buzz=False):
     """Rank keywords using TF-IDF, section boost, and role weights."""
     
-    # Prepare keyword list for TF-IDF (convert to lowercase to avoid warning)
-    keyword_texts = [kw['text'].lower() for kw in keywords]
+    # Calculate TF-IDF scores for all keywords
+    tfidf_scores = calculate_tfidf_scores(keywords, job_text)
     
-    # Create TF-IDF vectorizer with fixed vocabulary
-    vectorizer = TfidfVectorizer(
-        vocabulary=keyword_texts,
-        ngram_range=(1, 3),
-        stop_words='english',
-        lowercase=True
-    )
-    
-    # Fit and transform the job posting
-    try:
-        tfidf_matrix = vectorizer.fit_transform([job_text])
-        feature_names = vectorizer.get_feature_names_out()
-    except Exception as e:
-        print(f"Error in TF-IDF calculation: {e}")
-        # Fallback to simple frequency count
-        tfidf_scores = {}
-        for keyword_obj in keywords:
-            count = job_text.lower().count(keyword_obj['text'].lower())
-            tfidf_scores[keyword_obj['text']] = min(count / 10.0, 1.0)  # Normalize to 0-1
-    else:
-        # Get TF-IDF scores (map back to original keyword text)
-        tfidf_scores = {}
-        for i, keyword_obj in enumerate(keywords):
-            keyword_lower = keyword_obj['text'].lower()
-            if keyword_lower in feature_names:
-                feature_idx = list(feature_names).index(keyword_lower)
-                tfidf_scores[keyword_obj['text']] = tfidf_matrix[0, feature_idx]
-            else:
-                tfidf_scores[keyword_obj['text']] = 0.0
-    
-    # Calculate final scores
+    # Score each keyword
     results = []
     for keyword in keywords:
-        kw_text = keyword['text']
-        role = keyword['role']
-        
-        # Get TF-IDF score
-        tfidf_score = tfidf_scores.get(kw_text, 0.0)
-        
-        # Calculate section boost
-        section_score = calculate_section_boost(job_text, kw_text)
-        
-        # Get role weight
-        role_score = ROLE_WEIGHTS.get(role, 0.3)
-        
-        # Calculate base score
-        base_score = (
-            TFIDF_WEIGHT * tfidf_score +
-            SECTION_WEIGHT * section_score +
-            ROLE_WEIGHT * role_score
-        )
-        
-        # Apply enhancements
-        enhanced_score = apply_enhancements(base_score, kw_text, job_text)
-        
-        # Apply buzzword dampening
-        is_buzz = is_buzzword(kw_text)
-        if is_buzz:
-            if drop_buzz:
-                continue  # Skip buzzwords entirely
-            else:
-                enhanced_score *= BUZZWORD_PENALTY  # Apply penalty
-        
-        final_score = enhanced_score
-        
-        results.append({
-            'kw': kw_text,
-            'tfidf': round(float(tfidf_score), 3),
-            'section': round(float(section_score), 3),
-            'role': round(float(role_score), 3),
-            'score': round(final_score, 3),
-            'is_buzzword': is_buzz
-        })
+        scored_keyword = score_single_keyword(keyword, tfidf_scores, job_text, drop_buzz)
+        if scored_keyword is not None:  # None means buzzword was dropped
+            results.append(scored_keyword)
     
     # Sort by final score (descending)
     results.sort(key=lambda x: x['score'], reverse=True)
@@ -650,50 +681,55 @@ def save_results(results, keywords_file):
         print(f"Error saving results: {e}")
         sys.exit(1)
 
+def print_dual_summary(knockout_requirements, top_skills):
+    """Print comprehensive dual analysis summary."""
+    print("\n" + "="*60)
+    print("🎯 KNOCKOUT REQUIREMENTS ANALYSIS")
+    print("="*60)
+    
+    if knockout_requirements:
+        print(f"Found {len(knockout_requirements)} critical requirements:")
+        for i, req in enumerate(knockout_requirements, 1):
+            status = "✓" if req['tfidf'] > 0 else "○"
+            confidence = "HIGH" if req['score'] >= 0.8 else "MEDIUM" if req['score'] >= 0.5 else "LOW"
+            print(f"{i:2}. {status} {req['kw']} (score: {req['score']}, confidence: {confidence})")
+    else:
+        print("No knockout requirements identified.")
+    
+    print("\n" + "="*60)
+    print("🏆 TOP SKILLS ANALYSIS")
+    print("="*60)
+    
+    for i, skill in enumerate(top_skills, 1):
+        status = "✓" if skill['tfidf'] > 0 else "○"
+        buzzword_flag = " [BUZZWORD]" if skill.get('is_buzzword', False) else ""
+        print(f"{i:2}. {status} {skill['kw']} (score: {skill['score']}){buzzword_flag}")
+    
+    print("\n" + "="*60)
+
 def main():
     """Main function."""
     args = parse_arguments()
     
     print(f"🔍 Loading keywords from: {args.keywords_file}")
-    keyword_data = load_keywords(args.keywords_file)
+    keywords = load_keywords(args.keywords_file)
     
     print(f"📄 Loading job posting from: {args.job_file}")
     job_text = load_job_posting(args.job_file)
     
-    # Handle two-tier format
-    if 'skills_keywords' in keyword_data:
-        skills_keywords = keyword_data['skills_keywords']
-        knockouts = keyword_data.get('knockout_requirements', [])
-        
-        # Convert skills to legacy format for processing
-        skills_legacy = []
-        for skill in skills_keywords:
-            skills_legacy.append({
-                'text': skill['kw'],
-                'role': skill['role']
-            })
-        
-        print(f"⚙️ Processing {len(skills_legacy)} skills keywords...")
-        print(f"🎯 Processing {len(knockouts)} knockout requirements...")
-        
-        # Process skills with existing algorithm
-        skills_results = rank_keywords(skills_legacy, job_text, args.drop_buzz)
-        
-        # Process knockouts with simple matching
-        resume_text = ""  # TODO: Load resume if needed
-        knockout_results = process_knockouts(knockouts, resume_text, job_text)
-        
-        # Use skills results for main processing
-        results = skills_results
-    else:
-        # Legacy single-tier format
-        print(f"⚙️ Processing {len(keyword_data)} keywords...")
-        results = rank_keywords(keyword_data, job_text, args.drop_buzz)
+    print(f"⚙️ Processing {len(keywords)} keywords...")
+    results = rank_keywords(keywords, job_text, args.drop_buzz)
     
     if args.drop_buzz:
         print(f"🚫 Buzzword filtering: dropped buzzwords entirely")
     else:
         print(f"📉 Buzzword dampening: applied {BUZZWORD_PENALTY}x penalty to buzzwords")
+    
+    # Separate knockout requirements and skills
+    knockouts = [r for r in results if r['category'] == 'knockout']
+    skills = [r for r in results if r['category'] == 'skill']
+    
+    print(f"🎯 Categorized: {len(knockouts)} knockout requirements, {len(skills)} skills")
     
     print(f"🔗 Clustering aliases (threshold: {args.cluster_thresh})...")
     canonical_keywords = cluster_aliases(results, args.cluster_thresh)
@@ -701,34 +737,57 @@ def main():
     print(f"✂️ Trimming by median score...")
     trimmed_keywords = trim_by_median(canonical_keywords)
     
-    print(f"🏆 Selecting top {args.top} keywords...")
-    top_keywords = sorted(trimmed_keywords, key=lambda x: x['score'], reverse=True)[:args.top]
+    print(f"🏆 Selecting top {args.top} skills...")
     
-    # Show summary if requested and two-tier format
-    if args.summary and 'skills_keywords' in keyword_data:
-        summary = generate_summary(knockout_results, top_keywords, args.top)
-        print_summary(summary)
+    # Get top skills (excluding knockouts from regular top N)
+    top_skills = sorted([k for k in trimmed_keywords if k['category'] == 'skill'], 
+                       key=lambda x: x['score'], reverse=True)[:args.top]
+    
+    # Get all knockout requirements sorted by score
+    knockout_requirements = sorted([k for k in trimmed_keywords if k['category'] == 'knockout'], 
+                                  key=lambda x: x['score'], reverse=True)
+    
+    # Show dual output summary
+    if args.summary:
+        print_dual_summary(knockout_requirements, top_skills)
     
     print(f"💾 Saving results...")
     
-    # Save full results (post-processing)
+    # Save results with dual structure
     output_dir = Path(args.keywords_file).parent
+    
+    # Save full results (post-processing) - maintains backward compatibility
     full_output_file = output_dir / "kw_rank_post.json"
     with open(full_output_file, 'w') as f:
         json.dump(canonical_keywords, f, indent=2)
     
-    # Save top results
+    # Save top skills (maintains backward compatibility)
     top_output_file = output_dir / args.out
     with open(top_output_file, 'w') as f:
-        json.dump(top_keywords, f, indent=2)
+        json.dump(top_skills, f, indent=2)
+    
+    # Save new dual output format
+    dual_output = {
+        "knockout_requirements": knockout_requirements,
+        "skills_ranked": top_skills
+    }
+    dual_output_file = output_dir / "keyword_analysis.json"
+    with open(dual_output_file, 'w') as f:
+        json.dump(dual_output, f, indent=2)
     
     print(f"✅ Full ranking saved to: {full_output_file}")
-    print(f"✅ Top {args.top} keywords saved to: {top_output_file}")
-    print(f"📊 Processed {len(results)} → {len(canonical_keywords)} canonical → {len(top_keywords)} top")
+    print(f"✅ Top {args.top} skills saved to: {top_output_file}")
+    print(f"✅ Dual analysis saved to: {dual_output_file}")
+    print(f"📊 Processed {len(results)} → {len(canonical_keywords)} canonical → {len(knockout_requirements)} knockouts + {len(top_skills)} top skills")
     
-    # Show top results
-    print(f"\n🏆 Top {len(top_keywords)} ranked keywords:")
-    for i, result in enumerate(top_keywords, 1):
+    # Show results summary
+    print(f"\n🎯 KNOCKOUT REQUIREMENTS ({len(knockout_requirements)}):")
+    for i, result in enumerate(knockout_requirements, 1):
+        aliases_str = f" (aliases: {', '.join(result['aliases'])})" if result.get('aliases') else ""
+        print(f"  {i}. {result['kw']} (score: {result['score']}){aliases_str}")
+    
+    print(f"\n🏆 TOP {len(top_skills)} SKILLS:")
+    for i, result in enumerate(top_skills, 1):
         aliases_str = f" (aliases: {', '.join(result['aliases'])})" if result.get('aliases') else ""
         print(f"  {i}. {result['kw']} (score: {result['score']}){aliases_str}")
     

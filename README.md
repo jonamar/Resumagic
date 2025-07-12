@@ -129,9 +129,9 @@ This structure allows you to:
 - Python 3.11+ and virtual environment for keyword ranking tool
 - Python dependencies: `pip install -r requirements.txt`
 
-## Keyword Priority Ranking Tool
+## Intelligent Keyword Analysis Tool
 
-Resumagic includes a Python-based keyword ranking tool that analyzes job postings and ranks keywords by importance using TF-IDF, section boost, and role weights.
+Resumagic includes a Python-based keyword analysis tool that analyzes job postings, ranks keywords by importance using TF-IDF scoring, and intelligently categorizes them into knockout requirements vs. skills for optimal resume targeting.
 
 ### Setup
 
@@ -161,11 +161,12 @@ python kw_rank.py keywords.json job_posting.md --top 5 --out top5.json
 - `--cluster-thresh 0.25`: Clustering threshold for alias detection (default: 0.25)
 - `--top 5`: Number of top keywords to output (default: 5)
 - `--out top5.json`: Output filename for top keywords (default: top5.json)
+- `--summary`: Show dual analysis with knockout requirements and top skills breakdown
 
 #### Output Files
-- `kw_rank.json`: Original full ranking (legacy compatibility)
-- `kw_rank_post.json`: Full ranking after buzzword dampening and alias clustering
-- `top5.json`: Clean top-N shortlist with canonical keywords and aliases
+- `kw_rank_post.json`: Full ranking with intelligent categorization and processing
+- `top5.json`: Top skills shortlist (excludes knockout requirements)
+- `keyword_analysis.json`: Structured dual output with knockout requirements and ranked skills
 
 ### Enhanced Features
 
