@@ -22,10 +22,10 @@ ROLE_WEIGHTS = {
     'culture': 0.3
 }
 
-# Scoring weights
-TFIDF_WEIGHT = 0.4
-SECTION_WEIGHT = 0.25
-ROLE_WEIGHT = 0.35
+# Scoring weights (Adjusted for ATS optimization)
+TFIDF_WEIGHT = 0.55  # Increased: prioritize keywords that actually appear in posting
+SECTION_WEIGHT = 0.25  # Unchanged: section placement still matters
+ROLE_WEIGHT = 0.2  # Decreased: prevent role weight from overriding TF-IDF
 
 # Buzzword dampening (30-term generic PM buzzwords)
 BUZZWORDS = {
@@ -107,16 +107,24 @@ Examples:
                        help='Number of top keywords to output (default: 5)')
     parser.add_argument('--out', type=str, default='top5.json',
                        help='Output filename for top keywords (default: top5.json)')
+    parser.add_argument('--summary', action='store_true',
+                       help='Show knockout status and top skills summary')
     
     return parser.parse_args()
 
 def load_keywords(keywords_file):
-    """Load keywords from JSON file."""
+    """Load keywords from JSON file (supports both legacy and two-tier format)."""
     try:
         with open(keywords_file, 'r', encoding='utf-8') as f:
             keywords_data = json.load(f)
         
-        # Convert to list of keyword objects with role and text
+        # Check if new two-tier format
+        if isinstance(keywords_data, dict) and 'skills_keywords' in keywords_data:
+            print("📊 Loading two-tier keyword format")
+            return keywords_data
+        
+        # Legacy format - convert to two-tier
+        print("📊 Converting legacy keyword format")
         keywords = []
         for item in keywords_data:
             if isinstance(item, dict) and 'kw' in item and 'role' in item:
@@ -127,7 +135,9 @@ def load_keywords(keywords_file):
             else:
                 print(f"Warning: Skipping invalid keyword entry: {item}")
         
-        return keywords
+        # Return as legacy format for backward compatibility
+        return {'skills_keywords': keywords, 'knockout_requirements': []}
+        
     except FileNotFoundError:
         print(f"Error: Keywords file not found: {keywords_file}")
         sys.exit(1)
@@ -136,7 +146,7 @@ def load_keywords(keywords_file):
         sys.exit(1)
     except Exception as e:
         print(f"Error loading keywords: {e}")
-        sys.exit(1)
+        return {'skills_keywords': [], 'knockout_requirements': []}
 
 def load_job_posting(job_file):
     """Load and preprocess job posting text."""
@@ -403,6 +413,94 @@ def calculate_compound_boost(keyword_text):
     
     return 1.0
 
+def process_knockouts(knockouts, resume_text, job_text):
+    """Process knockout requirements with simple exact matching."""
+    if not knockouts:
+        return []
+    
+    results = []
+    for knockout in knockouts:
+        # Exact phrase matching in both resume and job posting
+        kw_lower = knockout['kw'].lower()
+        resume_match = kw_lower in resume_text.lower()
+        job_match = kw_lower in job_text.lower()
+        
+        results.append({
+            'requirement': knockout['kw'],
+            'type': knockout['type'],
+            'priority': knockout['priority'],
+            'in_resume': resume_match,
+            'in_job_posting': job_match,
+            'status': 'MATCH' if resume_match and job_match else 'MISSING',
+            'resume_critical': resume_match and knockout['priority'] in ['critical', 'required']
+        })
+    
+    return results
+
+def generate_summary(knockouts, top_skills, top_n=5):
+    """Generate comprehensive summary with knockout status and top skills."""
+    
+    # Analyze knockout status
+    critical_missing = [k for k in knockouts if k['priority'] == 'critical' and k['status'] == 'MISSING']
+    required_missing = [k for k in knockouts if k['priority'] == 'required' and k['status'] == 'MISSING']
+    all_requirements_met = len(critical_missing) == 0 and len(required_missing) == 0
+    
+    # Create summary
+    summary = {
+        'knockout_status': {
+            'total_knockouts': len(knockouts),
+            'critical_missing': [k['requirement'] for k in critical_missing],
+            'required_missing': [k['requirement'] for k in required_missing],
+            'all_requirements_met': all_requirements_met,
+            'recommendation': 'PROCEED' if all_requirements_met else 'REVIEW_REQUIREMENTS'
+        },
+        'top_skills': [
+            {
+                'keyword': skill['kw'],
+                'score': round(skill['score'], 3),
+                'tfidf': round(skill['tfidf'], 3),
+                'in_job_posting': skill['tfidf'] > 0
+            }
+            for skill in top_skills[:top_n]
+        ],
+        'knockouts_detail': knockouts
+    }
+    
+    return summary
+
+def print_summary(summary):
+    """Print formatted summary to console."""
+    
+    print("\n" + "="*60)
+    print("🎯 KNOCKOUT REQUIREMENTS STATUS")
+    print("="*60)
+    
+    knockouts = summary['knockout_status']
+    if knockouts['all_requirements_met']:
+        print("✅ ALL REQUIREMENTS MET")
+    else:
+        if knockouts['critical_missing']:
+            print(f"❌ CRITICAL MISSING ({len(knockouts['critical_missing'])}):")
+            for req in knockouts['critical_missing']:
+                print(f"   • {req}")
+        
+        if knockouts['required_missing']:
+            print(f"⚠️  REQUIRED MISSING ({len(knockouts['required_missing'])}):")
+            for req in knockouts['required_missing']:
+                print(f"   • {req}")
+    
+    print(f"\n📊 Recommendation: {knockouts['recommendation']}")
+    
+    print("\n" + "="*60)
+    print("🏆 TOP SKILLS KEYWORDS")
+    print("="*60)
+    
+    for i, skill in enumerate(summary['top_skills'], 1):
+        status = "✓" if skill['in_job_posting'] else "○"
+        print(f"{i:2}. {status} {skill['keyword']} (score: {skill['score']})")
+    
+    print("\n" + "="*60)
+
 def is_executive_vocabulary(keyword_text):
     """Check if keyword represents authentic executive vocabulary."""
     keyword_lower = keyword_text.lower().strip()
@@ -557,13 +655,40 @@ def main():
     args = parse_arguments()
     
     print(f"🔍 Loading keywords from: {args.keywords_file}")
-    keywords = load_keywords(args.keywords_file)
+    keyword_data = load_keywords(args.keywords_file)
     
     print(f"📄 Loading job posting from: {args.job_file}")
     job_text = load_job_posting(args.job_file)
     
-    print(f"⚙️ Processing {len(keywords)} keywords...")
-    results = rank_keywords(keywords, job_text, args.drop_buzz)
+    # Handle two-tier format
+    if 'skills_keywords' in keyword_data:
+        skills_keywords = keyword_data['skills_keywords']
+        knockouts = keyword_data.get('knockout_requirements', [])
+        
+        # Convert skills to legacy format for processing
+        skills_legacy = []
+        for skill in skills_keywords:
+            skills_legacy.append({
+                'text': skill['kw'],
+                'role': skill['role']
+            })
+        
+        print(f"⚙️ Processing {len(skills_legacy)} skills keywords...")
+        print(f"🎯 Processing {len(knockouts)} knockout requirements...")
+        
+        # Process skills with existing algorithm
+        skills_results = rank_keywords(skills_legacy, job_text, args.drop_buzz)
+        
+        # Process knockouts with simple matching
+        resume_text = ""  # TODO: Load resume if needed
+        knockout_results = process_knockouts(knockouts, resume_text, job_text)
+        
+        # Use skills results for main processing
+        results = skills_results
+    else:
+        # Legacy single-tier format
+        print(f"⚙️ Processing {len(keyword_data)} keywords...")
+        results = rank_keywords(keyword_data, job_text, args.drop_buzz)
     
     if args.drop_buzz:
         print(f"🚫 Buzzword filtering: dropped buzzwords entirely")
@@ -578,6 +703,11 @@ def main():
     
     print(f"🏆 Selecting top {args.top} keywords...")
     top_keywords = sorted(trimmed_keywords, key=lambda x: x['score'], reverse=True)[:args.top]
+    
+    # Show summary if requested and two-tier format
+    if args.summary and 'skills_keywords' in keyword_data:
+        summary = generate_summary(knockout_results, top_keywords, args.top)
+        print_summary(summary)
     
     print(f"💾 Saving results...")
     
