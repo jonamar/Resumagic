@@ -681,6 +681,45 @@ def save_results(results, keywords_file):
         print(f"Error saving results: {e}")
         sys.exit(1)
 
+def save_output_files(knockout_requirements, top_skills, canonical_keywords, args):
+    """Save all output files with proper structure."""
+    output_dir = Path(args.keywords_file).parent
+    
+    # Save full results (post-processing) - maintains backward compatibility
+    full_output_file = output_dir / "kw_rank_post.json"
+    with open(full_output_file, 'w') as f:
+        json.dump(canonical_keywords, f, indent=2)
+    
+    # Save top skills (maintains backward compatibility)
+    top_output_file = output_dir / args.out
+    with open(top_output_file, 'w') as f:
+        json.dump(top_skills, f, indent=2)
+    
+    # Save new dual output format
+    dual_output = {
+        "knockout_requirements": knockout_requirements,
+        "skills_ranked": top_skills
+    }
+    dual_output_file = output_dir / "keyword_analysis.json"
+    with open(dual_output_file, 'w') as f:
+        json.dump(dual_output, f, indent=2)
+    
+    return full_output_file, top_output_file, dual_output_file
+
+def print_results_summary(knockout_requirements, top_skills):
+    """Print final results summary."""
+    print(f"\n🎯 KNOCKOUT REQUIREMENTS ({len(knockout_requirements)}):")
+    for i, result in enumerate(knockout_requirements, 1):
+        aliases_str = f" (aliases: {', '.join(result['aliases'])})" if result.get('aliases') else ""
+        print(f"  {i}. {result['kw']} (score: {result['score']}){aliases_str}")
+    
+    print(f"\n🏆 TOP {len(top_skills)} SKILLS:")
+    for i, result in enumerate(top_skills, 1):
+        aliases_str = f" (aliases: {', '.join(result['aliases'])})" if result.get('aliases') else ""
+        print(f"  {i}. {result['kw']} (score: {result['score']}){aliases_str}")
+    
+    print(f"\n✨ Complete! Run time: <3s")
+
 def print_dual_summary(knockout_requirements, top_skills):
     """Print comprehensive dual analysis summary."""
     print("\n" + "="*60)
@@ -711,12 +750,14 @@ def main():
     """Main function."""
     args = parse_arguments()
     
+    # Load input data
     print(f"🔍 Loading keywords from: {args.keywords_file}")
     keywords = load_keywords(args.keywords_file)
     
     print(f"📄 Loading job posting from: {args.job_file}")
     job_text = load_job_posting(args.job_file)
     
+    # Process keywords
     print(f"⚙️ Processing {len(keywords)} keywords...")
     results = rank_keywords(keywords, job_text, args.drop_buzz)
     
@@ -731,6 +772,7 @@ def main():
     
     print(f"🎯 Categorized: {len(knockouts)} knockout requirements, {len(skills)} skills")
     
+    # Post-process results
     print(f"🔗 Clustering aliases (threshold: {args.cluster_thresh})...")
     canonical_keywords = cluster_aliases(results, args.cluster_thresh)
     
@@ -747,51 +789,22 @@ def main():
     knockout_requirements = sorted([k for k in trimmed_keywords if k['category'] == 'knockout'], 
                                   key=lambda x: x['score'], reverse=True)
     
-    # Show dual output summary
+    # Show optional dual output summary
     if args.summary:
         print_dual_summary(knockout_requirements, top_skills)
     
+    # Save all output files
     print(f"💾 Saving results...")
-    
-    # Save results with dual structure
-    output_dir = Path(args.keywords_file).parent
-    
-    # Save full results (post-processing) - maintains backward compatibility
-    full_output_file = output_dir / "kw_rank_post.json"
-    with open(full_output_file, 'w') as f:
-        json.dump(canonical_keywords, f, indent=2)
-    
-    # Save top skills (maintains backward compatibility)
-    top_output_file = output_dir / args.out
-    with open(top_output_file, 'w') as f:
-        json.dump(top_skills, f, indent=2)
-    
-    # Save new dual output format
-    dual_output = {
-        "knockout_requirements": knockout_requirements,
-        "skills_ranked": top_skills
-    }
-    dual_output_file = output_dir / "keyword_analysis.json"
-    with open(dual_output_file, 'w') as f:
-        json.dump(dual_output, f, indent=2)
+    full_output_file, top_output_file, dual_output_file = save_output_files(
+        knockout_requirements, top_skills, canonical_keywords, args)
     
     print(f"✅ Full ranking saved to: {full_output_file}")
     print(f"✅ Top {args.top} skills saved to: {top_output_file}")
     print(f"✅ Dual analysis saved to: {dual_output_file}")
     print(f"📊 Processed {len(results)} → {len(canonical_keywords)} canonical → {len(knockout_requirements)} knockouts + {len(top_skills)} top skills")
     
-    # Show results summary
-    print(f"\n🎯 KNOCKOUT REQUIREMENTS ({len(knockout_requirements)}):")
-    for i, result in enumerate(knockout_requirements, 1):
-        aliases_str = f" (aliases: {', '.join(result['aliases'])})" if result.get('aliases') else ""
-        print(f"  {i}. {result['kw']} (score: {result['score']}){aliases_str}")
-    
-    print(f"\n🏆 TOP {len(top_skills)} SKILLS:")
-    for i, result in enumerate(top_skills, 1):
-        aliases_str = f" (aliases: {', '.join(result['aliases'])})" if result.get('aliases') else ""
-        print(f"  {i}. {result['kw']} (score: {result['score']}){aliases_str}")
-    
-    print(f"\n✨ Complete! Run time: <3s")
+    # Show final results summary
+    print_results_summary(knockout_requirements, top_skills)
 
 if __name__ == '__main__':
     main() 
