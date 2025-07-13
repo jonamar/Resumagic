@@ -153,20 +153,18 @@ python kw_rank.py keywords.json job_posting.md
 
 #### Enhanced Top-N Selection
 ```bash
-python kw_rank.py keywords.json job_posting.md --top 5 --out top5.json
+python kw_rank.py keywords.json job_posting.md --top 5
 ```
 
 #### Available Options
 - `--drop-buzz`: Drop buzzwords entirely instead of penalizing (default: penalize)
 - `--cluster-thresh 0.25`: Clustering threshold for alias detection (default: 0.25)
 - `--top 5`: Number of top keywords to output (default: 5)
-- `--out top5.json`: Output filename for top keywords (default: top5.json)
 - `--summary`: Show dual analysis with knockout requirements and top skills breakdown
 
 #### Output Files
-- `kw_rank_post.json`: Full ranking with intelligent categorization and processing
-- `top5.json`: Top skills shortlist (excludes knockout requirements)
-- `keyword_analysis.json`: Structured dual output with knockout requirements and ranked skills
+- `keyword_analysis.json`: Canonical keyword data with knockout requirements, ranked skills, scoring, and aliases
+- `keyword-checklist.md`: Manual checklist for keyword injection during resume optimization
 
 ### Enhanced Features
 

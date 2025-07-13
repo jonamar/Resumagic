@@ -223,8 +223,6 @@ Examples:
                        help='Clustering threshold for alias detection (default: 0.35)')
     parser.add_argument('--top', type=int, default=5,
                        help='Number of top keywords to output (default: 5)')
-    parser.add_argument('--out', type=str, default='top5.json',
-                       help='Output filename for top keywords (default: top5.json)')
     parser.add_argument('--summary', action='store_true',
                        help='Show knockout status and top skills summary')
     
@@ -669,31 +667,9 @@ def rank_keywords(keywords, job_text, drop_buzz=False):
     
     return results
 
-def save_results(results, keywords_file):
-    """Save results to kw_rank.json in same directory as keywords file."""
-    keywords_dir = Path(keywords_file).parent
-    output_file = keywords_dir / 'kw_rank.json'
-    
-    try:
-        with open(output_file, 'w', encoding='utf-8') as f:
-            json.dump(results, f, indent=2)
-        
-        print(f"✅ Keyword ranking saved to: {output_file}")
-        print(f"📊 Processed {len(results)} keywords")
-        
-        # Show top 5 results for quick validation
-        print("\n🏆 Top 5 ranked keywords:")
-        for i, result in enumerate(results[:5], 1):
-            print(f"  {i}. {result['kw']} (score: {result['score']})")
-        
-        return str(output_file)
-        
-    except Exception as e:
-        print(f"Error saving results: {e}")
-        sys.exit(1)
 
 def save_output_files(knockout_requirements, top_skills, canonical_keywords, args):
-    """Save all output files in working directory for manual resume optimization."""
+    """Save canonical keyword analysis and checklist files."""
     # Get the working directory (assumes keywords.json is in inputs/)
     inputs_dir = Path(args.keywords_file).parent
     working_dir = inputs_dir.parent / "working"
@@ -701,26 +677,74 @@ def save_output_files(knockout_requirements, top_skills, canonical_keywords, arg
     # Ensure working directory exists
     working_dir.mkdir(exist_ok=True)
     
-    # Save full results (post-processing) - maintains backward compatibility
-    full_output_file = working_dir / "kw_rank_post.json"
-    with open(full_output_file, 'w') as f:
-        json.dump(canonical_keywords, f, indent=2)
-    
-    # Save top skills (maintains backward compatibility)
-    top_output_file = working_dir / args.out
-    with open(top_output_file, 'w') as f:
-        json.dump(top_skills, f, indent=2)
-    
-    # Save new dual output format
-    dual_output = {
+    # Save single canonical keyword analysis with all data
+    canonical_output = {
         "knockout_requirements": knockout_requirements,
-        "skills_ranked": top_skills
+        "skills_ranked": top_skills,
+        "metadata": {
+            "total_keywords_processed": len(canonical_keywords),
+            "knockout_count": len(knockout_requirements),
+            "skills_count": len(top_skills),
+            "generated_at": None  # Could add timestamp if needed
+        }
     }
-    dual_output_file = working_dir / "keyword_analysis.json"
-    with open(dual_output_file, 'w') as f:
-        json.dump(dual_output, f, indent=2)
     
-    return full_output_file, top_output_file, dual_output_file
+    analysis_file = working_dir / "keyword_analysis.json"
+    with open(analysis_file, 'w') as f:
+        json.dump(canonical_output, f, indent=2)
+    
+    # Generate keyword checklist markdown
+    checklist_content = generate_keyword_checklist(knockout_requirements, top_skills)
+    checklist_file = working_dir / "keyword-checklist.md"
+    with open(checklist_file, 'w') as f:
+        f.write(checklist_content)
+    
+    return analysis_file, checklist_file
+
+def generate_keyword_checklist(knockout_requirements, top_skills):
+    """Generate markdown checklist for manual keyword injection."""
+    content = []
+    content.append("# Keyword Injection Checklist")
+    content.append("")
+    content.append("Use this checklist during resume optimization to ensure critical keywords are included.")
+    content.append("")
+    
+    # Knockout Requirements Section
+    content.append("## 🎯 Knockout Requirements")
+    content.append("*These are critical qualifications that must be addressed in your resume.*")
+    content.append("")
+    
+    if knockout_requirements:
+        for i, req in enumerate(knockout_requirements, 1):
+            aliases_text = f" (aliases: {', '.join(req['aliases'])})" if req.get('aliases') else ""
+            content.append(f"- [ ] **{req['kw']}** (score: {req['score']}){aliases_text}")
+    else:
+        content.append("- No knockout requirements identified")
+    
+    content.append("")
+    
+    # Top Skills Section
+    content.append(f"## 🏆 Top {len(top_skills)} Skills")
+    content.append("*These are the highest-priority skills to emphasize in your resume.*")
+    content.append("")
+    
+    for i, skill in enumerate(top_skills, 1):
+        aliases_text = f" (aliases: {', '.join(skill['aliases'])})" if skill.get('aliases') else ""
+        buzzword_flag = " ⚠️ *buzzword*" if skill.get('is_buzzword', False) else ""
+        content.append(f"- [ ] **{skill['kw']}** (score: {skill['score']}){aliases_text}{buzzword_flag}")
+    
+    content.append("")
+    content.append("## 📝 Usage Notes")
+    content.append("")
+    content.append("- **Knockout Requirements**: Ensure these appear prominently in your experience section")
+    content.append("- **Skills**: Work these naturally into job descriptions and achievements")
+    content.append("- **Aliases**: Use variety - don't repeat the same keyword phrase")
+    content.append("- **Buzzwords**: Use sparingly and in context, not as standalone terms")
+    content.append("")
+    content.append("---")
+    content.append("*Generated by keyword analysis pipeline*")
+    
+    return "\n".join(content)
 
 def print_results_summary(knockout_requirements, top_skills):
     """Print final results summary."""
@@ -809,14 +833,13 @@ def main():
     if args.summary:
         print_dual_summary(knockout_requirements, top_skills)
     
-    # Save all output files
+    # Save output files
     print(f"💾 Saving results...")
-    full_output_file, top_output_file, dual_output_file = save_output_files(
+    analysis_file, checklist_file = save_output_files(
         knockout_requirements, top_skills, canonical_keywords, args)
     
-    print(f"✅ Full ranking saved to: {full_output_file}")
-    print(f"✅ Top {args.top} skills saved to: {top_output_file}")
-    print(f"✅ Dual analysis saved to: {dual_output_file}")
+    print(f"✅ Keyword analysis saved to: {analysis_file}")
+    print(f"✅ Checklist created at: {checklist_file}")
     print(f"📊 Processed {len(results)} → {len(canonical_keywords)} canonical → {len(knockout_requirements)} knockouts + {len(top_skills)} top skills")
     
     # Show final results summary
