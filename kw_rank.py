@@ -693,16 +693,21 @@ def save_results(results, keywords_file):
         sys.exit(1)
 
 def save_output_files(knockout_requirements, top_skills, canonical_keywords, args):
-    """Save all output files with proper structure."""
-    output_dir = Path(args.keywords_file).parent
+    """Save all output files in working directory for manual resume optimization."""
+    # Get the working directory (assumes keywords.json is in inputs/)
+    inputs_dir = Path(args.keywords_file).parent
+    working_dir = inputs_dir.parent / "working"
+    
+    # Ensure working directory exists
+    working_dir.mkdir(exist_ok=True)
     
     # Save full results (post-processing) - maintains backward compatibility
-    full_output_file = output_dir / "kw_rank_post.json"
+    full_output_file = working_dir / "kw_rank_post.json"
     with open(full_output_file, 'w') as f:
         json.dump(canonical_keywords, f, indent=2)
     
     # Save top skills (maintains backward compatibility)
-    top_output_file = output_dir / args.out
+    top_output_file = working_dir / args.out
     with open(top_output_file, 'w') as f:
         json.dump(top_skills, f, indent=2)
     
@@ -711,7 +716,7 @@ def save_output_files(knockout_requirements, top_skills, canonical_keywords, arg
         "knockout_requirements": knockout_requirements,
         "skills_ranked": top_skills
     }
-    dual_output_file = output_dir / "keyword_analysis.json"
+    dual_output_file = working_dir / "keyword_analysis.json"
     with open(dual_output_file, 'w') as f:
         json.dump(dual_output, f, indent=2)
     
