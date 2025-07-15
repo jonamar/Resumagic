@@ -890,25 +890,42 @@ def find_injection_points(resume_json, keywords):
     
     # Encode all content
     content_texts = [item['text'] for item in content]
-    content_embeddings = model.encode(content_texts, normalize_embeddings=True)
+    
+    # Filter out empty content
+    valid_content = [(i, content[i]) for i, text in enumerate(content_texts) if text.strip()]
+    if not valid_content:
+        print("Warning: No valid content found for matching")
+        return keywords
+    
+    valid_texts = [content[i]['text'] for i, _ in valid_content]
+    content_embeddings = model.encode(valid_texts, normalize_embeddings=True)
     
     # Process each keyword
     for keyword in keywords:
         kw_text = keyword['kw']
         
+        if not kw_text.strip():
+            continue
+            
         # Encode keyword
         kw_embedding = model.encode([kw_text], normalize_embeddings=True)
         
-        # Calculate similarities
-        similarities = cosine_similarity(kw_embedding, content_embeddings)[0]
+        # Calculate similarities with error handling
+        try:
+            similarities = cosine_similarity(kw_embedding, content_embeddings)[0]
+            # Handle NaN values
+            similarities = np.nan_to_num(similarities, nan=0.0, posinf=0.0, neginf=0.0)
+        except Exception as e:
+            print(f"Warning: Error calculating similarity for '{kw_text}': {e}")
+            similarities = np.zeros(len(valid_content))
         
         # Get top 3 matches
         top_indices = np.argsort(similarities)[-3:][::-1]  # Top 3 in descending order
         
         injection_points = []
         for idx in top_indices:
-            if idx < len(content):
-                content_item = content[idx]
+            if idx < len(valid_content):
+                _, content_item = valid_content[idx]
                 similarity = similarities[idx]
                 
                 # Classify the match
@@ -922,7 +939,7 @@ def find_injection_points(resume_json, keywords):
                 injection_points.append({
                     'text': display_text,
                     'full_text': content_item['text'],
-                    'similarity': round(similarity, 3),
+                    'similarity': round(float(similarity), 3),
                     'location': content_item['location'],
                     'context': content_item['context'],
                     'section': content_item['section'],
