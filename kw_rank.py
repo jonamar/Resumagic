@@ -703,6 +703,31 @@ def save_output_files(knockout_requirements, top_skills, canonical_keywords, arg
     
     return analysis_file, checklist_file
 
+def extract_employer_info(context, location):
+    """Extract employer and location info for better findability."""
+    # Extract employer name (everything before the first " - ")
+    employer = context.split(' - ')[0] if ' - ' in context else context
+    
+    # Extract location info for line numbers/references
+    location_info = ""
+    if 'sentence' in location:
+        # For sentence locations like "basics.summary (sentence 2)"
+        location_info = location.split('(')[1].rstrip(')') if '(' in location else ""
+    elif 'highlights' in location:
+        # For bullet locations like "work[1].highlights[0]"
+        # Extract the bullet number
+        import re
+        match = re.search(r'highlights\[(\d+)\]', location)
+        if match:
+            bullet_num = int(match.group(1)) + 1  # Convert to 1-indexed
+            location_info = f"bullet {bullet_num}"
+    
+    # Format final string
+    if location_info:
+        return f"[{employer}, {location_info}]"
+    else:
+        return f"[{employer}]"
+
 def generate_keyword_checklist(knockout_requirements, top_skills):
     """Generate markdown checklist for manual keyword injection."""
     content = []
@@ -719,13 +744,16 @@ def generate_keyword_checklist(knockout_requirements, top_skills):
     if knockout_requirements:
         for i, req in enumerate(knockout_requirements, 1):
             aliases_text = f" (aliases: {', '.join(req['aliases'])})" if req.get('aliases') else ""
-            content.append(f"- [ ] **{req['kw']}** (score: {req['score']}){aliases_text}")
+            content.append(f"- **{req['kw']}** (score: {req['score']}){aliases_text}")
             
             # Add injection points if available
             if req.get('injection_points'):
-                content.append("  **Best placement spots:**")
-                for j, point in enumerate(req['injection_points'], 1):
-                    content.append(f"  {j}. {point['icon']} \"{point['text']}\" ({point['action']})")
+                content.append("")  # Breathing room
+                for point in req['injection_points']:
+                    # Extract employer and location info for better findability
+                    employer_info = extract_employer_info(point['context'], point['location'])
+                    similarity_score = f"({point['similarity']}) " if point.get('similarity') else ""
+                    content.append(f"  ✓ {similarity_score}💡 \"{point['text']}\" {employer_info}")
                 content.append("")
     else:
         content.append("- No knockout requirements identified")
@@ -740,13 +768,16 @@ def generate_keyword_checklist(knockout_requirements, top_skills):
     for i, skill in enumerate(top_skills, 1):
         aliases_text = f" (aliases: {', '.join(skill['aliases'])})" if skill.get('aliases') else ""
         buzzword_flag = " ⚠️ *buzzword*" if skill.get('is_buzzword', False) else ""
-        content.append(f"- [ ] **{skill['kw']}** (score: {skill['score']}){aliases_text}{buzzword_flag}")
+        content.append(f"- **{skill['kw']}** (score: {skill['score']}){aliases_text}{buzzword_flag}")
         
         # Add injection points if available
         if skill.get('injection_points'):
-            content.append("  **Best placement spots:**")
-            for j, point in enumerate(skill['injection_points'], 1):
-                content.append(f"  {j}. {point['icon']} \"{point['text']}\" ({point['action']})")
+            content.append("")  # Breathing room
+            for point in skill['injection_points']:
+                # Extract employer and location info for better findability
+                employer_info = extract_employer_info(point['context'], point['location'])
+                similarity_score = f"({point['similarity']}) " if point.get('similarity') else ""
+                content.append(f"  ✓ {similarity_score}💡 \"{point['text']}\" {employer_info}")
             content.append("")
     
     content.append("")
@@ -872,7 +903,7 @@ def classify_match(content_text, keyword, similarity_score):
     elif similarity_score >= 0.55:
         return "🟠", "may need short phrase"
     else:
-        return "🚫", "suggest adding new bullet"
+        return "💡", "suggest adding new bullet"
 
 def find_injection_points(resume_json, keywords):
     """Find best placement spots for keywords using semantic similarity."""
