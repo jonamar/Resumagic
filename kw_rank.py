@@ -217,6 +217,8 @@ Examples:
     )
     parser.add_argument('keywords_file', help='Path to keywords JSON file')
     parser.add_argument('job_file', help='Path to job posting file (markdown or text)')
+    parser.add_argument('--resume', type=str, 
+                       help='Path to resume JSON file for sentence matching (optional)')
     parser.add_argument('--drop-buzz', action='store_true', 
                        help='Drop buzzwords entirely instead of penalizing (default: penalize)')
     parser.add_argument('--cluster-thresh', type=float, default=0.35,
@@ -718,6 +720,13 @@ def generate_keyword_checklist(knockout_requirements, top_skills):
         for i, req in enumerate(knockout_requirements, 1):
             aliases_text = f" (aliases: {', '.join(req['aliases'])})" if req.get('aliases') else ""
             content.append(f"- [ ] **{req['kw']}** (score: {req['score']}){aliases_text}")
+            
+            # Add injection points if available
+            if req.get('injection_points'):
+                content.append("  **Best placement spots:**")
+                for j, point in enumerate(req['injection_points'], 1):
+                    content.append(f"  {j}. {point['icon']} \"{point['text']}\" ({point['action']})")
+                content.append("")
     else:
         content.append("- No knockout requirements identified")
     
@@ -732,6 +741,13 @@ def generate_keyword_checklist(knockout_requirements, top_skills):
         aliases_text = f" (aliases: {', '.join(skill['aliases'])})" if skill.get('aliases') else ""
         buzzword_flag = " ⚠️ *buzzword*" if skill.get('is_buzzword', False) else ""
         content.append(f"- [ ] **{skill['kw']}** (score: {skill['score']}){aliases_text}{buzzword_flag}")
+        
+        # Add injection points if available
+        if skill.get('injection_points'):
+            content.append("  **Best placement spots:**")
+            for j, point in enumerate(skill['injection_points'], 1):
+                content.append(f"  {j}. {point['icon']} \"{point['text']}\" ({point['action']})")
+            content.append("")
     
     content.append("")
     content.append("## 📝 Usage Notes")
@@ -786,6 +802,138 @@ def print_dual_summary(knockout_requirements, top_skills):
     
     print("\n" + "="*60)
 
+def split_into_sentences(text):
+    """Split text into sentences using simple regex."""
+    if not text:
+        return []
+    
+    # Simple sentence splitting on periods, exclamation marks, and question marks
+    # followed by space and capital letter
+    sentences = re.split(r'[.!?]+\s+(?=[A-Z])', text)
+    
+    # Clean up sentences
+    cleaned_sentences = []
+    for sentence in sentences:
+        sentence = sentence.strip()
+        if sentence and len(sentence) > 10:  # Filter out very short fragments
+            cleaned_sentences.append(sentence)
+    
+    return cleaned_sentences
+
+def extract_matchable_content(resume_json):
+    """Extract bullets and sentences from resume for keyword matching."""
+    content = []
+    
+    # Extract bullets from highlights
+    for work_idx, work in enumerate(resume_json.get('work', [])):
+        for highlight_idx, highlight in enumerate(work.get('highlights', [])):
+            content.append({
+                'text': highlight.strip(),
+                'type': 'bullet',
+                'location': f"work[{work_idx}].highlights[{highlight_idx}]",
+                'context': f"{work.get('name', 'Unknown')} - {work.get('position', 'Unknown')}",
+                'section': 'highlights'
+            })
+    
+    # Extract sentences from work summaries
+    for work_idx, work in enumerate(resume_json.get('work', [])):
+        if work.get('summary'):
+            sentences = split_into_sentences(work['summary'])
+            for sent_idx, sentence in enumerate(sentences):
+                content.append({
+                    'text': sentence.strip(),
+                    'type': 'sentence',
+                    'location': f"work[{work_idx}].summary (sentence {sent_idx+1})",
+                    'context': f"{work.get('name', 'Unknown')} - {work.get('position', 'Unknown')}",
+                    'section': 'work_summary'
+                })
+    
+    # Extract sentences from basics summary
+    if resume_json.get('basics', {}).get('summary'):
+        sentences = split_into_sentences(resume_json['basics']['summary'])
+        for sent_idx, sentence in enumerate(sentences):
+            content.append({
+                'text': sentence.strip(),
+                'type': 'sentence',
+                'location': f"basics.summary (sentence {sent_idx+1})",
+                'context': "Executive Summary",
+                'section': 'basics_summary'
+            })
+    
+    return content
+
+def classify_match(content_text, keyword, similarity_score):
+    """Classify the match quality and suggest action."""
+    # Check for exact match (case-insensitive)
+    if keyword.lower() in content_text.lower():
+        return "✅", "already contains keyword"
+    elif similarity_score >= 0.75:
+        return "✏️", "likely one-word tweak"
+    elif similarity_score >= 0.55:
+        return "🟠", "may need short phrase"
+    else:
+        return "🚫", "suggest adding new bullet"
+
+def find_injection_points(resume_json, keywords):
+    """Find best placement spots for keywords using semantic similarity."""
+    from sklearn.metrics.pairwise import cosine_similarity
+    
+    # Extract matchable content
+    content = extract_matchable_content(resume_json)
+    
+    if not content:
+        print("Warning: No matchable content found in resume")
+        return keywords
+    
+    # Load sentence transformer model
+    model = SentenceTransformer('all-MiniLM-L6-v2')
+    
+    # Encode all content
+    content_texts = [item['text'] for item in content]
+    content_embeddings = model.encode(content_texts, normalize_embeddings=True)
+    
+    # Process each keyword
+    for keyword in keywords:
+        kw_text = keyword['kw']
+        
+        # Encode keyword
+        kw_embedding = model.encode([kw_text], normalize_embeddings=True)
+        
+        # Calculate similarities
+        similarities = cosine_similarity(kw_embedding, content_embeddings)[0]
+        
+        # Get top 3 matches
+        top_indices = np.argsort(similarities)[-3:][::-1]  # Top 3 in descending order
+        
+        injection_points = []
+        for idx in top_indices:
+            if idx < len(content):
+                content_item = content[idx]
+                similarity = similarities[idx]
+                
+                # Classify the match
+                icon, action = classify_match(content_item['text'], kw_text, similarity)
+                
+                # Truncate text for display (keep first 60 characters)
+                display_text = content_item['text']
+                if len(display_text) > 60:
+                    display_text = display_text[:57] + "..."
+                
+                injection_points.append({
+                    'text': display_text,
+                    'full_text': content_item['text'],
+                    'similarity': round(similarity, 3),
+                    'location': content_item['location'],
+                    'context': content_item['context'],
+                    'section': content_item['section'],
+                    'icon': icon,
+                    'action': action
+                })
+        
+        keyword['injection_points'] = injection_points
+    
+    return keywords
+
 def main():
     """Main function."""
     args = parse_arguments()
@@ -828,6 +976,33 @@ def main():
     # Get all knockout requirements sorted by score
     knockout_requirements = sorted([k for k in trimmed_keywords if k['category'] == 'knockout'], 
                                   key=lambda x: x['score'], reverse=True)
+    
+    # Add sentence-matching if resume file provided
+    if args.resume:
+        print(f"🎯 Finding injection points...")
+        try:
+            with open(args.resume, 'r', encoding='utf-8') as f:
+                resume_json = json.load(f)
+            
+            # Combine all keywords for sentence matching
+            all_keywords = knockout_requirements + top_skills
+            enhanced_keywords = find_injection_points(resume_json, all_keywords)
+            
+            # Update the separate lists with injection points
+            knockout_requirements = [kw for kw in enhanced_keywords if kw['category'] == 'knockout']
+            top_skills = [kw for kw in enhanced_keywords if kw['category'] == 'skill']
+            
+            print(f"✅ Injection points found for {len(enhanced_keywords)} keywords")
+            
+        except FileNotFoundError:
+            print(f"⚠️  Resume file not found: {args.resume}")
+            print("   Proceeding without sentence matching...")
+        except json.JSONDecodeError:
+            print(f"⚠️  Invalid JSON in resume file: {args.resume}")
+            print("   Proceeding without sentence matching...")
+        except Exception as e:
+            print(f"⚠️  Error processing resume: {e}")
+            print("   Proceeding without sentence matching...")
     
     # Show optional dual output summary
     if args.summary:
