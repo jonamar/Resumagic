@@ -744,7 +744,7 @@ def generate_keyword_checklist(knockout_requirements, top_skills):
     if knockout_requirements:
         for i, req in enumerate(knockout_requirements, 1):
             aliases_text = f" (aliases: {', '.join(req['aliases'])})" if req.get('aliases') else ""
-            content.append(f"- **{req['kw']}** (score: {req['score']}){aliases_text}")
+            content.append(f"{i}. **{req['kw']}** (score: {req['score']}){aliases_text}")
             
             # Add injection points if available
             if req.get('injection_points'):
@@ -753,7 +753,7 @@ def generate_keyword_checklist(knockout_requirements, top_skills):
                     # Extract employer and location info for better findability
                     employer_info = extract_employer_info(point['context'], point['location'])
                     similarity_score = f"({point['similarity']}) " if point.get('similarity') else ""
-                    content.append(f"  ✓ {similarity_score}💡 \"{point['text']}\" {employer_info}")
+                    content.append(f"  [ ] {similarity_score}💡 \"{point['text']}\" {employer_info}")
                 content.append("")
     else:
         content.append("- No knockout requirements identified")
@@ -768,7 +768,7 @@ def generate_keyword_checklist(knockout_requirements, top_skills):
     for i, skill in enumerate(top_skills, 1):
         aliases_text = f" (aliases: {', '.join(skill['aliases'])})" if skill.get('aliases') else ""
         buzzword_flag = " ⚠️ *buzzword*" if skill.get('is_buzzword', False) else ""
-        content.append(f"- **{skill['kw']}** (score: {skill['score']}){aliases_text}{buzzword_flag}")
+        content.append(f"{i}. **{skill['kw']}** (score: {skill['score']}){aliases_text}{buzzword_flag}")
         
         # Add injection points if available
         if skill.get('injection_points'):
@@ -777,7 +777,7 @@ def generate_keyword_checklist(knockout_requirements, top_skills):
                 # Extract employer and location info for better findability
                 employer_info = extract_employer_info(point['context'], point['location'])
                 similarity_score = f"({point['similarity']}) " if point.get('similarity') else ""
-                content.append(f"  ✓ {similarity_score}💡 \"{point['text']}\" {employer_info}")
+                content.append(f"  [ ] {similarity_score}💡 \"{point['text']}\" {employer_info}")
             content.append("")
     
     content.append("")
