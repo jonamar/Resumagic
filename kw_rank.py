@@ -87,13 +87,10 @@ EXECUTIVE_VOCAB_BOOST = 1.15  # Boost authentic executive vocabulary
 EXECUTIVE_BUZZWORD_PENALTY = 0.8  # Penalize executive buzzwords
 
 # Knockout categorization patterns
+# Note: Years-based patterns (e.g., "8+ years of experience") are now handled 
+# by detect_years_knockout() for better context extraction. These patterns
+# handle non-years knockouts like degrees and job titles.
 HARD_KNOCKOUT_PATTERNS = [
-    # Specific years of experience (must be specific number)
-    r'\d+\+?\s*years?\s*of\s+.*?(experience|leadership|management)',
-    r'\d+\+?\s*years?\s*(experience|leadership|management)',
-    r'\d+\+?\s*years?\s*in\s+(product\s+management|leadership|management)',
-    r'\d+\+?\s*years?\s*(in\s+)?(a\s+)?(senior|leadership|management)',
-    
     # Education degrees (actual degree requirements)
     r'bachelor\'?s?\s*degree',
     r'master\'?s?\s*degree',
@@ -110,10 +107,6 @@ MEDIUM_KNOCKOUT_PATTERNS = [
     # Required/preferred language with education
     r'(required|preferred|must\s+have).*\b(degree|education|bachelor|master|mba)',
     r'\b(degree|bachelor|master|mba).*(required|preferred)',
-    
-    # Leadership experience requirements  
-    r'leadership\s+experience.*\d+\+?\s*years?',
-    r'\d+\+?\s*years?.*leadership\s+experience',
 ]
 
 SOFT_SKILL_EXCLUSIONS = [
