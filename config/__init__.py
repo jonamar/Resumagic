@@ -1,0 +1,1 @@
+# Configuration module for keyword analysis tool

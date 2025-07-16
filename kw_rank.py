@@ -15,121 +15,23 @@ from sentence_transformers import SentenceTransformer
 import argparse
 import numpy as np
 
-# Role weight constants
-ROLE_WEIGHTS = {
-    'core': 1.2,
-    'important': 0.6,
-    'culture': 0.3
-}
+# Import configuration
+from config.constants import get_config, validate_config
 
-# Scoring weights (Adjusted for ATS optimization)
-TFIDF_WEIGHT = 0.55  # Increased: prioritize keywords that actually appear in posting
-SECTION_WEIGHT = 0.25  # Unchanged: section placement still matters
-ROLE_WEIGHT = 0.2  # Decreased: prevent role weight from overriding TF-IDF
+# Initialize configuration
+config = get_config()
+validate_config(config)
 
-# Buzzword dampening (30-term generic PM buzzwords)
-BUZZWORDS = {
-    'vision', 'strategy', 'strategic', 'roadmap', 'delivery', 'execution', 
-    'discovery', 'innovation', 'data-driven', 'metrics', 'kpis', 'scalable', 
-    'alignment', 'ownership', 'stakeholders', 'go-to-market', 'collaboration', 
-    'agile', 'sprint', 'backlog', 'prioritization', 'user-centric', 
-    'customer-centric', 'outcomes', 'best practices', 'cross-functional', 
-    'communication', 'leadership', 'fast-paced', 'results-oriented', 
-    'growth hacking', 'roi', 'north star', 'market research', 'ecosystem'
-}
-BUZZWORD_PENALTY = 0.7
+# Legacy constants - will be removed in Phase 2
+# These are kept temporarily for backwards compatibility during transition
 
-# Section boost patterns
-SECTION_PATTERNS = {
-    'title': r'^.*?(director|vp|vice president|head of|lead|manager).*$',
-    'requirements': r'(what you.ll need|what we.re looking for|what you bring|requirements|qualifications|must have|experience|skills)',
-    'responsibilities': r'(what you.ll do|what you.ll be doing|responsibilities|role|opportunity|day to day)',
-    'company': r'(about|why join|benefits|culture|perks|our mission)'
-}
+# Executive vocabulary will be moved to configuration in Phase 2
 
-# Section boost values
-SECTION_BOOSTS = {
-    'title': 1.0,
-    'requirements': 0.8,
-    'responsibilities': 0.8,
-    'company': 0.3
-}
-
-# Executive-level vocabulary and buzzword filtering
-EXECUTIVE_VOCABULARY = {
-    # Authentic executive terms
-    'p&l', 'p&l responsibility', 'revenue ownership', 'business outcomes', 
-    'portfolio management', 'cross-functional leadership', 'organizational design',
-    'board reporting', 'investor relations', 'market expansion', 'acquisition integration',
-    'team scaling', 'hiring plans', 'culture building', 'succession planning',
-    'executive presence', 'strategic partnerships', 'competitive positioning',
-    'go-to-market execution', 'budget ownership', 'headcount planning',
-    'performance management', 'talent development', 'executive coaching',
-    
-    # Role-specific executive terms
-    'vp of product', 'director of product', 'head of product', 'chief product officer',
-    'product portfolio', 'platform strategy', 'product vision', 'product leadership',
-    'executive team', 'leadership team', 'senior leadership', 'c-suite'
-}
-
-EXECUTIVE_BUZZWORDS = {
-    # Overused executive buzzwords that should be penalized
-    'thought leadership', 'best-in-class', 'world-class', 'cutting-edge', 'bleeding-edge',
-    'paradigm shift', 'game-changer', 'disruptive', 'revolutionary', 'transformational',
-    'synergies', 'low-hanging fruit', 'move the needle', 'boil the ocean', 'circle back',
-    'touch base', 'drill down', 'deep dive', 'take offline', 'leverage synergies',
-    'actionable insights', 'holistic approach', 'end-to-end solution', 'turn-key',
-    'enterprise-grade', 'mission-critical', 'scalable solution', 'robust framework',
-    'seamless integration', 'optimize efficiency', 'maximize roi', 'drive value'
-}
-
-EXECUTIVE_VOCAB_BOOST = 1.15  # Boost authentic executive vocabulary
-EXECUTIVE_BUZZWORD_PENALTY = 0.8  # Penalize executive buzzwords
-
-# Knockout categorization patterns
-# Note: Years-based patterns (e.g., "8+ years of experience") are now handled 
-# by detect_years_knockout() for better context extraction. These patterns
-# handle non-years knockouts like degrees and job titles.
-HARD_KNOCKOUT_PATTERNS = [
-    # Education degrees (actual degree requirements)
-    r'bachelor\'?s?\s*degree',
-    r'master\'?s?\s*degree',
-    r'\bmba\b',
-    r'\bphd\b',
-    r'\b(bs|ms|ba|ma)\s+(degree|in)',
-    r'degree\s+in\s+\w+',  # "degree in Business"
-    
-    # Specific job title requirements when mentioned as requirements
-    r'(director|vp|vice\s+president|chief)\s+(of\s+)?(product|marketing)',
-]
-
-MEDIUM_KNOCKOUT_PATTERNS = [
-    # Required/preferred language with education
-    r'(required|preferred|must\s+have).*\b(degree|education|bachelor|master|mba)',
-    r'\b(degree|bachelor|master|mba).*(required|preferred)',
-]
-
-SOFT_SKILL_EXCLUSIONS = [
-    r'leadership\s+style',
-    r'communication\s+skills',
-    r'strategic\s+thinking',
-    r'problem\s+solving',
-    r'team\s+player',
-    r'passion',
-    r'enthusiasm',
-    r'mindset',
-    r'empathy',
-    r'collaborative',
-    r'innovative',
-    r'customer-obsessed',
-    r'results-oriented',
-    r'data-driven',
-    r'fast-paced'
-]
+# Knockout patterns will be moved to configuration in Phase 2
 
 def is_soft_skill(keyword_lower):
     """Check if keyword is a soft skill that should not be a knockout."""
-    return any(re.search(pattern, keyword_lower) for pattern in SOFT_SKILL_EXCLUSIONS)
+    return any(re.search(pattern, keyword_lower) for pattern in config.knockouts.soft_skill_exclusions)
 
 def count_pattern_matches(keyword_lower, patterns):
     """Count how many patterns match the keyword."""
@@ -140,8 +42,8 @@ def calculate_knockout_confidence(keyword_lower, role_weight):
     knockout_confidence = 0
     
     # Check pattern matches
-    hard_matches = count_pattern_matches(keyword_lower, HARD_KNOCKOUT_PATTERNS)
-    medium_matches = count_pattern_matches(keyword_lower, MEDIUM_KNOCKOUT_PATTERNS)
+    hard_matches = count_pattern_matches(keyword_lower, config.knockouts.hard_patterns)
+    medium_matches = count_pattern_matches(keyword_lower, config.knockouts.medium_patterns)
     
     # Strong signals for knockout
     has_years_and_high_role = bool(re.search(r'\d+\+?\s*years?', keyword_lower)) and role_weight >= 1.0
@@ -150,33 +52,29 @@ def calculate_knockout_confidence(keyword_lower, role_weight):
     
     # Hard patterns are strong indicators
     if hard_matches >= 1:
-        knockout_confidence += 0.6
+        knockout_confidence += config.knockouts.hard_pattern_weight
     
     # Medium patterns with supporting evidence
     if medium_matches >= 1:
-        knockout_confidence += 0.3
+        knockout_confidence += config.knockouts.medium_pattern_weight
         
     # Years + high role weight is a good signal
     if has_years_and_high_role:
-        knockout_confidence += 0.4
+        knockout_confidence += config.knockouts.years_high_role_weight
         
     # Education requirements are typically knockouts
     if has_degree_mention and role_weight >= 1.0:
-        knockout_confidence += 0.4
+        knockout_confidence += config.knockouts.degree_high_role_weight
         
     # Required language strengthens the case
     if has_required_language:
-        knockout_confidence += 0.2
+        knockout_confidence += config.knockouts.required_language_weight
     
     return knockout_confidence
 
 def is_preferred_requirement(keyword_lower):
     """Check if a keyword indicates a preferred (not required) requirement."""
-    preferred_indicators = [
-        'preferred', 'plus', 'bonus', 'nice to have', 'advantage', 
-        'desirable', 'beneficial', 'would be great', 'a plus but not required'
-    ]
-    return any(indicator in keyword_lower for indicator in preferred_indicators)
+    return any(indicator in keyword_lower for indicator in config.knockouts.preferred_indicators)
 
 def detect_years_knockout(keyword):
     """
@@ -189,12 +87,7 @@ def detect_years_knockout(keyword):
         dict: {'is_knockout': bool, 'knockout_type': str, 'context': str}
     """
     # Look for years patterns
-    years_patterns = [
-        r'\d+\+?\s*years?',           # "5+ years", "8 years"
-        r'\d+\s*[-–]\s*\d+\s*years?', # "5-7 years", "3–5 years"
-        r'minimum\s+\d+\s*years?',    # "minimum 3 years"
-        r'\d+\s*years?\s*minimum',    # "3 years minimum"
-    ]
+    years_patterns = config.knockouts.years_patterns
     
     kw_lower = keyword.lower()
     years_match = None
@@ -303,7 +196,7 @@ def categorize_keyword(keyword, score, tfidf_score, role_weight):
     knockout_confidence = calculate_knockout_confidence(kw_lower, role_weight)
     
     # Lower threshold to catch more legitimate knockouts
-    if knockout_confidence >= 0.6:
+    if knockout_confidence >= config.knockouts.confidence_threshold:
         # Determine if it's preferred or required
         knockout_type = 'preferred' if is_preferred_requirement(kw_lower) else 'required'
         return {
@@ -333,10 +226,10 @@ Examples:
                        help='Path to resume JSON file for sentence matching (optional)')
     parser.add_argument('--drop-buzz', action='store_true', 
                        help='Drop buzzwords entirely instead of penalizing (default: penalize)')
-    parser.add_argument('--cluster-thresh', type=float, default=0.5,
-                       help='Clustering threshold for alias detection (default: 0.5)')
-    parser.add_argument('--top', type=int, default=5,
-                       help='Number of top keywords to output (default: 5)')
+    parser.add_argument('--cluster-thresh', type=float, default=config.clustering.similarity_threshold,
+                       help=f'Clustering threshold for alias detection (default: {config.clustering.similarity_threshold})')
+    parser.add_argument('--top', type=int, default=config.output.max_top_keywords,
+                       help=f'Number of top keywords to output (default: {config.output.max_top_keywords})')
     parser.add_argument('--summary', action='store_true',
                        help='Show knockout status and top skills summary')
     
@@ -397,50 +290,10 @@ def detect_section_type(line):
     """Detect what type of section a line represents."""
     line_lower = line.strip().lower()
     
-    # Requirements section patterns
-    requirements_patterns = [
-        r'what you bring',
-        r'what you.ll need',
-        r'what you.ll need',
-        r'what we.re looking for',
-        r'requirements',
-        r'qualifications',
-        r'must have',
-        r'experience',
-        r'skills'
-    ]
-    
-    # Responsibilities section patterns  
-    responsibilities_patterns = [
-        r'what you.ll do',
-        r'what you.ll be doing',
-        r'responsibilities',
-        r'role',
-        r'opportunity',
-        r'day to day'
-    ]
-    
-    # Company section patterns
-    company_patterns = [
-        r'about',
-        r'why join',
-        r'benefits',
-        r'culture',
-        r'perks',
-        r'our mission'
-    ]
-    
-    for pattern in requirements_patterns:
+    # Use patterns from configuration
+    for section_type, pattern in config.sections.patterns.items():
         if re.search(pattern, line_lower):
-            return 'requirements'
-    
-    for pattern in responsibilities_patterns:
-        if re.search(pattern, line_lower):
-            return 'responsibilities'
-            
-    for pattern in company_patterns:
-        if re.search(pattern, line_lower):
-            return 'company'
+            return section_type
     
     return None
 
@@ -448,7 +301,7 @@ def check_title_section(job_text, keyword):
     """Check if keyword appears in job title (first 150 words)."""
     first_150_words = ' '.join(job_text.split()[:150])
     if keyword.lower() in first_150_words.lower():
-        return SECTION_BOOSTS['title']
+        return config.sections.boosts['title']
     return 0.0
 
 def calculate_section_boost(job_text, keyword):
@@ -474,7 +327,7 @@ def calculate_section_boost(job_text, keyword):
         
         # Check if keyword appears in this line
         if keyword.lower() in line.lower():
-            section_boost = SECTION_BOOSTS.get(current_section, 0.0)
+            section_boost = config.sections.boosts.get(current_section, 0.0)
             boost_score = max(boost_score, section_boost)
     
     # Additional boost for requirement keywords (containing 'years' or 'experience')
@@ -518,7 +371,7 @@ def is_job_title_keyword(keyword_text, job_title):
 def is_buzzword(keyword_text):
     """Check if a keyword matches any buzzword (case-insensitive)."""
     keyword_lower = keyword_text.lower().strip()
-    return keyword_lower in BUZZWORDS
+    return keyword_lower in config.buzzwords.buzzwords
 
 def is_experience_keyword(keyword_text):
     """Check if keyword contains experience/years requirements."""
@@ -543,7 +396,7 @@ def select_canonical_keyword(cluster_keywords):
     cluster_keywords.sort(key=priority_key, reverse=True)
     return cluster_keywords[0]
 
-def cluster_aliases(ranked_keywords, cluster_threshold=0.25):
+def cluster_aliases(ranked_keywords, cluster_threshold=None):
     """
     Cluster similar keywords using semantic embeddings.
     Returns canonical keywords with their aliases.
@@ -567,6 +420,10 @@ def cluster_aliases(ranked_keywords, cluster_threshold=0.25):
         enhanced_texts.append(enhanced)
     
     embeddings = model.encode(enhanced_texts, normalize_embeddings=True)
+    
+    # Use configured threshold if not provided
+    if cluster_threshold is None:
+        cluster_threshold = config.clustering.distance_threshold
     
     # Run hierarchical clustering
     clustering = AgglomerativeClustering(
@@ -670,7 +527,13 @@ def calculate_compound_boost(keyword_text):
     words = keyword_text.split()
     word_count = len(words)
     
-    # Base compound boost
+    # Check for specific compound multipliers first
+    keyword_lower = keyword_text.lower()
+    for compound, multiplier in config.output.compound_multipliers.items():
+        if compound in keyword_lower:
+            return multiplier
+    
+    # Base compound boost based on word count
     if word_count == 1:
         return 1.0  # No boost for solo terms
     elif word_count == 2:
@@ -678,36 +541,25 @@ def calculate_compound_boost(keyword_text):
     elif word_count >= 3:
         return 1.5  # "7+ years in product management"
     
-    # Executive-specific compounds get additional boost
-    exec_compounds = {
-        'product strategy', 'go-to-market', 'product-market fit',
-        'revenue expansion', 'customer-driven growth', 'vertical saas',
-        'b2b saas', 'high-growth phases', 'portfolio management',
-        'stakeholder alignment', 'cross-functional leadership'
-    }
-    
-    if keyword_text.lower() in exec_compounds:
-        return 1.6  # Strong boost for executive compounds
-    
     return 1.0
 
 
 def is_executive_vocabulary(keyword_text):
     """Check if keyword represents authentic executive vocabulary."""
     keyword_lower = keyword_text.lower().strip()
-    return keyword_lower in EXECUTIVE_VOCABULARY
+    return keyword_lower in config.buzzwords.executive_vocabulary
 
 def is_executive_buzzword(keyword_text):
     """Check if keyword is an overused executive buzzword."""
     keyword_lower = keyword_text.lower().strip()
-    return keyword_lower in EXECUTIVE_BUZZWORDS
+    return keyword_lower in config.buzzwords.executive_buzzwords
 
 def calculate_executive_adjustment(keyword_text):
     """Calculate executive vocabulary adjustment factor."""
     if is_executive_vocabulary(keyword_text):
-        return EXECUTIVE_VOCAB_BOOST
+        return config.buzzwords.executive_boost
     elif is_executive_buzzword(keyword_text):
-        return EXECUTIVE_BUZZWORD_PENALTY
+        return config.buzzwords.executive_penalty
     return 1.0
 
 def calculate_tfidf_scores(keywords, job_text):
@@ -759,13 +611,13 @@ def score_single_keyword(keyword, tfidf_scores, job_text, drop_buzz=False):
     section_score = calculate_section_boost(job_text, kw_text)
     
     # Get role weight
-    role_score = ROLE_WEIGHTS.get(role, 0.3)
+    role_score = config.roles.core if role == 'core' else config.roles.important if role == 'important' else config.roles.culture
     
     # Calculate base score
     base_score = (
-        TFIDF_WEIGHT * tfidf_score +
-        SECTION_WEIGHT * section_score +
-        ROLE_WEIGHT * role_score
+        config.scoring.tfidf * tfidf_score +
+        config.scoring.section * section_score +
+        config.scoring.role * role_score
     )
     
     # Apply enhancements
@@ -776,7 +628,7 @@ def score_single_keyword(keyword, tfidf_scores, job_text, drop_buzz=False):
     if is_buzz and drop_buzz:
         return None  # Skip buzzwords entirely
     elif is_buzz:
-        enhanced_score *= BUZZWORD_PENALTY  # Apply penalty
+        enhanced_score *= config.buzzwords.penalty  # Apply penalty
     
     final_score = enhanced_score
     
@@ -1159,7 +1011,7 @@ def main():
     if args.drop_buzz:
         print(f"🚫 Buzzword filtering: dropped buzzwords entirely")
     else:
-        print(f"📉 Buzzword dampening: applied {BUZZWORD_PENALTY}x penalty to buzzwords")
+        print(f"📉 Buzzword dampening: applied {config.buzzwords.penalty}x penalty to buzzwords")
     
     # Separate knockout requirements and skills
     knockouts = [r for r in results if r['category'] == 'knockout']
