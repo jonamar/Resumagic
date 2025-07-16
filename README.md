@@ -1,29 +1,53 @@
 # Resumagic
 
-Resumagic is a tool for generating ATS-friendly resumes and cover letters in DOCX format from JSON Resume files and Markdown cover letters.
+Resumagic is a comprehensive tool for generating ATS-friendly resumes and cover letters in DOCX format from JSON Resume files and Markdown cover letters, with intelligent keyword analysis.
+
+## Architecture Overview
+
+This application follows a clean microservice architecture with language-specific boundaries:
+
+```
+app/
+├── 📄 Node.js Application (Document Generation)
+│   ├── generate-resume.js       # Main entry point
+│   ├── cli-parser.js           # Command line argument parsing
+│   ├── path-resolver.js        # File path resolution
+│   ├── document-orchestrator.js # Document generation coordination
+│   ├── docx-template.js        # DOCX document creation
+│   ├── markdown-to-data.js     # Markdown parsing
+│   └── theme.js                # Styling and configuration
+│
+└── 🐍 Python Services (Analysis & Intelligence)
+    └── services/keyword-analysis/   # Keyword analysis microservice
+        ├── kw_rank/                 # Modular Python package
+        │   ├── core/                # Core analysis modules
+        │   ├── io/                  # Input/Output modules
+        │   └── main.py              # Service orchestration
+        ├── config/                  # Configuration management
+        ├── kw_rank_modular.py      # Modern entry point
+        └── requirements.txt         # Python dependencies
+```
 
 ## Recent Improvements (2024)
 
-This codebase has been significantly refactored for better maintainability and code organization:
+### ✨ Clean Architecture & Language Separation
+- **Clear Service Boundaries**: Node.js handles document generation, Python handles analysis
+- **Technology Focused**: Each service uses the most appropriate technology stack
+- **Independent Development**: Services can evolve separately
+- **No Mixed Dependencies**: Separate package managers and tooling
 
-### ✨ Modular Architecture
-- **cli-parser.js**: Handles command line argument parsing and validation
-- **path-resolver.js**: Manages file path resolution and company name extraction
-- **document-orchestrator.js**: Coordinates document generation and file operations
-- **generate-resume.js**: Streamlined main entry point (75% code reduction)
-
-### 🎯 Code Quality Improvements
+### 🎯 Node.js Application Improvements  
+- **Modular Architecture**: Clean separation of concerns across focused modules
 - **Eliminated 300+ lines of duplicated code** through generic section generation
 - **Centralized configuration** in `theme.js` with comprehensive spacing constants
 - **Enhanced error handling** with user-friendly messages
-- **Improved testability** through modular design
-- **Better separation of concerns** across focused modules
+- **Better testability** through modular design
 
-### 🔧 Technical Enhancements
-- Generic `createItemSection()` function handles experience, projects, and speaking engagements
-- All spacing values centralized in `theme.spacingTwips` object
-- Consistent configuration-driven approach throughout codebase
-- Enhanced CLI argument parsing with better validation
+### 🔧 Python Service Architecture
+- **Comprehensive Refactoring**: Transformed 1,248-line monolith into clean modular architecture
+- **Single Responsibility**: Each module has one clear purpose (<300 lines each)
+- **Configuration Management**: All constants centralized with proper validation
+- **Advanced Features**: Semantic clustering, knockout detection, resume injection points
 
 ## Project Overview
 
