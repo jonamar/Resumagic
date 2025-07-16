@@ -333,8 +333,8 @@ Examples:
                        help='Path to resume JSON file for sentence matching (optional)')
     parser.add_argument('--drop-buzz', action='store_true', 
                        help='Drop buzzwords entirely instead of penalizing (default: penalize)')
-    parser.add_argument('--cluster-thresh', type=float, default=0.75,
-                       help='Clustering threshold for alias detection (default: 0.75)')
+    parser.add_argument('--cluster-thresh', type=float, default=0.5,
+                       help='Clustering threshold for alias detection (default: 0.5)')
     parser.add_argument('--top', type=int, default=5,
                        help='Number of top keywords to output (default: 5)')
     parser.add_argument('--summary', action='store_true',
@@ -556,7 +556,17 @@ def cluster_aliases(ranked_keywords, cluster_threshold=0.25):
     
     # Extract keyword texts and compute embeddings
     keyword_texts = [kw['kw'] for kw in ranked_keywords]
-    embeddings = model.encode(keyword_texts, normalize_embeddings=True)
+    
+    # Enhance scaling-related phrases for better clustering
+    enhanced_texts = []
+    for text in keyword_texts:
+        enhanced = text
+        # Add context to scaling phrases to improve semantic similarity
+        if any(scale_term in text.lower() for scale_term in ['scale', 'scaling', 'growth', 'expansion']):
+            enhanced = f"{text} business growth scaling products"
+        enhanced_texts.append(enhanced)
+    
+    embeddings = model.encode(enhanced_texts, normalize_embeddings=True)
     
     # Run hierarchical clustering
     clustering = AgglomerativeClustering(
@@ -1165,17 +1175,20 @@ def main():
     skills = [r for r in results if r['category'] == 'skill']
     print(f"🎯 Final categorization: {len(knockouts)} knockout requirements, {len(skills)} skills")
     
-    # Post-process results
+    # Post-process results: Only cluster skills, not knockouts
     print(f"🔗 Clustering aliases (threshold: {args.cluster_thresh})...")
-    canonical_keywords = cluster_aliases(results, args.cluster_thresh)
+    knockout_keywords = [k for k in results if k['category'] == 'knockout']
+    skill_keywords = [k for k in results if k['category'] == 'skill']
     
-    # Separate knockouts and skills for different processing
-    knockout_keywords = [k for k in canonical_keywords if k['category'] == 'knockout']
-    skill_keywords = [k for k in canonical_keywords if k['category'] == 'skill']
+    # Only cluster skills (knockouts remain unchanged - no aliases needed)
+    clustered_skills = cluster_aliases(skill_keywords, args.cluster_thresh) if skill_keywords else []
+    
+    # Combine knockouts (unchanged) with clustered skills
+    canonical_keywords = knockout_keywords + clustered_skills
     
     # Trim only skills (not knockouts)
     print(f"✂️ Trimming skills by median score...")
-    trimmed_skills = trim_by_median(skill_keywords)
+    trimmed_skills = trim_by_median(clustered_skills)
     
     print(f"🏆 Selecting top {args.top} skills...")
     
