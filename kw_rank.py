@@ -396,21 +396,8 @@ def select_canonical_keyword(cluster_keywords):
     cluster_keywords.sort(key=priority_key, reverse=True)
     return cluster_keywords[0]
 
-def cluster_aliases(ranked_keywords, cluster_threshold=None):
-    """
-    Cluster similar keywords using semantic embeddings.
-    Returns canonical keywords with their aliases.
-    """
-    if len(ranked_keywords) <= 1:
-        return ranked_keywords
-    
-    # Load SentenceTransformer model
-    model = SentenceTransformer('all-MiniLM-L6-v2')
-    
-    # Extract keyword texts and compute embeddings
-    keyword_texts = [kw['kw'] for kw in ranked_keywords]
-    
-    # Enhance scaling-related phrases for better clustering
+def enhance_keyword_texts(keyword_texts):
+    """Enhance keyword texts for better semantic clustering."""
     enhanced_texts = []
     for text in keyword_texts:
         enhanced = text
@@ -418,31 +405,29 @@ def cluster_aliases(ranked_keywords, cluster_threshold=None):
         if any(scale_term in text.lower() for scale_term in ['scale', 'scaling', 'growth', 'expansion']):
             enhanced = f"{text} business growth scaling products"
         enhanced_texts.append(enhanced)
-    
-    embeddings = model.encode(enhanced_texts, normalize_embeddings=True)
-    
-    # Use configured threshold if not provided
-    if cluster_threshold is None:
-        cluster_threshold = config.clustering.distance_threshold
-    
-    # Run hierarchical clustering
+    return enhanced_texts
+
+def perform_clustering(embeddings, cluster_threshold):
+    """Perform hierarchical clustering on keyword embeddings."""
     clustering = AgglomerativeClustering(
         distance_threshold=cluster_threshold,
         n_clusters=None,
         linkage='average',
         metric='cosine'
     )
-    
-    cluster_labels = clustering.fit_predict(embeddings)
-    
-    # Group keywords by cluster
+    return clustering.fit_predict(embeddings)
+
+def group_keywords_by_cluster(ranked_keywords, cluster_labels):
+    """Group keywords by their cluster labels."""
     clusters = {}
     for i, label in enumerate(cluster_labels):
         if label not in clusters:
             clusters[label] = []
         clusters[label].append(ranked_keywords[i])
-    
-    # For each cluster, select canonical keyword with experience priority
+    return clusters
+
+def create_canonical_keywords(clusters):
+    """Create canonical keywords with aliases from clusters."""
     canonical_keywords = []
     for cluster_keywords in clusters.values():
         canonical = select_canonical_keyword(cluster_keywords).copy()
@@ -454,6 +439,35 @@ def cluster_aliases(ranked_keywords, cluster_threshold=None):
         canonical_keywords.append(canonical)
     
     return canonical_keywords
+
+def cluster_aliases(ranked_keywords, cluster_threshold=None):
+    """
+    Cluster similar keywords using semantic embeddings.
+    Returns canonical keywords with their aliases.
+    """
+    if len(ranked_keywords) <= 1:
+        return ranked_keywords
+    
+    # Load SentenceTransformer model and extract texts
+    model = SentenceTransformer('all-MiniLM-L6-v2')
+    keyword_texts = [kw['kw'] for kw in ranked_keywords]
+    
+    # Enhance texts for better clustering
+    enhanced_texts = enhance_keyword_texts(keyword_texts)
+    embeddings = model.encode(enhanced_texts, normalize_embeddings=True)
+    
+    # Use configured threshold if not provided
+    if cluster_threshold is None:
+        cluster_threshold = config.clustering.distance_threshold
+    
+    # Perform clustering
+    cluster_labels = perform_clustering(embeddings, cluster_threshold)
+    
+    # Group keywords by cluster
+    clusters = group_keywords_by_cluster(ranked_keywords, cluster_labels)
+    
+    # Create canonical keywords with aliases
+    return create_canonical_keywords(clusters)
 
 def trim_by_median(canonical_keywords, median_multiplier=1.2, min_keywords=10):
     """
@@ -599,44 +613,37 @@ def calculate_tfidf_scores(keywords, job_text):
     
     return tfidf_scores
 
-def score_single_keyword(keyword, tfidf_scores, job_text, drop_buzz=False):
-    """Calculate score for a single keyword with all enhancements."""
-    kw_text = keyword['text']
-    role = keyword['role']
-    
-    # Get TF-IDF score
-    tfidf_score = tfidf_scores.get(kw_text, 0.0)
-    
-    # Calculate section boost
-    section_score = calculate_section_boost(job_text, kw_text)
-    
-    # Get role weight
-    role_score = config.roles.core if role == 'core' else config.roles.important if role == 'important' else config.roles.culture
-    
-    # Calculate base score
-    base_score = (
+def get_role_weight(role):
+    """Get role weight from configuration."""
+    if role == 'core':
+        return config.roles.core
+    elif role == 'important':
+        return config.roles.important
+    else:
+        return config.roles.culture
+
+def calculate_base_score(tfidf_score, section_score, role_score):
+    """Calculate base keyword score using configured weights."""
+    return (
         config.scoring.tfidf * tfidf_score +
         config.scoring.section * section_score +
         config.scoring.role * role_score
     )
-    
-    # Apply enhancements
-    enhanced_score = apply_enhancements(base_score, kw_text, job_text)
-    
-    # Apply buzzword dampening
-    is_buzz = is_buzzword(kw_text)
+
+def apply_buzzword_filtering(enhanced_score, keyword_text, drop_buzz):
+    """Apply buzzword filtering logic."""
+    is_buzz = is_buzzword(keyword_text)
     if is_buzz and drop_buzz:
-        return None  # Skip buzzwords entirely
+        return None, is_buzz  # Skip buzzwords entirely
     elif is_buzz:
         enhanced_score *= config.buzzwords.penalty  # Apply penalty
     
-    final_score = enhanced_score
-    
-    # Categorize keyword using intelligent classification
-    categorization = categorize_keyword(kw_text, final_score, tfidf_score, role_score)
-    
+    return enhanced_score, is_buzz
+
+def create_keyword_result(keyword_text, tfidf_score, section_score, role_score, final_score, is_buzz, categorization):
+    """Create a keyword result object."""
     return {
-        'kw': kw_text,
+        'kw': keyword_text,
         'tfidf': round(float(tfidf_score), 3),
         'section': round(float(section_score), 3),
         'role': round(float(role_score), 3),
@@ -646,6 +653,32 @@ def score_single_keyword(keyword, tfidf_scores, job_text, drop_buzz=False):
         'knockout_type': categorization.get('knockout_type'),
         'knockout_confidence': categorization.get('confidence', 0)
     }
+
+def score_single_keyword(keyword, tfidf_scores, job_text, drop_buzz=False):
+    """Calculate score for a single keyword with all enhancements."""
+    kw_text = keyword['text']
+    role = keyword['role']
+    
+    # Get component scores
+    tfidf_score = tfidf_scores.get(kw_text, 0.0)
+    section_score = calculate_section_boost(job_text, kw_text)
+    role_score = get_role_weight(role)
+    
+    # Calculate base score
+    base_score = calculate_base_score(tfidf_score, section_score, role_score)
+    
+    # Apply enhancements
+    enhanced_score = apply_enhancements(base_score, kw_text, job_text)
+    
+    # Apply buzzword filtering
+    final_score, is_buzz = apply_buzzword_filtering(enhanced_score, kw_text, drop_buzz)
+    if final_score is None:
+        return None  # Buzzword was dropped
+    
+    # Categorize keyword using intelligent classification
+    categorization = categorize_keyword(kw_text, final_score, tfidf_score, role_score)
+    
+    return create_keyword_result(kw_text, tfidf_score, section_score, role_score, final_score, is_buzz, categorization)
 
 def apply_enhancements(base_score, keyword_text, job_text):
     """Single enhancement point for all future improvements."""
@@ -916,50 +949,86 @@ def classify_match(content_text, keyword, similarity_score):
     else:
         return "💡", "suggest adding new bullet"
 
-def find_injection_points(resume_json, keywords):
-    """Find best placement spots for keywords using semantic similarity."""
-    from sklearn.metrics.pairwise import cosine_similarity
-    
-    # Extract matchable content
+def prepare_resume_content(resume_json):
+    """Extract and validate resume content for injection analysis."""
     content = extract_matchable_content(resume_json)
     
     if not content:
         print("Warning: No matchable content found in resume")
-        return keywords
-    
-    # Load sentence transformer model
-    model = SentenceTransformer('all-MiniLM-L6-v2')
-    
-    # Encode all content
-    content_texts = [item['text'] for item in content]
+        return None, None
     
     # Filter out empty content
-    valid_content = [(i, content[i]) for i, text in enumerate(content_texts) if text.strip()]
+    valid_content = [(i, content[i]) for i, text in enumerate([item['text'] for item in content]) if text.strip()]
     if not valid_content:
         print("Warning: No valid content found for matching")
+        return None, None
+    
+    return content, valid_content
+
+def encode_content_embeddings(valid_content):
+    """Encode resume content using sentence transformer."""
+    model = SentenceTransformer('all-MiniLM-L6-v2')
+    valid_texts = [content[i]['text'] for i, _ in valid_content]
+    return model.encode(valid_texts, normalize_embeddings=True), model
+
+def compute_keyword_similarities(keyword_text, content_embeddings, model):
+    """Compute semantic similarities between keyword and content."""
+    from sklearn.metrics.pairwise import cosine_similarity
+    
+    if not keyword_text.strip():
+        return np.zeros(len(content_embeddings))
+    
+    # Encode keyword
+    kw_embedding = model.encode([keyword_text], normalize_embeddings=True)
+    
+    # Calculate similarities with error handling
+    try:
+        similarities = cosine_similarity(kw_embedding, content_embeddings)[0]
+        # Handle NaN values
+        similarities = np.nan_to_num(similarities, nan=0.0, posinf=0.0, neginf=0.0)
+    except Exception as e:
+        print(f"Warning: Error calculating similarity for '{keyword_text}': {e}")
+        similarities = np.zeros(len(content_embeddings))
+    
+    return similarities
+
+def create_injection_point(content_item, similarity, keyword_text):
+    """Create an injection point object with classification."""
+    # Classify the match
+    icon, action = classify_match(content_item['text'], keyword_text, similarity)
+    
+    # Truncate text for display (keep first 60 characters)
+    display_text = content_item['text']
+    if len(display_text) > 60:
+        display_text = display_text[:57] + "..."
+    
+    return {
+        'text': display_text,
+        'full_text': content_item['text'],
+        'similarity': round(float(similarity), 3),
+        'location': content_item['location'],
+        'context': content_item['context'],
+        'section': content_item['section'],
+        'icon': icon,
+        'action': action
+    }
+
+def find_injection_points(resume_json, keywords):
+    """Find best placement spots for keywords using semantic similarity."""
+    # Prepare and validate content
+    content, valid_content = prepare_resume_content(resume_json)
+    if content is None:
         return keywords
     
-    valid_texts = [content[i]['text'] for i, _ in valid_content]
-    content_embeddings = model.encode(valid_texts, normalize_embeddings=True)
+    # Encode content embeddings
+    content_embeddings, model = encode_content_embeddings(valid_content)
     
     # Process each keyword
     for keyword in keywords:
         kw_text = keyword['kw']
         
-        if not kw_text.strip():
-            continue
-            
-        # Encode keyword
-        kw_embedding = model.encode([kw_text], normalize_embeddings=True)
-        
-        # Calculate similarities with error handling
-        try:
-            similarities = cosine_similarity(kw_embedding, content_embeddings)[0]
-            # Handle NaN values
-            similarities = np.nan_to_num(similarities, nan=0.0, posinf=0.0, neginf=0.0)
-        except Exception as e:
-            print(f"Warning: Error calculating similarity for '{kw_text}': {e}")
-            similarities = np.zeros(len(valid_content))
+        # Compute similarities
+        similarities = compute_keyword_similarities(kw_text, content_embeddings, model)
         
         # Get top 3 matches
         top_indices = np.argsort(similarities)[-3:][::-1]  # Top 3 in descending order
@@ -970,41 +1039,25 @@ def find_injection_points(resume_json, keywords):
                 _, content_item = valid_content[idx]
                 similarity = similarities[idx]
                 
-                # Classify the match
-                icon, action = classify_match(content_item['text'], kw_text, similarity)
-                
-                # Truncate text for display (keep first 60 characters)
-                display_text = content_item['text']
-                if len(display_text) > 60:
-                    display_text = display_text[:57] + "..."
-                
-                injection_points.append({
-                    'text': display_text,
-                    'full_text': content_item['text'],
-                    'similarity': round(float(similarity), 3),
-                    'location': content_item['location'],
-                    'context': content_item['context'],
-                    'section': content_item['section'],
-                    'icon': icon,
-                    'action': action
-                })
+                injection_point = create_injection_point(content_item, similarity, kw_text)
+                injection_points.append(injection_point)
         
         keyword['injection_points'] = injection_points
     
     return keywords
 
-def main():
-    """Main function."""
-    args = parse_arguments()
-    
-    # Load input data
+def load_input_data(args):
+    """Load keywords and job posting from input files."""
     print(f"🔍 Loading keywords from: {args.keywords_file}")
     keywords = load_keywords(args.keywords_file)
     
     print(f"📄 Loading job posting from: {args.job_file}")
     job_text = load_job_posting(args.job_file)
     
-    # Process keywords
+    return keywords, job_text
+
+def process_keywords(keywords, job_text, args):
+    """Process keywords and handle buzzword filtering."""
     print(f"⚙️ Processing {len(keywords)} keywords...")
     results = rank_keywords(keywords, job_text, args.drop_buzz)
     
@@ -1013,6 +1066,10 @@ def main():
     else:
         print(f"📉 Buzzword dampening: applied {config.buzzwords.penalty}x penalty to buzzwords")
     
+    return results
+
+def categorize_and_enforce_limits(results):
+    """Categorize keywords and enforce knockout limits."""
     # Separate knockout requirements and skills
     knockouts = [r for r in results if r['category'] == 'knockout']
     skills = [r for r in results if r['category'] == 'skill']
@@ -1020,14 +1077,17 @@ def main():
     print(f"🎯 Categorized: {len(knockouts)} knockout requirements, {len(skills)} skills")
     
     # Enforce knockout maximum (reclassify overflow as skills)
-    results = enforce_knockout_maximum(results, max_knockouts=5)
+    results = enforce_knockout_maximum(results, max_knockouts=config.knockouts.max_knockouts)
     
     # Update counts after enforcement
     knockouts = [r for r in results if r['category'] == 'knockout']
     skills = [r for r in results if r['category'] == 'skill']
     print(f"🎯 Final categorization: {len(knockouts)} knockout requirements, {len(skills)} skills")
     
-    # Post-process results: Only cluster skills, not knockouts
+    return results
+
+def process_clustering_and_trimming(results, args):
+    """Handle clustering and trimming of skills."""
     print(f"🔗 Clustering aliases (threshold: {args.cluster_thresh})...")
     knockout_keywords = [k for k in results if k['category'] == 'knockout']
     skill_keywords = [k for k in results if k['category'] == 'skill']
@@ -1042,6 +1102,10 @@ def main():
     print(f"✂️ Trimming skills by median score...")
     trimmed_skills = trim_by_median(clustered_skills)
     
+    return canonical_keywords, knockout_keywords, trimmed_skills
+
+def select_top_results(knockout_keywords, trimmed_skills, args):
+    """Select top skills and sort knockout requirements."""
     print(f"🏆 Selecting top {args.top} skills...")
     
     # Get top skills sorted by score
@@ -1054,33 +1118,42 @@ def main():
     
     knockout_requirements = sorted(knockout_keywords, key=knockout_sort_key)
     
-    # Add sentence-matching if resume file provided
-    if args.resume:
-        print(f"🎯 Finding injection points...")
-        try:
-            with open(args.resume, 'r', encoding='utf-8') as f:
-                resume_json = json.load(f)
-            
-            # Combine all keywords for sentence matching
-            all_keywords = knockout_requirements + top_skills
-            enhanced_keywords = find_injection_points(resume_json, all_keywords)
-            
-            # Update the separate lists with injection points
-            knockout_requirements = [kw for kw in enhanced_keywords if kw['category'] == 'knockout']
-            top_skills = [kw for kw in enhanced_keywords if kw['category'] == 'skill']
-            
-            print(f"✅ Injection points found for {len(enhanced_keywords)} keywords")
-            
-        except FileNotFoundError:
-            print(f"⚠️  Resume file not found: {args.resume}")
-            print("   Proceeding without sentence matching...")
-        except json.JSONDecodeError:
-            print(f"⚠️  Invalid JSON in resume file: {args.resume}")
-            print("   Proceeding without sentence matching...")
-        except Exception as e:
-            print(f"⚠️  Error processing resume: {e}")
-            print("   Proceeding without sentence matching...")
+    return knockout_requirements, top_skills
+
+def process_resume_injection(knockout_requirements, top_skills, args):
+    """Process resume injection points if resume file provided."""
+    if not args.resume:
+        return knockout_requirements, top_skills
     
+    print(f"🎯 Finding injection points...")
+    try:
+        with open(args.resume, 'r', encoding='utf-8') as f:
+            resume_json = json.load(f)
+        
+        # Combine all keywords for sentence matching
+        all_keywords = knockout_requirements + top_skills
+        enhanced_keywords = find_injection_points(resume_json, all_keywords)
+        
+        # Update the separate lists with injection points
+        knockout_requirements = [kw for kw in enhanced_keywords if kw['category'] == 'knockout']
+        top_skills = [kw for kw in enhanced_keywords if kw['category'] == 'skill']
+        
+        print(f"✅ Injection points found for {len(enhanced_keywords)} keywords")
+        
+    except FileNotFoundError:
+        print(f"⚠️  Resume file not found: {args.resume}")
+        print("   Proceeding without sentence matching...")
+    except json.JSONDecodeError:
+        print(f"⚠️  Invalid JSON in resume file: {args.resume}")
+        print("   Proceeding without sentence matching...")
+    except Exception as e:
+        print(f"⚠️  Error processing resume: {e}")
+        print("   Proceeding without sentence matching...")
+    
+    return knockout_requirements, top_skills
+
+def save_and_display_results(knockout_requirements, top_skills, canonical_keywords, results, args):
+    """Save output files and display results."""
     # Show optional dual output summary
     if args.summary:
         print_dual_summary(knockout_requirements, top_skills)
@@ -1096,6 +1169,31 @@ def main():
     
     # Show final results summary
     print_results_summary(knockout_requirements, top_skills)
+
+def main():
+    """Main function orchestrating the keyword analysis workflow."""
+    args = parse_arguments()
+    
+    # Load input data
+    keywords, job_text = load_input_data(args)
+    
+    # Process keywords
+    results = process_keywords(keywords, job_text, args)
+    
+    # Categorize and enforce limits
+    results = categorize_and_enforce_limits(results)
+    
+    # Process clustering and trimming
+    canonical_keywords, knockout_keywords, trimmed_skills = process_clustering_and_trimming(results, args)
+    
+    # Select top results
+    knockout_requirements, top_skills = select_top_results(knockout_keywords, trimmed_skills, args)
+    
+    # Process resume injection if provided
+    knockout_requirements, top_skills = process_resume_injection(knockout_requirements, top_skills, args)
+    
+    # Save and display results
+    save_and_display_results(knockout_requirements, top_skills, canonical_keywords, results, args)
 
 if __name__ == '__main__':
     main() 
