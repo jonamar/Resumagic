@@ -89,7 +89,8 @@ EXECUTIVE_BUZZWORD_PENALTY = 0.8  # Penalize executive buzzwords
 # Knockout categorization patterns
 HARD_KNOCKOUT_PATTERNS = [
     # Specific years of experience (must be specific number)
-    r'\d+\+?\s*years?\s*(of\s+)?(experience|leadership|management)',
+    r'\d+\+?\s*years?\s*of\s+.*?(experience|leadership|management)',
+    r'\d+\+?\s*years?\s*(experience|leadership|management)',
     r'\d+\+?\s*years?\s*in\s+(product\s+management|leadership|management)',
     r'\d+\+?\s*years?\s*(in\s+)?(a\s+)?(senior|leadership|management)',
     
