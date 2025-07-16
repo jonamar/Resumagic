@@ -176,33 +176,43 @@ def calculate_knockout_confidence(keyword_lower, role_weight):
     
     return knockout_confidence
 
+def is_preferred_requirement(keyword_lower):
+    """Check if a keyword indicates a preferred (not required) requirement."""
+    preferred_indicators = [
+        'preferred', 'plus', 'bonus', 'nice to have', 'advantage', 
+        'desirable', 'beneficial', 'would be great', 'a plus but not required'
+    ]
+    return any(indicator in keyword_lower for indicator in preferred_indicators)
+
 def categorize_keyword(keyword, score, tfidf_score, role_weight):
     """
     Intelligently categorize a scored keyword as knockout requirement or skill.
     
     Args:
         keyword (str): The keyword text
-        score (float): The final composite score (unused but kept for API compatibility)
+        score (float): The final composite score
         tfidf_score (float): The TF-IDF component score (unused but kept for API compatibility)
         role_weight (float): The role weight used in scoring
         
     Returns:
-        str: 'knockout' or 'skill'
+        dict: {'category': 'knockout' or 'skill', 'knockout_type': 'required' or 'preferred' or None}
     """
     kw_lower = keyword.lower()
     
     # Check if this is a soft skill that should not be a knockout
     if is_soft_skill(kw_lower):
-        return 'skill'
+        return {'category': 'skill', 'knockout_type': None}
     
     # Calculate knockout confidence
     knockout_confidence = calculate_knockout_confidence(kw_lower, role_weight)
     
     # Lower threshold to catch more legitimate knockouts
     if knockout_confidence >= 0.6:
-        return 'knockout'
+        # Determine if it's preferred or required
+        knockout_type = 'preferred' if is_preferred_requirement(kw_lower) else 'required'
+        return {'category': 'knockout', 'knockout_type': knockout_type, 'confidence': knockout_confidence, 'score': score}
     else:
-        return 'skill'
+        return {'category': 'skill', 'knockout_type': None}
 
 def parse_arguments():
     """Parse command line arguments."""
@@ -500,6 +510,49 @@ def trim_by_median(canonical_keywords, median_multiplier=1.2, min_keywords=10):
     
     return filtered_keywords
 
+def enforce_knockout_maximum(results, max_knockouts=5):
+    """
+    Enforce maximum number of knockouts, reclassifying overflow as skills.
+    
+    Args:
+        results (list): List of keyword results
+        max_knockouts (int): Maximum number of knockouts allowed
+        
+    Returns:
+        list: Updated results with knockout limit enforced
+    """
+    knockouts = [r for r in results if r['category'] == 'knockout']
+    skills = [r for r in results if r['category'] == 'skill']
+    
+    if len(knockouts) <= max_knockouts:
+        return results
+    
+    # Sort knockouts by confidence score (required > preferred), then by score
+    def knockout_sort_key(kw):
+        type_priority = 0 if kw.get('knockout_type') == 'required' else 1
+        confidence = kw.get('knockout_confidence', 0)
+        score = kw.get('score', 0)
+        return (type_priority, -confidence, -score)
+    
+    knockouts.sort(key=knockout_sort_key)
+    
+    # Keep top knockouts, reclassify the rest as skills
+    kept_knockouts = knockouts[:max_knockouts]
+    overflow_knockouts = knockouts[max_knockouts:]
+    
+    # Reclassify overflow knockouts as skills
+    for kw in overflow_knockouts:
+        kw['category'] = 'skill'
+        kw['knockout_type'] = None
+        kw['knockout_confidence'] = 0
+    
+    # Combine all results
+    updated_results = kept_knockouts + skills + overflow_knockouts
+    
+    print(f"🎯 Knockout limit enforced: {len(kept_knockouts)} knockouts kept, {len(overflow_knockouts)} reclassified as skills")
+    
+    return updated_results
+
 def calculate_compound_boost(keyword_text):
     """Boost compound keywords over solo terms."""
     words = keyword_text.split()
@@ -616,7 +669,7 @@ def score_single_keyword(keyword, tfidf_scores, job_text, drop_buzz=False):
     final_score = enhanced_score
     
     # Categorize keyword using intelligent classification
-    category = categorize_keyword(kw_text, final_score, tfidf_score, role_score)
+    categorization = categorize_keyword(kw_text, final_score, tfidf_score, role_score)
     
     return {
         'kw': kw_text,
@@ -625,7 +678,9 @@ def score_single_keyword(keyword, tfidf_scores, job_text, drop_buzz=False):
         'role': round(float(role_score), 3),
         'score': round(final_score, 3),
         'is_buzzword': is_buzz,
-        'category': category
+        'category': categorization['category'],
+        'knockout_type': categorization.get('knockout_type'),
+        'knockout_confidence': categorization.get('confidence', 0)
     }
 
 def apply_enhancements(base_score, keyword_text, job_text):
@@ -742,19 +797,11 @@ def generate_keyword_checklist(knockout_requirements, top_skills):
     content.append("")
     
     if knockout_requirements:
-        for i, req in enumerate(knockout_requirements, 1):
+        for req in knockout_requirements:
             aliases_text = f" (aliases: {', '.join(req['aliases'])})" if req.get('aliases') else ""
-            content.append(f"{i}. **{req['kw']}** (score: {req['score']}){aliases_text}")
-            
-            # Add injection points if available
-            if req.get('injection_points'):
-                content.append("")  # Breathing room
-                for point in req['injection_points']:
-                    # Extract employer and location info for better findability
-                    employer_info = extract_employer_info(point['context'], point['location'])
-                    similarity_score = f"({point['similarity']}) " if point.get('similarity') else ""
-                    content.append(f"  [ ] {similarity_score}💡 \"{point['text']}\" {employer_info}")
-                content.append("")
+            knockout_label = f" ({req['knockout_type']})" if req.get('knockout_type') == 'preferred' else ""
+            content.append(f"- [ ] **{req['kw']}** (score: {req['score']}){aliases_text}{knockout_label}")
+        content.append("")
     else:
         content.append("- No knockout requirements identified")
     
@@ -765,10 +812,10 @@ def generate_keyword_checklist(knockout_requirements, top_skills):
     content.append("*These are the highest-priority skills to emphasize in your resume.*")
     content.append("")
     
-    for i, skill in enumerate(top_skills, 1):
+    for skill in top_skills:
         aliases_text = f" (aliases: {', '.join(skill['aliases'])})" if skill.get('aliases') else ""
         buzzword_flag = " ⚠️ *buzzword*" if skill.get('is_buzzword', False) else ""
-        content.append(f"{i}. **{skill['kw']}** (score: {skill['score']}){aliases_text}{buzzword_flag}")
+        content.append(f"- [ ] **{skill['kw']}** (score: {skill['score']}){aliases_text}{buzzword_flag}")
         
         # Add injection points if available
         if skill.get('injection_points'):
@@ -1008,22 +1055,37 @@ def main():
     
     print(f"🎯 Categorized: {len(knockouts)} knockout requirements, {len(skills)} skills")
     
+    # Enforce knockout maximum (reclassify overflow as skills)
+    results = enforce_knockout_maximum(results, max_knockouts=5)
+    
+    # Update counts after enforcement
+    knockouts = [r for r in results if r['category'] == 'knockout']
+    skills = [r for r in results if r['category'] == 'skill']
+    print(f"🎯 Final categorization: {len(knockouts)} knockout requirements, {len(skills)} skills")
+    
     # Post-process results
     print(f"🔗 Clustering aliases (threshold: {args.cluster_thresh})...")
     canonical_keywords = cluster_aliases(results, args.cluster_thresh)
     
-    print(f"✂️ Trimming by median score...")
-    trimmed_keywords = trim_by_median(canonical_keywords)
+    # Separate knockouts and skills for different processing
+    knockout_keywords = [k for k in canonical_keywords if k['category'] == 'knockout']
+    skill_keywords = [k for k in canonical_keywords if k['category'] == 'skill']
+    
+    # Trim only skills (not knockouts)
+    print(f"✂️ Trimming skills by median score...")
+    trimmed_skills = trim_by_median(skill_keywords)
     
     print(f"🏆 Selecting top {args.top} skills...")
     
-    # Get top skills (excluding knockouts from regular top N)
-    top_skills = sorted([k for k in trimmed_keywords if k['category'] == 'skill'], 
-                       key=lambda x: x['score'], reverse=True)[:args.top]
+    # Get top skills sorted by score
+    top_skills = sorted(trimmed_skills, key=lambda x: x['score'], reverse=True)[:args.top]
     
-    # Get all knockout requirements sorted by score
-    knockout_requirements = sorted([k for k in trimmed_keywords if k['category'] == 'knockout'], 
-                                  key=lambda x: x['score'], reverse=True)
+    # Get all knockout requirements sorted by type and score
+    def knockout_sort_key(kw):
+        type_priority = 0 if kw.get('knockout_type') == 'required' else 1
+        return (type_priority, -kw.get('score', 0))
+    
+    knockout_requirements = sorted(knockout_keywords, key=knockout_sort_key)
     
     # Add sentence-matching if resume file provided
     if args.resume:
