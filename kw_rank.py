@@ -185,9 +185,100 @@ def is_preferred_requirement(keyword_lower):
     ]
     return any(indicator in keyword_lower for indicator in preferred_indicators)
 
+def detect_years_knockout(keyword):
+    """
+    Enhanced years-based knockout detection with context extraction.
+    
+    Args:
+        keyword (str): The keyword text to analyze
+        
+    Returns:
+        dict: {'is_knockout': bool, 'knockout_type': str, 'context': str}
+    """
+    # Look for years patterns
+    years_patterns = [
+        r'\d+\+?\s*years?',           # "5+ years", "8 years"
+        r'\d+\s*[-–]\s*\d+\s*years?', # "5-7 years", "3–5 years"
+        r'minimum\s+\d+\s*years?',    # "minimum 3 years"
+        r'\d+\s*years?\s*minimum',    # "3 years minimum"
+    ]
+    
+    kw_lower = keyword.lower()
+    years_match = None
+    
+    for pattern in years_patterns:
+        match = re.search(pattern, kw_lower)
+        if match:
+            years_match = match
+            break
+    
+    if not years_match:
+        return {'is_knockout': False}
+    
+    # Extract context around the years mention
+    context = extract_years_context(keyword, years_match)
+    
+    # Determine if preferred or required
+    knockout_type = 'preferred' if any(word in kw_lower for word in ['preferred', 'nice to have', 'plus']) else 'required'
+    
+    return {
+        'is_knockout': True,
+        'knockout_type': knockout_type,
+        'context': context,
+        'years_match': years_match.group()
+    }
+
+def extract_years_context(keyword, years_match):
+    """
+    Extract meaningful context around years mention.
+    
+    Args:
+        keyword (str): The full keyword text
+        years_match: The regex match object for years
+        
+    Returns:
+        str: Extracted context around the years mention
+    """
+    # Get the position of the years match
+    start_pos = years_match.start()
+    end_pos = years_match.end()
+    
+    # Look for context after years
+    after_years = keyword[end_pos:].strip()
+    
+    # Common context patterns
+    context_patterns = [
+        r'^\s*of\s+(.+?)(?:[.,;]|$|\s+and\s+|\s+or\s+|\s+but\s+|\s+with\s+|\s+while\s+|\s+across\s+)',
+        r'^\s*in\s+(.+?)(?:[.,;]|$|\s+and\s+|\s+or\s+|\s+but\s+|\s+with\s+|\s+while\s+|\s+across\s+)',
+        r'^\s+(.+?)(?:[.,;]|$|\s+and\s+|\s+or\s+|\s+but\s+|\s+with\s+|\s+while\s+|\s+across\s+)',
+    ]
+    
+    for pattern in context_patterns:
+        match = re.search(pattern, after_years, re.IGNORECASE)
+        if match:
+            context = match.group(1).strip()
+            if context and len(context) > 2:  # Avoid single character matches
+                return context
+    
+    # If no clear pattern, look for context before years (less common)
+    before_years = keyword[:start_pos].strip()
+    if before_years:
+        # Look for action words before years
+        action_match = re.search(r'(managing|leading|building|developing|working)\s+.*?$', before_years, re.IGNORECASE)
+        if action_match:
+            return action_match.group(0)
+    
+    # Fallback: return the portion after years up to punctuation
+    fallback_match = re.search(r'^[^.,;]+', after_years)
+    if fallback_match:
+        return fallback_match.group(0).strip()
+    
+    return "experience"  # Default fallback
+
 def categorize_keyword(keyword, score, tfidf_score, role_weight):
     """
     Intelligently categorize a scored keyword as knockout requirement or skill.
+    Uses hybrid approach: enhanced years-based detection + traditional patterns.
     
     Args:
         keyword (str): The keyword text
@@ -204,14 +295,31 @@ def categorize_keyword(keyword, score, tfidf_score, role_weight):
     if is_soft_skill(kw_lower):
         return {'category': 'skill', 'knockout_type': None}
     
-    # Calculate knockout confidence
+    # NEW: Enhanced years-based knockout detection
+    years_result = detect_years_knockout(keyword)
+    if years_result['is_knockout']:
+        return {
+            'category': 'knockout', 
+            'knockout_type': years_result['knockout_type'],
+            'confidence': 1.0,  # High confidence for years-based
+            'detection_method': 'years_based',
+            'context': years_result['context']
+        }
+    
+    # EXISTING: Traditional knockout detection for non-years patterns
     knockout_confidence = calculate_knockout_confidence(kw_lower, role_weight)
     
     # Lower threshold to catch more legitimate knockouts
     if knockout_confidence >= 0.6:
         # Determine if it's preferred or required
         knockout_type = 'preferred' if is_preferred_requirement(kw_lower) else 'required'
-        return {'category': 'knockout', 'knockout_type': knockout_type, 'confidence': knockout_confidence, 'score': score}
+        return {
+            'category': 'knockout', 
+            'knockout_type': knockout_type, 
+            'confidence': knockout_confidence, 
+            'detection_method': 'traditional',
+            'score': score
+        }
     else:
         return {'category': 'skill', 'knockout_type': None}
 
