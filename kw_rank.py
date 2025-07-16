@@ -333,8 +333,8 @@ Examples:
                        help='Path to resume JSON file for sentence matching (optional)')
     parser.add_argument('--drop-buzz', action='store_true', 
                        help='Drop buzzwords entirely instead of penalizing (default: penalize)')
-    parser.add_argument('--cluster-thresh', type=float, default=0.35,
-                       help='Clustering threshold for alias detection (default: 0.35)')
+    parser.add_argument('--cluster-thresh', type=float, default=0.75,
+                       help='Clustering threshold for alias detection (default: 0.75)')
     parser.add_argument('--top', type=int, default=5,
                        help='Number of top keywords to output (default: 5)')
     parser.add_argument('--summary', action='store_true',
