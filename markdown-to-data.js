@@ -43,12 +43,8 @@ function parseMarkdownCoverLetter(markdownFilePath, resumeJsonPath) {
       coverLetter: {
         content: contentParagraphs,
         metadata: {
-          jobTitle: frontMatter.jobTitle || '',
-          company: frontMatter.company || '',
-          hiringManager: frontMatter.hiringManager || '',
           date: frontMatter.date || new Date().toISOString().split('T')[0],
-          customClosing: frontMatter.customClosing || 'Sincerely',
-          referenceSource: frontMatter.referenceSource || ''
+          customClosing: frontMatter.customClosing || 'Sincerely'
         }
       }
     };
