@@ -68,45 +68,48 @@ This project uses a two-repo structure to separate code from private data:
 ```
 /resumagic/
 ├── app/                             # Public code repository (this repo)
+│   ├── docs/                        # Documentation
+│   │   └── cover-letter-schema.md   # Cover letter JSON schema
+│   ├── services/                    # Microservices
+│   │   └── keyword-analysis/        # Python keyword analysis service
+│   │       ├── kw_rank/             # Modular Python package
+│   │       │   ├── core/            # Core analysis modules
+│   │       │   └── io/              # Input/output modules
+│   │       ├── config/              # Configuration management
+│   │       ├── tests/               # Comprehensive test suite
+│   │       ├── API.md               # API documentation
+│   │       ├── SETUP.md             # Setup guide
+│   │       └── kw_rank_modular.py   # Modern entry point
+│   ├── generate-resume.js           # Resume/cover letter generation
 │   ├── docx-template.js             # DOCX generation templates
 │   ├── markdown-to-data.js          # Markdown parser and transformer
-│   ├── generate-resume.js           # Resume and cover letter generation script
-│   └── ... (other code files)
+│   └── ... (other core files)
 │
 └── data/                            # Private data repository
-    ├── applications/                # NEW: Application-specific folders
+    ├── applications/                # Application-specific folders
     │   ├── relay-director-of-product/
     │   │   ├── inputs/
     │   │   │   ├── resume.json      # Job-specific resume data
-    │   │   │   └── cover-letter.md  # Job-specific cover letter
+    │   │   │   ├── cover-letter.md  # Job-specific cover letter
+    │   │   │   └── keywords.json    # Keywords for analysis
+    │   │   ├── working/             # Process utilities & analysis
+    │   │   │   ├── keyword_analysis.json
+    │   │   │   ├── keyword-checklist.md
+    │   │   │   └── top5.json
     │   │   └── outputs/
     │   │       ├── Jon-Amar-Resume-Relay.docx
     │   │       ├── Jon-Amar-Cover-Letter-Relay.docx
     │   │       └── Jon-Amar-Cover-Letter-and-Resume-Relay.docx
     │   │
-    │   ├── openai-product-manager/
-    │   │   ├── inputs/
-    │   │   │   ├── resume.json
-    │   │   │   └── cover-letter.md
-    │   │   └── outputs/
-    │   │       └── ... (HR-friendly named files)
-    │   │
     │   └── template/                # Template for new applications
     │       ├── inputs/
     │       │   ├── resume.json      # Template resume
-    │       │   └── cover-letter.md  # Template cover letter
+    │       │   ├── cover-letter.md  # Template cover letter
+    │       │   └── keywords.json    # Template keywords
     │       └── README.md            # Usage instructions
     │
-    ├── input/                       # LEGACY: Original flat structure
-    │   ├── resume.json              # Personal resume data
-    │   ├── resume-cover-letter.md   # Cover letter for general applications
-    │   ├── pointclick-resume.json   # Specialized resume for specific job
-    │   └── ... (other legacy files)
-    │
-    └── output/                      # LEGACY: Original output folder
-        ├── resume.docx              # Resume-only generation (legacy)
-        ├── resume-resume.docx       # Resume (when generating both)
-        └── ... (other legacy files)
+    └── templates/                   # Reusable content templates
+        └── tiles.json               # Content tiles for resume generation
 ```
 
 This structure allows you to:
@@ -150,8 +153,8 @@ This structure allows you to:
 
 - Node.js installed on your system
 - Required NPM packages installed (run `npm install` to install them)
-- Python 3.11+ and virtual environment for keyword ranking tool
-- Python dependencies: `pip install -r requirements.txt`
+- Python 3.8+ and virtual environment for keyword analysis service
+- Python dependencies: `pip install -r services/keyword-analysis/requirements.txt`
 
 ## Intelligent Keyword Analysis Tool
 
@@ -172,23 +175,25 @@ pip install -r requirements.txt
 
 #### Basic Usage
 ```bash
-python kw_rank.py keywords.json job_posting.md
+python services/keyword-analysis/kw_rank_modular.py /path/to/application/directory
 ```
 
-#### Enhanced Top-N Selection
+#### Testing
 ```bash
-python kw_rank.py keywords.json job_posting.md --top 5
+cd services/keyword-analysis
+python run_tests.py --coverage
 ```
 
-#### Available Options
-- `--drop-buzz`: Drop buzzwords entirely instead of penalizing (default: penalize)
-- `--cluster-thresh 0.25`: Clustering threshold for alias detection (default: 0.25)
-- `--top 5`: Number of top keywords to output (default: 5)
-- `--summary`: Show dual analysis with knockout requirements and top skills breakdown
+#### Documentation
+- **API Reference**: `services/keyword-analysis/API.md`
+- **Setup Guide**: `services/keyword-analysis/SETUP.md`
+- **Architecture**: Modular design with comprehensive testing (85%+ coverage)
 
 #### Output Files
-- `keyword_analysis.json`: Canonical keyword data with knockout requirements, ranked skills, scoring, and aliases
-- `keyword-checklist.md`: Manual checklist for keyword injection during resume optimization
+- `working/keyword_analysis.json`: Detailed analysis with knockout requirements, ranked skills, scoring, and aliases
+- `working/kw_rank_post.json`: Full ranking results with TF-IDF scores
+- `working/top5.json`: Top 5 skills for resume optimization
+- `working/keyword-checklist.md`: Manual checklist for keyword injection during resume optimization
 
 ### Enhanced Features
 
