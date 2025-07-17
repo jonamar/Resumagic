@@ -1,63 +1,44 @@
 # Resumagic
 
-Resumagic is a comprehensive tool for generating ATS-friendly resumes and cover letters in DOCX format from JSON Resume files and Markdown cover letters, with intelligent keyword analysis.
+Professional resume and cover letter generator with intelligent keyword analysis for ATS optimization.
+
+## ⚡ Quick Start
+
+```bash
+# 1. Install dependencies
+npm install
+pip install -r services/keyword-analysis/requirements.txt
+
+# 2. Create new application
+cp -r ../data/applications/template ../data/applications/company-role
+
+# 3. Edit input files
+# ../data/applications/company-role/inputs/resume.json
+# ../data/applications/company-role/inputs/cover-letter.md  
+# ../data/applications/company-role/inputs/keywords.json
+
+# 4. Generate documents
+node generate-resume.js company-role
+
+# 5. Run keyword analysis
+python services/keyword-analysis/kw_rank_modular.py company-role
+```
+
+**Output**: Professional DOCX files + intelligent keyword optimization checklist
+
+## What This Tool Does
+
+**Document Generation**: Converts JSON Resume + Markdown → Professional DOCX files
+**Keyword Analysis**: Analyzes job postings → Categorizes keywords → Optimization checklist
+**ATS Optimization**: Ensures documents are easily parsed by applicant tracking systems
 
 ## Architecture Overview
 
-This application follows a clean microservice architecture with language-specific boundaries:
-
-```
-app/
-├── 📄 Node.js Application (Document Generation)
-│   ├── generate-resume.js       # Main entry point
-│   ├── cli-parser.js           # Command line argument parsing
-│   ├── path-resolver.js        # File path resolution
-│   ├── document-orchestrator.js # Document generation coordination
-│   ├── docx-template.js        # DOCX document creation
-│   ├── markdown-to-data.js     # Markdown parsing
-│   └── theme.js                # Styling and configuration
-│
-└── 🐍 Python Services (Analysis & Intelligence)
-    └── services/keyword-analysis/   # Keyword analysis microservice
-        ├── kw_rank/                 # Modular Python package
-        │   ├── core/                # Core analysis modules
-        │   ├── io/                  # Input/Output modules
-        │   └── main.py              # Service orchestration
-        ├── config/                  # Configuration management
-        ├── kw_rank_modular.py      # Modern entry point
-        └── requirements.txt         # Python dependencies
-```
-
-## Recent Improvements (2024)
-
-### ✨ Clean Architecture & Language Separation
-- **Clear Service Boundaries**: Node.js handles document generation, Python handles analysis
-- **Technology Focused**: Each service uses the most appropriate technology stack
-- **Independent Development**: Services can evolve separately
-- **No Mixed Dependencies**: Separate package managers and tooling
-
-### 🎯 Node.js Application Improvements  
-- **Modular Architecture**: Clean separation of concerns across focused modules
-- **Eliminated 300+ lines of duplicated code** through generic section generation
-- **Centralized configuration** in `theme.js` with comprehensive spacing constants
-- **Enhanced error handling** with user-friendly messages
-- **Better testability** through modular design
-
-### 🔧 Python Service Architecture
-- **Comprehensive Refactoring**: Transformed 1,248-line monolith into clean modular architecture
-- **Single Responsibility**: Each module has one clear purpose (<300 lines each)
-- **Configuration Management**: All constants centralized with proper validation
-- **Advanced Features**: Semantic clustering, knockout detection, resume injection points
-
-## Project Overview
-
-This tool converts JSON Resume files into clean, professional, ATS-friendly resumes and markdown files into matching cover letters, both in DOCX format. The focus is on creating documents that:
-
-- Are easily parsed by Applicant Tracking Systems (ATS)
-- Present your information in a clean, professional format
-- Have consistent styling between resumes and cover letters
-- Avoid common ATS parsing errors (like complex layouts or decorative elements)
-- Support copy/paste friendly content creation for cover letters
+**🔧 Clean Microservice Design**
+- **Node.js**: Document generation (DOCX creation, markdown parsing)
+- **Python**: Intelligent analysis (keyword scoring, semantic clustering)
+- **Separation**: Each service uses optimal technology stack
+- **Testing**: 85%+ coverage with comprehensive test suites
 
 ## Project Structure
 
@@ -147,289 +128,133 @@ This structure allows you to:
 - Quick one-off resume generation
 - Testing and development
 
-## How to Use
+## Prerequisites
 
-### Prerequisites
+- **Node.js** (for document generation)
+- **Python 3.8+** (for keyword analysis)
+- **Virtual environment recommended**
 
-- Node.js installed on your system
-- Required NPM packages installed (run `npm install` to install them)
-- Python 3.8+ and virtual environment for keyword analysis service
-- Python dependencies: `pip install -r services/keyword-analysis/requirements.txt`
+## Core Features
 
-## Intelligent Keyword Analysis Tool
+### 📄 Document Generation
+- **Resume + Cover Letter**: Generate both from structured data
+- **ATS-Friendly**: Optimized for applicant tracking systems
+- **Professional Styling**: Clean, consistent formatting
+- **Multiple Formats**: Separate files or combined document
 
-Resumagic includes a Python-based keyword analysis tool that analyzes job postings, ranks keywords by importance using TF-IDF scoring, and intelligently categorizes them into knockout requirements vs. skills for optimal resume targeting.
+### 🧠 Intelligent Keyword Analysis
+- **Smart Categorization**: Separates knockout requirements from skills
+- **TF-IDF Scoring**: Prioritizes keywords by job posting frequency
+- **Semantic Clustering**: Groups similar keywords with aliases
+- **Resume Injection**: Analyzes existing content for optimization points
 
-### Setup
+### 🔧 Advanced Features
+- **Buzzword Detection**: Penalizes generic terms, boosts authentic vocabulary
+- **Alias Clustering**: "Product Manager" + "Product Lead" → one optimized term
+- **Comprehensive Testing**: 85%+ test coverage with unit + integration tests
+- **Modular Architecture**: Clean separation of concerns
+
+## Usage Examples
+
+### Document Generation
 
 ```bash
-# Create and activate virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+# Generate all formats (recommended)
+node generate-resume.js company-role
 
-# Install dependencies
-pip install -r requirements.txt
+# Generate specific formats
+node generate-resume.js company-role --cover-letter
+node generate-resume.js company-role --both
+node generate-resume.js company-role --combined
 ```
 
-### Usage
+### Keyword Analysis
 
-#### Basic Usage
 ```bash
-python services/keyword-analysis/kw_rank_modular.py /path/to/application/directory
+# Run analysis
+python services/keyword-analysis/kw_rank_modular.py company-role
+
+# Run tests
+cd services/keyword-analysis && python run_tests.py --coverage
 ```
 
-#### Testing
+### File Structure
+
+```
+company-role/
+├── inputs/
+│   ├── resume.json          # Your resume data
+│   ├── cover-letter.md      # Cover letter content
+│   └── keywords.json        # Keywords to analyze
+├── working/
+│   ├── keyword_analysis.json    # Detailed analysis
+│   ├── keyword-checklist.md     # Optimization checklist
+│   └── top5.json               # Top skills
+└── outputs/
+    ├── Jon-Amar-Resume-Company.docx
+    ├── Jon-Amar-Cover-Letter-Company.docx
+    └── Jon-Amar-Combined-Company.docx
+```
+
+## Troubleshooting
+
+### Common Issues
+
+**Command not found**: Ensure you're in the correct directory and dependencies are installed
+**Python import errors**: Check virtual environment activation and requirements.txt
+**File not found**: Verify application folder structure and input files exist
+**DOCX generation fails**: Check resume.json format and required fields
+
+### Testing
+
 ```bash
-cd services/keyword-analysis
-python run_tests.py --coverage
+# Test document generation
+node generate-resume.js relay-director-of-product
+
+# Test keyword analysis
+python services/keyword-analysis/kw_rank_modular.py relay-director-of-product
+
+# Run full test suite
+cd services/keyword-analysis && python run_tests.py --coverage
 ```
 
-#### Documentation
+### Documentation
+
 - **API Reference**: `services/keyword-analysis/API.md`
 - **Setup Guide**: `services/keyword-analysis/SETUP.md`
-- **Architecture**: Modular design with comprehensive testing (85%+ coverage)
+- **Cover Letter Schema**: `docs/cover-letter-schema.md`
 
-#### Output Files
-- `working/keyword_analysis.json`: Detailed analysis with knockout requirements, ranked skills, scoring, and aliases
-- `working/kw_rank_post.json`: Full ranking results with TF-IDF scores
-- `working/top5.json`: Top 5 skills for resume optimization
-- `working/keyword-checklist.md`: Manual checklist for keyword injection during resume optimization
+## Technical Architecture
 
-### Enhanced Features
+### Core Components
+- **CLI Parser**: Command-line argument processing and validation
+- **Path Resolver**: File system operations and path validation  
+- **Document Orchestrator**: Coordinates generation and file operations
+- **DOCX Template**: Document formatting with generic section generation
+- **Theme Configuration**: Centralized styling and spacing control
 
-#### 1. Buzzword Dampening
-Generic PM buzzwords are automatically detected and penalized (0.7x score) or dropped entirely:
-- vision, strategy, roadmap, delivery, execution, discovery, innovation
-- data-driven, metrics, scalable, alignment, stakeholders, collaboration
-- agile, prioritization, user-centric, outcomes, cross-functional, etc.
+### Dependencies
+- **docx**: DOCX generation with full formatting control
+- **gray-matter**: YAML front matter parsing from markdown
+- **marked**: Markdown to structured data conversion
+- **scikit-learn**: TF-IDF vectorization and clustering
+- **sentence-transformers**: Semantic similarity analysis
 
-#### 2. Alias Clustering
-Similar keywords are clustered using semantic embeddings (SentenceTransformer):
-- "leading Product Managers" clusters with "managing Product Managers"
-- "home services industry" clusters with "home service businesses"
-- "b2b" clusters with "b2b2c"
+---
 
-#### 3. Median-Based Trimming
-Keywords below 1.2x median score are filtered out, ensuring only high-signal terms remain.
+## Appendix
 
-#### 4. Top-N Selection
-Clean shortlist of the highest-scoring canonical keywords with their aliases.
+### ATS Optimization Tips
+- Use ISO date format (YYYY-MM-DD)
+- Include job posting keywords naturally
+- Use standard section names ("Experience", "Education")
+- Avoid decorative elements and complex layouts
+- Test final DOCX files with ATS scanners
 
-### Updating Your Resume
+### Customization
+- **Styling**: Edit `theme.js` for colors, fonts, spacing
+- **Layout**: Modify `docx-template.js` for advanced changes
+- **Configuration**: Update `services/keyword-analysis/config/constants.py`
 
-1. Edit the `../data/input/resume.json` file with your personal information
-2. Make sure dates are in ISO format (YYYY-MM-DD)
-3. Create job-specific versions by copying and customizing your resume.json (e.g., `pointclick-resume.json`)
-
-### Creating Cover Letters
-
-1. Copy the `../data/input/cover-letter-template.md` to create a new cover letter
-2. Name it to match your resume file: `[resume-name]-cover-letter.md`
-3. Update the YAML front matter with job-specific information:
-   ```yaml
-   ---
-   jobTitle: "Senior Product Manager"
-   company: "Tech Corp"
-   hiringManager: "Sarah Johnson"
-   date: "2024-01-15"
-   customClosing: "Best regards"
-   referenceSource: "LinkedIn job posting"
-   ---
-   ```
-4. Write your cover letter content using markdown formatting:
-   - Use `**bold text**` for emphasis
-   - Use `*italic text*` for company names
-   - Use `- bullet points` for lists
-   - Separate paragraphs with blank lines
-
-### Generating Documents
-
-#### New Application Folder Structure (Recommended)
-
-For new applications, use the application folder structure for better organization:
-
-```bash
-# Create a new application from template
-cp -r data/applications/template data/applications/company-role-name
-
-# Generate all three formats (DEFAULT - when both resume and cover letter content are available)
-node generate-resume.js company-role-name
-# Output: data/applications/company-role-name/outputs/Jon-Amar-Resume-Company.docx
-#         data/applications/company-role-name/outputs/Jon-Amar-Cover-Letter-Company.docx
-#         data/applications/company-role-name/outputs/Jon-Amar-Cover-Letter-and-Resume-Company.docx
-
-# Generate specific formats only
-node generate-resume.js company-role-name --cover-letter
-# Output: data/applications/company-role-name/outputs/Jon-Amar-Cover-Letter-Company.docx
-
-node generate-resume.js company-role-name --both
-# Output: data/applications/company-role-name/outputs/Jon-Amar-Resume-Company.docx
-#         data/applications/company-role-name/outputs/Jon-Amar-Cover-Letter-Company.docx
-
-node generate-resume.js company-role-name --cover-letter-and-resume
-# Output: data/applications/company-role-name/outputs/Jon-Amar-Cover-Letter-and-Resume-Company.docx
-
-# Auto-generate (resume + cover letter if markdown file exists)
-node generate-resume.js company-role-name --auto
-```
-
-#### Legacy File Structure (Still Supported)
-
-For backward compatibility, the old file-based structure still works:
-
-```bash
-# Generate resume only (legacy behavior)
-node generate-resume.js [input-filename.json]
-# Output: ../data/output/filename.docx
-
-# Generate cover letter only
-node generate-resume.js [input-filename.json] --cover-letter
-# Output: ../data/output/filename-cover-letter.docx
-
-# Generate both resume and cover letter
-node generate-resume.js [input-filename.json] --both
-# Output: ../data/output/filename-resume.docx
-#         ../data/output/filename-cover-letter.docx
-
-# Generate combined document
-node generate-resume.js [input-filename.json] --cover-letter-and-resume
-# Output: ../data/output/filename-cover-letter-and-resume.docx
-
-# Auto-generate
-node generate-resume.js [input-filename.json] --auto
-```
-
-### Examples
-
-#### New Application Folder Examples
-
-```bash
-# Create application for Relay Director of Product role
-cp -r data/applications/template data/applications/relay-director-of-product
-
-# Edit the input files:
-# - data/applications/relay-director-of-product/inputs/resume.json
-# - data/applications/relay-director-of-product/inputs/cover-letter.md
-
-# Generate all three formats (DEFAULT behavior)
-node generate-resume.js relay-director-of-product
-# Output: data/applications/relay-director-of-product/outputs/Jon-Amar-Resume-Relay.docx
-#         data/applications/relay-director-of-product/outputs/Jon-Amar-Cover-Letter-Relay.docx
-#         data/applications/relay-director-of-product/outputs/Jon-Amar-Cover-Letter-and-Resume-Relay.docx
-
-# Now you have all three formats ready for any submission scenario!
-# - Use Jon-Amar-Resume-Relay.docx for resume-only applications
-# - Use Jon-Amar-Cover-Letter-Relay.docx for cover letter-only requests
-# - Use Jon-Amar-Cover-Letter-and-Resume-Relay.docx for complete application packages
-```
-
-#### Legacy Structure Examples
-
-```bash
-# Generate resume only (legacy behavior)
-node generate-resume.js resume.json
-# Output: ../data/output/resume.docx
-
-# Generate both resume and cover letter
-node generate-resume.js resume.json --both
-# Output: ../data/output/resume-resume.docx
-#         ../data/output/resume-cover-letter.docx
-
-# Generate combined document
-node generate-resume.js relay.json --cover-letter-and-resume
-# Output: ../data/output/relay-cover-letter-and-resume.docx
-```
-
-### Customizing Your Documents
-
-To change how your resume and cover letters look:
-
-1. Edit the `theme.js` file to modify:
-   - Colors and fonts
-   - Font sizes and spacing
-   - Section titles and formatting
-2. Edit the `docx-template.js` file for advanced layout changes
-3. Run the generation script again to see your changes
-
-## Features
-
-### Resume Features
-- **ATS-Friendly**: Uses standard fonts and proper document structure
-- **Single-Column Layout**: Ensures proper parsing by ATS systems
-- **Clean Typography**: Optimized for both screen and print
-- **Proper Spacing**: Professional margins and section spacing
-- **ISO Date Formatting**: Correctly handles dates in the standard format
-
-### Cover Letter Features
-- **Copy/Paste Friendly**: Markdown format handles line breaks naturally
-- **YAML Front Matter**: Structured metadata for job-specific information
-- **Consistent Styling**: Matches resume formatting exactly
-- **Reuses Contact Info**: Automatically pulls your contact details from resume JSON
-- **Markdown Formatting**: Support for bold, italic, and bullet points
-- **Pipeline Reuse**: Inherits all ATS optimizations from resume system
-
-### System Features
-- **Dual Output**: Generate both resume and cover letter in one command
-- **Auto-Detection**: Automatically finds and processes matching files
-- **Backward Compatible**: Existing resume-only workflows unchanged
-- **Professional Quality**: Same high-quality output for both documents
-- **HR-Friendly Naming**: Files named for easy identification (Jon-Amar-Resume-Company.docx)
-- **Organized Structure**: Application-specific folders keep everything organized
-- **Template System**: Easy setup for new applications using template folder
-
-## Technical Details
-
-### Architecture Overview
-
-The application follows a modular architecture with clear separation of concerns:
-
-```
-app/
-├── generate-resume.js           # Main entry point (73 lines)
-├── cli-parser.js               # CLI argument parsing and validation
-├── path-resolver.js            # File path resolution and validation
-├── document-orchestrator.js    # Document generation coordination
-├── docx-template.js            # DOCX formatting and layout
-├── markdown-to-data.js         # Markdown parsing and processing
-└── theme.js                   # Centralized configuration and styling
-```
-
-### Key Components
-
-- **CLI Parser**: Handles all command-line argument processing, flag detection, and generation plan determination
-- **Path Resolver**: Manages file system operations, path validation, and company name extraction
-- **Document Orchestrator**: Coordinates resume and cover letter generation, manages file operations
-- **DOCX Template**: Provides document formatting using generic section generation functions
-- **Theme Configuration**: Centralized styling with precise spacing control (all values in twips)
-
-### Code Architecture Benefits
-
-- **Maintainability**: Each module has a single responsibility
-- **Testability**: Isolated functions can be tested independently
-- **Scalability**: Easy to add new features without affecting existing code
-- **Configuration Management**: All styling and spacing centralized in one place
-- **Error Handling**: User-friendly error messages with clear guidance
-
-The tool uses:
-- **docx library** for DOCX generation with full formatting control
-- **gray-matter** for parsing YAML front matter in markdown files
-- **marked** for markdown to structured data conversion
-- **JSON Resume schema** for resume data structure
-- **Shared pipeline** for consistent styling and ATS optimization
-- **Modular architecture** for maintainable and testable code
-
-## Tips for ATS Optimization
-
-### General Tips
-- Keep all dates in ISO format (YYYY-MM-DD)
-- Use standard section names like "Experience," "Education," etc.
-- Include keywords from job descriptions in your content
-- Use standard fonts and avoid decorative elements
-- Test your final DOCX files with ATS scanners if possible
-
-### Cover Letter Tips
-- Use the company name and job title from the job posting exactly
-- Include 2-3 key achievements with specific metrics
-- Keep paragraphs focused and scannable
-- Use bullet points for lists of skills or accomplishments
-- Customize the content for each application while keeping the same professional format
+### Legacy Support
+Older file-based structure still supported for backward compatibility. See git history for legacy documentation.
