@@ -36,10 +36,6 @@ I am writing to express my strong interest in the **Senior Product Manager** pos
 In my current role at *Wikimedia Germany*, I have successfully led platform strategy for Wikibase Suite, overseeing 104 institutional deployments and driving $20M CAD in ARR-equivalent value. My experience in scaling cross-functional teams and launching products that serve millions of users aligns perfectly with your requirements.
 
 Thank you for considering my application. I look forward to discussing how my experience can contribute to your team's success.",
-    "jobTitle": "Senior Product Manager",
-    "company": "Tech Corp",
-    "hiringManager": "Sarah Johnson",
-    "referenceSource": "LinkedIn job posting",
     "date": "2024-01-15",
     "customClosing": "Best regards"
   }
@@ -68,43 +64,7 @@ I am writing to express my strong interest in the **Senior Product Manager** pos
 Thank you for considering my application. I look forward to discussing how my experience can contribute to your team's success."
 ```
 
-#### `jobTitle` (string, required)
-The title of the position being applied for.
-
-**Example:**
-```json
-"jobTitle": "Senior Product Manager"
-```
-
-#### `company` (string, required)
-The name of the company or organization.
-
-**Example:**
-```json
-"company": "Tech Corp"
-```
-
 ### Optional Fields
-
-#### `hiringManager` (string, optional)
-The name of the hiring manager or contact person. If provided, will be used in the salutation.
-
-**Example:**
-```json
-"hiringManager": "Sarah Johnson"
-```
-
-**Impact on output:**
-- With hiringManager: "Dear Sarah Johnson,"
-- Without: "Dear Hiring Manager,"
-
-#### `referenceSource` (string, optional)
-How you learned about the position. Can be displayed in the letter content or used for tracking.
-
-**Example:**
-```json
-"referenceSource": "LinkedIn job posting"
-```
 
 #### `date` (string, optional)
 The date for the cover letter. If not provided, will auto-generate current date.
@@ -181,13 +141,9 @@ Thank you for considering my application. I look forward to discussing how my ex
 
 ### Required Field Validation
 - `content`: Must be non-empty string
-- `jobTitle`: Must be non-empty string  
-- `company`: Must be non-empty string
 
 ### Optional Field Validation
 - `date`: Must be valid ISO date format (YYYY-MM-DD) if provided
-- `hiringManager`: Must be non-empty string if provided
-- `referenceSource`: Must be non-empty string if provided
 - `customClosing`: Must be non-empty string if provided
 
 ### Content Guidelines
@@ -205,7 +161,7 @@ Existing resume JSON files will continue to work unchanged. The `coverLetter` se
 To add cover letter capability to existing files:
 
 1. **Add the coverLetter section** to your JSON file
-2. **Populate required fields** (content, jobTitle, company)
+2. **Populate required fields** (content)
 3. **Add optional fields** as needed
 4. **Test generation** with `--cover-letter` flag
 
@@ -227,8 +183,8 @@ To add cover letter capability to existing files:
 I am writing to express my interest in the Product Manager position at Example Corp. With my background in product leadership and proven track record of success...
 
 Thank you for your consideration.",
-    "jobTitle": "Product Manager",
-    "company": "Example Corp"
+    "date": "2024-01-15",
+    "customClosing": "Best regards"
   }
 }
 ```
