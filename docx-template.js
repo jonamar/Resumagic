@@ -149,7 +149,7 @@ function createHeader(basics) {
   // Create contact information with ATS-friendly format
   const contactParts = [];
   
-  // Add address first with ATS-friendly label (city, province abbreviation, postal code, country)
+  // Add address first with ATS-friendly label (city, province abbreviation, country)
   if (basics.location) {
     let locationText = basics.location.city || '';
     
@@ -162,11 +162,6 @@ function createHeader(basics) {
     // Add country
     if (basics.location.country) {
       locationText += `, ${basics.location.country}`;
-    }
-    
-    // Add postal code (with space before it, not comma)
-    if (basics.location.postalCode) {
-      locationText += ` ${basics.location.postalCode}`;
     }
     
     // Add "Address:" label for ATS recognition
@@ -1176,7 +1171,7 @@ function createCoverLetterFooter(basics, isComboMode = false) {
   // Create contact information with ATS-friendly format
   const contactParts = [];
   
-  // Add address first with ATS-friendly label (city, province abbreviation, postal code, country)
+  // Add address first with ATS-friendly label (city, province abbreviation, country)
   if (basics.location) {
     let locationText = basics.location.city || '';
     
@@ -1189,11 +1184,6 @@ function createCoverLetterFooter(basics, isComboMode = false) {
     // Add country
     if (basics.location.country) {
       locationText += `, ${basics.location.country}`;
-    }
-    
-    // Add postal code (with space before it, not comma)
-    if (basics.location.postalCode) {
-      locationText += ` ${basics.location.postalCode}`;
     }
     
     // Add "Address:" label for ATS recognition
