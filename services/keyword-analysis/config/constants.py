@@ -143,6 +143,11 @@ class KnockoutConfig:
         r'\d+\s*[-–]\s*\d+\s*years?', # "5-7 years", "3–5 years"
         r'minimum\s+\d+\s*years?',    # "minimum 3 years"
         r'\d+\s*years?\s*minimum',    # "3 years minimum"
+        # Spelled-out numbers (1-20 years)
+        r'(one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty)\+?\s*years?',
+        r'(one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty)\s*[-–]\s*(one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty)\s*years?',
+        r'minimum\s+(one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty)\s*years?',
+        r'(one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty)\s*years?\s*minimum',
     ])
     
     # Preferred requirement indicators
