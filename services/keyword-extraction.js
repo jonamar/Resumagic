@@ -56,10 +56,11 @@ You are an expert at analyzing job postings and extracting the most important ke
 4. Categorize each keyword appropriately
 5. Output structured JSON
 
-## Categories:
-- **core**: Hard requirements and knockout criteria (education, years of experience, travel requirements, required certifications)
-- **important**: Key skills and functional experience (methodologies, technical skills, domain expertise)
-- **culture**: Cultural fit indicators and nice-to-have qualities (collaboration, innovation, industry context)
+## Categories (select only the MOST IMPORTANT keywords in each):
+- **core**: Hard knockout requirements (education, years of experience, travel requirements, required certifications)
+- **functional_skills**: Critical functional experience and methodologies (product management, agile, roadmap planning, P&L ownership, stakeholder management)
+- **industry_experience**: Essential sector-specific experience (SaaS, GovTech, enterprise, B2B, fintech, healthcare)
+- **culture**: Important cultural fit indicators (collaboration, innovation, startup environment)
 
 ## Guidelines:
 - Keep numeric qualifiers with their context: "5+ years experience" not just "experience"
@@ -76,10 +77,11 @@ You must respond with EXACTLY this JSON structure. Do not include any other text
     {"kw": "5+ years product management experience", "role": "core"},
     {"kw": "Bachelor's degree in Computer Science", "role": "core"},
     {"kw": "extensive travel up to 50%", "role": "core"},
-    {"kw": "Agile methodologies", "role": "important"},
-    {"kw": "B2B SaaS experience", "role": "important"},
-    {"kw": "product strategy", "role": "important"},
-    {"kw": "stakeholder management", "role": "important"},
+    {"kw": "Agile methodologies", "role": "functional_skills"},
+    {"kw": "product strategy", "role": "functional_skills"},
+    {"kw": "stakeholder management", "role": "functional_skills"},
+    {"kw": "B2B SaaS experience", "role": "industry_experience"},
+    {"kw": "enterprise software", "role": "industry_experience"},
     {"kw": "collaborative environment", "role": "culture"},
     {"kw": "fast-paced startup", "role": "culture"}
   ]
