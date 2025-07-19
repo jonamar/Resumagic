@@ -30,6 +30,7 @@ class BuzzwordConfig:
     penalty: float = 0.7
     executive_penalty: float = 0.8
     executive_boost: float = 1.15
+    junk_penalty: float = 0.1  # Heavy penalty for meaningless fragments
     
     # 30-term generic PM buzzwords
     buzzwords: Set[str] = field(default_factory=lambda: {
@@ -66,6 +67,10 @@ class BuzzwordConfig:
         'product portfolio', 'platform strategy', 'product vision', 'product leadership',
         'executive team', 'leadership team', 'senior leadership', 'c-suite'
     })
+    
+    # Minimum content quality requirements
+    min_meaningful_words: int = 1  # Must have at least 1 meaningful word
+    min_chars_per_word: int = 3    # Words must be at least 3 characters
 
 
 @dataclass
@@ -106,6 +111,18 @@ class KnockoutConfig:
         r'\bphd\b',
         r'\b(bs|ms|ba|ma)\s+(degree|in)',
         r'degree\s+in\s+\w+',  # "degree in Business"
+        # Handle slash notation and "in field" format
+        r'bachelor\'?s?(?:[\s/]|in|degree)',  # "bachelors/masters" or "bachelors in"
+        r'master\'?s?(?:[\s/]|in|degree)',    # "masters/bachelors" or "masters in"
+        r'bachelor\'?s?/master\'?s?',          # "bachelors/masters" explicit
+        r'(bachelor\'?s?|master\'?s?)\s+in\s+\w+',  # "bachelors in Computer Science"
+        
+        # Travel requirements
+        r'(extensive|significant|frequent).*travel',
+        r'travel.*required',
+        r'willing to travel',
+        r'travel.*\d+%',  # "travel 50%"
+        r'up to \d+%.*travel',  # "up to 50% travel"
         
         # Specific job title requirements when mentioned as requirements
         r'(director|vp|vice\s+president|chief)\s+(of\s+)?(product|marketing)',

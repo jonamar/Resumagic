@@ -160,6 +160,33 @@ def is_buzzword(keyword_text):
     return keyword_lower in config.buzzwords.buzzwords
 
 
+def is_junk_fragment(keyword_text):
+    """Check if text lacks meaningful content (generic, robust approach)."""
+    import re
+    text = keyword_text.strip()
+    
+    # Split into words, filtering out common noise
+    words = re.findall(r'\b[a-zA-Z]+\b', text)  # Only alphabetic words
+    
+    # Filter out very short words and pure connector words (not importance indicators)
+    meaningful_words = [
+        word for word in words 
+        if len(word) >= config.buzzwords.min_chars_per_word and 
+        word.lower() not in {'the', 'and', 'or', 'to', 'in', 'at', 'of', 'for', 'with', 'by', 'from', 'up', 'on', 'is', 'are', 'be', 'have', 'has', 'will', 'would', 'could'}
+        # Kept: 'required', 'preferred', 'must', 'should', 'can', 'may' - these are importance indicators
+    ]
+    
+    # Must have at least one meaningful word
+    if len(meaningful_words) < config.buzzwords.min_meaningful_words:
+        return True
+    
+    # Check if it's mostly numbers/percentages without context
+    if re.match(r'^[\d\s%+\-]+$', text):  # Only numbers, spaces, %, +, -
+        return True
+    
+    return False
+
+
 def calculate_compound_boost(keyword_text):
     """Boost compound keywords over solo terms."""
     words = keyword_text.split()
@@ -226,10 +253,16 @@ def apply_enhancements(base_score, keyword_text, job_text):
 def apply_buzzword_filtering(enhanced_score, keyword_text, drop_buzz):
     """Apply buzzword filtering logic."""
     is_buzz = is_buzzword(keyword_text)
+    is_junk = is_junk_fragment(keyword_text)
+    
     if is_buzz and drop_buzz:
         return None, is_buzz  # Skip buzzwords entirely
     elif is_buzz:
         enhanced_score *= config.buzzwords.penalty  # Apply penalty
+    
+    # Apply heavy penalty for junk fragments
+    if is_junk:
+        enhanced_score *= config.buzzwords.junk_penalty  # 0.1 penalty (90% reduction)
     
     return enhanced_score, is_buzz
 
