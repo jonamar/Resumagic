@@ -98,9 +98,26 @@ This structure allows you to:
 - Track changes to your resume and personal data in a separate private repository
 - Keep the generation functionality and data separate with clear boundaries
 
-## New vs Legacy Structure
+## Application Folder Structure
 
-### New Application Folder Structure (Recommended)
+**Required Structure:**
+Each application must follow this 3-tier folder structure:
+
+```
+{company-role}/
+├── inputs/                 # Source materials (required)
+│   ├── resume.json        # Structured resume data
+│   ├── cover-letter.md    # Markdown cover letter content
+│   └── keywords.json      # Keywords for analysis
+├── working/               # Process utilities (auto-generated)
+│   ├── keyword_analysis.json
+│   ├── keyword-checklist.md
+│   └── top5.json
+└── outputs/               # Generated deliverables (auto-generated)
+    ├── Jon-Amar-Resume-{Company}.docx
+    ├── Jon-Amar-Cover-Letter-{Company}.docx
+    └── Jon-Amar-Combined-{Company}.docx
+```
 
 **Benefits:**
 - **HR-Friendly**: Files named `Jon-Amar-Resume-Company.docx` for easy identification
@@ -110,23 +127,11 @@ This structure allows you to:
 - **Template-Based**: Quick setup for new applications using template folder
 
 **Best For:**
-- New job applications
+- All job applications and workflows
 - Professional submissions to HR departments
 - Managing multiple applications simultaneously
 - Long-term organization and tracking
-- Maximum flexibility (default generates all formats so you can grab what you need)
-
-### Legacy File Structure (Still Supported)
-
-**Benefits:**
-- **Backward Compatible**: Existing workflows continue to work
-- **Simple**: Direct file-based approach
-- **Quick**: No folder setup required
-
-**Best For:**
-- Existing workflows that you don't want to change
-- Quick one-off resume generation
-- Testing and development
+- Integration with other tools and services
 
 ## Prerequisites
 
@@ -220,25 +225,14 @@ cd services/keyword-analysis && python run_tests.py --coverage
 
 ### Documentation
 
+- **Architecture Overview**: `docs/architecture-overview.md` - Complete system architecture and integration guide
 - **API Reference**: `services/keyword-analysis/API.md`
 - **Setup Guide**: `services/keyword-analysis/SETUP.md`
 - **Cover Letter Schema**: `docs/cover-letter-schema.md`
 
 ## Technical Architecture
 
-### Core Components
-- **CLI Parser**: Command-line argument processing and validation
-- **Path Resolver**: File system operations and path validation  
-- **Document Orchestrator**: Coordinates generation and file operations
-- **DOCX Template**: Document formatting with generic section generation
-- **Theme Configuration**: Centralized styling and spacing control
-
-### Dependencies
-- **docx**: DOCX generation with full formatting control
-- **gray-matter**: YAML front matter parsing from markdown
-- **marked**: Markdown to structured data conversion
-- **scikit-learn**: TF-IDF vectorization and clustering
-- **sentence-transformers**: Semantic similarity analysis
+See `docs/architecture-overview.md` for complete system architecture, service boundaries, and integration guidance.
 
 ---
 
@@ -256,5 +250,5 @@ cd services/keyword-analysis && python run_tests.py --coverage
 - **Layout**: Modify `docx-template.js` for advanced changes
 - **Configuration**: Update `services/keyword-analysis/config/constants.py`
 
-### Legacy Support
-Older file-based structure still supported for backward compatibility. See git history for legacy documentation.
+### Template System
+Use the template folder to quickly create new applications: `cp -r ../data/applications/template ../data/applications/new-company-role`
