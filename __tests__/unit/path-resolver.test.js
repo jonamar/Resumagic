@@ -115,7 +115,7 @@ describe('Path Resolver', () => {
       const result = validatePaths(paths);
       expect(result.isValid).toBe(false);
       expect(result.errorType).toBe('FILE_NOT_FOUND');
-      expect(result.message).toContain('resume.json');
+      expect(result.error).toContain('resume.json');
       expect(result.legacyErrorType).toBe('RESUME_NOT_FOUND');
     });
 

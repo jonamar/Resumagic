@@ -85,11 +85,14 @@ function validatePaths(paths) {
       context
     );
     
-    return ErrorHandler.createResult(false, {
-      errorType: ERROR_TYPES.FILE_NOT_FOUND,
-      message: theme.messages.errors.applicationNotFound.replace('{path}', applicationFolderPath),
-      legacyErrorType: 'APPLICATION_NOT_FOUND'
-    });
+    return ErrorHandler.createResult(
+      false,
+      null,
+      theme.messages.errors.applicationNotFound.replace('{path}', applicationFolderPath),
+      ERROR_TYPES.FILE_NOT_FOUND,
+      [],
+      'APPLICATION_NOT_FOUND'
+    );
   }
   
   // Verify the resume file exists
@@ -106,12 +109,14 @@ function validatePaths(paths) {
       context
     );
     
-    return ErrorHandler.createResult(false, {
-      errorType: ERROR_TYPES.FILE_NOT_FOUND,
-      message: theme.messages.errors.resumeNotFound.replace('{path}', resumeDataPath),
-      details: [theme.messages.errors.resumeRequired],
-      legacyErrorType: 'RESUME_NOT_FOUND'
-    });
+    return ErrorHandler.createResult(
+      false,
+      null,
+      theme.messages.errors.resumeNotFound.replace('{path}', resumeDataPath),
+      ERROR_TYPES.FILE_NOT_FOUND,
+      [theme.messages.errors.resumeRequired],
+      'RESUME_NOT_FOUND'
+    );
   }
   
   // Ensure outputs directory exists
@@ -131,11 +136,14 @@ function validatePaths(paths) {
         context
       );
       
-      return ErrorHandler.createResult(false, {
-        errorType: ERROR_TYPES.FILE_SYSTEM_ERROR,
-        message: `Failed to create outputs directory: ${error.message}`,
-        legacyErrorType: 'OUTPUT_DIR_CREATION_FAILED'
-      });
+      return ErrorHandler.createResult(
+        false,
+        null,
+        `Failed to create outputs directory: ${error.message}`,
+        ERROR_TYPES.FILE_SYSTEM_ERROR,
+        [],
+        'OUTPUT_DIR_CREATION_FAILED'
+      );
     }
   }
   

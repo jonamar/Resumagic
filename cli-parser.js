@@ -62,17 +62,19 @@ function validateCliArguments(config) {
       context
     );
     
-    return ErrorHandler.createResult(false, {
-      errorType: ERROR_TYPES.VALIDATION_ERROR,
-      message: theme.messages.errors.noApplicationName,
-      helpText: [
+    return ErrorHandler.createResult(
+      false,
+      null,
+      theme.messages.errors.noApplicationName,
+      ERROR_TYPES.VALIDATION_ERROR,
+      [
         theme.messages.usage.command,
         theme.messages.usage.example,
         '',
         theme.messages.usage.createApplication,
         theme.messages.usage.createCommand.replace('{name}', '<application-name>')
       ]
-    });
+    );
   }
   
   return ErrorHandler.createResult(true);
@@ -153,13 +155,15 @@ function validateGenerationPlan(plan, hasMarkdownFile, markdownFilePath) {
       context
     );
     
-    return ErrorHandler.createResult(false, {
-      errorType: ERROR_TYPES.FILE_NOT_FOUND,
-      message: theme.messages.errors.coverLetterNotFound,
-      details: [
+    return ErrorHandler.createResult(
+      false,
+      null,
+      theme.messages.errors.coverLetterNotFound,
+      ERROR_TYPES.FILE_NOT_FOUND,
+      [
         theme.messages.errors.coverLetterRequired.replace('{path}', markdownFilePath)
       ]
-    });
+    );
   }
   
   return ErrorHandler.createResult(true);

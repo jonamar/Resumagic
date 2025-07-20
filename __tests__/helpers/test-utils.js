@@ -5,6 +5,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
 
 /**
  * Test file utilities
@@ -35,6 +36,19 @@ const TestFileUtils = {
     if (fs.existsSync(tempDir)) {
       fs.rmSync(tempDir, { recursive: true, force: true });
     }
+  },
+
+  /**
+   * Create a temporary directory for testing
+   * @param {string} dirName - Name of the directory
+   * @returns {string} Path to created directory
+   */
+  createTempDir(dirName) {
+    const tempDir = path.join(os.tmpdir(), 'resumagic-test', dirName + '-' + Date.now());
+    fs.mkdirSync(tempDir, { recursive: true });
+    if (!this.tempPaths) this.tempPaths = [];
+    this.tempPaths.push(tempDir);
+    return tempDir;
   },
 
   /**

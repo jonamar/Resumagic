@@ -128,7 +128,7 @@ class ErrorHandler {
    * @param {Array} [details] - Additional error details
    * @returns {Object} Standardized result object
    */
-  static createResult(success, data = null, errorMessage = null, errorType = ERROR_TYPES.UNKNOWN_ERROR, details = []) {
+  static createResult(success, data = null, errorMessage = null, errorType = ERROR_TYPES.UNKNOWN_ERROR, details = [], legacyErrorType = null) {
     if (success) {
       return {
         isValid: true,
@@ -136,13 +136,20 @@ class ErrorHandler {
         data
       };
     } else {
-      return {
+      const result = {
         isValid: false,
         success: false,
         error: errorMessage,
         errorType,
         details
       };
+      
+      // Add legacy error type for backward compatibility if provided
+      if (legacyErrorType) {
+        result.legacyErrorType = legacyErrorType;
+      }
+      
+      return result;
     }
   }
 
