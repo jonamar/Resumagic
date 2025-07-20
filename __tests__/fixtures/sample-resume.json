@@ -1,0 +1,54 @@
+{
+  "name": "Jane Smith",
+  "email": "jane.smith@example.com",
+  "phone": "+1-555-0199",
+  "location": "San Francisco, CA",
+  "experience": [
+    {
+      "title": "Senior Product Manager",
+      "company": "TechStart Inc",
+      "location": "San Francisco, CA",
+      "duration": "2021-2024",
+      "bullets": [
+        "Led cross-functional team of 8 engineers and designers to deliver 3 major product releases",
+        "Increased user engagement by 45% through data-driven feature prioritization",
+        "Managed $2M product budget and reduced development costs by 20%"
+      ]
+    },
+    {
+      "title": "Product Manager",
+      "company": "Innovation Labs",
+      "location": "Palo Alto, CA", 
+      "duration": "2019-2021",
+      "bullets": [
+        "Launched MVP that acquired 10K+ users in first 6 months",
+        "Conducted 50+ user interviews to validate product-market fit",
+        "Collaborated with engineering team to implement agile development processes"
+      ]
+    }
+  ],
+  "education": [
+    {
+      "degree": "Master of Business Administration",
+      "school": "Stanford Graduate School of Business",
+      "location": "Stanford, CA",
+      "year": "2019"
+    },
+    {
+      "degree": "Bachelor of Science in Computer Science",
+      "school": "UC Berkeley",
+      "location": "Berkeley, CA", 
+      "year": "2017"
+    }
+  ],
+  "skills": [
+    "Product Strategy",
+    "Data Analysis", 
+    "User Research",
+    "Agile/Scrum",
+    "SQL",
+    "Python",
+    "Figma",
+    "Jira"
+  ]
+}
