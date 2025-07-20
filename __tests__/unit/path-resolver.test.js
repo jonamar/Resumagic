@@ -99,48 +99,41 @@ describe('Path Resolver', () => {
       
       const result = validatePaths(paths);
       expect(result.isValid).toBe(false);
-      expect(result.errorType).toBe('APPLICATION_NOT_FOUND');
+      expect(result.errorType).toBe('FILE_NOT_FOUND');
+      expect(result.legacyErrorType).toBe('APPLICATION_NOT_FOUND');
     });
 
     test('should reject missing resume data file', () => {
-      // Create directory but no resume file
-      const appDir = path.join(tempDir, 'test-app-no-resume');
-      fs.mkdirSync(appDir, { recursive: true });
-      
+      // Create a temporary application directory but no resume file
+      const tempAppDir = TestFileUtils.createTempDir('test-app');
       const paths = {
-        applicationFolderPath: appDir,
-        resumeDataPath: path.join(appDir, 'inputs', 'resume.json'),
-        outputFolderPath: path.join(appDir, 'outputs')
+        applicationFolderPath: tempAppDir,
+        resumeDataPath: path.join(tempAppDir, 'resume.json'),
+        outputsDir: path.join(tempAppDir, 'outputs')
       };
       
       const result = validatePaths(paths);
       expect(result.isValid).toBe(false);
-      expect(result.error).toContain('resume.json');
+      expect(result.errorType).toBe('FILE_NOT_FOUND');
+      expect(result.message).toContain('resume.json');
+      expect(result.legacyErrorType).toBe('RESUME_NOT_FOUND');
     });
 
     test('should create output directory if it does not exist', () => {
-      // Create app directory and resume file, but no outputs directory
-      const appDir = path.join(tempDir, 'test-app-create-outputs');
-      const inputsDir = path.join(appDir, 'inputs');
-      const outputsDir = path.join(appDir, 'outputs');
-      
-      fs.mkdirSync(inputsDir, { recursive: true });
-      
-      const resumePath = path.join(inputsDir, 'resume.json');
-      fs.writeFileSync(resumePath, JSON.stringify(MockDataUtils.createMockResumeData()));
+      // Create a temporary application directory and resume file
+      const tempAppDir = TestFileUtils.createTempDir('test-app');
+      const resumePath = TestFileUtils.createTempFile('resume.json', '{}', tempAppDir);
+      const outputsDir = path.join(tempAppDir, 'outputs');
       
       const paths = {
-        applicationFolderPath: appDir,
+        applicationFolderPath: tempAppDir,
         resumeDataPath: resumePath,
-        outputFolderPath: outputsDir
+        outputsDir: outputsDir
       };
       
       const result = validatePaths(paths);
-      
-      if (result.isValid) {
-        // Should have created the outputs directory
-        expect(fs.existsSync(outputsDir)).toBe(true);
-      }
+      expect(result.isValid).toBe(true);
+      expect(fs.existsSync(outputsDir)).toBe(true);
     });
   });
 
