@@ -202,3 +202,15 @@ module.exports = {
   MockDataUtils,
   AssertionUtils
 };
+
+// Simple test to prevent Jest from complaining about no tests in this file
+if (typeof describe !== 'undefined') {
+  describe('Test Utils', () => {
+    test('should export all utility modules', () => {
+      expect(TestFileUtils).toBeDefined();
+      expect(ConsoleUtils).toBeDefined();
+      expect(MockDataUtils).toBeDefined();
+      expect(AssertionUtils).toBeDefined();
+    });
+  });
+}
