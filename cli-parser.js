@@ -1,4 +1,13 @@
 const theme = require('./theme');
+const ErrorHandler = require('./utils/error-handler');
+const { ErrorTypes } = require('./utils/error-types');
+
+// Initialize error handler for CLI operations
+const errorHandler = new ErrorHandler({
+  component: 'cli-parser',
+  includeContext: true,
+  includeStackTrace: false
+});
 
 /**
  * CLI Parser Module
@@ -40,9 +49,20 @@ function validateCliArguments(config) {
   
   // Check if application name is provided
   if (!applicationName) {
-    return {
-      isValid: false,
-      error: theme.messages.errors.noApplicationName,
+    const context = ErrorHandler.buildValidationContext('applicationName', {
+      provided: applicationName,
+      expectedFormat: 'non-empty string'
+    });
+    
+    errorHandler.logAppError(
+      'Missing application name in CLI arguments',
+      ErrorTypes.VALIDATION_ERROR,
+      context
+    );
+    
+    return ErrorHandler.createResult(false, {
+      errorType: ErrorTypes.VALIDATION_ERROR,
+      message: theme.messages.errors.noApplicationName,
       helpText: [
         theme.messages.usage.command,
         theme.messages.usage.example,
@@ -50,12 +70,10 @@ function validateCliArguments(config) {
         theme.messages.usage.createApplication,
         theme.messages.usage.createCommand.replace('{name}', '<application-name>')
       ]
-    };
+    });
   }
   
-  return {
-    isValid: true
-  };
+  return ErrorHandler.createResult(true);
 }
 
 /**
@@ -120,18 +138,29 @@ function validateGenerationPlan(plan, hasMarkdownFile, markdownFilePath) {
   
   // Check if cover letter generation is requested but no markdown file exists
   if ((generateCoverLetter || generateCombinedDoc) && !hasMarkdownFile) {
-    return {
-      isValid: false,
-      error: theme.messages.errors.coverLetterNotFound,
+    const context = ErrorHandler.buildFileContext(markdownFilePath, {
+      operation: 'cover letter generation',
+      required: true,
+      generateCoverLetter,
+      generateCombinedDoc
+    });
+    
+    errorHandler.logAppError(
+      'Cover letter generation requested but markdown file not found',
+      ErrorTypes.FILE_NOT_FOUND,
+      context
+    );
+    
+    return ErrorHandler.createResult(false, {
+      errorType: ErrorTypes.FILE_NOT_FOUND,
+      message: theme.messages.errors.coverLetterNotFound,
       details: [
         theme.messages.errors.coverLetterRequired.replace('{path}', markdownFilePath)
       ]
-    };
+    });
   }
   
-  return {
-    isValid: true
-  };
+  return ErrorHandler.createResult(true);
 }
 
 /**
@@ -140,14 +169,19 @@ function validateGenerationPlan(plan, hasMarkdownFile, markdownFilePath) {
  * @param {string} applicationName - Requested application name for create command
  */
 function displayUsage(applicationsDir, applicationName) {
-  console.error(`${theme.messages.emojis.error} ${theme.messages.errors.noApplicationName}`);
+  errorHandler.logAppError(
+    'Missing application name in CLI arguments',
+    ErrorTypes.VALIDATION_ERROR,
+    {
+      provided: applicationName,
+      expectedFormat: 'non-empty string'
+    }
+  );
+  
   console.error(theme.messages.usage.command);
   console.error(theme.messages.usage.example);
   
   // Show available applications if directory exists
-  const fs = require('fs');
-  const path = require('path');
-  
   if (fs.existsSync(applicationsDir)) {
     console.error('');
     console.error(theme.messages.usage.availableApplications);
