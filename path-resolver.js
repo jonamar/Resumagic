@@ -1,6 +1,15 @@
 const path = require('path');
 const fs = require('fs');
 const theme = require('./theme');
+const ErrorHandler = require('./utils/error-handler');
+const { ERROR_TYPES } = require('./utils/error-types');
+
+// Initialize error handler for path resolution operations
+const errorHandler = new ErrorHandler({
+  component: 'path-resolver',
+  includeContext: true,
+  includeStackTrace: false
+});
 
 /**
  * Path Resolver Module
@@ -64,21 +73,45 @@ function validatePaths(paths) {
   
   // Verify the application folder exists
   if (!fs.existsSync(applicationFolderPath) || !fs.statSync(applicationFolderPath).isDirectory()) {
-    return {
-      isValid: false,
-      error: theme.messages.errors.applicationNotFound.replace('{path}', applicationFolderPath),
-      errorType: 'APPLICATION_NOT_FOUND'
-    };
+    const context = ErrorHandler.buildFileContext(applicationFolderPath, {
+      operation: 'application folder validation',
+      required: true,
+      expectedType: 'directory'
+    });
+    
+    ErrorHandler.logAppError(
+      'Application folder not found or not a directory',
+      ERROR_TYPES.FILE_NOT_FOUND,
+      context
+    );
+    
+    return ErrorHandler.createResult(false, {
+      errorType: ERROR_TYPES.FILE_NOT_FOUND,
+      message: theme.messages.errors.applicationNotFound.replace('{path}', applicationFolderPath),
+      legacyErrorType: 'APPLICATION_NOT_FOUND'
+    });
   }
   
   // Verify the resume file exists
   if (!fs.existsSync(resumeDataPath)) {
-    return {
-      isValid: false,
-      error: theme.messages.errors.resumeNotFound.replace('{path}', resumeDataPath),
+    const context = ErrorHandler.buildFileContext(resumeDataPath, {
+      operation: 'resume data validation',
+      required: true,
+      expectedType: 'file'
+    });
+    
+    ErrorHandler.logAppError(
+      'Resume data file not found',
+      ERROR_TYPES.FILE_NOT_FOUND,
+      context
+    );
+    
+    return ErrorHandler.createResult(false, {
+      errorType: ERROR_TYPES.FILE_NOT_FOUND,
+      message: theme.messages.errors.resumeNotFound.replace('{path}', resumeDataPath),
       details: [theme.messages.errors.resumeRequired],
-      errorType: 'RESUME_NOT_FOUND'
-    };
+      legacyErrorType: 'RESUME_NOT_FOUND'
+    });
   }
   
   // Ensure outputs directory exists
@@ -86,17 +119,27 @@ function validatePaths(paths) {
     try {
       fs.mkdirSync(outputsDir, { recursive: true });
     } catch (error) {
-      return {
-        isValid: false,
-        error: `Failed to create outputs directory: ${error.message}`,
-        errorType: 'OUTPUT_DIR_CREATION_FAILED'
-      };
+      const context = ErrorHandler.buildFileContext(outputsDir, {
+        operation: 'output directory creation',
+        error: error.message,
+        required: true
+      });
+      
+      ErrorHandler.logAppError(
+        'Failed to create outputs directory',
+        ERROR_TYPES.FILE_SYSTEM_ERROR,
+        context
+      );
+      
+      return ErrorHandler.createResult(false, {
+        errorType: ERROR_TYPES.FILE_SYSTEM_ERROR,
+        message: `Failed to create outputs directory: ${error.message}`,
+        legacyErrorType: 'OUTPUT_DIR_CREATION_FAILED'
+      });
     }
   }
   
-  return {
-    isValid: true
-  };
+  return ErrorHandler.createResult(true);
 }
 
 /**
