@@ -1,6 +1,8 @@
+const fs = require('fs');
+const path = require('path');
 const theme = require('./theme');
 const ErrorHandler = require('./utils/error-handler');
-const { ErrorTypes } = require('./utils/error-types');
+const { ERROR_TYPES } = require('./utils/error-types');
 
 // Initialize error handler for CLI operations
 const errorHandler = new ErrorHandler({
@@ -54,14 +56,14 @@ function validateCliArguments(config) {
       expectedFormat: 'non-empty string'
     });
     
-    errorHandler.logAppError(
+    ErrorHandler.logAppError(
       'Missing application name in CLI arguments',
-      ErrorTypes.VALIDATION_ERROR,
+      ERROR_TYPES.VALIDATION_ERROR,
       context
     );
     
     return ErrorHandler.createResult(false, {
-      errorType: ErrorTypes.VALIDATION_ERROR,
+      errorType: ERROR_TYPES.VALIDATION_ERROR,
       message: theme.messages.errors.noApplicationName,
       helpText: [
         theme.messages.usage.command,
@@ -145,14 +147,14 @@ function validateGenerationPlan(plan, hasMarkdownFile, markdownFilePath) {
       generateCombinedDoc
     });
     
-    errorHandler.logAppError(
+    ErrorHandler.logAppError(
       'Cover letter generation requested but markdown file not found',
-      ErrorTypes.FILE_NOT_FOUND,
+      ERROR_TYPES.FILE_NOT_FOUND,
       context
     );
     
     return ErrorHandler.createResult(false, {
-      errorType: ErrorTypes.FILE_NOT_FOUND,
+      errorType: ERROR_TYPES.FILE_NOT_FOUND,
       message: theme.messages.errors.coverLetterNotFound,
       details: [
         theme.messages.errors.coverLetterRequired.replace('{path}', markdownFilePath)
@@ -169,9 +171,9 @@ function validateGenerationPlan(plan, hasMarkdownFile, markdownFilePath) {
  * @param {string} applicationName - Requested application name for create command
  */
 function displayUsage(applicationsDir, applicationName) {
-  errorHandler.logAppError(
+  ErrorHandler.logAppError(
     'Missing application name in CLI arguments',
-    ErrorTypes.VALIDATION_ERROR,
+    ERROR_TYPES.VALIDATION_ERROR,
     {
       provided: applicationName,
       expectedFormat: 'non-empty string'
