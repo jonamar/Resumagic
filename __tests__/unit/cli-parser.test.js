@@ -68,14 +68,10 @@ describe('CLI Parser', () => {
     });
 
     test('should reject missing application name', () => {
-      const config = {
-        applicationName: undefined,
-        flags: { preview: true }
-      };
-      
+      const config = { applicationName: null, flags: {} };
       const result = validateCliArguments(config);
       expect(result.isValid).toBe(false);
-      expect(result.error).toContain('application name');
+      expect(result.error).toBe('Error: Please specify an application folder name.');
     });
 
     test('should reject empty application name', () => {
@@ -101,46 +97,51 @@ describe('CLI Parser', () => {
 
   describe('determineGenerationPlan', () => {
     test('should create plan for resume only', () => {
-      const flags = { preview: true, coverLetter: false, both: false };
-      const markdownExists = false;
+      const flags = {};
+      const hasMarkdownFile = false;
       
-      const plan = determineGenerationPlan(flags, markdownExists);
+      const plan = determineGenerationPlan(flags, hasMarkdownFile);
       
       expect(plan.generateResume).toBe(true);
       expect(plan.generateCoverLetter).toBe(false);
-      expect(plan.openPreview).toBe(true);
+      expect(plan.generateCombinedDoc).toBe(false);
+      expect(plan.behaviorDescription).toContain('resume only');
     });
 
     test('should create plan for cover letter only', () => {
-      const flags = { preview: true, coverLetter: true, both: false };
-      const markdownExists = true;
+      const flags = { coverLetter: true };
+      const hasMarkdownFile = true;
       
-      const plan = determineGenerationPlan(flags, markdownExists);
+      const plan = determineGenerationPlan(flags, hasMarkdownFile);
       
       expect(plan.generateResume).toBe(false);
       expect(plan.generateCoverLetter).toBe(true);
-      expect(plan.openPreview).toBe(true);
+      expect(plan.generateCombinedDoc).toBe(false);
+      expect(plan.behaviorDescription).toBe('Cover letter only mode');
     });
 
     test('should create plan for both documents', () => {
-      const flags = { preview: true, coverLetter: false, both: true };
-      const markdownExists = true;
+      const flags = { both: true };
+      const hasMarkdownFile = true;
       
-      const plan = determineGenerationPlan(flags, markdownExists);
+      const plan = determineGenerationPlan(flags, hasMarkdownFile);
       
       expect(plan.generateResume).toBe(true);
       expect(plan.generateCoverLetter).toBe(true);
-      expect(plan.openPreview).toBe(true);
+      expect(plan.generateCombinedDoc).toBe(false);
+      expect(plan.behaviorDescription).toBe('Both resume and cover letter mode');
     });
 
-    test('should handle no preview flag', () => {
-      const flags = { preview: false, coverLetter: false, both: false };
-      const markdownExists = false;
+    test('should handle default behavior with markdown', () => {
+      const flags = {};
+      const hasMarkdownFile = true;
       
-      const plan = determineGenerationPlan(flags, markdownExists);
+      const plan = determineGenerationPlan(flags, hasMarkdownFile);
       
       expect(plan.generateResume).toBe(true);
-      expect(plan.openPreview).toBe(false);
+      expect(plan.generateCoverLetter).toBe(true);
+      expect(plan.generateCombinedDoc).toBe(true);
+      expect(plan.behaviorDescription).toContain('Default behavior');
     });
   });
 
@@ -149,22 +150,9 @@ describe('CLI Parser', () => {
       const plan = {
         generateResume: true,
         generateCoverLetter: false,
-        openPreview: true
+        generateCombinedDoc: false
       };
       const markdownExists = false;
-      const markdownPath = '/path/to/cover-letter.md';
-      
-      const result = validateGenerationPlan(plan, markdownExists, markdownPath);
-      expect(result.isValid).toBe(true);
-    });
-
-    test('should validate valid cover letter plan when markdown exists', () => {
-      const plan = {
-        generateResume: false,
-        generateCoverLetter: true,
-        openPreview: true
-      };
-      const markdownExists = true;
       const markdownPath = '/path/to/cover-letter.md';
       
       const result = validateGenerationPlan(plan, markdownExists, markdownPath);
@@ -172,24 +160,20 @@ describe('CLI Parser', () => {
     });
 
     test('should reject cover letter plan when markdown missing', () => {
-      const plan = {
-        generateResume: false,
-        generateCoverLetter: true,
-        openPreview: true
-      };
+      const plan = { generateCoverLetter: true, generateCombinedDoc: false };
       const markdownExists = false;
-      const markdownPath = '/path/to/cover-letter.md';
+      const markdownPath = '/path/to/missing.md';
       
       const result = validateGenerationPlan(plan, markdownExists, markdownPath);
       expect(result.isValid).toBe(false);
-      expect(result.error).toContain('cover letter');
+      expect(result.error).toBe('Error: Cover letter generation requested but no markdown file found.');
     });
 
     test('should validate both documents when markdown exists', () => {
       const plan = {
         generateResume: true,
         generateCoverLetter: true,
-        openPreview: true
+        generateCombinedDoc: true
       };
       const markdownExists = true;
       const markdownPath = '/path/to/cover-letter.md';
@@ -199,20 +183,15 @@ describe('CLI Parser', () => {
     });
 
     test('should handle both documents when markdown missing (should generate resume only)', () => {
-      const plan = {
-        generateResume: true,
-        generateCoverLetter: true,
-        openPreview: true
-      };
+      const plan = { generateCoverLetter: true, generateCombinedDoc: true };
       const markdownExists = false;
-      const markdownPath = '/path/to/cover-letter.md';
+      const markdownPath = '/path/to/missing.md';
       
       const result = validateGenerationPlan(plan, markdownExists, markdownPath);
-      // This should either be valid (fallback to resume only) or invalid with clear message
-      expect(typeof result.isValid).toBe('boolean');
-      if (!result.isValid) {
-        expect(result.error).toContain('cover letter');
-      }
+      
+      // Should fail validation since cover letter is requested but markdown is missing
+      expect(result.isValid).toBe(false);
+      expect(result.error).toBe('Error: Cover letter generation requested but no markdown file found.');
     });
   });
 

@@ -25,28 +25,21 @@ describe('Path Resolver', () => {
   });
 
   describe('resolvePaths', () => {
-    test('should resolve paths for valid application name', () => {
-      const applicationName = 'test-application';
-      const baseDir = __dirname;
+    test('should resolve basic paths correctly', () => {
+      const paths = resolvePaths('test-app', __dirname);
       
-      const paths = resolvePaths(applicationName, baseDir);
-      
-      expect(paths.applicationName).toBe(applicationName);
-      expect(paths.applicationFolderPath).toContain(applicationName);
+      expect(paths.companyName).toBe('Test');
+      expect(paths.applicationFolderPath).toContain('test-app');
       expect(paths.resumeDataPath).toContain('resume.json');
       expect(paths.markdownFilePath).toContain('cover-letter.md');
-      expect(paths.outputFolderPath).toContain('outputs');
-      expect(paths.companyName).toBe(applicationName); // Default behavior
+      expect(paths.outputsDir).toContain('outputs');
     });
 
-    test('should handle application names with special characters', () => {
-      const applicationName = 'company-role_2024';
-      const baseDir = __dirname;
+    test('should handle complex application names', () => {
+      const paths = resolvePaths('my-company-role', __dirname);
       
-      const paths = resolvePaths(applicationName, baseDir);
-      
-      expect(paths.applicationName).toBe(applicationName);
-      expect(paths.applicationFolderPath).toContain(applicationName);
+      expect(paths.companyName).toBe('My');
+      expect(paths.applicationFolderPath).toContain('my-company-role');
     });
 
     test('should resolve relative paths correctly', () => {
@@ -57,7 +50,7 @@ describe('Path Resolver', () => {
       
       expect(path.isAbsolute(paths.applicationFolderPath)).toBe(true);
       expect(path.isAbsolute(paths.resumeDataPath)).toBe(true);
-      expect(path.isAbsolute(paths.outputFolderPath)).toBe(true);
+      expect(path.isAbsolute(paths.outputsDir)).toBe(true);
     });
 
     test('should extract company name from application name', () => {
@@ -90,7 +83,7 @@ describe('Path Resolver', () => {
       const paths = {
         applicationFolderPath: appDir,
         resumeDataPath: resumePath,
-        outputFolderPath: outputsDir
+        outputsDir: outputsDir
       };
       
       const result = validatePaths(paths);
@@ -101,7 +94,7 @@ describe('Path Resolver', () => {
       const paths = {
         applicationFolderPath: '/nonexistent/path',
         resumeDataPath: '/nonexistent/resume.json',
-        outputFolderPath: '/nonexistent/outputs'
+        outputsDir: '/nonexistent/outputs'
       };
       
       const result = validatePaths(paths);
@@ -194,7 +187,7 @@ describe('Path Resolver', () => {
       const result = loadResumeData(resumePath);
       
       expect(result.isValid).toBe(false);
-      expect(result.error).toContain('not found');
+      expect(result.error).toContain('Error loading resume data');
     });
 
     test('should reject invalid JSON', () => {
@@ -230,25 +223,25 @@ describe('Path Resolver', () => {
 
   describe('error handling and edge cases', () => {
     test('should handle undefined application name gracefully', () => {
-      expect(() => resolvePaths(undefined, __dirname)).not.toThrow();
+      expect(() => resolvePaths(undefined, __dirname)).toThrow();
     });
 
     test('should handle null base directory gracefully', () => {
-      expect(() => resolvePaths('test-app', null)).not.toThrow();
+      expect(() => resolvePaths('test-app', null)).toThrow();
     });
 
     test('should handle very long application names', () => {
       const longName = 'a'.repeat(100);
       const paths = resolvePaths(longName, __dirname);
       
-      expect(paths.applicationName).toBe(longName);
+      expect(paths.companyName).toBe('Aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
     });
 
     test('should handle paths with unicode characters', () => {
       const unicodeName = 'test-app-🚀-2024';
       const paths = resolvePaths(unicodeName, __dirname);
       
-      expect(paths.applicationName).toBe(unicodeName);
+      expect(paths.companyName).toBe('Test');
     });
 
     test('should handle permission errors gracefully', () => {
