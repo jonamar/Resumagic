@@ -1,8 +1,43 @@
 {
+  "name": "resumagic-app",
+  "version": "1.0.0",
+  "description": "Professional resume and cover letter generator with intelligent keyword analysis",
+  "main": "generate-resume.js",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:error-handler": "jest utils/__tests__/error-handler.test.js",
+    "lint": "eslint .",
+    "lint:errors": "eslint . --config .eslintrc.error-handling.js",
+    "lint:fix": "eslint . --fix",
+    "validate:migration": "node utils/validate-migration.js",
+    "benchmark:performance": "node utils/benchmark-performance.js"
+  },
   "dependencies": {
     "docx": "^9.5.1",
     "gray-matter": "^4.0.3",
     "jszip": "^3.10.1",
     "marked": "^16.0.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "eslint": "^8.57.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "collectCoverageFrom": [
+      "utils/**/*.js",
+      "!utils/**/*.test.js",
+      "!utils/eslint-rules/**/*.js"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 90,
+        "functions": 95,
+        "lines": 95,
+        "statements": 95
+      }
+    }
   }
 }
