@@ -50,7 +50,7 @@ async function runKeywordAnalysis(applicationName) {
     
     const { stdout, stderr } = await execAsync(keywordAnalysisCommand, {
       cwd: __dirname,
-      timeout: 60000 // 1 minute timeout
+      timeout: 120000 // 2 minutes - ML processing takes time
     });
     
     if (stderr) {
