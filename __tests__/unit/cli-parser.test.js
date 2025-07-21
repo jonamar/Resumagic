@@ -37,6 +37,34 @@ describe('CLI Parser', () => {
       expect(result.flags.auto).toBe(true);
     });
 
+    test('should parse --evaluate flag', () => {
+      const args = ['my-app', '--evaluate'];
+      const result = parseCliArguments(args);
+      
+      expect(result.applicationName).toBe('my-app');
+      expect(result.flags.evaluate).toBe(true);
+      expect(result.flags.all).toBe(false);
+    });
+
+    test('should parse --all flag', () => {
+      const args = ['my-app', '--all'];
+      const result = parseCliArguments(args);
+      
+      expect(result.applicationName).toBe('my-app');
+      expect(result.flags.all).toBe(true);
+      expect(result.flags.evaluate).toBe(false);
+    });
+
+    test('should handle --all and --evaluate flags together', () => {
+      const args = ['my-app', '--all', '--evaluate', '--preview'];
+      const result = parseCliArguments(args);
+      
+      expect(result.applicationName).toBe('my-app');
+      expect(result.flags.all).toBe(true);
+      expect(result.flags.evaluate).toBe(true);
+      expect(result.flags.preview).toBe(true);
+    });
+
     test('should handle no application name', () => {
       const args = ['--preview', '--cover-letter'];
       const result = parseCliArguments(args);
@@ -141,7 +169,60 @@ describe('CLI Parser', () => {
       expect(plan.generateResume).toBe(true);
       expect(plan.generateCoverLetter).toBe(true);
       expect(plan.generateCombinedDoc).toBe(true);
+      expect(plan.runHiringEvaluation).toBe(false);
       expect(plan.behaviorDescription).toContain('Default behavior');
+    });
+
+    test('should create plan for --evaluate flag with markdown', () => {
+      const flags = { evaluate: true };
+      const hasMarkdownFile = true;
+      
+      const plan = determineGenerationPlan(flags, hasMarkdownFile);
+      
+      expect(plan.generateResume).toBe(true);
+      expect(plan.generateCoverLetter).toBe(true);
+      expect(plan.generateCombinedDoc).toBe(true);
+      expect(plan.runHiringEvaluation).toBe(true);
+      expect(plan.behaviorDescription).toContain('Document generation + hiring evaluation');
+    });
+
+    test('should create plan for --evaluate flag without markdown', () => {
+      const flags = { evaluate: true };
+      const hasMarkdownFile = false;
+      
+      const plan = determineGenerationPlan(flags, hasMarkdownFile);
+      
+      expect(plan.generateResume).toBe(true);
+      expect(plan.generateCoverLetter).toBe(false);
+      expect(plan.generateCombinedDoc).toBe(false);
+      expect(plan.runHiringEvaluation).toBe(true);
+      expect(plan.behaviorDescription).toContain('Resume generation + hiring evaluation');
+    });
+
+    test('should create plan for --all flag with markdown', () => {
+      const flags = { all: true };
+      const hasMarkdownFile = true;
+      
+      const plan = determineGenerationPlan(flags, hasMarkdownFile);
+      
+      expect(plan.generateResume).toBe(true);
+      expect(plan.generateCoverLetter).toBe(true);
+      expect(plan.generateCombinedDoc).toBe(true);
+      expect(plan.runHiringEvaluation).toBe(true);
+      expect(plan.behaviorDescription).toContain('Complete workflow: documents + keyword analysis + hiring evaluation');
+    });
+
+    test('should create plan for --all flag without markdown', () => {
+      const flags = { all: true };
+      const hasMarkdownFile = false;
+      
+      const plan = determineGenerationPlan(flags, hasMarkdownFile);
+      
+      expect(plan.generateResume).toBe(true);
+      expect(plan.generateCoverLetter).toBe(false);
+      expect(plan.generateCombinedDoc).toBe(false);
+      expect(plan.runHiringEvaluation).toBe(true);
+      expect(plan.behaviorDescription).toContain('Complete workflow: resume + keyword analysis + hiring evaluation');
     });
   });
 

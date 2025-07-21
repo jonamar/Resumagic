@@ -31,7 +31,9 @@ function parseCliArguments(args) {
     coverLetter: args.includes(theme.cli.flags.coverLetter),
     both: args.includes(theme.cli.flags.both),
     auto: args.includes(theme.cli.flags.auto),
-    combined: args.includes(theme.cli.flags.combined)
+    combined: args.includes(theme.cli.flags.combined),
+    evaluate: args.includes(theme.cli.flags.evaluate),
+    all: args.includes(theme.cli.flags.all)
   };
   
   return {
@@ -90,9 +92,35 @@ function determineGenerationPlan(flags, hasMarkdownFile) {
   let generateResume = false;
   let generateCoverLetter = false;
   let generateCombinedDoc = false;
+  let runHiringEvaluation = false;
   let behaviorDescription = '';
   
-  if (flags.coverLetter) {
+  // Handle --all flag (complete workflow)
+  if (flags.all) {
+    generateResume = true;
+    generateCoverLetter = hasMarkdownFile;
+    generateCombinedDoc = hasMarkdownFile;
+    runHiringEvaluation = true;
+    behaviorDescription = hasMarkdownFile ? 
+      'Complete workflow: documents + keyword analysis + hiring evaluation' : 
+      'Complete workflow: resume + keyword analysis + hiring evaluation';
+  }
+  // Handle --evaluate flag (documents + hiring evaluation)
+  else if (flags.evaluate) {
+    if (hasMarkdownFile) {
+      generateResume = true;
+      generateCoverLetter = true;
+      generateCombinedDoc = true;
+    } else {
+      generateResume = true;
+    }
+    runHiringEvaluation = true;
+    behaviorDescription = hasMarkdownFile ?
+      'Document generation + hiring evaluation' :
+      'Resume generation + hiring evaluation';
+  }
+  // Existing document-only flags
+  else if (flags.coverLetter) {
     generateCoverLetter = true;
     behaviorDescription = 'Cover letter only mode';
   } else if (flags.both) {
@@ -126,6 +154,7 @@ function determineGenerationPlan(flags, hasMarkdownFile) {
     generateResume,
     generateCoverLetter,
     generateCombinedDoc,
+    runHiringEvaluation,
     behaviorDescription
   };
 }
@@ -186,6 +215,9 @@ function displayUsage(applicationsDir, applicationName) {
   
   console.error(theme.messages.usage.command);
   console.error(theme.messages.usage.example);
+  console.error('');
+  console.error(theme.messages.usage.flags);
+  console.error(theme.messages.usage.flagDescriptions);
   
   // Show available applications if directory exists
   if (fs.existsSync(applicationsDir)) {

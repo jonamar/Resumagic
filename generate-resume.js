@@ -9,6 +9,86 @@ const theme = require('./theme');
  * Coordinates CLI parsing, path resolution, and document generation
  */
 
+/**
+ * Runs keyword analysis for the specified application
+ * @param {string} applicationName - Name of the application
+ * @returns {Promise<void>}
+ */
+async function runKeywordAnalysis(applicationName) {
+  console.log(`${theme.messages.emojis.processing} Starting keyword analysis...`);
+  
+  try {
+    const { exec } = require('child_process');
+    const { promisify } = require('util');
+    const execAsync = promisify(exec);
+    
+    const keywordAnalysisCommand = `python services/keyword-analysis/kw_rank_modular.py ${applicationName}`;
+    
+    console.log(`${theme.messages.emojis.processing} Running: ${keywordAnalysisCommand}`);
+    
+    const { stdout, stderr } = await execAsync(keywordAnalysisCommand, {
+      cwd: __dirname,
+      timeout: 60000 // 1 minute timeout
+    });
+    
+    if (stderr) {
+      console.warn(`${theme.messages.emojis.warning} Keyword analysis warnings: ${stderr}`);
+    }
+    
+    console.log(`${theme.messages.emojis.success} Keyword analysis completed successfully!`);
+    return stdout;
+  } catch (error) {
+    console.error(`${theme.messages.emojis.error} Keyword analysis failed: ${error.message}`);
+    
+    // Check common issues
+    if (error.message.includes('python: command not found')) {
+      console.error(`${theme.messages.emojis.warning} Python not found. Make sure Python is installed and in PATH.`);
+    } else if (error.message.includes('No module named')) {
+      console.error(`${theme.messages.emojis.warning} Missing Python dependencies. Run: pip install -r services/keyword-analysis/requirements.txt`);
+    }
+    
+    throw error;
+  }
+}
+
+/**
+ * Runs hiring evaluation for the specified application
+ * @param {string} applicationName - Name of the application
+ * @param {Object} resumeData - Resume data for candidate name extraction
+ * @returns {Promise<void>}
+ */
+async function runHiringEvaluation(applicationName, resumeData) {
+  console.log(`${theme.messages.emojis.processing} Starting hiring evaluation...`);
+  
+  try {
+    const EvaluationRunner = require('./services/hiring-evaluation/evaluation-runner');
+    const evaluator = new EvaluationRunner(applicationName);
+    
+    // Extract candidate name from resume data
+    const candidateName = resumeData.basics?.name || 'Candidate';
+    
+    console.log(`${theme.messages.emojis.processing} Evaluating candidate: ${candidateName}`);
+    
+    // Run the evaluation
+    const results = await evaluator.runEvaluation(candidateName);
+    
+    console.log(`${theme.messages.emojis.success} Hiring evaluation completed successfully!`);
+    console.log(`${theme.messages.emojis.folder} Evaluation results saved to working directory`);
+    
+    return results;
+  } catch (error) {
+    console.error(`${theme.messages.emojis.error} Hiring evaluation failed: ${error.message}`);
+    
+    // Check if it's an Ollama connection error
+    if (error.message.includes('localhost:11434') || error.message.includes('connection refused')) {
+      console.error(`${theme.messages.emojis.warning} Make sure Ollama is running: ollama serve`);
+      console.error(`${theme.messages.emojis.warning} And dolphin3:latest model is available: ollama pull dolphin3:latest`);
+    }
+    
+    throw error;
+  }
+}
+
 // Main function
 (async () => {
   try {
@@ -80,6 +160,15 @@ const theme = require('./theme');
     
     // Execute document generation
     const generatedFiles = await orchestrateGeneration(generationPlan, paths, resumeData, flags.preview);
+    
+    // Execute additional services if requested
+    if (generationPlan.runHiringEvaluation) {
+      // For --all flag, run keyword analysis first, then hiring evaluation
+      if (flags.all) {
+        await runKeywordAnalysis(paths.applicationName);
+      }
+      await runHiringEvaluation(paths.applicationName, resumeData);
+    }
     
     // Exit successfully
     process.exit(0);

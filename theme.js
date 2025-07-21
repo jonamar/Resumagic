@@ -133,6 +133,8 @@ const theme = {
       both: '--both',
       auto: '--auto',
       combined: '--cover-letter-and-resume',
+      evaluate: '--evaluate',
+      all: '--all',
     },
     
     defaults: {
@@ -197,6 +199,8 @@ const theme = {
     usage: {
       command: 'Usage: node generate-resume.js <application-folder-name> [flags]',
       example: 'Example: node generate-resume.js relay-director-of-product',
+      flags: 'Available flags: --resume --cover-letter --both --combined --auto --evaluate --all --preview',
+      flagDescriptions: '  --evaluate: Generate documents + run hiring evaluation\n  --all: Complete workflow (documents + keyword analysis + hiring evaluation)',
       createApplication: 'To create a new application:',
       createCommand: 'cp -r data/applications/template data/applications/{name}',
       availableApplications: 'Available applications:',
