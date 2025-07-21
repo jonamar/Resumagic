@@ -53,9 +53,18 @@ function generatePrompt(personaKey) {
     // Add competitive framework (embedded)
     const framework = `## Evaluation Task
 
-**COMPETITIVE FRAMEWORK**: You are evaluating this candidate against other director-level candidates in today's hyper-competitive market. Ask yourself: "Would I hire this person over 50+ other director-level candidates?" Only scores of 8.0+ represent truly viable candidates who could compete successfully.
+**COMPETITIVE FRAMEWORK**: You are evaluating this candidate against other director-level candidates in today's hyper-competitive market. 
 
-Review the attached resume against the job posting and score the candidate using the unified scoring rubric (1-10 scale). Focus particularly on your areas of expertise:`;
+**SCORING RUBRIC (1-10):**
+- **1-3 = Reject**: Missing core requirements, red flags, poor fit
+- **4-5 = Weak**: Some qualifications but significant gaps or concerns  
+- **6-7 = Solid**: Meets requirements but not exceptional, average candidate
+- **8-9 = Strong**: Exceeds requirements, top 20% candidate
+- **10 = Exceptional**: Best-in-class, transformational hire
+
+**CALIBRATION**: Most candidates score 4-7. Only give 8+ if you'd genuinely hire them over 80% of other director-level candidates. Be specific about gaps and weaknesses - this feedback helps candidates improve.
+
+Review the attached resume against the job posting and score using this rubric. Focus particularly on your areas of expertise:`;
     prompt += `${framework}\n\n`;
     
     // Add criteria

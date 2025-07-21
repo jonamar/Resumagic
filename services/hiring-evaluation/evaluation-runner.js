@@ -333,18 +333,22 @@ class EvaluationRunner {
         
         console.log(`📋 Evaluating: ${candidateName}`);
         
-        const evaluations = [];
+        // Run all personas in parallel for faster evaluation
+        console.log(`🚀 Running ${this.personas.length} persona evaluations in parallel...`);
         
-        for (const persona of this.personas) {
+        const evaluationPromises = this.personas.map(async (persona) => {
             try {
+                console.log(`🔄 Starting ${persona} evaluation...`);
                 const evaluation = await this.evaluatePersona(persona, 'ollama');
-                evaluations.push(evaluation);
                 console.log(`✓ ${persona} persona completed`);
+                return evaluation;
             } catch (error) {
                 console.error(`✗ ${persona} persona failed:`, error.message);
-                throw error;
+                throw new Error(`${persona} evaluation failed: ${error.message}`);
             }
-        }
+        });
+        
+        const evaluations = await Promise.all(evaluationPromises);
         
         // Process results with our enhanced evaluation processor
         const { processEvaluationResults } = require('./evaluation-processor.js');
