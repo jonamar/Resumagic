@@ -137,10 +137,10 @@ class ModelPerformanceTester {
     let totalScore = 0;
     let count = 0;
     
-    rawResults.evaluations.forEach(eval => {
-      if (eval.overall_assessment && eval.overall_assessment.persona_score) {
-        scores[eval.persona] = eval.overall_assessment.persona_score;
-        totalScore += eval.overall_assessment.persona_score;
+    rawResults.evaluations.forEach(evaluation => {
+      if (evaluation.overall_assessment && evaluation.overall_assessment.persona_score) {
+        scores[evaluation.persona] = evaluation.overall_assessment.persona_score;
+        totalScore += evaluation.overall_assessment.persona_score;
         count++;
       }
     });
@@ -205,9 +205,9 @@ class ModelPerformanceTester {
     
     // Check for feedback quality
     let feedbackQuality = 0;
-    rawResults.evaluations.forEach(eval => {
-      if (eval.scores) {
-        Object.values(eval.scores).forEach(criterion => {
+    rawResults.evaluations.forEach(evaluation => {
+      if (evaluation.scores) {
+        Object.values(evaluation.scores).forEach(criterion => {
           if (criterion.reasoning && criterion.reasoning.length > 50) {
             feedbackQuality++;
           }
