@@ -1,0 +1,50 @@
+{
+  "name": "Alex Johnson",
+  "email": "alex.johnson@email.com",
+  "phone": "+1-555-0123",
+  "location": "Austin, TX",
+  "experience": [
+    {
+      "title": "Associate Product Manager",
+      "company": "StartupCo",
+      "location": "Austin, TX",
+      "duration": "2023-2024",
+      "bullets": [
+        "Assisted senior product managers with feature development and user story creation",
+        "Participated in daily standups and sprint planning meetings",
+        "Created basic product documentation and user flow diagrams",
+        "Conducted 5 user interviews over 12 months"
+      ]
+    },
+    {
+      "title": "Product Marketing Intern",
+      "company": "TechBridge Solutions",
+      "location": "Austin, TX",
+      "duration": "2022-2023",
+      "bullets": [
+        "Supported marketing team with competitive analysis research",
+        "Helped create social media content for product launches",
+        "Attended product team meetings as an observer",
+        "Maintained product documentation in Confluence"
+      ]
+    }
+  ],
+  "education": [
+    {
+      "degree": "Bachelor of Arts in Business Administration",
+      "school": "University of Texas at Austin",
+      "location": "Austin, TX",
+      "year": "2022"
+    }
+  ],
+  "skills": [
+    "Microsoft Office",
+    "Google Analytics",
+    "Confluence",
+    "Basic SQL",
+    "Figma (beginner)",
+    "Jira",
+    "PowerPoint",
+    "Excel"
+  ]
+}

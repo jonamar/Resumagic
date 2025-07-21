@@ -135,6 +135,7 @@ const theme = {
       combined: '--cover-letter-and-resume',
       evaluate: '--evaluate',
       all: '--all',
+      fast: '--fast',
     },
     
     defaults: {

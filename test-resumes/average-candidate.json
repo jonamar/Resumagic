@@ -1,0 +1,70 @@
+{
+  "name": "Morgan Davis",
+  "email": "morgan.davis@techmail.com",
+  "phone": "+1-555-0456",
+  "location": "Denver, CO",
+  "experience": [
+    {
+      "title": "Senior Product Manager",
+      "company": "MidSize Tech",
+      "location": "Denver, CO",
+      "duration": "2022-2024",
+      "bullets": [
+        "Led product development for B2B SaaS platform serving 500+ customers",
+        "Managed product roadmap and coordinated with engineering team of 6 developers",
+        "Increased user retention by 25% through feature improvements and user research",
+        "Collaborated with sales team to define product requirements for enterprise clients"
+      ]
+    },
+    {
+      "title": "Product Manager",
+      "company": "Digital Solutions Inc",
+      "location": "Denver, CO",
+      "duration": "2020-2022",
+      "bullets": [
+        "Developed and launched 2 new product features that generated $300K in additional revenue",
+        "Conducted market research and competitive analysis for product positioning",
+        "Worked with UX/UI team to improve user experience and reduce support tickets by 15%",
+        "Managed product backlog and prioritized features based on customer feedback"
+      ]
+    },
+    {
+      "title": "Business Analyst",
+      "company": "Consulting Group LLC",
+      "location": "Chicago, IL",
+      "duration": "2019-2020",
+      "bullets": [
+        "Analyzed business processes and recommended technology solutions for clients",
+        "Created detailed project plans and tracked deliverables for consulting engagements",
+        "Facilitated stakeholder meetings and gathered requirements for system improvements"
+      ]
+    }
+  ],
+  "education": [
+    {
+      "degree": "Master of Business Administration",
+      "school": "University of Colorado Boulder",
+      "location": "Boulder, CO",
+      "year": "2019"
+    },
+    {
+      "degree": "Bachelor of Science in Information Systems",
+      "school": "Colorado State University",
+      "location": "Fort Collins, CO",
+      "year": "2017"
+    }
+  ],
+  "skills": [
+    "Product Strategy",
+    "Market Research",
+    "User Research",
+    "Agile/Scrum",
+    "SQL",
+    "Tableau",
+    "Figma",
+    "Jira",
+    "Confluence",
+    "Google Analytics",
+    "A/B Testing"
+  ]
+}

@@ -1,0 +1,98 @@
+{
+  "name": "Dr. Sarah Chen",
+  "email": "sarah.chen@productleader.com",
+  "phone": "+1-555-0789",
+  "location": "Seattle, WA",
+  "experience": [
+    {
+      "title": "VP of Product",
+      "company": "CloudScale Technologies",
+      "location": "Seattle, WA",
+      "duration": "2021-2024",
+      "bullets": [
+        "Led product organization of 45+ product managers, designers, and researchers across 8 product lines",
+        "Scaled platform from $50M to $200M ARR through strategic product vision and execution",
+        "Pioneered AI-driven product features that increased customer engagement by 180% and reduced churn by 40%",
+        "Built and executed 3-year product strategy resulting in successful $500M Series D funding round",
+        "Established data-driven product culture with advanced analytics, experimentation frameworks, and ML-powered insights"
+      ]
+    },
+    {
+      "title": "Senior Director of Product Management",
+      "company": "Enterprise Software Corp",
+      "location": "San Francisco, CA",
+      "duration": "2018-2021",
+      "bullets": [
+        "Managed portfolio of enterprise products serving 10,000+ customers with $150M+ annual revenue",
+        "Led digital transformation initiative that modernized legacy platform and increased user satisfaction by 65%",
+        "Built strategic partnerships with AWS, Google Cloud, and Microsoft Azure to expand platform capabilities",
+        "Developed go-to-market strategy for government sector, securing $25M in federal contracts",
+        "Mentored and developed 15 product managers, with 80% promoted to senior roles"
+      ]
+    },
+    {
+      "title": "Director of Product Management",
+      "company": "GovTech Solutions",
+      "location": "Washington, DC",
+      "duration": "2015-2018",
+      "bullets": [
+        "Launched market-leading government compliance platform adopted by 200+ agencies",
+        "Led cross-functional teams of 25+ engineers, designers, and data scientists",
+        "Established product-market fit in regulated GovTech space with 95% customer retention rate",
+        "Drove technical architecture decisions for scalable, secure, cloud-native platform",
+        "Achieved FedRAMP High authorization and SOC 2 Type II compliance"
+      ]
+    },
+    {
+      "title": "Senior Product Manager",
+      "company": "DataDriven Analytics",
+      "location": "Boston, MA", 
+      "duration": "2012-2015",
+      "bullets": [
+        "Built enterprise analytics platform from concept to $10M ARR in 18 months",
+        "Led technical product strategy for machine learning and AI capabilities",
+        "Established product management best practices and hired initial product team of 8",
+        "Conducted 200+ customer interviews to validate product-market fit and feature prioritization"
+      ]
+    }
+  ],
+  "education": [
+    {
+      "degree": "PhD in Computer Science (Machine Learning)",
+      "school": "Massachusetts Institute of Technology",
+      "location": "Cambridge, MA",
+      "year": "2012"
+    },
+    {
+      "degree": "Master of Science in Computer Science",
+      "school": "Stanford University",
+      "location": "Stanford, CA",
+      "year": "2008"
+    },
+    {
+      "degree": "Bachelor of Science in Computer Engineering",
+      "school": "Carnegie Mellon University",
+      "location": "Pittsburgh, PA",
+      "year": "2006"
+    }
+  ],
+  "skills": [
+    "Product Strategy & Vision",
+    "AI/ML Product Development",
+    "Enterprise Software Architecture",
+    "Data Science & Analytics",
+    "GovTech & Regulatory Compliance",
+    "Technical Leadership",
+    "Team Building & Mentoring",
+    "Strategic Partnerships",
+    "Go-to-Market Strategy",
+    "Python",
+    "SQL",
+    "TensorFlow",
+    "AWS/GCP/Azure",
+    "Kubernetes",
+    "Advanced Statistics",
+    "Product Analytics",
+    "A/B Testing & Experimentation"
+  ]
+}

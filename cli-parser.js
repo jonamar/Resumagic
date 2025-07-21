@@ -33,7 +33,8 @@ function parseCliArguments(args) {
     auto: args.includes(theme.cli.flags.auto),
     combined: args.includes(theme.cli.flags.combined),
     evaluate: args.includes(theme.cli.flags.evaluate),
-    all: args.includes(theme.cli.flags.all)
+    all: args.includes(theme.cli.flags.all),
+    fast: args.includes(theme.cli.flags.fast)
   };
   
   return {

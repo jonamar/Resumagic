@@ -79,24 +79,31 @@ async function runKeywordAnalysis(applicationName) {
  * Runs hiring evaluation for the specified application
  * @param {string} applicationName - Name of the application
  * @param {Object} resumeData - Resume data for candidate name extraction
+ * @param {boolean} fastMode - Use faster model for quick evaluation
  * @returns {Promise<void>}
  */
-async function runHiringEvaluation(applicationName, resumeData) {
-  console.log(`${theme.messages.emojis.processing} Starting hiring evaluation...`);
+async function runHiringEvaluation(applicationName, resumeData, fastMode = false) {
+  const mode = fastMode ? 'fast evaluation' : 'detailed evaluation';
+  console.log(`${theme.messages.emojis.processing} Starting hiring ${mode}...`);
   
   try {
     const EvaluationRunner = require('./services/hiring-evaluation/evaluation-runner');
     const evaluator = new EvaluationRunner(applicationName);
     
+    // Set fast mode if requested
+    if (fastMode) {
+      evaluator.setFastMode(true);
+    }
+    
     // Extract candidate name from resume data
     const candidateName = resumeData.basics?.name || 'Candidate';
     
-    console.log(`${theme.messages.emojis.processing} Evaluating candidate: ${candidateName}`);
+    console.log(`${theme.messages.emojis.processing} Evaluating candidate: ${candidateName} (${mode})`);
     
     // Run the evaluation
     const results = await evaluator.runEvaluation(candidateName);
     
-    console.log(`${theme.messages.emojis.success} Hiring evaluation completed successfully!`);
+    console.log(`${theme.messages.emojis.success} Hiring ${mode} completed successfully!`);
     console.log(`${theme.messages.emojis.folder} Evaluation results saved to working directory`);
     
     return results;
@@ -107,6 +114,9 @@ async function runHiringEvaluation(applicationName, resumeData) {
     if (error.message.includes('localhost:11434') || error.message.includes('connection refused')) {
       console.error(`${theme.messages.emojis.warning} Make sure Ollama is running: ollama serve`);
       console.error(`${theme.messages.emojis.warning} And dolphin3:latest model is available: ollama pull dolphin3:latest`);
+      if (fastMode) {
+        console.error(`${theme.messages.emojis.warning} For fast mode, also ensure llama3.2:3b is available: ollama pull llama3.2:3b`);
+      }
     }
     
     throw error;
@@ -191,7 +201,7 @@ async function runHiringEvaluation(applicationName, resumeData) {
       if (flags.all) {
         await runKeywordAnalysis(applicationName);
       }
-      await runHiringEvaluation(applicationName, resumeData);
+      await runHiringEvaluation(applicationName, resumeData, flags.fast);
     }
     
     // Exit successfully
