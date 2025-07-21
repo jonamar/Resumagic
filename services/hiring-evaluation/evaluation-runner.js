@@ -11,6 +11,8 @@ class EvaluationRunner {
         this.applicationName = applicationName;
         this.ollamaUrl = 'http://localhost:11434';
         this.modelName = 'dolphin3:latest';
+        this.fastModelName = 'llama3.2:3b';
+        this.fastMode = false;
         this.personas = ['hr', 'technical', 'design', 'finance', 'ceo', 'team'];
         this.weights = {
             hr: 0.20,
@@ -20,6 +22,11 @@ class EvaluationRunner {
             ceo: 0.20,
             team: 0.10
         };
+    }
+
+    setFastMode(enabled) {
+        this.fastMode = enabled;
+        console.log(`🚀 Fast mode ${enabled ? 'enabled' : 'disabled'}: using ${enabled ? this.fastModelName : this.modelName}`);
     }
 
     async loadFile(filePath) {
@@ -114,8 +121,9 @@ class EvaluationRunner {
         };
 
         return new Promise((resolve, reject) => {
+            const selectedModel = this.fastMode ? this.fastModelName : model;
             const postData = JSON.stringify({
-                model: model,
+                model: selectedModel,
                 prompt: prompt,
                 stream: false,
                 format: evaluationSchema,
