@@ -20,14 +20,17 @@ class KeywordExtractionService {
             const response = await this.callOllama(prompt);
             const keywords = this.parseJSON(response);
             
+            console.log('🔧 Validating and fixing experience requirements...');
+            const validatedKeywords = this.validateExperienceRequirements(keywords, jobPosting);
+            
             console.log('💾 Saving keywords...');
-            fs.writeFileSync(outputPath, JSON.stringify(keywords, null, 2));
+            fs.writeFileSync(outputPath, JSON.stringify(validatedKeywords, null, 2));
             
             console.log(`✅ Keywords extracted and saved to: ${outputPath}`);
-            console.log(`📊 Extracted ${keywords.keywords.length} keywords`);
+            console.log(`📊 Extracted ${validatedKeywords.keywords.length} keywords`);
             
             // Summary
-            const categories = keywords.keywords.reduce((acc, kw) => {
+            const categories = validatedKeywords.keywords.reduce((acc, kw) => {
                 acc[kw.role] = (acc[kw.role] || 0) + 1;
                 return acc;
             }, {});
@@ -37,10 +40,92 @@ class KeywordExtractionService {
                 console.log(`  - ${role}: ${count} keywords`);
             });
             
-            return keywords;
+            return validatedKeywords;
         } catch (error) {
             console.error('❌ Keyword extraction failed:', error.message);
             throw error;
+        }
+    }
+
+    validateExperienceRequirements(keywords, jobPosting) {
+        console.log('  🔍 Extracting experience requirements from job posting...');
+        
+        // Extract all experience requirements directly from job posting
+        const experiencePatterns = [
+            // Standard patterns: "7+ years", "5-8 years", "minimum 4 years"
+            /(\d+)\+?\s*years?\s+(?:of\s+|in\s+|with\s+|as\s+|managing\s+|leading\s+)?([^.]{15,150})/gi,
+            /(minimum|at least|minimum of)\s+(\d+)\+?\s*years?\s+(?:of\s+|in\s+|with\s+|as\s+|managing\s+|leading\s+)?([^.]{15,150})/gi,
+            /(\d+)\s*[-–]\s*(\d+)\s*years?\s+(?:of\s+|in\s+|with\s+|as\s+|managing\s+|leading\s+)?([^.]{15,150})/gi,
+        ];
+
+        const directExtractions = [];
+        
+        for (const pattern of experiencePatterns) {
+            let match;
+            while ((match = pattern.exec(jobPosting)) !== null) {
+                let years, description;
+                
+                if (match[1] === 'minimum' || match[1] === 'at least' || match[1] === 'minimum of') {
+                    years = match[2];
+                    description = match[3];
+                } else if (match[2] && !isNaN(match[2])) {
+                    // Range pattern like "5-8 years"
+                    years = match[1] + '-' + match[2];
+                    description = match[3];
+                } else {
+                    years = match[1];
+                    description = match[2];
+                }
+                
+                if (description && description.trim().length > 10) {
+                    const cleanDesc = description.trim()
+                        .replace(/[.,;:].*$/, '') // Remove everything after first punctuation
+                        .replace(/\s+/g, ' ')      // Normalize whitespace
+                        .trim();
+                    
+                    const fullRequirement = `${years}+ years ${cleanDesc}`;
+                    
+                    directExtractions.push({
+                        kw: fullRequirement,
+                        role: 'core',
+                        source: 'direct_extraction',
+                        originalYears: years,
+                        originalDescription: cleanDesc
+                    });
+                }
+            }
+        }
+        
+        if (directExtractions.length > 0) {
+            console.log(`  ✅ Found ${directExtractions.length} experience requirements directly`);
+            
+            // Find and replace/add experience requirements
+            const result = { ...keywords };
+            const experienceKeywords = new Set();
+            
+            // Remove LLM-extracted experience requirements that might be corrupted
+            result.keywords = result.keywords.filter(kw => {
+                const isExperienceKeyword = /\d+\+?\s*years?\s+(?:in|of|with|as|managing|leading)/i.test(kw.kw);
+                if (isExperienceKeyword) {
+                    experienceKeywords.add(kw.kw.toLowerCase());
+                    console.log(`  🗑️  Removing potentially corrupted: "${kw.kw}"`);
+                    return false;
+                }
+                return true;
+            });
+            
+            // Add direct extractions
+            for (const extraction of directExtractions) {
+                if (!experienceKeywords.has(extraction.kw.toLowerCase())) {
+                    result.keywords.push(extraction);
+                    console.log(`  ✅ Added validated requirement: "${extraction.kw}"`);
+                }
+            }
+            
+            return result;
+        } else {
+            console.log('  ℹ️  No experience requirements found to validate');
+            return keywords;
         }
     }
 

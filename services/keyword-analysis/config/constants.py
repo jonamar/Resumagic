@@ -125,7 +125,7 @@ class KnockoutConfig:
         r'up to \d+%.*travel',  # "up to 50% travel"
         
         # Specific job title requirements when mentioned as requirements
-        r'(director|vp|vice\s+president|chief)\s+(of\s+)?(product|marketing)',
+        r'(director|vp|vice\s+president|chief|head)\s+(of\s+)?(product|marketing)',
     ])
     
     # Medium knockout patterns (moderate indicators)
