@@ -1,0 +1,306 @@
+{
+  "test_result": {
+    "test_metadata": {
+      "test_id": "memory_conservative_deepseek_r1_8b_test-average-candidate_run2_1753123373631",
+      "configuration": "memory_conservative",
+      "model": "deepseek-r1:8b",
+      "model_category": "quality",
+      "candidate": "Morgan Davis",
+      "candidate_type": "average",
+      "run_number": 2,
+      "timestamp": "2025-07-21T18:45:22.608Z"
+    },
+    "performance_metrics": {
+      "total_duration_seconds": 148.468,
+      "personas_completed": 6,
+      "average_persona_time": 24.744666666666664,
+      "success": true
+    },
+    "quality_metrics": {
+      "quality_score": 7,
+      "score_appropriateness": true,
+      "score_variance": 0.34960294939005054,
+      "avg_reasoning_length": 67,
+      "issues": [
+        "Low score variance - poor persona discrimination",
+        "Insufficient reasoning detail"
+      ]
+    },
+    "scoring_results": {
+      "by_persona": {
+        "HR Manager": {
+          "score": 7,
+          "reasoning_length": 200
+        },
+        "Director of Engineering": {
+          "score": 6,
+          "reasoning_length": 16
+        },
+        "Director of Design": {
+          "score": 7,
+          "reasoning_length": 82
+        },
+        "Finance Director": {
+          "score": 6.5,
+          "reasoning_length": 70
+        },
+        "CEO": {
+          "score": 6.8,
+          "reasoning_length": 17
+        },
+        "Senior Product Manager": {
+          "score": 6.5,
+          "reasoning_length": 16
+        }
+      },
+      "average": "6.63",
+      "personas_count": 6,
+      "score_variance": 0.34960294939005054,
+      "total_reasoning_chars": 401
+    },
+    "system_metrics": {
+      "memory_before": {
+        "phase": "before",
+        "error": "Unable to capture memory"
+      },
+      "memory_after": {
+        "phase": "after",
+        "error": "Unable to capture memory"
+      },
+      "memory_delta": {
+        "error": "Unable to calculate delta"
+      }
+    },
+    "telemetry": {
+      "pre_test": {
+        "system_state": {
+          "timestamp": "2025-07-21T18:42:53.631Z",
+          "cpu_usage": "CPU usage: 3.35% user, 23.25% sys, 73.38% idle",
+          "active_connections": 4,
+          "ollama_processes": [
+            "27451   0.0  0.2   0:05.83"
+          ],
+          "memory": {
+            "phase": "system_state",
+            "error": "Unable to capture memory"
+          }
+        },
+        "ollama_health": {
+          "healthy": true,
+          "response_time_ms": 2,
+          "status_code": 200,
+          "timestamp": "2025-07-21T18:42:54.099Z"
+        },
+        "active_connections": 0,
+        "memory_snapshot": {
+          "phase": "before",
+          "error": "Unable to capture memory"
+        }
+      },
+      "post_test": {
+        "system_state": {
+          "timestamp": "2025-07-21T18:45:22.099Z",
+          "cpu_usage": "CPU usage: 4.21% user, 15.0% sys, 80.78% idle",
+          "active_connections": 4,
+          "ollama_processes": [
+            "27451   0.5  0.3   0:06.20"
+          ],
+          "memory": {
+            "phase": "system_state",
+            "error": "Unable to capture memory"
+          }
+        },
+        "ollama_health": {
+          "healthy": true,
+          "response_time_ms": 7,
+          "status_code": 200,
+          "timestamp": "2025-07-21T18:45:22.595Z"
+        },
+        "active_connections": 0,
+        "memory_snapshot": {
+          "phase": "after",
+          "error": "Unable to capture memory"
+        }
+      },
+      "connection_stability": {
+        "connections_before": 0,
+        "connections_after": 0,
+        "connection_delta": 0
+      },
+      "ollama_performance": {
+        "health_before": {
+          "healthy": true,
+          "response_time_ms": 2,
+          "status_code": 200,
+          "timestamp": "2025-07-21T18:42:54.099Z"
+        },
+        "health_after": {
+          "healthy": true,
+          "response_time_ms": 7,
+          "status_code": 200,
+          "timestamp": "2025-07-21T18:45:22.595Z"
+        },
+        "response_time_delta": 5
+      }
+    },
+    "raw_data_archive": "memory_conservative_deepseek_r1_8b_test-average-candidate_run2_1753123373631_complete.json"
+  },
+  "full_evaluation_output": {
+    "evaluation_timestamp": "2025-07-21T18:45:22.097Z",
+    "model": "deepseek-r1:8b",
+    "candidate": "Morgan Davis",
+    "evaluations": [
+      {
+        "scores": {
+          "experience_match": {
+            "score": 6,
+            "reasoning": "The candidate has relevant product management experience with a focus on B2B SaaS platforms, which aligns well with our requirements. However, the resume lacks explicit mention of people leadership responsibilities beyond coordination and collaboration in previous roles. The three years of people\n\n"
+          },
+          "cultural_fit": {
+            "score": 7,
+            "reasoning": "The candidate's experience demonstrates strong business acumen and customer focus through their work with sales teams and user research, which aligns well with our collaborative culture.\n\n"
+          },
+          "qualification_alignment": {
+            "score": 5,
+            "reasoning": "While the resume shows relevant technical skills (Agile/Scrum, SQL, Tableau), it lacks explicit mention of required certifications like PMP or practical experience with Pragmatic Marketing. The educational background is a Master's in Business Administration and Bachelor's\n\n"
+          },
+          "communication_skills": {
+            "score": 8,
+            "reasoning": "The candidate has evidence of delivering technical presentations through market research, feature launches, and stakeholder meetings. They also have experience with tools like Confluence for documentation.\n\n"
+          }
+        },
+        "overall_assessment": {
+          "persona_score": 7,
+          "recommendation": "This candidate meets the core requirements but has gaps in people leadership experience and specific technical qualifications (PMP, Pragmatic Marketing). They would be a solid hire for an average role"
+        },
+        "persona": "HR Manager"
+      },
+      {
+        "scores": {
+          "technical_depth": {
+            "score": 5,
+            "reasoning": "..."
+          },
+          "architecture_thinking": {
+            "score": 4,
+            "reasoning": "..."
+          },
+          "problem_solving": {
+            "score": 6,
+            "reasoning": "..."
+          },
+          "technical_leadership": {
+            "score": 7,
+            "reasoning": "..."
+          }
+        },
+        "overall_assessment": {
+          "persona_score": 6,
+          "recommendation": "Conditional Hire"
+        },
+        "persona": "Director of Engineering"
+      },
+      {
+        "scores": {
+          "usercentered_thinking": {
+            "score": 6,
+            "reasoning": "The candidate has some user research experience but lacks explicit mention of customer-centricity or user advocacy in product decisions."
+          },
+          "design_collaboration": {
+            "score": 7,
+            "reasoning": "Candidate has collaborative experience with engineering and sales, but no direct evidence of working with designers specifically."
+          },
+          "product_craft": {
+            "score": 5,
+            "reasoning": "Limited evidence for high-quality product delivery beyond basic metrics. No mention of design systems or polished products."
+          },
+          "crossfunctional_leadership": {
+            "score": 8,
+            "reasoning": "Strong experience in leading teams and managing cross-functional aspects, though the PM role is recent."
+          }
+        },
+        "overall_assessment": {
+          "persona_score": 7,
+          "recommendation": "Conditional hire. More information needed on user advocacy and design integration."
+        },
+        "persona": "Director of Design"
+      },
+      {
+        "scores": {
+          "business_impact_roi": {
+            "score": 7,
+            "reasoning": "Candidate has experience with revenue generation through product features but lacks explicit mention of ROI measurement or unit economics understanding."
+          },
+          "financial_acumen": {
+            "score": 6,
+            "reasoning": "Shows budget management in a consulting role and some financial planning skills from SaaS roles, but no direct evidence of P&L impact or advanced forecasting experience."
+          },
+          "resource_management": {
+            "score": 8,
+            "reasoning": "Strong product leadership track record with team building and resource allocation across development teams. Evidence of scaling products to handle growth."
+          },
+          "growth_strategy": {
+            "score": 7,
+            "reasoning": "Candidate has a history of identifying market opportunities through research but lacks explicit mention of sustainable long-term strategies or multi-year planning experience."
+          }
+        },
+        "overall_assessment": {
+          "persona_score": 6.5,
+          "recommendation": "Conditional Offer - Requires further assessment in key financial areas"
+        },
+        "persona": "Finance Director"
+      },
+      {
+        "scores": {
+          "strategic_vision_execution": {
+            "score": 7,
+            "reasoning": "Candidate has relevant product management experience with evidence of strategic thinking (e.g., led product development for B2B SaaS platform) and execution skills (coordinated with engineering team). However, lacks explicit mention of long-term vision or market understanding beyond current role."
+          },
+          "leadership_culture_fit": {
+            "score": 6,
+            "reasoning": "Candidate has people leadership experience in previous roles but limited evidence of building high-performing teams or fostering a culture of innovation. The Business Analyst role does not demonstrate strong team development skills."
+          },
+          "market_customer_focus": {
+            "score": 8,
+            "reasoning": "Candidate's B2B SaaS and GovTech exposure aligns well with Elovate's focus. Experience in product management roles shows ability to understand market needs and customer problems."
+          },
+          "organizational_impact": {
+            "score": 7,
+            "reasoning": "Evidence of scaling products (MidSize Tech platform serving 500+ customers) but no explicit mention of driving company-wide growth or managing complex cross-functional transformations."
+          }
+        },
+        "overall_assessment": {
+          "persona_score": 6.8,
+          "recommendation": "Conditional Offer"
+        },
+        "persona": "CEO"
+      },
+      {
+        "scores": {
+          "management_mentorship": {
+            "score": 7,
+            "reasoning": "The candidate has some experience managing a small engineering team but lacks explicit evidence of leading or mentoring other product managers."
+          },
+          "communication_collaboration": {
+            "score": 8,
+            "reasoning": "Demonstrates strong cross-functional collaboration skills and clear communication in past roles. Experience with Agile tools suggests structured communication practices."
+          },
+          "practical_leadership": {
+            "score": 6,
+            "reasoning": "Limited evidence of hands-on leadership or decision-making processes involving larger teams."
+          },
+          "professional_development": {
+            "score": 7,
+            "reasoning": "Shows interest in team growth through product improvements but lacks structured mentorship programs for professional development."
+          }
+        },
+        "overall_assessment": {
+          "persona_score": 6.5,
+          "recommendation": "Conditional Hire"
+        },
+        "persona": "Senior Product Manager"
+      }
+    ]
+  },
+  "evaluation_summary": "# Candidate Evaluation Summary: Morgan Davis\n\n## Overall Result\n**Final Score: 6.6/10** - Weak Candidate ❌\n\n## Detailed Breakdown\n\n| Persona | Criterion 1 | Criterion 2 | Criterion 3 | Criterion 4 | **Avg** | Weight | **Weighted** |\n|---------|-------------|-------------|-------------|-------------|---------|--------|--------------|\n| HR Manager | 6 | 7 | 5 | 8 | **6.5** | 20% | **1.3** |\n| Director of Engineering | 5 | 4 | 6 | 7 | **5.5** | 15% | **0.83** |\n| Director of Design | 6 | 7 | 5 | 8 | **6.5** | 15% | **0.98** |\n| Finance Director | 7 | 6 | 8 | 7 | **7** | 20% | **1.4** |\n| CEO | 7 | 6 | 8 | 7 | **7** | 20% | **1.4** |\n| Senior Product Manager | 7 | 8 | 6 | 7 | **7** | 10% | **0.7** |\n| | | | | | | **Total** | **6.6** |\n\n## Key Insights\n- **Strongest Evaluation**: Finance Director (7/10)\n- **Areas of Concern**: Director of Engineering (5.5/10)\n- **Consensus Level**: Low (1.5 point variance)\n- **Assessment**: Not recommended\n\n## Qualitative Insights\n\n### Strengths Highlighted\n- **Communication**: \"The candidate has evidence of delivering technical presentations through market research, feature launches, and stakeholder meetings\" (HR Manager)\n- **Other**: \"Strong experience in leading teams and managing cross-functional aspects, though the PM role is recent\" (Director of Design)\n- **Management**: \"Strong product leadership track record with team building and resource allocation across development teams\" (Finance Director)\n- **Market Understanding**: \"Candidate's B2B SaaS and GovTech exposure aligns well with Elovate's focus\" (CEO)\n- **Collaboration**: \"Demonstrates strong cross-functional collaboration skills and clear communication in past roles\" (Senior Product Manager)\n\n### Concerns Raised\n- **Product Quality**: \"Limited evidence for high-quality product delivery beyond basic metrics\" (Director of Design)\n\n### Consensus Themes\n- ⚠️ **Leadership**: Strong consensus (3 personas, avg 6.3/10)\n\n## Persona Recommendations\n- **HR Manager**: This candidate meets the core requirements but has gaps in people leadership experience and specific technical qualifications (PMP, Pragmatic Marketing). They would be a solid hire for an average role\n- **Director of Engineering**: Conditional Hire\n- **Director of Design**: Conditional hire. More information needed on user advocacy and design integration.\n- **Finance Director**: Conditional Offer - Requires further assessment in key financial areas\n- **CEO**: Conditional Offer\n- **Senior Product Manager**: Conditional Hire\n"
+}

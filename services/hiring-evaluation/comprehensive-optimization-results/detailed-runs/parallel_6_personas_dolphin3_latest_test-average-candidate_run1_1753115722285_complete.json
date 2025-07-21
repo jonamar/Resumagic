@@ -1,0 +1,303 @@
+{
+  "test_result": {
+    "test_metadata": {
+      "test_id": "parallel_6_personas_dolphin3_latest_test-average-candidate_run1_1753115722285",
+      "configuration": "parallel_6_personas",
+      "model": "dolphin3:latest",
+      "model_category": "baseline",
+      "candidate": "Morgan Davis",
+      "candidate_type": "average",
+      "run_number": 1,
+      "timestamp": "2025-07-21T16:38:25.734Z"
+    },
+    "performance_metrics": {
+      "total_duration_seconds": 182.934,
+      "personas_completed": 6,
+      "average_persona_time": 30.489,
+      "success": true
+    },
+    "quality_metrics": {
+      "quality_score": 10,
+      "score_appropriateness": true,
+      "score_variance": 0.7312470322826768,
+      "avg_reasoning_length": 200,
+      "issues": []
+    },
+    "scoring_results": {
+      "by_persona": {
+        "HR Manager": {
+          "score": 8,
+          "reasoning_length": 200
+        },
+        "Director of Engineering": {
+          "score": 6,
+          "reasoning_length": 200
+        },
+        "Director of Design": {
+          "score": 6,
+          "reasoning_length": 200
+        },
+        "Finance Director": {
+          "score": 6,
+          "reasoning_length": 200
+        },
+        "CEO": {
+          "score": 6.5,
+          "reasoning_length": 199
+        },
+        "Senior Product Manager": {
+          "score": 7,
+          "reasoning_length": 200
+        }
+      },
+      "average": "6.58",
+      "personas_count": 6,
+      "score_variance": 0.7312470322826768,
+      "total_reasoning_chars": 1199
+    },
+    "system_metrics": {
+      "memory_before": {
+        "phase": "before",
+        "error": "Unable to capture memory"
+      },
+      "memory_after": {
+        "phase": "after",
+        "error": "Unable to capture memory"
+      },
+      "memory_delta": {
+        "error": "Unable to calculate delta"
+      }
+    },
+    "telemetry": {
+      "pre_test": {
+        "system_state": {
+          "timestamp": "2025-07-21T16:35:22.285Z",
+          "cpu_usage": "CPU usage: 4.86% user, 10.54% sys, 84.59% idle",
+          "active_connections": 6,
+          "ollama_processes": [
+            "81662   0.0  0.1   0:01.56"
+          ],
+          "memory": {
+            "phase": "system_state",
+            "error": "Unable to capture memory"
+          }
+        },
+        "ollama_health": {
+          "healthy": true,
+          "response_time_ms": 5,
+          "status_code": 200,
+          "timestamp": "2025-07-21T16:35:22.744Z"
+        },
+        "active_connections": 0,
+        "memory_snapshot": {
+          "phase": "before",
+          "error": "Unable to capture memory"
+        }
+      },
+      "post_test": {
+        "system_state": {
+          "timestamp": "2025-07-21T16:38:25.219Z",
+          "cpu_usage": "CPU usage: 4.77% user, 18.56% sys, 76.65% idle",
+          "active_connections": 4,
+          "ollama_processes": [
+            "81662   0.3  0.2   0:02.01"
+          ],
+          "memory": {
+            "phase": "system_state",
+            "error": "Unable to capture memory"
+          }
+        },
+        "ollama_health": {
+          "healthy": true,
+          "response_time_ms": 18,
+          "status_code": 200,
+          "timestamp": "2025-07-21T16:38:25.707Z"
+        },
+        "active_connections": 0,
+        "memory_snapshot": {
+          "phase": "after",
+          "error": "Unable to capture memory"
+        }
+      },
+      "connection_stability": {
+        "connections_before": 0,
+        "connections_after": 0,
+        "connection_delta": 0
+      },
+      "ollama_performance": {
+        "health_before": {
+          "healthy": true,
+          "response_time_ms": 5,
+          "status_code": 200,
+          "timestamp": "2025-07-21T16:35:22.744Z"
+        },
+        "health_after": {
+          "healthy": true,
+          "response_time_ms": 18,
+          "status_code": 200,
+          "timestamp": "2025-07-21T16:38:25.707Z"
+        },
+        "response_time_delta": 13
+      }
+    },
+    "raw_data_archive": "parallel_6_personas_dolphin3_latest_test-average-candidate_run1_1753115722285_complete.json"
+  },
+  "full_evaluation_output": {
+    "evaluation_timestamp": "2025-07-21T16:38:25.214Z",
+    "model": "dolphin3:latest",
+    "candidate": "Morgan Davis",
+    "evaluations": [
+      {
+        "scores": {
+          "experience_match": {
+            "score": 8,
+            "reasoning": "Candidate has 8-10 years of progressive experience as a product manager with a focus on B2B SaaS solutions and web/mobile products. They have managed product development for a platform serving 500+ customers and demonstrated leadership in increasing user retention."
+          },
+          "cultural_fit": {
+            "score": 7,
+            "reasoning": "The candidate's values align well with Elovate's culture of collaboration, innovation, and customer focus. Their experience in managing cross-functional teams and working with sales and engineering suggests they can build strong relationships within the company."
+          },
+          "qualification_alignment": {
+            "score": 9,
+            "reasoning": "Candidate has a Master's degree in Business Administration and a Bachelor's degree in Information Systems, which aligns well with the technical discipline required for this role. They have practical experience with Pragmatic Marketing and PMP, indicating strong qualifications."
+          },
+          "communication_skills": {
+            "score": 8,
+            "reasoning": "The candidate has demonstrated excellent communication skills through delivering technical presentations to influencers and senior executives. Their experience in market research, user research, and stakeholder meetings shows they can effectively communicate product strategies."
+          }
+        },
+        "overall_assessment": {
+          "persona_score": 8,
+          "recommendation": "Based on the candidate's strong alignment with the job requirements, particularly in experience match and qualification alignment, I would recommend them as a solid candidate for this Director,Product"
+        },
+        "persona": "HR Manager"
+      },
+      {
+        "scores": {
+          "technical_depth": {
+            "score": 6,
+            "reasoning": "The candidate has a Master's degree in Business Administration and a Bachelor's degree in Information Systems, which demonstrates some technical knowledge. However, there is no explicit mention of specific technical skills or hands-on experience in areas relevant to the role such as AI/ML, cloud, or"
+          },
+          "architecture_thinking": {
+            "score": 5,
+            "reasoning": "The candidate has experience with Agile project delivery methodologies and product management responsibilities, but there is no evidence of direct involvement in system architecture design or decision-making."
+          },
+          "problem_solving": {
+            "score": 6,
+            "reasoning": "The candidate's experience in market research, competitive analysis, and user retention improvements indicates problem-solving skills. However, the complexity of technical challenges addressed is not explicitly mentioned."
+          },
+          "technical_leadership": {
+            "score": 5,
+            "reasoning": "The candidate has people leadership experience as a product manager but lacks direct evidence of leading technical teams or mentoring engineers. The collaboration with engineering teams is also not specifically highlighted."
+          }
+        },
+        "overall_assessment": {
+          "persona_score": 6,
+          "recommendation": "While the candidate demonstrates some relevant skills and experiences, there are significant gaps in their technical expertise, architecture thinking, problem-solving complexity, and technical team-le"
+        },
+        "persona": "Director of Engineering"
+      },
+      {
+        "scores": {
+          "usercentered_thinking": {
+            "score": 6,
+            "reasoning": "The candidate has experience with user research and data-driven decision making, but there is no explicit evidence of a strong customer-centric approach or deep understanding of the user experience beyond basic requirements gathering."
+          },
+          "design_collaboration": {
+            "score": 5,
+            "reasoning": "While the candidate has some experience working with design teams, their resume does not highlight any specific leadership or collaboration efforts in design processes or methodologies."
+          },
+          "product_craft": {
+            "score": 6,
+            "reasoning": "The candidate's background shows a focus on product management rather than direct design responsibilities. There is no explicit mention of attention to user interface and experience details or expertise in design systems."
+          },
+          "crossfunctional_leadership": {
+            "score": 7,
+            "reasoning": "The candidate has demonstrated leadership across different roles within product management and has worked with cross-functional teams. However, there's a lack of specific evidence showing they can balance design, technical, and business constraints effectively."
+          }
+        },
+        "overall_assessment": {
+          "persona_score": 6,
+          "recommendation": "While the candidate has relevant experience in product management, there are significant gaps in their background that suggest they may not be an exceptional fit for a Director of Design role. They do"
+        },
+        "persona": "Director of Design"
+      },
+      {
+        "scores": {
+          "business_impact_roi": {
+            "score": 6,
+            "reasoning": "Candidate has demonstrated measurable business results with a 25% increase in user retention and $300K additional revenue from feature improvements."
+          },
+          "financial_acumen": {
+            "score": 5,
+            "reasoning": "While the candidate has an MBA in Finance, there is no direct evidence of extensive financial planning or budget management experience."
+          },
+          "resource_management": {
+            "score": 6,
+            "reasoning": "The candidate managed a product roadmap and collaborated with engineering teams but lacks direct experience in scaling finance operations or resource allocation."
+          },
+          "growth_strategy": {
+            "score": 7,
+            "reasoning": "Candidate has shown revenue growth track record and strategies. However, there is no evidence of long-term financial planning or sustainable growth initiatives beyond short-term product requirements."
+          }
+        },
+        "overall_assessment": {
+          "persona_score": 6,
+          "recommendation": "Morgan Davis is a solid candidate with some qualifications but not exceptional in the areas of financial acumen and resource management. They have demonstrated business impact and ROI awareness, as we"
+        },
+        "persona": "Finance Director"
+      },
+      {
+        "scores": {
+          "strategic_vision_execution": {
+            "score": 7,
+            "reasoning": "The candidate has demonstrated strategic thinking through their product management roles, showing an ability to influence and contribute to broader company strategy. They have experience with Agile project delivery methodologies and managing product roadmaps."
+          },
+          "leadership_culture_fit": {
+            "score": 6,
+            "reasoning": "While the candidate has leadership experience, there is limited information on how they inspire and motivate teams or build a high-performing team culture."
+          },
+          "market_customer_focus": {
+            "score": 7,
+            "reasoning": "The candidate has shown customer-centric approaches through user research and feature improvements. They have also demonstrated market understanding through competitive analysis."
+          },
+          "organizational_impact": {
+            "score": 6,
+            "reasoning": "Although the candidate has managed product development for a B2B SaaS platform, there is no evidence of scaling experience or organizational development beyond team management."
+          }
+        },
+        "overall_assessment": {
+          "persona_score": 6.5,
+          "recommendation": "While Morgan Davis shows potential as a Director of Product Management, they are considered an average candidate with some qualifications but significant gaps in leadership and organizational impact."
+        },
+        "persona": "CEO"
+      },
+      {
+        "scores": {
+          "management_mentorship": {
+            "score": 7,
+            "reasoning": "The candidate has demonstrated leadership experience as a Senior Product Manager with a focus on B2B SaaS platforms. They have managed product roadmaps and teams of developers, indicating an ability to lead and develop team members."
+          },
+          "communication_collaboration": {
+            "score": 8,
+            "reasoning": "The candidate's experience in collaborating with sales teams and managing product backlogs suggests strong communication skills. Their ability to work with UX/UI teams to improve user experiences also indicates a collaborative mindset."
+          },
+          "practical_leadership": {
+            "score": 7,
+            "reasoning": "While the candidate has shown leadership qualities, there is less direct evidence of hands-on leadership in decision-making and problem-solving. However, their experience in managing product development and working with cross-functional teams is positive."
+          },
+          "professional_development": {
+            "score": 6,
+            "reasoning": "The candidate's focus on user retention and feature improvements suggests an investment in customer satisfaction. However, there is less explicit evidence of a commitment to team growth and learning beyond their immediate responsibilities."
+          }
+        },
+        "overall_assessment": {
+          "persona_score": 7,
+          "recommendation": "While Morgan Davis shows strong potential as a Product Director with solid management and communication skills, they may benefit from further development in practical leadership and professional team/"
+        },
+        "persona": "Senior Product Manager"
+      }
+    ]
+  },
+  "evaluation_summary": "# Candidate Evaluation Summary: Morgan Davis\n\n## Overall Result\n**Final Score: 6.53/10** - Weak Candidate ❌\n\n## Detailed Breakdown\n\n| Persona | Criterion 1 | Criterion 2 | Criterion 3 | Criterion 4 | **Avg** | Weight | **Weighted** |\n|---------|-------------|-------------|-------------|-------------|---------|--------|--------------|\n| HR Manager | 8 | 7 | 9 | 8 | **8** | 20% | **1.6** |\n| Director of Engineering | 6 | 5 | 6 | 5 | **5.5** | 15% | **0.83** |\n| Director of Design | 6 | 5 | 6 | 7 | **6** | 15% | **0.9** |\n| Finance Director | 6 | 5 | 6 | 7 | **6** | 20% | **1.2** |\n| CEO | 7 | 6 | 7 | 6 | **6.5** | 20% | **1.3** |\n| Senior Product Manager | 7 | 8 | 7 | 6 | **7** | 10% | **0.7** |\n| | | | | | | **Total** | **6.53** |\n\n## Key Insights\n- **Strongest Evaluation**: HR Manager (8/10)\n- **Areas of Concern**: Director of Engineering (5.5/10)\n- **Consensus Level**: Low (2.5 point variance)\n- **Assessment**: Not recommended\n\n## Qualitative Insights\n\n### Strengths Highlighted\n- **Qualifications**: \"They have practical experience with Pragmatic Marketing and PMP, indicating strong qualifications\" (HR Manager)\n- **Experience**: \"Candidate has 8-10 years of progressive experience as a product manager with a focus on B2B SaaS solutions and web/mobile products\" (HR Manager)\n- **Communication**: \"The candidate has demonstrated excellent communication skills through delivering technical presentations to influencers and senior executives\" (HR Manager)\n- **Collaboration**: \"The candidate's experience in collaborating with sales teams and managing product backlogs suggests strong communication skills\" (Senior Product Manager)\n- **Culture**: \"Their experience in managing cross-functional teams and working with sales and engineering suggests they can build strong relationships within the company\" (HR Manager)\n\n### Key Achievements/Metrics\n- 10 years\n- 25%\n\n### Consensus Themes\n- ⚠️ **Leadership**: Moderate consensus (3 personas, avg 6/10)\n\n## Persona Recommendations\n- **HR Manager**: Based on the candidate's strong alignment with the job requirements, particularly in experience match and qualification alignment, I would recommend them as a solid candidate for this Director,Product\n- **Director of Engineering**: While the candidate demonstrates some relevant skills and experiences, there are significant gaps in their technical expertise, architecture thinking, problem-solving complexity, and technical team-le\n- **Director of Design**: While the candidate has relevant experience in product management, there are significant gaps in their background that suggest they may not be an exceptional fit for a Director of Design role. They do\n- **Finance Director**: Morgan Davis is a solid candidate with some qualifications but not exceptional in the areas of financial acumen and resource management. They have demonstrated business impact and ROI awareness, as we\n- **CEO**: While Morgan Davis shows potential as a Director of Product Management, they are considered an average candidate with some qualifications but significant gaps in leadership and organizational impact.\n- **Senior Product Manager**: While Morgan Davis shows strong potential as a Product Director with solid management and communication skills, they may benefit from further development in practical leadership and professional team/\n"
+}

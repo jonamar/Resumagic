@@ -1,0 +1,221 @@
+{
+  "timestamp": "2025-07-21T15:30:00.182Z",
+  "test_type": "configuration_discovery_phase_1b",
+  "recommendations": {
+    "configuration": "baseline_default",
+    "model": "dolphin3:latest",
+    "optimal_settings": {
+      "max_concurrent_requests": 4,
+      "memory_monitoring_thresholds": {
+        "warning_gb": 2,
+        "critical_gb": 4
+      },
+      "connection_limit": 20,
+      "confidence_level": "high"
+    },
+    "performance_characteristics": {
+      "baseline_memory_usage": 0,
+      "optimal_response_time_ms": 2.75,
+      "success_rate_at_optimal": 1
+    },
+    "production_readiness": "ready"
+  },
+  "raw_data": {
+    "thresholds": {
+      "memory_warning_gb": 2,
+      "memory_critical_gb": 4,
+      "cpu_warning_percent": null,
+      "connection_limit": 20,
+      "baseline_state": {
+        "timestamp": "2025-07-21T15:29:40.946Z",
+        "cpu_usage": "CPU usage: 12.2% user, 10.92% sys, 77.4% idle",
+        "active_connections": 2,
+        "ollama_processes": [
+          "36755   0.0  0.3   0:02.42"
+        ],
+        "memory": {
+          "phase": "system_state",
+          "error": "Unable to capture memory"
+        }
+      }
+    },
+    "concurrency_analysis": {
+      "optimal_concurrency": 4,
+      "confidence": "high",
+      "success_rate": 1,
+      "average_response_time": 2.75,
+      "reason": "Best performance at 4 concurrent requests with 100.0% success rate",
+      "system_impact": {
+        "cpu_before": "CPU usage: 4.28% user, 11.52% sys, 84.18% idle",
+        "cpu_after": "CPU usage: 3.18% user, 11.30% sys, 85.50% idle",
+        "connections_before": 8,
+        "connections_after": 10,
+        "memory_delta": {
+          "error": "Unable to calculate delta"
+        }
+      },
+      "all_results": [
+        {
+          "concurrency_level": 1,
+          "success": true,
+          "success_rate": 1,
+          "failure_rate": 0,
+          "average_response_time": 6.333333333333333,
+          "test_duration_seconds": 0.87,
+          "system_impact": {
+            "cpu_before": "CPU usage: 6.88% user, 10.74% sys, 82.36% idle",
+            "cpu_after": "CPU usage: 2.29% user, 8.62% sys, 89.8% idle",
+            "connections_before": 2,
+            "connections_after": 4,
+            "memory_delta": {
+              "error": "Unable to calculate delta"
+            }
+          },
+          "detailed_runs": [
+            {
+              "run_number": 1,
+              "concurrent_requests": 1,
+              "successful_requests": 1,
+              "average_response_time": 15,
+              "success_rate": 1
+            },
+            {
+              "run_number": 2,
+              "concurrent_requests": 1,
+              "successful_requests": 1,
+              "average_response_time": 2,
+              "success_rate": 1
+            },
+            {
+              "run_number": 3,
+              "concurrent_requests": 1,
+              "successful_requests": 1,
+              "average_response_time": 2,
+              "success_rate": 1
+            }
+          ]
+        },
+        {
+          "concurrency_level": 2,
+          "success": true,
+          "success_rate": 1,
+          "failure_rate": 0,
+          "average_response_time": 3.3333333333333335,
+          "test_duration_seconds": 0.888,
+          "system_impact": {
+            "cpu_before": "CPU usage: 6.87% user, 11.64% sys, 81.48% idle",
+            "cpu_after": "CPU usage: 6.21% user, 10.73% sys, 83.5% idle",
+            "connections_before": 4,
+            "connections_after": 6,
+            "memory_delta": {
+              "error": "Unable to calculate delta"
+            }
+          },
+          "detailed_runs": [
+            {
+              "run_number": 1,
+              "concurrent_requests": 2,
+              "successful_requests": 2,
+              "average_response_time": 4,
+              "success_rate": 1
+            },
+            {
+              "run_number": 2,
+              "concurrent_requests": 2,
+              "successful_requests": 2,
+              "average_response_time": 2.5,
+              "success_rate": 1
+            },
+            {
+              "run_number": 3,
+              "concurrent_requests": 2,
+              "successful_requests": 2,
+              "average_response_time": 3.5,
+              "success_rate": 1
+            }
+          ]
+        },
+        {
+          "concurrency_level": 3,
+          "success": true,
+          "success_rate": 1,
+          "failure_rate": 0,
+          "average_response_time": 2.3333333333333335,
+          "test_duration_seconds": 0.892,
+          "system_impact": {
+            "cpu_before": "CPU usage: 6.72% user, 11.2% sys, 82.25% idle",
+            "cpu_after": "CPU usage: 5.84% user, 9.74% sys, 84.40% idle",
+            "connections_before": 6,
+            "connections_after": 8,
+            "memory_delta": {
+              "error": "Unable to calculate delta"
+            }
+          },
+          "detailed_runs": [
+            {
+              "run_number": 1,
+              "concurrent_requests": 3,
+              "successful_requests": 3,
+              "average_response_time": 2,
+              "success_rate": 1
+            },
+            {
+              "run_number": 2,
+              "concurrent_requests": 3,
+              "successful_requests": 3,
+              "average_response_time": 2.6666666666666665,
+              "success_rate": 1
+            },
+            {
+              "run_number": 3,
+              "concurrent_requests": 3,
+              "successful_requests": 3,
+              "average_response_time": 2.3333333333333335,
+              "success_rate": 1
+            }
+          ]
+        },
+        {
+          "concurrency_level": 4,
+          "success": true,
+          "success_rate": 1,
+          "failure_rate": 0,
+          "average_response_time": 2.75,
+          "test_duration_seconds": 0.889,
+          "system_impact": {
+            "cpu_before": "CPU usage: 4.28% user, 11.52% sys, 84.18% idle",
+            "cpu_after": "CPU usage: 3.18% user, 11.30% sys, 85.50% idle",
+            "connections_before": 8,
+            "connections_after": 10,
+            "memory_delta": {
+              "error": "Unable to calculate delta"
+            }
+          },
+          "detailed_runs": [
+            {
+              "run_number": 1,
+              "concurrent_requests": 4,
+              "successful_requests": 4,
+              "average_response_time": 2.5,
+              "success_rate": 1
+            },
+            {
+              "run_number": 2,
+              "concurrent_requests": 4,
+              "successful_requests": 4,
+              "average_response_time": 3.75,
+              "success_rate": 1
+            },
+            {
+              "run_number": 3,
+              "concurrent_requests": 4,
+              "successful_requests": 4,
+              "average_response_time": 2,
+              "success_rate": 1
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -21,8 +21,9 @@ cp -r ../data/applications/template ../data/applications/company-role
 node generate-resume.js company-role
 
 # 5. Integrated workflows (NEW!)
-node generate-resume.js company-role --evaluate  # Documents + hiring evaluation
-node generate-resume.js company-role --all       # Complete workflow
+node generate-resume.js company-role --evaluate       # Documents + hiring evaluation (quality mode)
+node generate-resume.js company-role --evaluate --fast # Documents + hiring evaluation (speed mode)
+node generate-resume.js company-role --all            # Complete workflow
 
 # 6. Individual services
 python services/keyword-analysis/kw_rank_modular.py company-role
@@ -68,10 +69,11 @@ This project uses a two-repo structure to separate code from private data:
 │   │   │   ├── API.md               # API documentation
 │   │   │   ├── SETUP.md             # Setup guide
 │   │   │   └── kw_rank_modular.py   # Modern entry point
-│   │   └── hiring-evaluation/       # Node.js hiring simulation service
+│   │   └── hiring-evaluation/       # Node.js hiring simulation service (optimized)
 │   │       ├── personas/            # YAML persona configurations
-│   │       ├── evaluation-runner.js # Main evaluation engine
-│   │       └── evaluation-processor.js # Results processing
+│   │       ├── evaluation-runner.js # Main evaluation engine (dolphin3:latest/phi3:mini)
+│   │       ├── evaluation-processor.js # Results processing
+│   │       └── model-test-results/  # Comprehensive optimization study
 │   ├── generate-resume.js           # Resume/cover letter generation
 │   ├── docx-template.js             # DOCX generation templates
 │   ├── markdown-to-data.js          # Markdown parser and transformer
@@ -152,7 +154,7 @@ Each application must follow this 3-tier folder structure:
 - **Python 3.8+** (for keyword analysis)
 - **Ollama** (for hiring evaluation service)
   - Install: `curl -fsSL https://ollama.ai/install.sh | sh`
-  - Pull model: `ollama pull dolphin3:latest`
+  - Models: `ollama pull dolphin3:latest` (quality) + `ollama pull phi3:mini` (speed)
 - **Virtual environment recommended**
 
 ## Core Features
@@ -189,8 +191,9 @@ node generate-resume.js company-role --both
 node generate-resume.js company-role --combined
 
 # Integrated workflows (NEW!)
-node generate-resume.js company-role --evaluate  # Documents + hiring evaluation
-node generate-resume.js company-role --all       # Complete workflow: docs + analysis + evaluation
+node generate-resume.js company-role --evaluate       # Documents + hiring evaluation (quality mode)
+node generate-resume.js company-role --evaluate --fast # Documents + hiring evaluation (speed mode)
+node generate-resume.js company-role --all            # Complete workflow: docs + analysis + evaluation
 ```
 
 ### Keyword Analysis
@@ -206,10 +209,14 @@ cd services/keyword-analysis && python run_tests.py --coverage
 ### Hiring Simulation
 
 ```bash
-# Simulate 6-person hiring review board
-node services/hiring-evaluation/evaluation-runner.js company-role
+# Two-tier optimization: Quality vs Speed
+# Quality mode (default): dolphin3:latest - 170s, 9.0-10.0/10 quality
+node generate-resume.js company-role --evaluate
 
-# With specific candidate name
+# Speed mode: phi3:mini - 140s, 7.0-8.0/10 quality (30% faster)
+node generate-resume.js company-role --evaluate --fast
+
+# Direct service calls (if needed)
 node services/hiring-evaluation/evaluation-runner.js company-role "John Smith"
 ```
 

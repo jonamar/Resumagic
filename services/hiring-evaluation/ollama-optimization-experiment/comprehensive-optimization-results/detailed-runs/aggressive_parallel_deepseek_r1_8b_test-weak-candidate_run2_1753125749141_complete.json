@@ -1,0 +1,305 @@
+{
+  "test_result": {
+    "test_metadata": {
+      "test_id": "aggressive_parallel_deepseek_r1_8b_test-weak-candidate_run2_1753125749141",
+      "configuration": "aggressive_parallel",
+      "model": "deepseek-r1:8b",
+      "model_category": "quality",
+      "candidate": "Alex Johnson",
+      "candidate_type": "weak",
+      "run_number": 2,
+      "timestamp": "2025-07-21T19:24:46.713Z"
+    },
+    "performance_metrics": {
+      "total_duration_seconds": 137.079,
+      "personas_completed": 6,
+      "average_persona_time": 22.846500000000002,
+      "success": true
+    },
+    "quality_metrics": {
+      "quality_score": 9,
+      "score_appropriateness": true,
+      "score_variance": 1.1547005383792515,
+      "avg_reasoning_length": 73,
+      "issues": [
+        "Insufficient reasoning detail"
+      ]
+    },
+    "scoring_results": {
+      "by_persona": {
+        "HR Manager": {
+          "score": 5,
+          "reasoning_length": 102
+        },
+        "Director of Engineering": {
+          "score": 4,
+          "reasoning_length": 6
+        },
+        "Director of Design": {
+          "score": 5,
+          "reasoning_length": 6
+        },
+        "Finance Director": {
+          "score": 2,
+          "reasoning_length": 200
+        },
+        "CEO": {
+          "score": 3,
+          "reasoning_length": 119
+        },
+        "Senior Product Manager": {
+          "score": 5,
+          "reasoning_length": 6
+        }
+      },
+      "average": "4.00",
+      "personas_count": 6,
+      "score_variance": 1.1547005383792515,
+      "total_reasoning_chars": 439
+    },
+    "system_metrics": {
+      "memory_before": {
+        "phase": "before",
+        "error": "Unable to capture memory"
+      },
+      "memory_after": {
+        "phase": "after",
+        "error": "Unable to capture memory"
+      },
+      "memory_delta": {
+        "error": "Unable to calculate delta"
+      }
+    },
+    "telemetry": {
+      "pre_test": {
+        "system_state": {
+          "timestamp": "2025-07-21T19:22:29.141Z",
+          "cpu_usage": "CPU usage: 4.49% user, 14.2% sys, 81.48% idle",
+          "active_connections": 4,
+          "ollama_processes": [
+            "50314   0.0  0.2   0:04.80"
+          ],
+          "memory": {
+            "phase": "system_state",
+            "error": "Unable to capture memory"
+          }
+        },
+        "ollama_health": {
+          "healthy": true,
+          "response_time_ms": 4,
+          "status_code": 200,
+          "timestamp": "2025-07-21T19:22:29.605Z"
+        },
+        "active_connections": 0,
+        "memory_snapshot": {
+          "phase": "before",
+          "error": "Unable to capture memory"
+        }
+      },
+      "post_test": {
+        "system_state": {
+          "timestamp": "2025-07-21T19:24:46.220Z",
+          "cpu_usage": "CPU usage: 3.95% user, 13.72% sys, 82.32% idle",
+          "active_connections": 4,
+          "ollama_processes": [
+            "50314   0.5  0.2   0:05.18"
+          ],
+          "memory": {
+            "phase": "system_state",
+            "error": "Unable to capture memory"
+          }
+        },
+        "ollama_health": {
+          "healthy": true,
+          "response_time_ms": 6,
+          "status_code": 200,
+          "timestamp": "2025-07-21T19:24:46.699Z"
+        },
+        "active_connections": 0,
+        "memory_snapshot": {
+          "phase": "after",
+          "error": "Unable to capture memory"
+        }
+      },
+      "connection_stability": {
+        "connections_before": 0,
+        "connections_after": 0,
+        "connection_delta": 0
+      },
+      "ollama_performance": {
+        "health_before": {
+          "healthy": true,
+          "response_time_ms": 4,
+          "status_code": 200,
+          "timestamp": "2025-07-21T19:22:29.605Z"
+        },
+        "health_after": {
+          "healthy": true,
+          "response_time_ms": 6,
+          "status_code": 200,
+          "timestamp": "2025-07-21T19:24:46.699Z"
+        },
+        "response_time_delta": 2
+      }
+    },
+    "raw_data_archive": "aggressive_parallel_deepseek_r1_8b_test-weak-candidate_run2_1753125749141_complete.json"
+  },
+  "full_evaluation_output": {
+    "evaluation_timestamp": "2025-07-21T19:24:46.218Z",
+    "model": "deepseek-r1:8b",
+    "candidate": "Alex Johnson",
+    "evaluations": [
+      {
+        "scores": {
+          "experience_match": {
+            "score": 3,
+            "reasoning": "Candidate has only two years total experience (one year as Associate PM and one year as intern) which falls short of the required minimum 8-10 years progressive experience. The roles are entry-level or junior positions with limited scope and responsibility."
+          },
+          "cultural_fit": {
+            "score": 2,
+            "reasoning": "No evidence of leadership beyond internship observation. Communication skills appear basic based on resume format and listed responsibilities. No travel mentioned in any role."
+          },
+          "qualification_alignment": {
+            "score": 3,
+            "reasoning": "Bachelor's degree not aligned with computer science or technical discipline preference. Skills are non-technical business tools lacking the required technical expertise like Agile methodologies (only Jira mentioned), Pragmatic Marketing experience missing entirely, and no SaaS product development."
+          },
+          "communication_skills": {
+            "score": 4,
+            "reasoning": "Limited evidence of technical communication skills beyond basic Confluence use. No mention of presentations to senior stakeholders or market analysis."
+          }
+        },
+        "overall_assessment": {
+          "persona_score": 5,
+          "recommendation": "Reject this candidate entirely as they do not meet the minimum requirements for a Director-level role."
+        },
+        "persona": "HR Manager"
+      },
+      {
+        "scores": {
+          "technical_depth": {
+            "score": 2,
+            "reasoning": "The resume shows no technical degree or relevant experience beyond basic documentation tasks and user interviews."
+          },
+          "architecture_thinking": {
+            "score": 1,
+            "reasoning": "No evidence of system design, scalability, or distributed systems knowledge in the provided experience."
+          },
+          "problem_solving": {
+            "score": 3,
+            "reasoning": "The technical challenges addressed are very basic (user interviews) and lack innovation or data-driven decision making."
+          },
+          "technical_leadership": {
+            "score": 2,
+            "reasoning": "No people leadership experience mentioned in the resume. The product role is described as 'Associate Product Manager' with no team management responsibilities."
+          }
+        },
+        "overall_assessment": {
+          "persona_score": 4,
+          "recommendation": "Reject"
+        },
+        "persona": "Director of Engineering"
+      },
+      {
+        "scores": {
+          "usercentered_thinking": {
+            "score": 3,
+            "reasoning": "The resume shows minimal user research experience with only one instance of user interviews mentioned over a two-year period."
+          },
+          "design_collaboration": {
+            "score": 2,
+            "reasoning": "No direct evidence of design collaboration or understanding of design processes in the provided experience."
+          },
+          "product_craft": {
+            "score": 4,
+            "reasoning": "Limited technical product development skills and no mention of high-quality delivery."
+          },
+          "crossfunctional_leadership": {
+            "score": 3,
+            "reasoning": "No leadership experience mentioned at all. The candidate has only held junior roles."
+          }
+        },
+        "overall_assessment": {
+          "persona_score": 5,
+          "recommendation": "Reject"
+        },
+        "persona": "Director of Design"
+      },
+      {
+        "scores": {
+          "business_impact_roi": {
+            "score": 2,
+            "reasoning": "The resume lacks any evidence of measurable business results or ROI impact from product initiatives."
+          },
+          "financial_acumen": {
+            "score": 3,
+            "reasoning": "No experience with P&L management, financial planning/forecasting, SaaS metrics beyond basic understanding, and no data-driven decision making examples provided."
+          },
+          "resource_management": {
+            "score": 2,
+            "reasoning": "Limited evidence of budget ownership or team scaling decisions. The intern role at TechBridge Solutions doesn't demonstrate cost-conscious resource management experience."
+          },
+          "growth_strategy": {
+            "score": 3,
+            "reasoning": "No track record of revenue growth strategies or market expansion efforts mentioned in the resume."
+          }
+        },
+        "overall_assessment": {
+          "persona_score": 2,
+          "recommendation": "Reject this candidate based on lack of relevant experience and qualifications for a Director-level role. The candidate appears to be early career with less than two years of product management or市场营销全"
+        },
+        "persona": "Finance Director"
+      },
+      {
+        "scores": {
+          "strategic_vision_execution": {
+            "score": 3,
+            "reasoning": "The resume shows very limited evidence of strategic thinking or execution capability beyond basic tasks like user interviews and documentation maintenance."
+          },
+          "leadership_culture_fit": {
+            "score": 2,
+            "reasoning": "No leadership experience mentioned at all. The candidate has only held an associate role and internships without any people management responsibilities."
+          },
+          "market_customer_focus": {
+            "score": 4,
+            "reasoning": "The candidate's roles were primarily operational or support functions with little evidence of market understanding or customer focus beyond basic tasks."
+          },
+          "organizational_impact": {
+            "score": 2,
+            "reasoning": "No experience in scaling organizations or leading cross-functional teams. The resume focuses on junior-level tasks without any indication of strategic organizational impact."
+          }
+        },
+        "overall_assessment": {
+          "persona_score": 3,
+          "recommendation": "Reject this candidate based on the significant gaps in their qualifications and lack of relevant leadership experience."
+        },
+        "persona": "CEO"
+      },
+      {
+        "scores": {
+          "management_mentorship": {
+            "score": 3,
+            "reasoning": "The resume lacks evidence of people leadership or managing a team."
+          },
+          "communication_collaboration": {
+            "score": 4,
+            "reasoning": "Limited experience in cross-functional collaboration and communication with senior stakeholders."
+          },
+          "practical_leadership": {
+            "score": 2,
+            "reasoning": "No direct management experience at the director level."
+          },
+          "professional_development": {
+            "score": 3,
+            "reasoning": "The candidate has no evidence of investing in team growth or career development support."
+          }
+        },
+        "overall_assessment": {
+          "persona_score": 5,
+          "recommendation": "Reject"
+        },
+        "persona": "Senior Product Manager"
+      }
+    ]
+  },
+  "evaluation_summary": "# Candidate Evaluation Summary: Alex Johnson\n\n## Overall Result\n**Final Score: 2.7/10** - Poor Candidate 🚫\n\n## Detailed Breakdown\n\n| Persona | Criterion 1 | Criterion 2 | Criterion 3 | Criterion 4 | **Avg** | Weight | **Weighted** |\n|---------|-------------|-------------|-------------|-------------|---------|--------|--------------|\n| HR Manager | 3 | 2 | 3 | 4 | **3** | 20% | **0.6** |\n| Director of Engineering | 2 | 1 | 3 | 2 | **2** | 15% | **0.3** |\n| Director of Design | 3 | 2 | 4 | 3 | **3** | 15% | **0.45** |\n| Finance Director | 2 | 3 | 2 | 3 | **2.5** | 20% | **0.5** |\n| CEO | 3 | 2 | 4 | 2 | **2.75** | 20% | **0.55** |\n| Senior Product Manager | 3 | 4 | 2 | 3 | **3** | 10% | **0.3** |\n| | | | | | | **Total** | **2.7** |\n\n## Key Insights\n- **Strongest Evaluation**: HR Manager (3/10)\n- **Areas of Concern**: Director of Engineering (2/10)\n- **Consensus Level**: Medium (1 point variance)\n- **Assessment**: Strong rejection\n\n## Qualitative Insights\n\n### Strengths Highlighted\n- **Other**: \"The resume shows minimal user research experience with only one instance of user interviews mentioned over a two-year period\" (Director of Design)\n- **Other**: \"No leadership experience mentioned at all\" (Director of Design)\n- **Business Acumen**: \"No experience with P&L management, financial planning/forecasting, SaaS metrics beyond basic understanding, and no data-driven decision making examples provided\" (Finance Director)\n- **Strategy**: \"No track record of revenue growth strategies or market expansion efforts mentioned in the resume\" (Finance Director)\n- **Technical**: \"The resume shows no technical degree or relevant experience beyond basic documentation tasks and user interviews\" (Director of Engineering)\n\n### Concerns Raised\n- **Communication**: \"Limited evidence of technical communication skills beyond basic Confluence use\" (HR Manager)\n- **Product Quality**: \"Limited technical product development skills and no mention of high-quality delivery\" (Director of Design)\n- **Strategy**: \"The resume shows very limited evidence of strategic thinking or execution capability beyond basic tasks like user interviews and documentation maintenance\" (CEO)\n- **Management**: \"The resume lacks evidence of people leadership or managing a team\" (Senior Product Manager)\n- **Development**: \"The candidate has no evidence of investing in team growth or career development support\" (Senior Product Manager)\n\n### Key Achievements/Metrics\n- 10 years\n\n### Consensus Themes\n- ❌ **Leadership**: Strong consensus (3 personas, avg 2/10)\n\n## Persona Recommendations\n- **HR Manager**: Reject this candidate entirely as they do not meet the minimum requirements for a Director-level role.\n- **Director of Engineering**: Reject\n- **Director of Design**: Reject\n- **Finance Director**: Reject this candidate based on lack of relevant experience and qualifications for a Director-level role. The candidate appears to be early career with less than two years of product management or市场营销全\n- **CEO**: Reject this candidate based on the significant gaps in their qualifications and lack of relevant leadership experience.\n- **Senior Product Manager**: Reject\n"
+}

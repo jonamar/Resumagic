@@ -1,0 +1,305 @@
+{
+  "test_result": {
+    "test_metadata": {
+      "test_id": "parallel_threads_optimized_phi3_mini_test-weak-candidate_run2_1753119227497",
+      "configuration": "parallel_threads_optimized",
+      "model": "phi3:mini",
+      "model_category": "speed",
+      "candidate": "Alex Johnson",
+      "candidate_type": "weak",
+      "run_number": 2,
+      "timestamp": "2025-07-21T17:36:04.120Z"
+    },
+    "performance_metrics": {
+      "total_duration_seconds": 136.124,
+      "personas_completed": 6,
+      "average_persona_time": 22.68733333333333,
+      "success": true
+    },
+    "quality_metrics": {
+      "quality_score": 7,
+      "score_appropriateness": false,
+      "score_variance": 5.580223014261069,
+      "avg_reasoning_length": 193,
+      "issues": [
+        "Score 8.83 outside expected range 3-6"
+      ]
+    },
+    "scoring_results": {
+      "by_persona": {
+        "HR Manager": {
+          "score": 9,
+          "reasoning_length": 200
+        },
+        "Director of Engineering": {
+          "score": 8,
+          "reasoning_length": 200
+        },
+        "Director of Design": {
+          "score": 9,
+          "reasoning_length": 200
+        },
+        "Finance Director": {
+          "score": 2,
+          "reasoning_length": 189
+        },
+        "CEO": {
+          "score": 20,
+          "reasoning_length": 200
+        },
+        "Senior Product Manager": {
+          "score": 5,
+          "reasoning_length": 171
+        }
+      },
+      "average": "8.83",
+      "personas_count": 6,
+      "score_variance": 5.580223014261069,
+      "total_reasoning_chars": 1160
+    },
+    "system_metrics": {
+      "memory_before": {
+        "phase": "before",
+        "error": "Unable to capture memory"
+      },
+      "memory_after": {
+        "phase": "after",
+        "error": "Unable to capture memory"
+      },
+      "memory_delta": {
+        "error": "Unable to calculate delta"
+      }
+    },
+    "telemetry": {
+      "pre_test": {
+        "system_state": {
+          "timestamp": "2025-07-21T17:33:47.497Z",
+          "cpu_usage": "CPU usage: 23.42% user, 23.17% sys, 53.40% idle",
+          "active_connections": 4,
+          "ollama_processes": [
+            " 4941   0.0  0.1   0:03.11"
+          ],
+          "memory": {
+            "phase": "system_state",
+            "error": "Unable to capture memory"
+          }
+        },
+        "ollama_health": {
+          "healthy": true,
+          "response_time_ms": 2,
+          "status_code": 200,
+          "timestamp": "2025-07-21T17:33:47.988Z"
+        },
+        "active_connections": 0,
+        "memory_snapshot": {
+          "phase": "before",
+          "error": "Unable to capture memory"
+        }
+      },
+      "post_test": {
+        "system_state": {
+          "timestamp": "2025-07-21T17:36:03.621Z",
+          "cpu_usage": "CPU usage: 15.78% user, 21.5% sys, 63.15% idle",
+          "active_connections": 4,
+          "ollama_processes": [
+            " 4941   0.3  0.2   0:03.29"
+          ],
+          "memory": {
+            "phase": "system_state",
+            "error": "Unable to capture memory"
+          }
+        },
+        "ollama_health": {
+          "healthy": true,
+          "response_time_ms": 7,
+          "status_code": 200,
+          "timestamp": "2025-07-21T17:36:04.109Z"
+        },
+        "active_connections": 0,
+        "memory_snapshot": {
+          "phase": "after",
+          "error": "Unable to capture memory"
+        }
+      },
+      "connection_stability": {
+        "connections_before": 0,
+        "connections_after": 0,
+        "connection_delta": 0
+      },
+      "ollama_performance": {
+        "health_before": {
+          "healthy": true,
+          "response_time_ms": 2,
+          "status_code": 200,
+          "timestamp": "2025-07-21T17:33:47.988Z"
+        },
+        "health_after": {
+          "healthy": true,
+          "response_time_ms": 7,
+          "status_code": 200,
+          "timestamp": "2025-07-21T17:36:04.109Z"
+        },
+        "response_time_delta": 5
+      }
+    },
+    "raw_data_archive": "parallel_threads_optimized_phi3_mini_test-weak-candidate_run2_1753119227497_complete.json"
+  },
+  "full_evaluation_output": {
+    "evaluation_timestamp": "2025-07-21T17:36:03.618Z",
+    "model": "phi3:mini",
+    "candidate": "Alex Johnson",
+    "evaluations": [
+      {
+        "scores": {
+          "experience_match": {
+            "score": 3,
+            "reasoning": "Alex Johnson has limited experience as a product manager with only two years of relevant work history and no direct mention of progressive career progression or role scope growth. The candidate lacks the extensive travel requirement (up to 50%) that is essential for this position."
+          },
+          "cultural_fit": {
+            "score": 4,
+            "reasoning": "The resume shows some evidence of leadership and collaboration experience but does not provide clear indications about values or communication style. There's no mention of team building experiences which are crucial in the role described."
+          },
+          "qualification_alignment": {
+            "score": 5,
+            "reasoning": "Alex has a Bachelor’s degree and some technical skills but lacks advanced qualifications like PMP or experience with GovTech solutions. The educational background does not align well with the job's requirement for strong analytical abilities typically associated with computer science degrees."
+          },
+          "communication_skills": {
+            "score": 4,
+            "reasoning": "While Alex has some presentation skills and experience working in a team setting, there is no evidence of stakeholder management capabilities or cross-functional collaboration. The candidate's written communication abilities are not demonstrated."
+          }
+        },
+        "overall_assessment": {
+          "persona_score": 9,
+          "recommendation": "Alex Johnson shows potential and has some relevant experience but lacks the depth of expertise required for this Director role. It is recommended that Alex seeks additional opportunities to gain more-"
+        },
+        "persona": "HR Manager"
+      },
+      {
+        "scores": {
+          "technical_depth": {
+            "score": 2,
+            "reasoning": "Alex Johnson's resume lacks a strong technical foundation and depth that is critical for the Director of Product Management role at Elovate. The candidate has no Bachelor’s or Master’s degree in Computer Science as required by the job posting nor any relevant industry experience to demonstrate profi"
+          },
+          "architecture_thinking": {
+            "score": 1,
+            "reasoning": "The resume shows a lack of system design and architectural expertise. There is no evidence that Alex has made significant technical architecture decisions or understands complex trade-offs in distributed systems."
+          },
+          "problem_solving": {
+            "score": 3,
+            "reasoning": "While the candidate does show some ability to conduct user interviews, there's little indication of innovative problem solving capabilities. The resume lacks evidence of data-driven decision making or technical risk assessment."
+          },
+          "technical_leadership": {
+            "score": 2,
+            "reasoning": "Alex has no experience leading teams and shows limited ability to work cross-functionally with engineering, which is essential for the role. There's also a lack of evidence that Alex can develop an effective technical product strategy or roadmap."
+          }
+        },
+        "overall_assessment": {
+          "persona_score": 8,
+          "recommendation": "Alex Johnson does not meet the core requirements for this role. The candidate lacks a strong foundation in computer science, system architecture expertise, and experience leading technical teams or co"
+        },
+        "persona": "Director of Engineering"
+      },
+      {
+        "scores": {
+          "usercentered_thinking": {
+            "score": 3,
+            "reasoning": "Alex Johnson's resume indicates a lack of substantial user research and data-driven decision making experience which is crucial for understanding the customer journey. The candidate has only conducted basic interviews without any mention of synthesizing insights into product strategy or advocating U"
+          },
+          "design_collaboration": {
+            "score": 4,
+            "reasoning": "While Alex Johnson does have experience working with design teams and understanding some aspects of the design process through creating user flow diagrams, there is no evidence provided about their ability to integrate design thinking into product strategy or respect for the creative process. Their "
+          },
+          "product_craft": {
+            "score": 4,
+            "reasoning": "The candidate has some experience with documentation and user flow creation but lacks clear examples of high-quality product delivery that focuses on polished UI/UX details or understanding design systems. Their beginner level in Figma suggests a need for more hands-on work to ensure well-crafted, s"
+          },
+          "crossfunctional_leadership": {
+            "score": 5,
+            "reasoning": "Alex Johnson has some experience working with cross-functional teams and maintains product documentation. However, there is no evidence of leading a team or balancing design constraints with business goals effectively."
+          }
+        },
+        "overall_assessment": {
+          "persona_score": 9,
+          "recommendation": "Alex Johnson has potential but requires significant growth in user-centered thinking and product craft. They have demonstrated some ability to work with design teams and understand basic aspects of Ag"
+        },
+        "persona": "Director of Design"
+      },
+      {
+        "scores": {
+          "business_impact_roi": {
+            "score": 2,
+            "reasoning": "The resume lacks any quantifiable revenue growth or business metrics that demonstrate a strong understanding of unit economics and SaaS-specific financial impact. There is no evidence provided on ROI measurement or cost-conscious decision making."
+          },
+          "financial_acumen": {
+            "score": 2,
+            "reasoning": "The candidate has limited experience with P&L impact assessment, budget management, and lacks knowledge of SaaS business models. There is no evidence provided on data-driven financial decision making."
+          },
+          "resource_management": {
+            "score": 3,
+            "reasoning": "While the resume shows some experience with resource allocation decisions during their time as an Associate Product Manager and intern at TechBridge Solutions, there is no evidence of budget ownership or cost management. The candidate's ability to prioritize based on business value and ROI remains a"
+          },
+          "growth_strategy": {
+            "score": 3,
+            "reasoning": "The resume lacks any clear revenue growth track record or strategies for market expansion and customer acquisition. There is no evidence of experience with pricing strategy or monetization approach."
+          }
+        },
+        "overall_assessment": {
+          "persona_score": 2,
+          "recommendation": "The candidate does not meet the core requirements for this role and would be a weak fit. They need to significantly improve their understanding of finance-related aspects in SaaS companies."
+        },
+        "persona": "Finance Director"
+      },
+      {
+        "scores": {
+          "strategic_vision_execution": {
+            "score": 5,
+            "reasoning": "Alex has demonstrated a foundational understanding of product development and market research through his experiences with StartupCo and TechBridge Solutions. However, there is no clear evidence that he's developed or executed strategic initiatives at scale nor does the resume showcase any long-term"
+          },
+          "leadership_culture_fit": {
+            "score": 4,
+            "reasoning": "Alex has shown some ability to work with teams and develop documentation, but there's no evidence of his leadership philosophy or how he might inspire a team at Elovate. His experience seems more aligned with entry-level roles rather than senior management."
+          },
+          "market_customer_focus": {
+            "score": 6,
+            "reasoning": "Alex has shown some understanding and involvement in market research, but his focus appears to be on general supportive tasks without a deep dive into customer needs or strategic positioning. His experience with social media content creation is relevant."
+          },
+          "organizational_impact": {
+            "score": 5,
+            "reasoning": "Alex has not demonstrated any direct influence over organizational development, scaling experiences, nor cross-functional collaboration in his past roles which are crucial for a Director position at Elovate. His skills seem more aligned with entry or mid-level product management."
+          }
+        },
+        "overall_assessment": {
+          "persona_score": 20,
+          "recommendation": "Alex's experience and skill set do not align well enough to be considered for the Director, Product Management role at Elovate. He lacks significant strategic planning or leadership development skills"
+        },
+        "persona": "CEO"
+      },
+      {
+        "scores": {
+          "management_mentorship": {
+            "score": 4,
+            "reasoning": "The resume shows some evidence of people development and leadership experience with roles as an Associate Product Manager where Alex Johnson assisted senior product managers. However, there is a lack of concrete examples demonstrating direct mentorship or coaching capabilities that would indicate he"
+          },
+          "communication_collaboration": {
+            "score": 5,
+            "reasoning": "Alex has some experience with team interaction through daily standups and sprint planning meetings. However, there is no clear evidence of cross-functional collaboration or conflict resolution skills."
+          },
+          "practical_leadership": {
+            "score": 6,
+            "reasoning": "The resume shows a progression in leadership roles but lacks specific examples demonstrating hands-on day-to-day management style and approachability. There is no mention of decision-making processes or how Alex involves the team."
+          },
+          "professional_development": {
+            "score": 5,
+            "reasoning": "While there's a brief note about supporting marketing teams with competitive analysis research, it does not provide evidence for investment in personal and professional growth of his own or others. There is no mention of career pathing support."
+          }
+        },
+        "overall_assessment": {
+          "persona_score": 5,
+          "recommendation": "Alex has a foundation to grow into the role with more experience in leadership and mentorship. He should seek opportunities that allow him to develop these skills further."
+        },
+        "persona": "Senior Product Manager"
+      }
+    ]
+  },
+  "evaluation_summary": "# Candidate Evaluation Summary: Alex Johnson\n\n## Overall Result\n**Final Score: 3.7/10** - Poor Candidate 🚫\n\n## Detailed Breakdown\n\n| Persona | Criterion 1 | Criterion 2 | Criterion 3 | Criterion 4 | **Avg** | Weight | **Weighted** |\n|---------|-------------|-------------|-------------|-------------|---------|--------|--------------|\n| HR Manager | 3 | 4 | 5 | 4 | **4** | 20% | **0.8** |\n| Director of Engineering | 2 | 1 | 3 | 2 | **2** | 15% | **0.3** |\n| Director of Design | 3 | 4 | 4 | 5 | **4** | 15% | **0.6** |\n| Finance Director | 2 | 2 | 3 | 3 | **2.5** | 20% | **0.5** |\n| CEO | 5 | 4 | 6 | 5 | **5** | 20% | **1** |\n| Senior Product Manager | 4 | 5 | 6 | 5 | **5** | 10% | **0.5** |\n| | | | | | | **Total** | **3.7** |\n\n## Key Insights\n- **Strongest Evaluation**: CEO (5/10)\n- **Areas of Concern**: Director of Engineering (2/10)\n- **Consensus Level**: Low (3 point variance)\n- **Assessment**: Strong rejection\n\n## Qualitative Insights\n\n### Strengths Highlighted\n- **Market Understanding**: \"Alex has shown some understanding and involvement in market research, but his focus appears to be on general supportive tasks without a deep dive into customer needs or strategic positioning\" (CEO)\n- **Other**: \"However, there is no evidence of leading a team or balancing design constraints with business goals effectively\" (Director of Design)\n- **Strategy**: \"Alex has demonstrated a foundational understanding of product development and market research through his experiences with StartupCo and TechBridge Solutions\" (CEO)\n- **Organizational**: \"Alex has not demonstrated any direct influence over organizational development, scaling experiences, nor cross-functional collaboration in his past roles which are crucial for a Director position at Elovate\" (CEO)\n- **Collaboration**: \"Alex has some experience with team interaction through daily standups and sprint planning meetings\" (Senior Product Manager)\n\n### Concerns Raised\n- **Development**: \"While there's a brief note about supporting marketing teams with competitive analysis research, it does not provide evidence for investment in personal and professional growth of his own or others\" (Senior Product Manager)\n- **Business Impact**: \"The resume lacks any quantifiable revenue growth or business metrics that demonstrate a strong understanding of unit economics and SaaS-specific financial impact\" (Finance Director)\n- **Business Acumen**: \"The candidate has limited experience with P&L impact assessment, budget management, and lacks knowledge of SaaS business models\" (Finance Director)\n- **Technical**: \"There is no evidence that Alex has made significant technical architecture decisions or understands complex trade-offs in distributed systems\" (Director of Engineering)\n\n### Key Achievements/Metrics\n- 50%\n- Figma\n\n### Consensus Themes\n- ❌ **Leadership**: Mixed opinions (3 personas, avg 4/10)\n\n## Persona Recommendations\n- **HR Manager**: Alex Johnson shows potential and has some relevant experience but lacks the depth of expertise required for this Director role. It is recommended that Alex seeks additional opportunities to gain more-\n- **Director of Engineering**: Alex Johnson does not meet the core requirements for this role. The candidate lacks a strong foundation in computer science, system architecture expertise, and experience leading technical teams or co\n- **Director of Design**: Alex Johnson has potential but requires significant growth in user-centered thinking and product craft. They have demonstrated some ability to work with design teams and understand basic aspects of Ag\n- **Finance Director**: The candidate does not meet the core requirements for this role and would be a weak fit. They need to significantly improve their understanding of finance-related aspects in SaaS companies.\n- **CEO**: Alex's experience and skill set do not align well enough to be considered for the Director, Product Management role at Elovate. He lacks significant strategic planning or leadership development skills\n- **Senior Product Manager**: Alex has a foundation to grow into the role with more experience in leadership and mentorship. He should seek opportunities that allow him to develop these skills further.\n"
+}

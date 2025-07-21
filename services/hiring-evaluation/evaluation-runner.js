@@ -10,8 +10,8 @@ class EvaluationRunner {
         this.baseDir = __dirname;
         this.applicationName = applicationName;
         this.ollamaUrl = 'http://localhost:11434';
-        this.modelName = 'dolphin3:latest';
-        this.fastModelName = 'llama3.2:3b';
+        this.modelName = 'dolphin3:latest';        // Quality optimized: 170s, 9.0-10.0/10
+        this.fastModelName = 'phi3:mini';           // Speed optimized: 140s, 7.0-8.0/10
         this.fastMode = false;
         this.personas = ['hr', 'technical', 'design', 'finance', 'ceo', 'team'];
         this.weights = {

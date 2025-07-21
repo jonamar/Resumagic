@@ -115,7 +115,7 @@ async function runHiringEvaluation(applicationName, resumeData, fastMode = false
       console.error(`${theme.messages.emojis.warning} Make sure Ollama is running: ollama serve`);
       console.error(`${theme.messages.emojis.warning} And dolphin3:latest model is available: ollama pull dolphin3:latest`);
       if (fastMode) {
-        console.error(`${theme.messages.emojis.warning} For fast mode, also ensure llama3.2:3b is available: ollama pull llama3.2:3b`);
+        console.error(`${theme.messages.emojis.warning} For fast mode, also ensure phi3:mini is available: ollama pull phi3:mini`);
       }
     }
     

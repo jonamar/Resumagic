@@ -1,0 +1,305 @@
+{
+  "test_result": {
+    "test_metadata": {
+      "test_id": "parallel_6_personas_dolphin3_latest_test-average-candidate_run3_1753116098042",
+      "configuration": "parallel_6_personas",
+      "model": "dolphin3:latest",
+      "model_category": "baseline",
+      "candidate": "Morgan Davis",
+      "candidate_type": "average",
+      "run_number": 3,
+      "timestamp": "2025-07-21T16:44:33.304Z"
+    },
+    "performance_metrics": {
+      "total_duration_seconds": 174.757,
+      "personas_completed": 6,
+      "average_persona_time": 29.126166666666666,
+      "success": true
+    },
+    "quality_metrics": {
+      "quality_score": 8,
+      "score_appropriateness": true,
+      "score_variance": 0.372677996249965,
+      "avg_reasoning_length": 200,
+      "issues": [
+        "Low score variance - poor persona discrimination"
+      ]
+    },
+    "scoring_results": {
+      "by_persona": {
+        "HR Manager": {
+          "score": 7,
+          "reasoning_length": 200
+        },
+        "Director of Engineering": {
+          "score": 6,
+          "reasoning_length": 200
+        },
+        "Director of Design": {
+          "score": 6,
+          "reasoning_length": 200
+        },
+        "Finance Director": {
+          "score": 6,
+          "reasoning_length": 200
+        },
+        "CEO": {
+          "score": 6,
+          "reasoning_length": 200
+        },
+        "Senior Product Manager": {
+          "score": 6,
+          "reasoning_length": 200
+        }
+      },
+      "average": "6.17",
+      "personas_count": 6,
+      "score_variance": 0.372677996249965,
+      "total_reasoning_chars": 1200
+    },
+    "system_metrics": {
+      "memory_before": {
+        "phase": "before",
+        "error": "Unable to capture memory"
+      },
+      "memory_after": {
+        "phase": "after",
+        "error": "Unable to capture memory"
+      },
+      "memory_delta": {
+        "error": "Unable to calculate delta"
+      }
+    },
+    "telemetry": {
+      "pre_test": {
+        "system_state": {
+          "timestamp": "2025-07-21T16:41:38.042Z",
+          "cpu_usage": "CPU usage: 6.79% user, 20.38% sys, 72.82% idle",
+          "active_connections": 4,
+          "ollama_processes": [
+            "81662   0.0  0.1   0:02.45"
+          ],
+          "memory": {
+            "phase": "system_state",
+            "error": "Unable to capture memory"
+          }
+        },
+        "ollama_health": {
+          "healthy": true,
+          "response_time_ms": 6,
+          "status_code": 200,
+          "timestamp": "2025-07-21T16:41:38.486Z"
+        },
+        "active_connections": 0,
+        "memory_snapshot": {
+          "phase": "before",
+          "error": "Unable to capture memory"
+        }
+      },
+      "post_test": {
+        "system_state": {
+          "timestamp": "2025-07-21T16:44:32.799Z",
+          "cpu_usage": "CPU usage: 4.22% user, 19.52% sys, 76.25% idle",
+          "active_connections": 4,
+          "ollama_processes": [
+            "81662   0.4  0.2   0:02.87"
+          ],
+          "memory": {
+            "phase": "system_state",
+            "error": "Unable to capture memory"
+          }
+        },
+        "ollama_health": {
+          "healthy": true,
+          "response_time_ms": 13,
+          "status_code": 200,
+          "timestamp": "2025-07-21T16:44:33.291Z"
+        },
+        "active_connections": 0,
+        "memory_snapshot": {
+          "phase": "after",
+          "error": "Unable to capture memory"
+        }
+      },
+      "connection_stability": {
+        "connections_before": 0,
+        "connections_after": 0,
+        "connection_delta": 0
+      },
+      "ollama_performance": {
+        "health_before": {
+          "healthy": true,
+          "response_time_ms": 6,
+          "status_code": 200,
+          "timestamp": "2025-07-21T16:41:38.486Z"
+        },
+        "health_after": {
+          "healthy": true,
+          "response_time_ms": 13,
+          "status_code": 200,
+          "timestamp": "2025-07-21T16:44:33.291Z"
+        },
+        "response_time_delta": 7
+      }
+    },
+    "raw_data_archive": "parallel_6_personas_dolphin3_latest_test-average-candidate_run3_1753116098042_complete.json"
+  },
+  "full_evaluation_output": {
+    "evaluation_timestamp": "2025-07-21T16:44:32.792Z",
+    "model": "dolphin3:latest",
+    "candidate": "Morgan Davis",
+    "evaluations": [
+      {
+        "scores": {
+          "experience_match": {
+            "score": 8,
+            "reasoning": "Candidate has 8-10 years of progressive experience as a product manager with experience in B2B SaaS platforms and managed product roadmaps. They also have people leadership experience preferred for the role."
+          },
+          "cultural_fit": {
+            "score": 7,
+            "reasoning": "The candidate's values and communication style are not explicitly mentioned but their experience aligns well with the company culture of ensuring employee success and collaboration."
+          },
+          "qualification_alignment": {
+            "score": 8,
+            "reasoning": "Candidate has a Master's degree in Business Administration which is relevant for product management roles. They also have practical experience with Pragmatic Marketing and PMP which are nice-to-have qualifications."
+          },
+          "communication_skills": {
+            "score": 7,
+            "reasoning": "The candidate has demonstrated strong written communication skills through their resume bullet points and likely possesses good presentation skills given their experience in delivering technical presentations to influencers and senior executives. However, cross-functional collaboration skills could,"
+          }
+        },
+        "overall_assessment": {
+          "persona_score": 7,
+          "recommendation": "The candidate is a solid fit for the Director, Product Management role at Elovate with strong experience in product management and leadership. They have demonstrated success in managing product roadm,"
+        },
+        "persona": "HR Manager"
+      },
+      {
+        "scores": {
+          "technical_depth": {
+            "score": 6,
+            "reasoning": "The candidate has a Master's degree in Business Administration and a Bachelor's degree in Information Systems, which demonstrates some technical knowledge. However, there is no explicit mention of advanced computer science education or hands-on technical involvement that would be expected from a CTO"
+          },
+          "architecture_thinking": {
+            "score": 5,
+            "reasoning": "The candidate has experience with Agile project delivery methodologies and product development for B2B SaaS platforms. However, there is no evidence of system design or architectural experience beyond basic product management responsibilities."
+          },
+          "problem_solving": {
+            "score": 6,
+            "reasoning": "The candidate has demonstrated problem-solving skills through increasing user retention and improving product features based on customer feedback. However, the complexity of technical challenges addressed is not explicitly mentioned."
+          },
+          "technical_leadership": {
+            "score": 7,
+            "reasoning": "The candidate has experience managing product roadmaps and collaborating with engineering teams. They have also demonstrated leadership in increasing user retention and improving product features. However, there is no mention of technical mentoring or coaching, which would be expected from a peer Cx"
+          }
+        },
+        "overall_assessment": {
+          "persona_score": 6,
+          "recommendation": "While the candidate has some relevant experience and skills for the Director, Product Management role at Elovate, they lack specific technical depth, architecture thinking, and hands-on involvement in"
+        },
+        "persona": "Director of Engineering"
+      },
+      {
+        "scores": {
+          "usercentered_thinking": {
+            "score": 6,
+            "reasoning": "The candidate has experience with user research and data-driven decision making, but there is no explicit evidence of a strong customer-centric approach or advocacy in product decisions."
+          },
+          "design_collaboration": {
+            "score": 5,
+            "reasoning": "While the candidate has some experience collaborating with designers and design teams, their resume does not highlight any specific leadership or integration of design thinking into product strategy."
+          },
+          "product_craft": {
+            "score": 6,
+            "reasoning": "The candidate has a solid background in product management, but there is no evidence of expertise in design systems, user interface experience, or attention to detailed design execution."
+          },
+          "crossfunctional_leadership": {
+            "score": 7,
+            "reasoning": "The candidate has experience leading cross-functional teams and balancing technical and business constraints. Their communication skills are implied but not explicitly stated."
+          }
+        },
+        "overall_assessment": {
+          "persona_score": 6,
+          "recommendation": "This candidate is a solid choice for the Director, Product Management role at Elovate, with a strong background in product management and leadership experience. However, they may require development,尤"
+        },
+        "persona": "Director of Design"
+      },
+      {
+        "scores": {
+          "business_impact_roi": {
+            "score": 6,
+            "reasoning": "Candidate has demonstrated measurable business results with a 25% increase in user retention and $300K additional revenue from feature improvements."
+          },
+          "financial_acumen": {
+            "score": 5,
+            "reasoning": "While the candidate has an MBA in Finance, there is no direct evidence of financial planning or budget management experience."
+          },
+          "resource_management": {
+            "score": 6,
+            "reasoning": "The candidate managed a product roadmap and collaborated with engineering teams. However, there's no clear indication of cost management or team scaling experience."
+          },
+          "growth_strategy": {
+            "score": 7,
+            "reasoning": "Candidate has shown revenue growth track record and strategies, but lacks direct experience in market expansion and customer acquisition."
+          }
+        },
+        "overall_assessment": {
+          "persona_score": 6,
+          "recommendation": "Morgan Davis is a solid candidate with some qualifications but significant gaps or concerns. They have demonstrated measurable business results and growth track record, but lack direct experience in S"
+        },
+        "persona": "Finance Director"
+      },
+      {
+        "scores": {
+          "strategic_vision_execution": {
+            "score": 7,
+            "reasoning": "Candidate has demonstrated ability to develop product strategies that sustain revenue growth and innovate for the future. They have experience with Agile project delivery methodologies which indicates a strategic approach to execution."
+          },
+          "leadership_culture_fit": {
+            "score": 6,
+            "reasoning": "The candidate has some leadership experience but lacks depth in people development approaches and team building. Their ability to inspire and motivate cross-functional teams could be further developed."
+          },
+          "market_customer_focus": {
+            "score": 5,
+            "reasoning": "While the candidate has conducted market research and competitive analysis, their experience is limited to B2B SaaS platforms. They need more experience in relevant markets such as GovTech."
+          },
+          "organizational_impact": {
+            "score": 6,
+            "reasoning": "The candidate has managed product roadmaps and collaborated with engineering teams but lacks extensive scaling experience or transformation leadership. Their contribution to company reputation and market position could be improved."
+          }
+        },
+        "overall_assessment": {
+          "persona_score": 6,
+          "recommendation": "While the candidate is a solid choice for the Director, Product Management role at Elovate, they have some gaps in their experience that need to be addressed. They show potential but would benefit for"
+        },
+        "persona": "CEO"
+      },
+      {
+        "scores": {
+          "management_mentorship": {
+            "score": 7,
+            "reasoning": "The candidate has demonstrated leadership experience as a Senior Product Manager, managing a product development team and increasing user retention through feature improvements and user research. They have also shown mentorship potential by managing and coordinating with an engineering team."
+          },
+          "communication_collaboration": {
+            "score": 8,
+            "reasoning": "The candidate's ability to collaborate with cross-functional teams is evident from their experience working with sales teams to define product requirements for enterprise clients. Their clear communication skills are reflected in their role in conducting market research and competitive analysis."
+          },
+          "practical_leadership": {
+            "score": 6,
+            "reasoning": "While the candidate has shown strong leadership potential through managing a team and improving user retention, there is room for growth in practical leadership. They have not yet demonstrated direct day-to-day leadership experience at the director level."
+          },
+          "professional_development": {
+            "score": 7,
+            "reasoning": "The candidate has a solid foundation in investing in team member growth and learning through conducting market research and competitive analysis. However, they lack specific examples of knowledge sharing and skill development opportunities."
+          }
+        },
+        "overall_assessment": {
+          "persona_score": 6,
+          "recommendation": "While the candidate has demonstrated strong leadership potential and communication skills, there are gaps in practical leadership experience at the director level and investment in team member growth."
+        },
+        "persona": "Senior Product Manager"
+      }
+    ]
+  },
+  "evaluation_summary": "# Candidate Evaluation Summary: Morgan Davis\n\n## Overall Result\n**Final Score: 6.4/10** - Weak Candidate ❌\n\n## Detailed Breakdown\n\n| Persona | Criterion 1 | Criterion 2 | Criterion 3 | Criterion 4 | **Avg** | Weight | **Weighted** |\n|---------|-------------|-------------|-------------|-------------|---------|--------|--------------|\n| HR Manager | 8 | 7 | 8 | 7 | **7.5** | 20% | **1.5** |\n| Director of Engineering | 6 | 5 | 6 | 7 | **6** | 15% | **0.9** |\n| Director of Design | 6 | 5 | 6 | 7 | **6** | 15% | **0.9** |\n| Finance Director | 6 | 5 | 6 | 7 | **6** | 20% | **1.2** |\n| CEO | 7 | 6 | 5 | 6 | **6** | 20% | **1.2** |\n| Senior Product Manager | 7 | 8 | 6 | 7 | **7** | 10% | **0.7** |\n| | | | | | | **Total** | **6.4** |\n\n## Key Insights\n- **Strongest Evaluation**: HR Manager (7.5/10)\n- **Areas of Concern**: Director of Engineering (6/10)\n- **Consensus Level**: Low (1.5 point variance)\n- **Assessment**: Not recommended\n\n## Qualitative Insights\n\n### Strengths Highlighted\n- **Experience**: \"Candidate has 8-10 years of progressive experience as a product manager with experience in B2B SaaS platforms and managed product roadmaps\" (HR Manager)\n- **Qualifications**: \"Candidate has a Master's degree in Business Administration which is relevant for product management roles\" (HR Manager)\n- **Collaboration**: \"The candidate's ability to collaborate with cross-functional teams is evident from their experience working with sales teams to define product requirements for enterprise clients\" (Senior Product Manager)\n- **Culture**: \"The candidate's values and communication style are not explicitly mentioned but their experience aligns well with the company culture of ensuring employee success and collaboration\" (HR Manager)\n- **Communication**: \"The candidate has demonstrated strong written communication skills through their resume bullet points and likely possesses good presentation skills given their experience in delivering technical presentations to influencers and senior executives\" (HR Manager)\n\n### Key Achievements/Metrics\n- 10 years\n- 25%\n\n### Consensus Themes\n- ⚠️ **Leadership**: Strong consensus (3 personas, avg 6.3/10)\n\n## Persona Recommendations\n- **HR Manager**: The candidate is a solid fit for the Director, Product Management role at Elovate with strong experience in product management and leadership. They have demonstrated success in managing product roadm,\n- **Director of Engineering**: While the candidate has some relevant experience and skills for the Director, Product Management role at Elovate, they lack specific technical depth, architecture thinking, and hands-on involvement in\n- **Director of Design**: This candidate is a solid choice for the Director, Product Management role at Elovate, with a strong background in product management and leadership experience. However, they may require development,尤\n- **Finance Director**: Morgan Davis is a solid candidate with some qualifications but significant gaps or concerns. They have demonstrated measurable business results and growth track record, but lack direct experience in S\n- **CEO**: While the candidate is a solid choice for the Director, Product Management role at Elovate, they have some gaps in their experience that need to be addressed. They show potential but would benefit for\n- **Senior Product Manager**: While the candidate has demonstrated strong leadership potential and communication skills, there are gaps in practical leadership experience at the director level and investment in team member growth.\n"
+}

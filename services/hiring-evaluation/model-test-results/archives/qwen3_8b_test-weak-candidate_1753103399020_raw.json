@@ -1,0 +1,157 @@
+{
+  "evaluation_timestamp": "2025-07-21T13:13:07.874Z",
+  "model": "qwen3:8b",
+  "candidate": "Alex Johnson",
+  "evaluations": [
+    {
+      "scores": {
+        "experience_match": {
+          "score": 2,
+          "reasoning": "The candidate has only 1 year of product management experience (Associate PM) and no people leadership experience. They lack the required 8-10 years of progressive experience and 3 years of people leadership as specified in the job posting."
+        },
+        "cultural_fit": {
+          "score": 2,
+          "reasoning": "The candidate's resume shows limited exposure to complex product management responsibilities and lacks evidence of leadership or team-building skills. Their experience is more intern-like and does not demonstrate the collaborative, strategic mindset required for a director-level role."
+        },
+        "qualification_alignment": {
+          "score": 3,
+          "reasoning": "While the candidate has a relevant bachelor's degree, they lack critical certifications like PMP and Pragmatic Marketing experience. They also don't have SaaS product development experience or GovTech focus as requested in the job posting."
+        },
+        "communication_skills": {
+          "score": 2,
+          "reasoning": "The resume lacks evidence of professional communication skills such as delivering technical presentations to executives or stakeholders. Their experience is more operational and doesn't show the ability to influence at a strategic level."
+        }
+      },
+      "overall_assessment": {
+        "persona_score": 3,
+        "recommendation": "Reject - This candidate does not meet the core requirements for the Director, Product Management role. They lack the necessary experience, certifications, and leadership capabilities required for this"
+      },
+      "persona": "HR Manager"
+    },
+    {
+      "scores": {
+        "technical_depth": {
+          "score": 2,
+          "reasoning": "The candidate has no relevant technical background or education. They hold a Bachelor's degree in Business Administration and lack any computer science or engineering-related qualifications. Their experience is limited to product management and marketing roles with no evidence of hands-on technical涉"
+        },
+        "architecture_thinking": {
+          "score": 1,
+          "reasoning": "The candidate has no experience with system design, scalability, or distributed systems. They have not demonstrated any architectural thinking capabilities relevant to the role."
+        },
+        "problem_solving": {
+          "score": 2,
+          "reasoning": "The candidate's experience is limited to basic product management tasks and marketing support roles. There is no evidence of complex technical problem-solving or innovation in their work history."
+        },
+        "technical_leadership": {
+          "score": 1,
+          "reasoning": "The candidate has no leadership experience in technical teams or initiatives. They have not demonstrated any cross-functional collaboration with engineering teams or technical product strategy development."
+        }
+      },
+      "overall_assessment": {
+        "persona_score": 2,
+        "recommendation": "Reject - This candidate lacks the necessary technical depth, architecture thinking, problem-solving capabilities, and technical leadership experience required for a Director of Engineering role. They "
+      },
+      "persona": "Director of Engineering"
+    },
+    {
+      "scores": {
+        "usercentered_thinking": {
+          "score": 2,
+          "reasoning": "The candidate has limited experience with user research and data-driven decision making. They conducted only 5 user interviews over 12 months, which is not sufficient to demonstrate a strong user focus or empathy. There's no evidence of customer-centric product development approach or user advocacy."
+        },
+        "design_collaboration": {
+          "score": 2,
+          "reasoning": "The candidate has very limited experience collaborating with design teams. They have only worked in product management and marketing roles without direct design collaboration. No mention of design thinking integration or respect for design craft."
+        },
+        "product_craft": {
+          "score": 1,
+          "reasoning": "The candidate lacks evidence of high-quality product delivery or attention to UI/UX details. There's no mention of design systems, consistency, or polished products. Their experience is limited to basic documentation and user flow diagrams."
+        },
+        "crossfunctional_leadership": {
+          "score": 2,
+          "reasoning": "The candidate has no leadership experience in cross-functional teams. They have only held junior roles without managing product teams or leading complex initiatives. No evidence of balancing design, technical, and business constraints."
+        }
+      },
+      "overall_assessment": {
+        "persona_score": 1,
+        "recommendation": "Reject - This candidate lacks the necessary experience and skills to be an effective peer partner for design leadership in a director-level role at Elovate. They have limited user research experience,"
+      },
+      "persona": "Director of Design"
+    },
+    {
+      "scores": {
+        "business_impact_roi": {
+          "score": 3,
+          "reasoning": "The resume lacks any evidence of measurable business results or ROI measurement. The candidate has only held junior roles with no impact on revenue growth, financial metrics, or product investment decisions. There is no mention of unit economics, SaaS metrics, or cost-conscious decision making."
+        },
+        "financial_acumen": {
+          "score": 3,
+          "reasoning": "The resume does not demonstrate any understanding of business financials. The candidate has no experience with P&L impact, budget management, financial planning, or forecasting. There is no mention of SaaS business models or data-driven financial decision making."
+        },
+        "resource_management": {
+          "score": 3,
+          "reasoning": "The resume lacks any evidence of resource management capabilities. The candidate has only held junior roles with no experience in budget ownership, team scaling, resource allocation decisions, or operational efficiency improvements."
+        },
+        "growth_strategy": {
+          "score": 3,
+          "reasoning": "The resume does not show a track record of driving profitable growth. There is no mention of revenue growth strategies, market expansion, pricing strategy, or long-term financial planning. The candidate has only held junior roles with limited impact on business outcomes."
+        }
+      },
+      "overall_assessment": {
+        "persona_score": 3,
+        "recommendation": "This candidate does not meet the core requirements for the Director, Product Management role at Elovate. They have only held junior product and marketing internships with no evidence of business acumn"
+      },
+      "persona": "Finance Director"
+    },
+    {
+      "scores": {
+        "strategic_vision_execution": {
+          "score": 2,
+          "reasoning": "The candidate has no relevant experience as a product manager or leader, with only two junior roles that lack strategic impact and execution capability. Their resume shows no evidence of developing product vision, market analysis, or driving complex initiatives."
+        },
+        "leadership_culture_fit": {
+          "score": 2,
+          "reasoning": "The candidate lacks leadership experience and has not demonstrated any people management skills. They have only held support roles with no indication of team building or influencing cross-functional teams."
+        },
+        "market_customer_focus": {
+          "score": 2,
+          "reasoning": "The candidate has no experience in B2B SaaS or GovTech markets. Their resume shows no understanding of customer needs or market positioning, which is critical for this role."
+        },
+        "organizational_impact": {
+          "score": 2,
+          "reasoning": "The candidate lacks scaling experience and organizational development background. They have not demonstrated the ability to lead product teams or drive company-wide transformation."
+        }
+      },
+      "overall_assessment": {
+        "persona_score": 2,
+        "recommendation": "Reject - This candidate is not qualified for a director-level role at Elovate. Their experience is too limited and lacks the strategic, leadership, and market expertise required for this position."
+      },
+      "persona": "CEO"
+    },
+    {
+      "scores": {
+        "management_mentorship": {
+          "score": 2,
+          "reasoning": "Alex Johnson has no direct people management experience or evidence of mentoring senior product managers. The resume only shows junior roles where he assisted others rather than leading teams or developing high-performing product management professionals."
+        },
+        "communication_collaboration": {
+          "score": 4,
+          "reasoning": "While Alex has some collaboration experience in team meetings, there is no evidence of cross-functional leadership or conflict resolution skills. His role as an intern and associate PM suggests limited influence on strategic communication or stakeholder alignment."
+        },
+        "practical_leadership": {
+          "score": 2,
+          "reasoning": "Alex lacks hands-on leadership experience with product teams. He has not demonstrated decision-making authority, team sustainability practices, or the ability to execute complex product strategies that align with business goals."
+        },
+        "professional_development": {
+          "score": 3,
+          "reasoning": "There is no evidence of Alex investing in team growth or creating learning opportunities for senior PMs. His experience appears limited to basic documentation and task execution rather than fostering innovation or career development."
+        }
+      },
+      "overall_assessment": {
+        "persona_score": 2,
+        "recommendation": "This candidate is not suitable for the Director, Product Management role at Elovate. They lack the essential people management experience, strategic leadership capabilities, and hands-on product team-"
+      },
+      "persona": "Senior Product Manager"
+    }
+  ]
+}

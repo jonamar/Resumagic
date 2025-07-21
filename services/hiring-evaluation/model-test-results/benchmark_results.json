@@ -1,0 +1,822 @@
+{
+  "timestamp": "2025-07-21T12:53:23.357Z",
+  "system_info": {
+    "os": "Darwin Mac-mini.local 24.5.0 Darwin Kernel Version 24.5.0: Tue Apr 22 19:54:43 PDT 2025; root:xnu-11417.121.6~2/RELEASE_ARM64_T8132 arm64",
+    "memory": "Mach Virtual Memory Statistics: (page size of 16384 bytes)\nPages free:                                3923.\nPages active:                            379703.\nPages inactive:                          375426.\nPages speculative:                         2907.\nPages throttled:                              0.\nPages wired down:                        138864.\nPages purgeable:                           2323.\n\"Translation faults\":               30279357406.\nPages copy-on-write:                 1920695104.\nPages zero filled:                   8789289484.\nPages reactivated:                   4258743169.\nPages purged:                         311557154.\nFile-backed pages:                       349043.\nAnonymous pages:                         408993.\nPages stored in compressor:              875362.\nPages occupied by compressor:            113134.\nDecompressions:                      6060583245.\nCompressions:                        6501419567.\nPageins:                             1367128566.\nPageouts:                              11536613.\nSwapins:                               55348644.\nSwapouts:                              61512544."
+  },
+  "baseline_model": "dolphin3:latest",
+  "test_models": {
+    "baseline": "dolphin3:latest",
+    "quality_8b": [
+      "deepseek-r1:8b",
+      "qwen3:8b"
+    ],
+    "speed_3_4b": [
+      "gemma3:4b",
+      "phi3:mini",
+      "qwen3:4b"
+    ]
+  },
+  "results": {
+    "dolphin3:latest": {
+      "model_category": "baseline",
+      "total_tests": 3,
+      "successful_tests": 3,
+      "average_duration": "168.94",
+      "average_quality": "10.00",
+      "results": [
+        {
+          "model": "dolphin3:latest",
+          "candidate": {
+            "name": "Alex Johnson",
+            "folder": "test-weak-candidate",
+            "expected": "weak"
+          },
+          "duration_seconds": 156.454,
+          "success": true,
+          "scores": {
+            "by_persona": {
+              "HR Manager": 5,
+              "Director of Engineering": 5,
+              "Director of Design": 5,
+              "Finance Director": 4,
+              "CEO": 4,
+              "Senior Product Manager": 5.2
+            },
+            "average": "4.70",
+            "distribution": {
+              "reject": 0,
+              "weak": 5,
+              "solid": 1,
+              "strong": 0,
+              "exceptional": 0
+            },
+            "score_range": {
+              "min": 4,
+              "max": 5.2
+            }
+          },
+          "quality_assessment": {
+            "quality_score": 10,
+            "expected_level": "weak",
+            "actual_avg_score": 4.7,
+            "score_appropriateness": true,
+            "variance": 0.5,
+            "detailed_feedback_count": 24,
+            "issues": []
+          },
+          "test_id": "dolphin3_latest_test-weak-candidate_1753102403372",
+          "raw_results_file": "dolphin3_latest_test-weak-candidate_1753102403372_raw.json",
+          "summary_file": "dolphin3_latest_test-weak-candidate_1753102403372_summary.md"
+        },
+        {
+          "model": "dolphin3:latest",
+          "candidate": {
+            "name": "Morgan Davis",
+            "folder": "test-average-candidate",
+            "expected": "average"
+          },
+          "duration_seconds": 164.918,
+          "success": true,
+          "scores": {
+            "by_persona": {
+              "HR Manager": 8,
+              "Director of Engineering": 6,
+              "Director of Design": 6,
+              "Finance Director": 6,
+              "CEO": 6,
+              "Senior Product Manager": 7
+            },
+            "average": "6.50",
+            "distribution": {
+              "reject": 0,
+              "weak": 0,
+              "solid": 5,
+              "strong": 1,
+              "exceptional": 0
+            },
+            "score_range": {
+              "min": 6,
+              "max": 8
+            }
+          },
+          "quality_assessment": {
+            "quality_score": 10,
+            "expected_level": "average",
+            "actual_avg_score": 6.5,
+            "score_appropriateness": true,
+            "variance": 0.7637626158259734,
+            "detailed_feedback_count": 24,
+            "issues": []
+          },
+          "test_id": "dolphin3_latest_test-average-candidate_1753102560829",
+          "raw_results_file": "dolphin3_latest_test-average-candidate_1753102560829_raw.json",
+          "summary_file": "dolphin3_latest_test-average-candidate_1753102560829_summary.md"
+        },
+        {
+          "model": "dolphin3:latest",
+          "candidate": {
+            "name": "Dr. Sarah Chen",
+            "folder": "test-strong-candidate",
+            "expected": "strong"
+          },
+          "duration_seconds": 185.46,
+          "success": true,
+          "scores": {
+            "by_persona": {
+              "HR Manager": 8,
+              "Director of Engineering": 9,
+              "Director of Design": 7,
+              "Finance Director": 8,
+              "CEO": 8.5,
+              "Senior Product Manager": 9
+            },
+            "average": "8.25",
+            "distribution": {
+              "reject": 0,
+              "weak": 0,
+              "solid": 1,
+              "strong": 5,
+              "exceptional": 0
+            },
+            "score_range": {
+              "min": 7,
+              "max": 9
+            }
+          },
+          "quality_assessment": {
+            "quality_score": 10,
+            "expected_level": "strong",
+            "actual_avg_score": 8.25,
+            "score_appropriateness": true,
+            "variance": 0.6922186552431729,
+            "detailed_feedback_count": 24,
+            "issues": []
+          },
+          "test_id": "dolphin3_latest_test-strong-candidate_1753102726750",
+          "raw_results_file": "dolphin3_latest_test-strong-candidate_1753102726750_raw.json",
+          "summary_file": "dolphin3_latest_test-strong-candidate_1753102726750_summary.md"
+        }
+      ]
+    },
+    "deepseek-r1:8b": {
+      "model_category": "quality_8b",
+      "total_tests": 3,
+      "successful_tests": 3,
+      "average_duration": "160.93",
+      "average_quality": "10.00",
+      "results": [
+        {
+          "model": "deepseek-r1:8b",
+          "candidate": {
+            "name": "Alex Johnson",
+            "folder": "test-weak-candidate",
+            "expected": "weak"
+          },
+          "duration_seconds": 154.683,
+          "success": true,
+          "scores": {
+            "by_persona": {
+              "HR Manager": 4,
+              "Director of Engineering": 5,
+              "Director of Design": 3,
+              "Finance Director": 2,
+              "CEO": 2,
+              "Senior Product Manager": 5
+            },
+            "average": "3.50",
+            "distribution": {
+              "reject": 3,
+              "weak": 3,
+              "solid": 0,
+              "strong": 0,
+              "exceptional": 0
+            },
+            "score_range": {
+              "min": 2,
+              "max": 5
+            }
+          },
+          "quality_assessment": {
+            "quality_score": 10,
+            "expected_level": "weak",
+            "actual_avg_score": 3.5,
+            "score_appropriateness": true,
+            "variance": 1.2583057392117916,
+            "detailed_feedback_count": 24,
+            "issues": []
+          },
+          "test_id": "deepseek_r1_8b_test-weak-candidate_1753102913219",
+          "raw_results_file": "deepseek_r1_8b_test-weak-candidate_1753102913219_raw.json",
+          "summary_file": "deepseek_r1_8b_test-weak-candidate_1753102913219_summary.md"
+        },
+        {
+          "model": "deepseek-r1:8b",
+          "candidate": {
+            "name": "Morgan Davis",
+            "folder": "test-average-candidate",
+            "expected": "average"
+          },
+          "duration_seconds": 147.383,
+          "success": true,
+          "scores": {
+            "by_persona": {
+              "HR Manager": 6,
+              "Director of Engineering": 5,
+              "Director of Design": 7,
+              "Finance Director": 8.5,
+              "CEO": 7,
+              "Senior Product Manager": 8
+            },
+            "average": "6.92",
+            "distribution": {
+              "reject": 0,
+              "weak": 1,
+              "solid": 3,
+              "strong": 2,
+              "exceptional": 0
+            },
+            "score_range": {
+              "min": 5,
+              "max": 8.5
+            }
+          },
+          "quality_assessment": {
+            "quality_score": 10,
+            "expected_level": "average",
+            "actual_avg_score": 6.92,
+            "score_appropriateness": true,
+            "variance": 1.16963907063485,
+            "detailed_feedback_count": 20,
+            "issues": []
+          },
+          "test_id": "deepseek_r1_8b_test-average-candidate_1753103068904",
+          "raw_results_file": "deepseek_r1_8b_test-average-candidate_1753103068904_raw.json",
+          "summary_file": "deepseek_r1_8b_test-average-candidate_1753103068904_summary.md"
+        },
+        {
+          "model": "deepseek-r1:8b",
+          "candidate": {
+            "name": "Dr. Sarah Chen",
+            "folder": "test-strong-candidate",
+            "expected": "strong"
+          },
+          "duration_seconds": 180.726,
+          "success": true,
+          "scores": {
+            "by_persona": {
+              "HR Manager": 9,
+              "Director of Engineering": 7.5,
+              "Director of Design": 9,
+              "Finance Director": 7.5,
+              "CEO": 9.5,
+              "Senior Product Manager": 9.5
+            },
+            "average": "8.67",
+            "distribution": {
+              "reject": 0,
+              "weak": 0,
+              "solid": 0,
+              "strong": 4,
+              "exceptional": 2
+            },
+            "score_range": {
+              "min": 7.5,
+              "max": 9.5
+            }
+          },
+          "quality_assessment": {
+            "quality_score": 10,
+            "expected_level": "strong",
+            "actual_avg_score": 8.67,
+            "score_appropriateness": true,
+            "variance": 0.8498365855987975,
+            "detailed_feedback_count": 20,
+            "issues": []
+          },
+          "test_id": "deepseek_r1_8b_test-strong-candidate_1753103217289",
+          "raw_results_file": "deepseek_r1_8b_test-strong-candidate_1753103217289_raw.json",
+          "summary_file": "deepseek_r1_8b_test-strong-candidate_1753103217289_summary.md"
+        }
+      ]
+    },
+    "qwen3:8b": {
+      "model_category": "quality_8b",
+      "total_tests": 3,
+      "successful_tests": 3,
+      "average_duration": "212.67",
+      "average_quality": "8.33",
+      "results": [
+        {
+          "model": "qwen3:8b",
+          "candidate": {
+            "name": "Alex Johnson",
+            "folder": "test-weak-candidate",
+            "expected": "weak"
+          },
+          "duration_seconds": 188.86,
+          "success": true,
+          "scores": {
+            "by_persona": {
+              "HR Manager": 3,
+              "Director of Engineering": 2,
+              "Director of Design": 1,
+              "Finance Director": 3,
+              "CEO": 2,
+              "Senior Product Manager": 2
+            },
+            "average": "2.17",
+            "distribution": {
+              "reject": 6,
+              "weak": 0,
+              "solid": 0,
+              "strong": 0,
+              "exceptional": 0
+            },
+            "score_range": {
+              "min": 1,
+              "max": 3
+            }
+          },
+          "quality_assessment": {
+            "quality_score": 8,
+            "expected_level": "weak",
+            "actual_avg_score": 2.17,
+            "score_appropriateness": false,
+            "variance": 0.6871842709362768,
+            "detailed_feedback_count": 24,
+            "issues": [
+              "Score too low: 2.17 < 3 for weak candidate"
+            ]
+          },
+          "test_id": "qwen3_8b_test-weak-candidate_1753103399020",
+          "raw_results_file": "qwen3_8b_test-weak-candidate_1753103399020_raw.json",
+          "summary_file": "qwen3_8b_test-weak-candidate_1753103399020_summary.md"
+        },
+        {
+          "model": "qwen3:8b",
+          "candidate": {
+            "name": "Morgan Davis",
+            "folder": "test-average-candidate",
+            "expected": "average"
+          },
+          "duration_seconds": 214,
+          "success": true,
+          "scores": {
+            "by_persona": {
+              "HR Manager": 7,
+              "Director of Engineering": 4,
+              "Director of Design": 6,
+              "Finance Director": 6,
+              "CEO": 6,
+              "Senior Product Manager": 6
+            },
+            "average": "5.83",
+            "distribution": {
+              "reject": 0,
+              "weak": 1,
+              "solid": 5,
+              "strong": 0,
+              "exceptional": 0
+            },
+            "score_range": {
+              "min": 4,
+              "max": 7
+            }
+          },
+          "quality_assessment": {
+            "quality_score": 10,
+            "expected_level": "average",
+            "actual_avg_score": 5.83,
+            "score_appropriateness": true,
+            "variance": 0.8975274678557505,
+            "detailed_feedback_count": 24,
+            "issues": []
+          },
+          "test_id": "qwen3_8b_test-average-candidate_1753103588882",
+          "raw_results_file": "qwen3_8b_test-average-candidate_1753103588882_raw.json",
+          "summary_file": "qwen3_8b_test-average-candidate_1753103588882_summary.md"
+        },
+        {
+          "model": "qwen3:8b",
+          "candidate": {
+            "name": "Dr. Sarah Chen",
+            "folder": "test-strong-candidate",
+            "expected": "strong"
+          },
+          "duration_seconds": 235.156,
+          "success": true,
+          "scores": {
+            "by_persona": {
+              "HR Manager": 10,
+              "Director of Engineering": 9,
+              "Director of Design": 9,
+              "Finance Director": 9,
+              "CEO": 9,
+              "Senior Product Manager": 9
+            },
+            "average": "9.17",
+            "distribution": {
+              "reject": 0,
+              "weak": 0,
+              "solid": 0,
+              "strong": 5,
+              "exceptional": 1
+            },
+            "score_range": {
+              "min": 9,
+              "max": 10
+            }
+          },
+          "quality_assessment": {
+            "quality_score": 7,
+            "expected_level": "strong",
+            "actual_avg_score": 9.17,
+            "score_appropriateness": false,
+            "variance": 0.3726779962499649,
+            "detailed_feedback_count": 24,
+            "issues": [
+              "Score too high: 9.17 > 9 for strong candidate",
+              "Low score variance - poor discrimination between personas"
+            ]
+          },
+          "test_id": "qwen3_8b_test-strong-candidate_1753103803884",
+          "raw_results_file": "qwen3_8b_test-strong-candidate_1753103803884_raw.json",
+          "summary_file": "qwen3_8b_test-strong-candidate_1753103803884_summary.md"
+        }
+      ]
+    },
+    "gemma3:4b": {
+      "model_category": "speed_3_4b",
+      "total_tests": 3,
+      "successful_tests": 1,
+      "average_duration": "105.19",
+      "average_quality": "10.00",
+      "results": [
+        {
+          "model": "gemma3:4b",
+          "candidate": {
+            "name": "Alex Johnson",
+            "folder": "test-weak-candidate",
+            "expected": "weak"
+          },
+          "duration_seconds": 105.193,
+          "success": true,
+          "scores": {
+            "by_persona": {
+              "HR Manager": 4,
+              "Director of Engineering": 4,
+              "Director of Design": 6,
+              "Finance Director": 3,
+              "CEO": 3,
+              "Senior Product Manager": 5
+            },
+            "average": "4.17",
+            "distribution": {
+              "reject": 2,
+              "weak": 3,
+              "solid": 1,
+              "strong": 0,
+              "exceptional": 0
+            },
+            "score_range": {
+              "min": 3,
+              "max": 6
+            }
+          },
+          "quality_assessment": {
+            "quality_score": 10,
+            "expected_level": "weak",
+            "actual_avg_score": 4.17,
+            "score_appropriateness": true,
+            "variance": 1.0671873729054748,
+            "detailed_feedback_count": 24,
+            "issues": []
+          },
+          "test_id": "gemma3_4b_test-weak-candidate_1753104040072",
+          "raw_results_file": "gemma3_4b_test-weak-candidate_1753104040072_raw.json",
+          "summary_file": "gemma3_4b_test-weak-candidate_1753104040072_summary.md"
+        },
+        {
+          "model": "gemma3:4b",
+          "candidate": {
+            "name": "Morgan Davis",
+            "folder": "test-average-candidate",
+            "expected": "average"
+          },
+          "duration_seconds": 79.326,
+          "success": false,
+          "error": "design evaluation failed: Expected ',' or '}' after property value in JSON at position 1529 (line 19 column 6)",
+          "timeout": false,
+          "test_id": "gemma3_4b_test-average-candidate_1753104146268"
+        },
+        {
+          "model": "gemma3:4b",
+          "candidate": {
+            "name": "Dr. Sarah Chen",
+            "folder": "test-strong-candidate",
+            "expected": "strong"
+          },
+          "duration_seconds": 50.346,
+          "success": false,
+          "error": "finance evaluation failed: No valid JSON found in response",
+          "timeout": false,
+          "test_id": "gemma3_4b_test-strong-candidate_1753104226595"
+        }
+      ]
+    },
+    "phi3:mini": {
+      "model_category": "speed_3_4b",
+      "total_tests": 3,
+      "successful_tests": 3,
+      "average_duration": "160.51",
+      "average_quality": "8.33",
+      "results": [
+        {
+          "model": "phi3:mini",
+          "candidate": {
+            "name": "Alex Johnson",
+            "folder": "test-weak-candidate",
+            "expected": "weak"
+          },
+          "duration_seconds": 178.486,
+          "success": true,
+          "scores": {
+            "by_persona": {
+              "HR Manager": 9,
+              "Director of Engineering": 8,
+              "Director of Design": 9,
+              "Finance Director": 3,
+              "CEO": 5,
+              "Senior Product Manager": 5
+            },
+            "average": "6.50",
+            "distribution": {
+              "reject": 1,
+              "weak": 2,
+              "solid": 0,
+              "strong": 3,
+              "exceptional": 0
+            },
+            "score_range": {
+              "min": 3,
+              "max": 9
+            }
+          },
+          "quality_assessment": {
+            "quality_score": 8,
+            "expected_level": "weak",
+            "actual_avg_score": 6.5,
+            "score_appropriateness": false,
+            "variance": 2.29128784747792,
+            "detailed_feedback_count": 24,
+            "issues": [
+              "Score too high: 6.5 > 6 for weak candidate"
+            ]
+          },
+          "test_id": "phi3_mini_test-weak-candidate_1753104277943",
+          "raw_results_file": "phi3_mini_test-weak-candidate_1753104277943_raw.json",
+          "summary_file": "phi3_mini_test-weak-candidate_1753104277943_summary.md"
+        },
+        {
+          "model": "phi3:mini",
+          "candidate": {
+            "name": "Morgan Davis",
+            "folder": "test-average-candidate",
+            "expected": "average"
+          },
+          "duration_seconds": 143.256,
+          "success": true,
+          "scores": {
+            "by_persona": {
+              "HR Manager": 7,
+              "Director of Engineering": 24,
+              "Director of Design": 6,
+              "Finance Director": 6,
+              "CEO": 7.25,
+              "Senior Product Manager": 6
+            },
+            "average": "9.38",
+            "distribution": {
+              "reject": 0,
+              "weak": 0,
+              "solid": 4,
+              "strong": 1,
+              "exceptional": 1
+            },
+            "score_range": {
+              "min": 6,
+              "max": 24
+            }
+          },
+          "quality_assessment": {
+            "quality_score": 8,
+            "expected_level": "average",
+            "actual_avg_score": 9.38,
+            "score_appropriateness": false,
+            "variance": 6.560217857154847,
+            "detailed_feedback_count": 24,
+            "issues": [
+              "Score too high: 9.38 > 7 for average candidate"
+            ]
+          },
+          "test_id": "phi3_mini_test-average-candidate_1753104457433",
+          "raw_results_file": "phi3_mini_test-average-candidate_1753104457433_raw.json",
+          "summary_file": "phi3_mini_test-average-candidate_1753104457433_summary.md"
+        },
+        {
+          "model": "phi3:mini",
+          "candidate": {
+            "name": "Dr. Sarah Chen",
+            "folder": "test-strong-candidate",
+            "expected": "strong"
+          },
+          "duration_seconds": 159.777,
+          "success": true,
+          "scores": {
+            "by_persona": {
+              "HR Manager": 9,
+              "Director of Engineering": 9,
+              "Director of Design": 9,
+              "Finance Director": 9,
+              "CEO": 8,
+              "Senior Product Manager": 9
+            },
+            "average": "8.83",
+            "distribution": {
+              "reject": 0,
+              "weak": 0,
+              "solid": 0,
+              "strong": 6,
+              "exceptional": 0
+            },
+            "score_range": {
+              "min": 8,
+              "max": 9
+            }
+          },
+          "quality_assessment": {
+            "quality_score": 9,
+            "expected_level": "strong",
+            "actual_avg_score": 8.83,
+            "score_appropriateness": true,
+            "variance": 0.37267799624996495,
+            "detailed_feedback_count": 24,
+            "issues": [
+              "Low score variance - poor discrimination between personas"
+            ]
+          },
+          "test_id": "phi3_mini_test-strong-candidate_1753104601691",
+          "raw_results_file": "phi3_mini_test-strong-candidate_1753104601691_raw.json",
+          "summary_file": "phi3_mini_test-strong-candidate_1753104601691_summary.md"
+        }
+      ]
+    },
+    "qwen3:4b": {
+      "model_category": "speed_3_4b",
+      "total_tests": 3,
+      "successful_tests": 3,
+      "average_duration": "169.36",
+      "average_quality": "8.33",
+      "results": [
+        {
+          "model": "qwen3:4b",
+          "candidate": {
+            "name": "Alex Johnson",
+            "folder": "test-weak-candidate",
+            "expected": "weak"
+          },
+          "duration_seconds": 128.1,
+          "success": true,
+          "scores": {
+            "by_persona": {
+              "HR Manager": 3,
+              "Director of Engineering": 4,
+              "Director of Design": 5,
+              "Finance Director": 3,
+              "CEO": 4,
+              "Senior Product Manager": 4
+            },
+            "average": "3.83",
+            "distribution": {
+              "reject": 2,
+              "weak": 4,
+              "solid": 0,
+              "strong": 0,
+              "exceptional": 0
+            },
+            "score_range": {
+              "min": 3,
+              "max": 5
+            }
+          },
+          "quality_assessment": {
+            "quality_score": 10,
+            "expected_level": "weak",
+            "actual_avg_score": 3.83,
+            "score_appropriateness": true,
+            "variance": 0.6871842709362768,
+            "detailed_feedback_count": 24,
+            "issues": []
+          },
+          "test_id": "qwen3_4b_test-weak-candidate_1753104762471",
+          "raw_results_file": "qwen3_4b_test-weak-candidate_1753104762471_raw.json",
+          "summary_file": "qwen3_4b_test-weak-candidate_1753104762471_summary.md"
+        },
+        {
+          "model": "qwen3:4b",
+          "candidate": {
+            "name": "Morgan Davis",
+            "folder": "test-average-candidate",
+            "expected": "average"
+          },
+          "duration_seconds": 194.518,
+          "success": true,
+          "scores": {
+            "by_persona": {
+              "HR Manager": 9,
+              "Director of Engineering": 6,
+              "Director of Design": 8,
+              "Finance Director": 7,
+              "CEO": 8,
+              "Senior Product Manager": 7
+            },
+            "average": "7.50",
+            "distribution": {
+              "reject": 0,
+              "weak": 0,
+              "solid": 3,
+              "strong": 3,
+              "exceptional": 0
+            },
+            "score_range": {
+              "min": 6,
+              "max": 9
+            }
+          },
+          "quality_assessment": {
+            "quality_score": 8,
+            "expected_level": "average",
+            "actual_avg_score": 7.5,
+            "score_appropriateness": false,
+            "variance": 0.9574271077563381,
+            "detailed_feedback_count": 24,
+            "issues": [
+              "Score too high: 7.5 > 7 for average candidate"
+            ]
+          },
+          "test_id": "qwen3_4b_test-average-candidate_1753104891573",
+          "raw_results_file": "qwen3_4b_test-average-candidate_1753104891573_raw.json",
+          "summary_file": "qwen3_4b_test-average-candidate_1753104891573_summary.md"
+        },
+        {
+          "model": "qwen3:4b",
+          "candidate": {
+            "name": "Dr. Sarah Chen",
+            "folder": "test-strong-candidate",
+            "expected": "strong"
+          },
+          "duration_seconds": 185.457,
+          "success": true,
+          "scores": {
+            "by_persona": {
+              "HR Manager": 10,
+              "Director of Engineering": 9,
+              "Director of Design": 9,
+              "Finance Director": 9,
+              "CEO": 10,
+              "Senior Product Manager": 9
+            },
+            "average": "9.33",
+            "distribution": {
+              "reject": 0,
+              "weak": 0,
+              "solid": 0,
+              "strong": 4,
+              "exceptional": 2
+            },
+            "score_range": {
+              "min": 9,
+              "max": 10
+            }
+          },
+          "quality_assessment": {
+            "quality_score": 7,
+            "expected_level": "strong",
+            "actual_avg_score": 9.33,
+            "score_appropriateness": false,
+            "variance": 0.4714045207910317,
+            "detailed_feedback_count": 24,
+            "issues": [
+              "Score too high: 9.33 > 9 for strong candidate",
+              "Low score variance - poor discrimination between personas"
+            ]
+          },
+          "test_id": "qwen3_4b_test-strong-candidate_1753105087094",
+          "raw_results_file": "qwen3_4b_test-strong-candidate_1753105087094_raw.json",
+          "summary_file": "qwen3_4b_test-strong-candidate_1753105087094_summary.md"
+        }
+      ]
+    }
+  }
+}
