@@ -86,7 +86,7 @@ const theme = {
     afterProjectEntry: 180, // 9pt after project entries
     afterSectionEntry: 240, // 12pt after section entries
     beforeDate: 240,      // 12pt before date in cover letter
-    afterDate: 480,       // 24pt after date in cover letter
+    afterDateCoverLetter: 480,       // 24pt after date in cover letter
     coverLetterParagraph: 240, // 12pt between cover letter paragraphs
     beforeContact: 240,   // 12pt before contact info in cover letter
   },

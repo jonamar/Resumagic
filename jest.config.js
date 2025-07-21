@@ -23,7 +23,11 @@ module.exports = {
     '!**/*.spec.js',
     '!**/__tests__/**',
     '!jest.config.js',
-    '!.eslintrc*.js'
+    '!.eslintrc*.js',
+    '*.js',
+    'utils/**/*.js',
+    'services/**/*.js',
+    '!utils/eslint-rules/**' // Exclude ESLint rules from coverage
   ],
   
   // Coverage output
