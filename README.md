@@ -22,6 +22,9 @@ node generate-resume.js company-role
 
 # 5. Run keyword analysis
 python services/keyword-analysis/kw_rank_modular.py company-role
+
+# 6. Simulate hiring review board (requires Ollama)
+node services/hiring-evaluation/evaluation-runner.js company-role
 ```
 
 **Output**: Professional DOCX files + intelligent keyword optimization checklist
@@ -52,15 +55,19 @@ This project uses a two-repo structure to separate code from private data:
 │   ├── docs/                        # Documentation
 │   │   └── cover-letter-schema.md   # Cover letter JSON schema
 │   ├── services/                    # Microservices
-│   │   └── keyword-analysis/        # Python keyword analysis service
-│   │       ├── kw_rank/             # Modular Python package
-│   │       │   ├── core/            # Core analysis modules
-│   │       │   └── io/              # Input/output modules
-│   │       ├── config/              # Configuration management
-│   │       ├── tests/               # Comprehensive test suite
-│   │       ├── API.md               # API documentation
-│   │       ├── SETUP.md             # Setup guide
-│   │       └── kw_rank_modular.py   # Modern entry point
+│   │   ├── keyword-analysis/        # Python keyword analysis service
+│   │   │   ├── kw_rank/             # Modular Python package
+│   │   │   │   ├── core/            # Core analysis modules
+│   │   │   │   └── io/              # Input/output modules
+│   │   │   ├── config/              # Configuration management
+│   │   │   ├── tests/               # Comprehensive test suite
+│   │   │   ├── API.md               # API documentation
+│   │   │   ├── SETUP.md             # Setup guide
+│   │   │   └── kw_rank_modular.py   # Modern entry point
+│   │   └── hiring-evaluation/       # Node.js hiring simulation service
+│   │       ├── personas/            # YAML persona configurations
+│   │       ├── evaluation-runner.js # Main evaluation engine
+│   │       └── evaluation-processor.js # Results processing
 │   ├── generate-resume.js           # Resume/cover letter generation
 │   ├── docx-template.js             # DOCX generation templates
 │   ├── markdown-to-data.js          # Markdown parser and transformer
@@ -112,7 +119,9 @@ Each application must follow this 3-tier folder structure:
 ├── working/               # Process utilities (auto-generated)
 │   ├── keyword_analysis.json
 │   ├── keyword-checklist.md
-│   └── top5.json
+│   ├── top5.json
+│   ├── evaluation-results.json      # Hiring simulation raw data
+│   └── {candidate}-evaluation.md    # Hiring simulation summary
 └── outputs/               # Generated deliverables (auto-generated)
     ├── Jon-Amar-Resume-{Company}.docx
     ├── Jon-Amar-Cover-Letter-{Company}.docx
@@ -137,6 +146,9 @@ Each application must follow this 3-tier folder structure:
 
 - **Node.js** (for document generation)
 - **Python 3.8+** (for keyword analysis)
+- **Ollama** (for hiring evaluation service)
+  - Install: `curl -fsSL https://ollama.ai/install.sh | sh`
+  - Pull model: `ollama pull dolphin3:latest`
 - **Virtual environment recommended**
 
 ## Core Features
@@ -181,6 +193,16 @@ python services/keyword-analysis/kw_rank_modular.py company-role
 
 # Run tests
 cd services/keyword-analysis && python run_tests.py --coverage
+```
+
+### Hiring Simulation
+
+```bash
+# Simulate 6-person hiring review board
+node services/hiring-evaluation/evaluation-runner.js company-role
+
+# With specific candidate name
+node services/hiring-evaluation/evaluation-runner.js company-role "John Smith"
 ```
 
 ### File Structure

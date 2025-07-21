@@ -16,13 +16,17 @@ Resumagic uses a **dual-repository design** for security and modularity:
 │   ├── theme.js               # Styling configuration
 │   ├── docs/                  # Documentation
 │   └── services/
-│       └── keyword-analysis/  # Python microservice
-│           ├── kw_rank_modular.py  # Entry point
-│           ├── kw_rank/           # Core analysis package
-│           │   ├── core/          # Analysis algorithms
-│           │   └── io/            # Data handling
-│           ├── config/            # Configuration
-│           └── tests/             # Test suite
+│       ├── keyword-analysis/  # Python microservice
+│       │   ├── kw_rank_modular.py  # Entry point
+│       │   ├── kw_rank/           # Core analysis package
+│       │   │   ├── core/          # Analysis algorithms
+│       │   │   └── io/            # Data handling
+│       │   ├── config/            # Configuration
+│       │   └── tests/             # Test suite
+│       └── hiring-evaluation/ # Node.js microservice
+│           ├── evaluation-runner.js # Entry point
+│           ├── evaluation-processor.js # Results processing
+│           └── personas/          # YAML persona configs
 │
 └── data/                   # Private data repository (separate repo)
     ├── applications/          # Job application folders
@@ -79,6 +83,12 @@ Each job application in `/data/applications/` follows this **required 3-tier str
 - **Responsibilities**: TF-IDF scoring, semantic clustering, knockout detection, resume injection analysis
 - **Technology**: Python with `scikit-learn`, `sentence-transformers`
 
+### **Hiring Evaluation Service** (`/app/services/hiring-evaluation/`)
+- **Entry Point**: `evaluation-runner.js`
+- **Responsibilities**: Multi-persona candidate evaluation simulation, structured feedback, application optimization insights
+- **Technology**: Node.js with Ollama integration, YAML-based prompt configuration
+- **Purpose**: Enable candidates to simulate hiring review boards before application submission
+
 ## **Integration Points**
 
 ### **CLI Interface**
@@ -91,6 +101,9 @@ node generate-resume.js company-role [--resume|--cover-letter|--both|--combined]
 
 # Keyword analysis (reads from ../data/applications/{company-role}/)
 python services/keyword-analysis/kw_rank_modular.py company-role
+
+# Hiring simulation (reads from ../data/applications/{company-role}/)
+node services/hiring-evaluation/evaluation-runner.js company-role
 
 # Create new application (in data repository)
 cp -r ../data/applications/template ../data/applications/new-company-role
