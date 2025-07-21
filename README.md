@@ -20,10 +20,12 @@ cp -r ../data/applications/template ../data/applications/company-role
 # 4. Generate documents
 node generate-resume.js company-role
 
-# 5. Run keyword analysis
-python services/keyword-analysis/kw_rank_modular.py company-role
+# 5. Integrated workflows (NEW!)
+node generate-resume.js company-role --evaluate  # Documents + hiring evaluation
+node generate-resume.js company-role --all       # Complete workflow
 
-# 6. Simulate hiring review board (requires Ollama)
+# 6. Individual services
+python services/keyword-analysis/kw_rank_modular.py company-role
 node services/hiring-evaluation/evaluation-runner.js company-role
 ```
 
@@ -33,7 +35,9 @@ node services/hiring-evaluation/evaluation-runner.js company-role
 
 **Document Generation**: Converts JSON Resume + Markdown → Professional DOCX files
 **Keyword Analysis**: Analyzes job postings → Categorizes keywords → Optimization checklist
+**Hiring Simulation**: 6-persona review board simulation with detailed evaluation reports
 **ATS Optimization**: Ensures documents are easily parsed by applicant tracking systems
+**Integrated Workflows**: End-to-end automation with `--evaluate` and `--all` flags
 
 ## Architecture Overview
 
@@ -183,6 +187,10 @@ node generate-resume.js company-role
 node generate-resume.js company-role --cover-letter
 node generate-resume.js company-role --both
 node generate-resume.js company-role --combined
+
+# Integrated workflows (NEW!)
+node generate-resume.js company-role --evaluate  # Documents + hiring evaluation
+node generate-resume.js company-role --all       # Complete workflow: docs + analysis + evaluation
 ```
 
 ### Keyword Analysis

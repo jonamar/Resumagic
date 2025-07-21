@@ -21,8 +21,30 @@ async function runKeywordAnalysis(applicationName) {
     const { exec } = require('child_process');
     const { promisify } = require('util');
     const execAsync = promisify(exec);
+    const path = require('path');
+    const fs = require('fs');
     
-    const keywordAnalysisCommand = `python services/keyword-analysis/kw_rank_modular.py ${applicationName}`;
+    // Construct paths to required files
+    const applicationPath = path.join(__dirname, '../data/applications', applicationName);
+    const keywordsFile = path.join(applicationPath, 'inputs', 'keywords.json');
+    const jobPostingFile = path.join(applicationPath, 'inputs', 'job-posting.md');
+    const resumeFile = path.join(applicationPath, 'inputs', 'resume.json');
+    
+    // Check if required files exist
+    if (!fs.existsSync(keywordsFile)) {
+      throw new Error(`Keywords file not found: ${keywordsFile}`);
+    }
+    if (!fs.existsSync(jobPostingFile)) {
+      throw new Error(`Job posting file not found: ${jobPostingFile}`);
+    }
+    
+    // Construct the command with proper arguments
+    let keywordAnalysisCommand = `python services/keyword-analysis/kw_rank_modular.py "${keywordsFile}" "${jobPostingFile}"`;
+    
+    // Add resume file if it exists for sentence matching
+    if (fs.existsSync(resumeFile)) {
+      keywordAnalysisCommand += ` --resume "${resumeFile}"`;
+    }
     
     console.log(`${theme.messages.emojis.processing} Running: ${keywordAnalysisCommand}`);
     
@@ -45,6 +67,8 @@ async function runKeywordAnalysis(applicationName) {
       console.error(`${theme.messages.emojis.warning} Python not found. Make sure Python is installed and in PATH.`);
     } else if (error.message.includes('No module named')) {
       console.error(`${theme.messages.emojis.warning} Missing Python dependencies. Run: pip install -r services/keyword-analysis/requirements.txt`);
+    } else if (error.message.includes('not found:')) {
+      console.error(`${theme.messages.emojis.warning} Missing required input files. Ensure keywords.json and job-posting.md exist in inputs/ directory.`);
     }
     
     throw error;
@@ -165,9 +189,9 @@ async function runHiringEvaluation(applicationName, resumeData) {
     if (generationPlan.runHiringEvaluation) {
       // For --all flag, run keyword analysis first, then hiring evaluation
       if (flags.all) {
-        await runKeywordAnalysis(paths.applicationName);
+        await runKeywordAnalysis(applicationName);
       }
-      await runHiringEvaluation(paths.applicationName, resumeData);
+      await runHiringEvaluation(applicationName, resumeData);
     }
     
     // Exit successfully
