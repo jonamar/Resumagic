@@ -39,7 +39,7 @@ Professional resume and cover letter generator with intelligent keyword analysis
 node generate-resume.js company-role
 
 # Integrated workflows (NEW!)
-node generate-resume.js company-role --evaluate  # Documents + hiring evaluation
+node generate-resume.js company-role --evaluate  # Documents + hiring evaluation (dolphin3@0.7)
 node generate-resume.js company-role --all       # Complete workflow
 
 # Individual services

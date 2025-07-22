@@ -69,11 +69,11 @@ This project uses a two-repo structure to separate code from private data:
 │   │   │   ├── API.md               # API documentation
 │   │   │   ├── SETUP.md             # Setup guide
 │   │   │   └── kw_rank_modular.py   # Modern entry point
-│   │   └── hiring-evaluation/       # Node.js hiring simulation service (optimized)
+│   │   └── hiring-evaluation/       # Node.js hiring simulation service (split temperature optimized)
 │   │       ├── personas/            # YAML persona configurations
-│   │       ├── evaluation-runner.js # Main evaluation engine (dolphin3:latest/phi3:mini)
-│   │       ├── evaluation-processor.js # Results processing
-│   │       └── model-test-results/  # Comprehensive optimization study
+│   │       ├── evaluation-runner.js # Main evaluation engine (dolphin3@0.7/phi3@0.3)
+│   │       ├── evaluation-processor.js # Results processing and markdown generation
+│   │       └── model-test-results/  # Comprehensive optimization study (42-153% improvement)
 │   ├── generate-resume.js           # Resume/cover letter generation
 │   ├── docx-template.js             # DOCX generation templates
 │   ├── markdown-to-data.js          # Markdown parser and transformer
@@ -209,11 +209,11 @@ cd services/keyword-analysis && python run_tests.py --coverage
 ### Hiring Simulation
 
 ```bash
-# Two-tier optimization: Quality vs Speed
-# Quality mode (default): dolphin3:latest - 170s, 9.0-10.0/10 quality
+# Two-tier optimization: Quality vs Speed (Split Temperature Configuration)
+# Quality mode (default): dolphin3:latest @ temp 0.7 - 188s, excellent differentiation (range 3-5)
 node generate-resume.js company-role --evaluate
 
-# Speed mode: phi3:mini - 140s, 7.0-8.0/10 quality (30% faster)
+# Speed mode: phi3:mini @ temp 0.3 - 148s, good differentiation (range 5+, 76% improvement)
 node generate-resume.js company-role --evaluate --fast
 
 # Direct service calls (if needed)
