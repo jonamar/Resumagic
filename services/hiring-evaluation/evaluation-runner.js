@@ -13,6 +13,11 @@ class EvaluationRunner {
         this.modelName = 'dolphin3:latest';        // Quality optimized: 170s, 9.0-10.0/10
         this.fastModelName = 'phi3:mini';           // Speed optimized: 140s, 7.0-8.0/10
         this.fastMode = false;
+        // Per-model optimized temperature settings
+        this.modelTemperatures = {
+            'dolphin3:latest': 0.7,   // Higher temp for better variance in quality model
+            'phi3:mini': 0.3          // Lower temp for more focused output in fast model
+        };
         this.personas = ['hr', 'technical', 'design', 'finance', 'ceo', 'team'];
         this.weights = {
             hr: 0.20,
@@ -26,7 +31,9 @@ class EvaluationRunner {
 
     setFastMode(enabled) {
         this.fastMode = enabled;
-        console.log(`🚀 Fast mode ${enabled ? 'enabled' : 'disabled'}: using ${enabled ? this.fastModelName : this.modelName}`);
+        const selectedModel = enabled ? this.fastModelName : this.modelName;
+        const temperature = this.modelTemperatures[selectedModel] || 0.1;
+        console.log(`🚀 Fast mode ${enabled ? 'enabled' : 'disabled'}: using ${selectedModel} @ temperature ${temperature}`);
     }
 
     async loadFile(filePath) {
@@ -122,13 +129,16 @@ class EvaluationRunner {
 
         return new Promise((resolve, reject) => {
             const selectedModel = this.fastMode ? this.fastModelName : model;
+            // Get optimized temperature for the selected model
+            const temperature = this.modelTemperatures[selectedModel] || 0.1;
+            
             const postData = JSON.stringify({
                 model: selectedModel,
                 prompt: prompt,
                 stream: false,
                 format: evaluationSchema,
                 options: {
-                    temperature: 0.1,
+                    temperature: temperature,
                     top_p: 0.9,
                     repeat_penalty: 1.1,
                     max_tokens: 4000,
