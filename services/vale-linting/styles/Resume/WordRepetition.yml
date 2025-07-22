@@ -1,0 +1,16 @@
+extends: repetition
+message: "Word '%s' appears %d times - consider varying vocabulary"
+level: warning
+ignorecase: true
+max: 3
+tokens:
+  - product
+  - strategy
+  - strategic
+  - led
+  - managed
+  - driven
+  - delivered
+  - achieved
+  - built
+  - developed

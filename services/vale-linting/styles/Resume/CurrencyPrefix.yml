@@ -1,0 +1,9 @@
+extends: existence
+message: "Currency format issue: Use 'CAD $X.XM' for first mention, then '$X.XM' for subsequent"
+level: warning
+ignorecase: true
+tokens:
+  # Multiple CAD prefixes in same section (should only be first)
+  - 'CAD\s+\$[0-9.]+[KMB]?.*CAD\s+\$[0-9.]+[KMB]?'
+  # Missing CAD on first large currency mention
+  - '\$[0-9]+[0-9,]*\.?[0-9]*[MB](?!.*CAD)'

@@ -1,0 +1,9 @@
+extends: existence
+message: "Voice consistency violation: %s"
+level: warning
+ignorecase: true
+tokens:
+  # No "I " in bullet lines (should be third person)
+  - '^\s*[-•]\s+.*\bI\s+'
+  # No leading past-tense verbs in summary (should be first person)  
+  - '"summary":\s*"[^"]*\b(Led|Built|Achieved|Managed|Directed|Developed|Created|Established|Implemented|Launched|Delivered|Executed|Optimized|Scaled|Transformed)'

@@ -1,0 +1,8 @@
+extends: existence
+message: "Missing bold header pattern in highlight: should start with **Category**: format"
+level: warning
+scope: paragraph
+# Look for highlights that don't follow the **Category**: pattern
+tokens:
+  - '"highlights":\s*\[\s*"[^*][^"]*"'  # Highlight that doesn't start with *
+  - '"highlights":\s*\[[^"]*"[^*][^"]*"'  # Subsequent highlights without *
