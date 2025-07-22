@@ -46,7 +46,8 @@ node services/hiring-evaluation/evaluation-runner.js company-role
 - **Node.js**: Document generation (DOCX creation, markdown parsing)
 - **Python**: Intelligent analysis (keyword scoring, semantic clustering)
 - **Separation**: Each service uses optimal technology stack
-- **Testing**: 85%+ coverage with comprehensive test suites
+- **Local CI/CD**: Fast 6-second validation pipeline with git hook integration
+- **Testing**: 124 tests (96 JS + 28 Python) with comprehensive coverage
 
 ## Project Structure
 
@@ -247,17 +248,41 @@ company-role/
 **File not found**: Verify application folder structure and input files exist
 **DOCX generation fails**: Check resume.json format and required fields
 
-### Testing
+### Testing & CI/CD
 
+**Local CI/CD Pipeline** (Fast, Simple, Agentic-Compatible)
+```bash
+# Full validation pipeline (~6 seconds)
+../scripts/ci/local-pipeline.sh
+
+# Individual test suites
+npm test                    # JavaScript tests (96 tests)
+npm run test:python        # Python tests (28 tests)
+npm run lint               # ESLint validation
+
+# Quick validation options
+../scripts/ci/local-pipeline.sh --lint-only    # Lint only
+../scripts/ci/local-pipeline.sh --skip-tests   # Skip tests
+```
+
+**Git Integration**
+```bash
+# Pre-commit hook runs automatically (lint validation)
+git commit -m "your changes"
+
+# Skip validation if needed
+SKIP_CI=true git commit -m "skip validation"
+git commit --no-verify -m "skip validation"
+git commit -m "changes [skip ci]"  # Skip via commit message
+```
+
+**Manual Testing**
 ```bash
 # Test document generation
 node generate-resume.js relay-director-of-product
 
 # Test keyword analysis
 python services/keyword-analysis/kw_rank_modular.py relay-director-of-product
-
-# Run full test suite
-cd services/keyword-analysis && python run_tests.py --coverage
 ```
 
 ### Documentation
