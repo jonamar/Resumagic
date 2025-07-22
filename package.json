@@ -19,7 +19,9 @@
     "lint:ci": "eslint . --format=json --output-file=eslint-results.json || true",
     "validate:error-handling": "node -e \"const {ErrorHandler} = require('./utils/error-handler'); const {ERROR_TYPES} = require('./utils/error-types'); console.log('✅ Error handling validation passed');\"",
     "ci:pre-commit": "npm run lint && npm run test:ci && npm run validate:error-handling",
-    "ci:full": "npm run ci:pre-commit && npm run test:python"
+    "ci:full": "npm run ci:pre-commit && npm run test:python",
+    "ci:local": "../scripts/ci/local-pipeline.sh",
+    "ci:validate": "../scripts/ci/validate-all.sh"
   },
   "dependencies": {
     "docx": "^9.5.1",
