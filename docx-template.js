@@ -136,7 +136,6 @@ function createHeader(basics) {
   paragraphs.push(
     new Paragraph({
       text: basics.name,
-      heading: HeadingLevel.HEADING_1,
       style: "applicantName",
       alignment: AlignmentType.LEFT,
       spacing: {
