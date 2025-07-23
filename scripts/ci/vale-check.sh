@@ -16,9 +16,9 @@ VALE_DIR="$SCRIPT_DIR/../../services/vale-linting"
 # Change to Vale directory for configuration
 cd "$VALE_DIR"
 
-# Find all resume.json files in applications 
+# Find all resume and cover letter files in applications 
 SEARCH_PATH="$PROJECT_ROOT/data/applications"
-echo "🔍 Looking for resume files in: $SEARCH_PATH"
+echo "🔍 Looking for resume and cover letter files in: $SEARCH_PATH"
 
 if [ ! -d "$SEARCH_PATH" ]; then
     echo "⚠️  Applications directory not found: $SEARCH_PATH"
@@ -26,17 +26,21 @@ if [ ! -d "$SEARCH_PATH" ]; then
 fi
 
 RESUME_FILES=$(find "$SEARCH_PATH" -name "resume.json" 2>/dev/null)
+COVER_LETTER_FILES=$(find "$SEARCH_PATH" -name "cover-letter.md" 2>/dev/null)
+ALL_FILES="$RESUME_FILES $COVER_LETTER_FILES"
 
-if [ -z "$RESUME_FILES" ]; then
-    echo "⚠️  No resume files found to check"
+if [ -z "$ALL_FILES" ]; then
+    echo "⚠️  No files found to check"
     exit 0
 fi
 
-echo "📁 Found $(echo "$RESUME_FILES" | wc -l) resume files to check"
+RESUME_COUNT=$(echo "$RESUME_FILES" | wc -l | tr -d ' ')
+COVER_COUNT=$(echo "$COVER_LETTER_FILES" | wc -l | tr -d ' ')
+echo "📁 Found $RESUME_COUNT resume files and $COVER_COUNT cover letter files to check"
 
 TOTAL_ISSUES=0
 
-for file in $RESUME_FILES; do
+for file in $ALL_FILES; do
     echo "Checking: $file"
     
     # Run Vale and capture output
