@@ -14,6 +14,11 @@ module.exports = {
     '**/*.spec.js'
   ],
   
+  // Transform ignore patterns for ESM/CJS compatibility
+  transformIgnorePatterns: [
+    'node_modules/(?!(marked)/)'
+  ],
+  
   // Coverage configuration
   collectCoverageFrom: [
     '**/*.js',
