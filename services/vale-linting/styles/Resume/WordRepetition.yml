@@ -1,16 +1,7 @@
-extends: repetition
-message: "Word '%s' appears %d times - consider varying vocabulary"
+extends: existence
+message: "Overused word detected: '%s' - consider varying vocabulary"
 level: warning
 ignorecase: true
-max: 3
+# Using existence to detect patterns, not repetition counting
 tokens:
-  - product
-  - strategy
-  - strategic
-  - led
-  - managed
-  - driven
-  - delivered
-  - achieved
-  - built
-  - developed
+  - '\b(product|strategy|strategic|led|managed|driven|delivered|achieved|built|developed)\b'
