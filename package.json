@@ -21,7 +21,10 @@
     "ci:pre-commit": "npm run lint && npm run test:ci && npm run validate:error-handling",
     "ci:full": "npm run ci:pre-commit && npm run test:python",
     "ci:local": "../scripts/ci/local-pipeline.sh",
-    "ci:validate": "../scripts/ci/validate-all.sh"
+    "ci:validate": "../scripts/ci/validate-all.sh",
+    "vale:start": "node services/vale-linting/process-manager.js start",
+    "vale:stop": "node services/vale-linting/process-manager.js stop",
+    "vale:status": "node services/vale-linting/process-manager.js status"
   },
   "dependencies": {
     "docx": "^9.5.1",
