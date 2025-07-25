@@ -306,7 +306,7 @@ function createExperience(work) {
           { field: 'endDate', format: (date) => date ? formatDate(date) : 'Present' }
         ],
         includeLocation: true,
-        separator: ' • ',
+        separator: ' - ',
         fontSize: theme.fontSize.meta,
         color: theme.colors.dimText,
         bold: false,
@@ -620,7 +620,7 @@ function createItemSection(items, config) {
         if (headerConfig.includeLocation && item.location) {
           parts.push(item.location);
         }
-        headerText = parts.join(headerConfig.separator || ' • ');
+        headerText = parts.join(headerConfig.separator || ' - ');
       } else if (headerConfig.field && item[headerConfig.field]) {
         headerText = item[headerConfig.field];
       }
