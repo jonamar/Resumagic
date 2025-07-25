@@ -350,7 +350,8 @@ function createSkills(skills) {
           })
         ],
         spacing: {
-          after: theme.spacingTwips.afterJobTitle // 3pt
+          after: theme.spacingTwips.afterJobTitle, // 3pt
+          line: theme.spacingTwips.oneAndHalfLine
         }
       })
     );
@@ -364,9 +365,10 @@ function createSkills(skills) {
             font: theme.fonts.primary,
             color: theme.colors.dimText
           }),
-          spacing: {
-            after: theme.spacingTwips.xlarge // 9pt
-          }
+                  spacing: {
+          after: theme.spacingTwips.xlarge, // 9pt
+          line: theme.spacingTwips.oneAndHalfLine
+        }
         })
       );
     }
@@ -406,7 +408,8 @@ function createEducation(education) {
           })
         ],
         spacing: {
-          after: theme.spacingTwips.afterJobTitle // 3pt
+          after: theme.spacingTwips.afterJobTitle, // 3pt
+          line: theme.spacingTwips.oneAndHalfLine
         },
         keepNext: true // Keep with institution
       })
@@ -425,7 +428,8 @@ function createEducation(education) {
           })
         ],
         spacing: {
-          after: theme.spacingTwips.afterCompanyName // 3pt
+          after: theme.spacingTwips.afterCompanyName, // 3pt
+          line: theme.spacingTwips.oneAndHalfLine
         },
         keepNext: true // Keep with date/location
       })
@@ -658,7 +662,8 @@ function createItemSection(items, config) {
             })
           ],
           spacing: {
-            after: spacing
+            after: spacing,
+            line: theme.spacingTwips.oneAndHalfLine
           },
           keepNext: keepNext
         })
@@ -675,7 +680,8 @@ function createItemSection(items, config) {
             color: theme.colors.text
           }),
           spacing: {
-            after: config.descriptionSpacing || theme.spacingTwips.large // 6pt
+            after: config.descriptionSpacing || theme.spacingTwips.large, // 6pt
+            line: theme.spacingTwips.oneAndHalfLine
           },
           keepLines: true, // Keep description lines together
           keepNext: hasHighlights // Keep with highlights if they exist
@@ -710,7 +716,8 @@ function createItemSection(items, config) {
               level: 0
             },
             spacing: {
-              after: highlightSpacing
+              after: highlightSpacing,
+              line: theme.spacingTwips.oneAndHalfLine
             },
             indent: {
               left: theme.spacingTwips.bulletIndent, // 0.25 inch left indent for bullet
