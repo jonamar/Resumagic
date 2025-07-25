@@ -2,6 +2,11 @@
 
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 class KeywordExtractor {
     constructor() {
@@ -179,10 +184,10 @@ Consider the size, stage, and industry context of this organization when evaluat
 }
 
 // Export for use in other modules
-module.exports = KeywordExtractor;
+export default KeywordExtractor;
 
 // Test function if run directly
-if (require.main === module) {
+if (import.meta.url === `file://${process.argv[1]}`) {
     const extractor = new KeywordExtractor();
     const keywordPath = path.join(__dirname, 'application-materials', 'keyword_analysis.json');
     

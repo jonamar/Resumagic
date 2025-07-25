@@ -139,7 +139,7 @@ describe('Service Wrapper Interface Validation', () => {
       
       expect(response.success).toBe(false);
       expect(response.error.code).toBe('ANALYSIS_FAILED');
-      expect(response.error.message).toContain('Input is required');
+      expect(response.error.message).toContain('Required field');
     });
 
     test('hiring evaluation should validate resume data structure', async () => {

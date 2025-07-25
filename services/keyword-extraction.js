@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
-const path = require('path');
-const http = require('http');
+import fs from 'fs';
+import path from 'path';
+import http from 'http';
 
 class KeywordExtractionService {
     constructor() {
@@ -277,7 +277,7 @@ Extract all important keywords from this job posting and categorize them appropr
 }
 
 // CLI interface
-if (require.main === module) {
+if (import.meta.url === `file://${process.argv[1]}`) {
     const args = process.argv.slice(2);
     
     if (args.length < 2) {
@@ -306,4 +306,4 @@ if (require.main === module) {
         });
 }
 
-module.exports = KeywordExtractionService;
+export default KeywordExtractionService;

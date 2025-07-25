@@ -331,16 +331,9 @@ function createExperience(work) {
 function createSkills(skills) {
   const paragraphs = [];
 
-  // Add page break before skills section
+  // Add section heading with page break
   paragraphs.push(
-    new Paragraph({
-      pageBreakBefore: true
-    })
-  );
-
-  // Add section heading
-  paragraphs.push(
-    createSectionHeading(theme.ats.sectionTitles.skills)
+    createSectionHeading(theme.ats.sectionTitles.skills, true)
   );
 
   // Add each skill category
@@ -768,7 +761,7 @@ function createItemSection(items, config) {
  * @param {String} title - Section title
  * @returns {Paragraph} Section heading paragraph
  */
-function createSectionHeading(title) {
+function createSectionHeading(title, pageBreak = false) {
   return new Paragraph({
     children: [
       new TextRun({
@@ -785,6 +778,7 @@ function createSectionHeading(title) {
       after: theme.spacingTwips.large   // 6pt
     },
     keepNext: true, // Prevent section headings from being orphaned on previous page
+    pageBreakBefore: pageBreak, // Add page break if requested
     // Border removed to eliminate unwanted underlines
   });
 }

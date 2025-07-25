@@ -437,4 +437,4 @@ if (require.main === module) {
         });
 }
 
-module.exports = EvaluationRunner;
+export default EvaluationRunner;

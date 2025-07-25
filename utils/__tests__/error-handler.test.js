@@ -239,8 +239,8 @@ describe('ErrorHandler', () => {
   });
 
   describe('buildFileContext', () => {
-    test('should build basic file context', () => {
-      const context = ErrorHandler.buildFileContext('/test/path/file.js');
+    test('should build basic file context', async () => {
+      const context = await ErrorHandler.buildFileContext('/test/path/file.js');
 
       expect(context.type).toBe(CONTEXT_TYPES.FILE);
       expect(context.filePath).toBe('/test/path/file.js');
@@ -248,8 +248,8 @@ describe('ErrorHandler', () => {
       expect(context.directory).toBe('/test/path');
     });
 
-    test('should include additional info', () => {
-      const context = ErrorHandler.buildFileContext('/test/file.js', {
+    test('should include additional info', async () => {
+      const context = await ErrorHandler.buildFileContext('/test/file.js', {
         operation: 'read',
         encoding: 'utf8'
       });
@@ -258,9 +258,9 @@ describe('ErrorHandler', () => {
       expect(context.encoding).toBe('utf8');
     });
 
-    test('should handle file existence check', () => {
+    test('should handle file existence check', async () => {
       // Test with a file that likely doesn't exist
-      const context = ErrorHandler.buildFileContext('/nonexistent/file.js');
+      const context = await ErrorHandler.buildFileContext('/nonexistent/file.js');
       
       expect(context.exists).toBe(false);
     });

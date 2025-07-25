@@ -517,11 +517,11 @@ function processEvaluationResults(evaluationsArray, candidateName) {
     return processor.processEvaluations(evaluationsArray, candidateName);
 }
 
-module.exports = { EvaluationProcessor, processEvaluationResults };
+export { EvaluationProcessor, processEvaluationResults };
 
 // If running directly, provide usage example
-if (require.main === module) {
+if (import.meta.url === `file://${process.argv[1]}`) {
     console.log("Evaluation Processor created successfully!");
-    console.log("Usage: const { processEvaluationResults } = require('./evaluation-processor.js');");
+    console.log("Usage: import { processEvaluationResults } from './evaluation-processor.js';");
     console.log("const summary = processEvaluationResults(evaluationsArray, 'Candidate Name');");
 }

@@ -56,7 +56,7 @@ module.exports = {
   // },
   
   // Test setup
-  setupFilesAfterEnv: [],
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   
   // Module paths
   testPathIgnorePatterns: [
@@ -69,6 +69,9 @@ module.exports = {
   
   // Clear mocks between tests
   clearMocks: true,
+  
+  // Make Jest globals available
+  injectGlobals: true,
   
 
 };
