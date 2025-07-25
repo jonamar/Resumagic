@@ -70,14 +70,15 @@ const theme = {
     bulletIndent: 360,    // 0.25 inch - bullet indentation
     bulletHanging: 360,   // 0.25 inch - bullet hanging indent
     
-    // Line spacing multipliers (240 = 1.0x, 408 = 1.7x)
+    // Line spacing multipliers (240 = 1.0x, 264 = 1.1x, 408 = 1.7x)
     singleLine: 240,      // 1.0 line spacing
-    oneAndHalfLine: 408,  // 1.7 line spacing
+    resumeLine: 264,      // 1.1 line spacing for resume sections
+    oneAndHalfLine: 408,  // 1.7 line spacing for cover letter
     
     // Specific use cases
     afterHeader: 240,     // 12pt after header elements
     afterContact: 100,    // 5pt after contact info
-    afterJobTitle: 60,    // 3pt after job titles
+    afterJobTitle: 40,    // 2pt after job titles (reduced from 3pt)
     afterCompanyName: 60, // 3pt after company names
     afterDate: 80,        // 4pt after date lines
     afterSummary: 120,    // 6pt after summary paragraphs (increased for better spacing)

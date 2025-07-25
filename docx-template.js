@@ -307,6 +307,7 @@ function createExperience(work) {
         ],
         includeLocation: true,
         separator: ' - ',
+        locationSeparator: ' • ',
         fontSize: theme.fontSize.meta,
         color: theme.colors.dimText,
         bold: false,
@@ -330,6 +331,13 @@ function createExperience(work) {
 function createSkills(skills) {
   const paragraphs = [];
 
+  // Add page break before skills section
+  paragraphs.push(
+    new Paragraph({
+      pageBreakBefore: true
+    })
+  );
+
   // Add section heading
   paragraphs.push(
     createSectionHeading(theme.ats.sectionTitles.skills)
@@ -351,7 +359,7 @@ function createSkills(skills) {
         ],
         spacing: {
           after: theme.spacingTwips.afterJobTitle, // 3pt
-          line: theme.spacingTwips.oneAndHalfLine
+          line: theme.spacingTwips.resumeLine
         }
       })
     );
@@ -367,7 +375,7 @@ function createSkills(skills) {
           }),
                   spacing: {
           after: theme.spacingTwips.xlarge, // 9pt
-          line: theme.spacingTwips.oneAndHalfLine
+          line: theme.spacingTwips.resumeLine
         }
         })
       );
@@ -409,7 +417,7 @@ function createEducation(education) {
         ],
         spacing: {
           after: theme.spacingTwips.afterJobTitle, // 3pt
-          line: theme.spacingTwips.oneAndHalfLine
+          line: theme.spacingTwips.resumeLine
         },
         keepNext: true // Keep with institution
       })
@@ -429,7 +437,7 @@ function createEducation(education) {
         ],
         spacing: {
           after: theme.spacingTwips.afterCompanyName, // 3pt
-          line: theme.spacingTwips.oneAndHalfLine
+          line: theme.spacingTwips.resumeLine
         },
         keepNext: true // Keep with date/location
       })
@@ -622,9 +630,12 @@ function createItemSection(items, config) {
           }
         });
         if (headerConfig.includeLocation && item.location) {
-          parts.push(item.location);
+          // Join date fields with the main separator, then add location with locationSeparator
+          const dateText = parts.join(headerConfig.separator || ' - ');
+          headerText = dateText + (headerConfig.locationSeparator || ' • ') + item.location;
+        } else {
+          headerText = parts.join(headerConfig.separator || ' - ');
         }
-        headerText = parts.join(headerConfig.separator || ' - ');
       } else if (headerConfig.field && item[headerConfig.field]) {
         headerText = item[headerConfig.field];
       }
@@ -663,7 +674,7 @@ function createItemSection(items, config) {
           ],
           spacing: {
             after: spacing,
-            line: theme.spacingTwips.oneAndHalfLine
+            line: theme.spacingTwips.resumeLine
           },
           keepNext: keepNext
         })
@@ -681,7 +692,7 @@ function createItemSection(items, config) {
           }),
           spacing: {
             after: config.descriptionSpacing || theme.spacingTwips.large, // 6pt
-            line: theme.spacingTwips.oneAndHalfLine
+            line: theme.spacingTwips.resumeLine
           },
           keepLines: true, // Keep description lines together
           keepNext: hasHighlights // Keep with highlights if they exist
@@ -717,7 +728,7 @@ function createItemSection(items, config) {
             },
             spacing: {
               after: highlightSpacing,
-              line: theme.spacingTwips.oneAndHalfLine
+              line: theme.spacingTwips.resumeLine
             },
             indent: {
               left: theme.spacingTwips.bulletIndent, // 0.25 inch left indent for bullet
