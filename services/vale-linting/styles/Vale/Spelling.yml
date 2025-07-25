@@ -1,0 +1,144 @@
+extends: spelling
+message: "Did you really mean '%s'?"
+level: error
+ignore:
+  # Resume-specific business terms
+  - SaaS
+  - B2B
+  - B2C
+  - DTC
+  - GTM
+  - ARR
+  - CAGR
+  - CLTV
+  - KPI
+  - KPIs
+  - OKR
+  - OKRs
+  - ROI
+  - API
+  - APIs
+  - SDK
+  - SDKs
+  - UX
+  - UI
+  - DevOps
+  - MLOps
+  - EdTech
+  - FinTech
+  - RegTech
+  - AdTech
+  - MarTech
+  
+  # Role and team terms
+  - PM
+  - PMs
+  - stakeholder
+  - stakeholders
+  - roadmap
+  - roadmaps
+  - cross-functional
+  - end-to-end
+  - omnichannel
+  - multi-channel
+  - go-to-market
+  - time-to-market
+  - product-led
+  - data-driven
+  - user-centric
+  - customer-centric
+  
+  # Technical terms
+  - analytics
+  - telemetry
+  - A/B
+  - ML
+  - AI
+  - NLP
+  - LLM
+  - MVP
+  - POC
+  - CI/CD
+  - microservices
+  - serverless
+  - containerization
+  - Kubernetes
+  - GraphQL
+  - PostgreSQL
+  - MongoDB
+  - Redis
+  - AWS
+  - GCP
+  - Azure
+  - OAuth
+  - SSO
+  - GDPR
+  - CCPA
+  - SOC2
+  - HIPAA
+  - Wikibase
+  - workstreams
+  - deliverables
+  - Kickstarter
+  
+  # Metrics and measurement
+  - churn
+  - retention
+  - conversion
+  - funnel
+  - cohort
+  - cohorts
+  - LTV
+  - CAC
+  - MRR
+  - onboarding
+  - offboarding
+  - upsell
+  - cross-sell
+  - freemium
+  - tiered
+  - scalable
+  - scalability
+  
+  # Modern work terms
+  - agile
+  - scrum
+  - kanban
+  - sprint
+  - sprints
+  - backlog
+  - burndown
+  - retrospective
+  - standup
+  - standups
+  - sync
+  - syncs
+  - asynchronous
+  - async
+  - workflow
+  - workflows
+  - playbook
+  - playbooks
+  - runbook
+  - runbooks
+  
+  # Geographic and cultural
+  - Montréal
+  - québécois
+  - français
+  - anglais
+  
+  # Common resume abbreviations
+  - vs
+  - e.g.
+  - i.e.
+  - etc
+  - ca
+  - approx
+  - min
+  - max
+  - avg
+  - pct
+  
+  # Company names and proper nouns
+  - Founderland

@@ -107,8 +107,9 @@ class ValeWatcher {
                 
                 // Success feedback
                 const tier1Count = analysisResults.tier1.length;
+                const spellingCount = analysisResults.spelling ? analysisResults.spelling.length : 0;
                 const tier2Count = analysisResults.tier2.length;
-                console.log(`✅ Processed ${applicationName} in ${totalDuration}ms (${tier1Count} critical, ${tier2Count} density issues)`);
+                console.log(`✅ Processed ${applicationName} in ${totalDuration}ms (${tier1Count} critical, ${spellingCount} spelling, ${tier2Count} density issues)`);
                 console.log(`📄 Report: ${path.relative(process.cwd(), reportPath)}`);
             } else {
                 // Handle markdown files (cover letters) with simple processing

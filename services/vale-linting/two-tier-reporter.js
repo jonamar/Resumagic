@@ -10,15 +10,18 @@ class TwoTierReporter {
     }
     
     /**
-     * Generate comprehensive two-tier report
+     * Generate comprehensive two-tier report with spelling
      */
     generateReport(analysisResults, applicationName, stats = {}) {
         const timestamp = new Date().toLocaleString();
-        const { tier1, tier2 } = analysisResults;
+        const { tier1, spelling, tier2 } = analysisResults;
+        
+        // Debug logging
+        console.log(`🔍 Reporter received: tier1=${tier1.length}, spelling=${spelling ? spelling.length : 'undefined'}, tier2=${tier2.length}`);
         
         let report = `# Vale Analysis - ${this.formatApplicationName(applicationName)}\n\n`;
         report += `**File Type:** Resume\n`;
-        report += `**Critical Issues:** ${tier1.length} | **Density Issues:** ${tier2.length}\n\n`;
+        report += `**Critical Issues:** ${tier1.length} | **Spelling Issues:** ${spelling.length} | **Density Issues:** ${tier2.length}\n\n`;
         
         // Tier 1: Critical Writing Issues
         if (tier1.length > 0) {
@@ -39,6 +42,27 @@ class TwoTierReporter {
         } else {
             report += `## ✅ Critical Writing Issues\n\n`;
             report += `No same-section word repetition found. Good writing!\n\n`;
+        }
+        
+        // Spelling Issues
+        if (spelling.length > 0) {
+            report += `## 🔤 Spelling Issues (Fix Now)\n\n`;
+            report += `*Potential spelling errors detected*\n\n`;
+            
+            const spellingGrouped = this.groupSpellingIssues(spelling);
+            
+            Object.entries(spellingGrouped).forEach(([word, data]) => {
+                report += `**${word}** - Potential misspelling (${data.totalCount} instances)\n`;
+                
+                Object.entries(data.sections).forEach(([sectionTitle, instances]) => {
+                    const positions = instances.map(i => `${i.Line}:${i.Span[1]}`).join(', ');
+                    report += `- ${sectionTitle}: (${positions})\n`;
+                });
+                report += '\n';
+            });
+        } else {
+            report += `## ✅ Spelling Issues\n\n`;
+            report += `No spelling errors detected. Great proofreading!\n\n`;
         }
         
         // Tier 2: Density Optimization
@@ -113,6 +137,33 @@ class TwoTierReporter {
                 // Remove this keyword entirely if no section has 2+ instances
                 delete grouped[keyword];
             }
+        });
+        
+        return grouped;
+    }
+    
+    /**
+     * Group spelling issues by misspelled word
+     */
+    groupSpellingIssues(spellingIssues) {
+        const grouped = {};
+        
+        spellingIssues.forEach(issue => {
+            const misspelledWord = this.extractKeyword(issue.Message);
+            
+            if (!grouped[misspelledWord]) {
+                grouped[misspelledWord] = {
+                    totalCount: 0,
+                    sections: {}
+                };
+            }
+            
+            if (!grouped[misspelledWord].sections[issue.sectionTitle]) {
+                grouped[misspelledWord].sections[issue.sectionTitle] = [];
+            }
+            
+            grouped[misspelledWord].totalCount++;
+            grouped[misspelledWord].sections[issue.sectionTitle].push(issue);
         });
         
         return grouped;

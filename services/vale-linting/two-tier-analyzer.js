@@ -13,7 +13,7 @@ class TwoTierAnalyzer {
     }
     
     /**
-     * Analyze resume with two-tier approach
+     * Analyze resume with two-tier approach plus spelling
      */
     async analyzeResume(jsonPath) {
         const startTime = Date.now();
@@ -26,6 +26,9 @@ class TwoTierAnalyzer {
         // Tier 1: Analyze each section individually for writing issues
         const tier1Results = await this.analyzeTier1(sections);
         
+        // Spelling: Analyze each section for spelling errors
+        const spellingResults = await this.analyzeSpelling(sections);
+        
         // Tier 2: Analyze entire resume for density patterns
         const tier2Results = await this.analyzeTier2(resume, jsonContent);
         
@@ -33,11 +36,12 @@ class TwoTierAnalyzer {
         
         return {
             tier1: tier1Results,
+            spelling: spellingResults,
             tier2: tier2Results,
             stats: {
                 duration,
                 sectionsAnalyzed: sections.length,
-                totalIssues: tier1Results.length + tier2Results.length
+                totalIssues: tier1Results.length + spellingResults.length + tier2Results.length
             }
         };
     }
@@ -138,6 +142,40 @@ class TwoTierAnalyzer {
     }
     
     /**
+     * Spelling: Analyze each section for spelling errors
+     */
+    async analyzeSpelling(sections) {
+        const spellingIssues = [];
+        
+        for (const section of sections) {
+            try {
+                const valeResults = await this.runValeOnContent(section.content, section.id);
+                
+                // Filter for spelling errors only
+                const spellingResults = valeResults.filter(issue => this.isSpellingError(issue.Message));
+                
+                // Add section context to spelling results
+                spellingResults.forEach(issue => {
+                    spellingIssues.push({
+                        ...issue,
+                        sectionId: section.id,
+                        sectionTitle: section.title,
+                        sectionType: section.type,
+                        jsonLine: section.jsonLine,
+                        tier: 'spelling',
+                        priority: 'critical',
+                        reason: 'Spelling error'
+                    });
+                });
+            } catch (error) {
+                console.error(`Error checking spelling in section ${section.id}:`, error.message);
+            }
+        }
+        
+        return spellingIssues;
+    }
+    
+    /**
      * Count word occurrences in text (case-insensitive)
      */
     countWordsInText(text) {
@@ -232,7 +270,17 @@ class TwoTierAnalyzer {
         const wordyMatch = message.match(/'([^']+)' is too wordy/i);
         if (wordyMatch) return wordyMatch[1];
         
+        const spellingMatch = message.match(/Did you really mean '([^']+)'/i);
+        if (spellingMatch) return spellingMatch[1];
+        
         return 'other';
+    }
+    
+    /**
+     * Check if issue is a spelling error
+     */
+    isSpellingError(message) {
+        return message.includes("Did you really mean");
     }
     
     /**
