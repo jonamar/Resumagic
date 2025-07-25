@@ -1,8 +1,13 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
-const path = require('path');
-const { execSync } = require('child_process');
+import fs from 'fs';
+import path from 'path';
+import { execSync } from 'child_process';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 /**
  * Model Performance Testing Framework
@@ -21,11 +26,12 @@ const TEST_MODELS = {
     'qwen3:8b'
   ],
   
-  // 3-4B candidates for speed
+  // 3-4B candidates for speed (and ultra-light models)
   speed_3_4b: [
     'gemma3:4b',
     'phi3:mini', 
-    'qwen3:4b'
+    'qwen3:4b',
+    'qwen3:0.6b'  // Ultra-lightweight model for speed testing
   ]
 };
 
@@ -389,7 +395,7 @@ class ModelPerformanceTester {
 }
 
 // CLI interface
-if (require.main === module) {
+if (import.meta.url === `file://${process.argv[1]}`) {
   const tester = new ModelPerformanceTester();
   
   tester.runFullBenchmark()
@@ -400,4 +406,4 @@ if (require.main === module) {
     });
 }
 
-module.exports = ModelPerformanceTester;
+export default ModelPerformanceTester;

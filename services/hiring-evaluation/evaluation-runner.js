@@ -1,9 +1,14 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
-const path = require('path');
-const https = require('https');
-const http = require('http');
+import fs from 'fs';
+import path from 'path';
+import https from 'https';
+import http from 'http';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 class EvaluationRunner {
     constructor(applicationName = 'elovate-director-product-management') {
@@ -197,12 +202,12 @@ class EvaluationRunner {
 
     async loadPrompt(persona, provider = 'claude') {
         // Generate prompt from YAML configuration
-        const { generatePrompt } = require('./generate-prompt.js');
+        const { generatePrompt } = await import('./generate-prompt.js');
         return generatePrompt(persona);
     }
 
     async preparePrompt(persona, provider = 'claude') {
-        const KeywordExtractor = require('./keyword-extractor.js');
+        const { default: KeywordExtractor } = await import('./keyword-extractor.js');
         const extractor = new KeywordExtractor();
         
         const { jobPosting, resume } = await this.loadApplicationMaterials();
@@ -369,7 +374,7 @@ class EvaluationRunner {
         const evaluations = await Promise.all(evaluationPromises);
         
         // Process results with our enhanced evaluation processor
-        const { processEvaluationResults } = require('./evaluation-processor.js');
+        const { processEvaluationResults } = await import('./evaluation-processor.js');
         const summary = processEvaluationResults(evaluations, candidateName);
         
         // Save raw results
