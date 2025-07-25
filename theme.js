@@ -70,9 +70,9 @@ const theme = {
     bulletIndent: 360,    // 0.25 inch - bullet indentation
     bulletHanging: 360,   // 0.25 inch - bullet hanging indent
     
-    // Line spacing multipliers (240 = 1.0x, 360 = 1.5x)
+    // Line spacing multipliers (240 = 1.0x, 384 = 1.6x)
     singleLine: 240,      // 1.0 line spacing
-    oneAndHalfLine: 360,  // 1.5 line spacing
+    oneAndHalfLine: 384,  // 1.6 line spacing
     
     // Specific use cases
     afterHeader: 240,     // 12pt after header elements
