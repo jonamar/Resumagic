@@ -21,7 +21,7 @@ describe('Application Isolation', () => {
     'zearch-director-of-product-marketing'
   ];
 
-  let baselineTimestamps = {};
+  const baselineTimestamps = {};
 
   beforeAll(() => {
     // Capture baseline timestamps for all applications
@@ -67,8 +67,8 @@ describe('Application Isolation', () => {
     }
 
     // Check that only target application files were modified
-    let modifiedApps = [];
-    let unchangedApps = [];
+    const modifiedApps = [];
+    const unchangedApps = [];
 
     testApps.forEach(app => {
       if (!baselineTimestamps[app]) return; // Skip if no baseline

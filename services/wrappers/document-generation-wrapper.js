@@ -5,9 +5,8 @@
  */
 
 import fs from 'fs';
-import path from 'path';
+import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
-import { dirname } from 'path';
 import { BaseServiceWrapper } from './base-service-wrapper.js';
 import * as documentOrchestrator from '../../document-orchestrator.js';
 

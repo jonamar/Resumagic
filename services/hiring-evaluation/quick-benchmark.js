@@ -63,16 +63,16 @@ class QuickBenchmark extends ModelPerformanceTester {
   generateQuickReport() {
     const results = this.testResults.results;
     
-    let content = `# Quick Model Benchmark Results\\n\\n`;
+    let content = '# Quick Model Benchmark Results\\n\\n';
     content += `**Test Date**: ${this.testResults.timestamp}\\n`;
-    content += `**Test Candidate**: Alex Johnson (Weak - Expected scores 3-6)\\n\\n`;
+    content += '**Test Candidate**: Alex Johnson (Weak - Expected scores 3-6)\\n\\n';
     
     // Speed ranking
     const speedRanking = Object.entries(results)
       .filter(([model, data]) => data.quick_test_result.success)
       .sort((a, b) => a[1].quick_test_result.duration_seconds - b[1].quick_test_result.duration_seconds);
     
-    content += `## ⚡ Speed Ranking\\n\\n`;
+    content += '## ⚡ Speed Ranking\\n\\n';
     speedRanking.forEach(([model, data], index) => {
       const time = data.quick_test_result.duration_seconds;
       const improvement = index === 0 ? 'FASTEST' : 
@@ -85,7 +85,7 @@ class QuickBenchmark extends ModelPerformanceTester {
       .filter(([model, data]) => data.quick_test_result.success)
       .sort((a, b) => b[1].quick_test_result.quality_assessment.quality_score - a[1].quick_test_result.quality_assessment.quality_score);
     
-    content += `\\n## 🎯 Quality Ranking\\n\\n`;
+    content += '\\n## 🎯 Quality Ranking\\n\\n';
     qualityRanking.forEach(([model, data], index) => {
       const quality = data.quick_test_result.quality_assessment.quality_score;
       const avgScore = data.quick_test_result.scores.average;
@@ -94,7 +94,7 @@ class QuickBenchmark extends ModelPerformanceTester {
     });
     
     // Recommendations
-    content += `\\n## 🏆 Quick Recommendations\\n\\n`;
+    content += '\\n## 🏆 Quick Recommendations\\n\\n';
     
     if (speedRanking.length > 0) {
       const fastestModel = speedRanking[0][0];

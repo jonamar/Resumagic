@@ -6,9 +6,8 @@
 import { resolvePaths, validatePaths, hasMarkdownFile, loadResumeData } from '../../path-resolver.js';
 import { TestFileUtils, MockDataUtils } from '../helpers/test-utils.js';
 import fs from 'fs';
-import path from 'path';
+import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
-import { dirname } from 'path';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

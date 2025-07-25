@@ -216,14 +216,14 @@ const theme = {
   // ATS best practices
   ats: {
     sectionTitles: {
-      experience: "EXPERIENCE",
-      education: "EDUCATION",
-      skills: "SKILLS",
-      projects: "PROJECTS",
-      speakingEngagements: "SPEAKING ENGAGEMENTS",
-      languages: "LANGUAGES",
+      experience: 'EXPERIENCE',
+      education: 'EDUCATION',
+      skills: 'SKILLS',
+      projects: 'PROJECTS',
+      speakingEngagements: 'SPEAKING ENGAGEMENTS',
+      languages: 'LANGUAGES',
     },
-    dateFormat: "MMM-YYYY", // ATS-friendly date format
+    dateFormat: 'MMM-YYYY', // ATS-friendly date format
   }
 };
 

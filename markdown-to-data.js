@@ -94,7 +94,7 @@ function parseMarkdownContent(content) {
 function parseInlineMarkdown(text) {
   // Simple regex patterns for bold and italic
   const parts = [];
-  let remainingText = text;
+  const remainingText = text;
   
   // Find all bold (**text**) and italic (*text*) patterns
   const boldPattern = /\*\*(.+?)\*\*/g;

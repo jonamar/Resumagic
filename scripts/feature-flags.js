@@ -204,54 +204,54 @@ function main() {
   const persist = args.includes('--persist');
   
   switch (command) {
-    case 'list':
-      listFlags();
-      break;
+  case 'list':
+    listFlags();
+    break;
       
-    case 'enable':
-      if (args.length < 2) {
-        console.error('Error: Flag name required for enable command');
-        process.exit(1);
-      }
-      enableFlag(args[1], persist);
-      break;
-      
-    case 'disable':
-      if (args.length < 2) {
-        console.error('Error: Flag name required for disable command');
-        process.exit(1);
-      }
-      disableFlag(args[1], persist);
-      break;
-      
-    case 'toggle':
-      if (args.length < 2) {
-        console.error('Error: Flag name required for toggle command');
-        process.exit(1);
-      }
-      toggleFlag(args[1], persist);
-      break;
-      
-    case 'reset':
-      resetFlags(persist);
-      break;
-      
-    case 'validate':
-      validateFlags();
-      break;
-      
-    case 'implementation':
-      if (args.length < 2) {
-        console.error('Error: Service name required for implementation command');
-        process.exit(1);
-      }
-      showImplementation(args[1]);
-      break;
-      
-    default:
-      console.error(`Error: Unknown command: ${command}`);
-      console.error('Run with --help to see available commands');
+  case 'enable':
+    if (args.length < 2) {
+      console.error('Error: Flag name required for enable command');
       process.exit(1);
+    }
+    enableFlag(args[1], persist);
+    break;
+      
+  case 'disable':
+    if (args.length < 2) {
+      console.error('Error: Flag name required for disable command');
+      process.exit(1);
+    }
+    disableFlag(args[1], persist);
+    break;
+      
+  case 'toggle':
+    if (args.length < 2) {
+      console.error('Error: Flag name required for toggle command');
+      process.exit(1);
+    }
+    toggleFlag(args[1], persist);
+    break;
+      
+  case 'reset':
+    resetFlags(persist);
+    break;
+      
+  case 'validate':
+    validateFlags();
+    break;
+      
+  case 'implementation':
+    if (args.length < 2) {
+      console.error('Error: Service name required for implementation command');
+      process.exit(1);
+    }
+    showImplementation(args[1]);
+    break;
+      
+  default:
+    console.error(`Error: Unknown command: ${command}`);
+    console.error('Run with --help to see available commands');
+    process.exit(1);
   }
 }
 

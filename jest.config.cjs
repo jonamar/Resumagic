@@ -9,7 +9,7 @@ module.exports = {
   
   // ESM Support
   moduleNameMapper: {
-    '^(\.\.?\/.+)\.js$': '$1'
+    '^(\\.\\.?\\/.+)\\.js$': '$1'
   },
   transform: {},
   

@@ -5,9 +5,9 @@
  */
 
 import { Document, Paragraph, TextRun, HeadingLevel, AlignmentType, Table, 
-        TableRow, TableCell, BorderStyle, WidthType, TableLayoutType, 
-        UnderlineType, TableBorders, SectionType, PageBreak, LevelFormat,
-        convertInchesToTwip, ExternalHyperlink } from 'docx';
+  TableRow, TableCell, BorderStyle, WidthType, TableLayoutType, 
+  UnderlineType, TableBorders, SectionType, PageBreak, LevelFormat,
+  convertInchesToTwip, ExternalHyperlink } from 'docx';
 import theme from './theme.js';
 import { parseTextWithFormatting } from './markdown-parser.js';
 
@@ -64,12 +64,12 @@ function createResumeDocx(resumeData, options = {}) {
     numbering: {
       config: [
         {
-          reference: "small-bullet",
+          reference: 'small-bullet',
           levels: [
             {
               level: 0,
               format: LevelFormat.BULLET,
-              text: "•",
+              text: '•',
               alignment: AlignmentType.LEFT,
               style: {
                 run: {
@@ -86,13 +86,13 @@ function createResumeDocx(resumeData, options = {}) {
     styles: {
       paragraphStyles: [
         {
-          id: "applicantName",
-          name: "Applicant Name",
-          basedOn: "Normal",
-          next: "Normal",
+          id: 'applicantName',
+          name: 'Applicant Name',
+          basedOn: 'Normal',
+          next: 'Normal',
           run: {
             size: theme.fontSize.name * 2, // Convert to half-points
-            font: "Arial", // Set Arial as the default font for all runs
+            font: 'Arial', // Set Arial as the default font for all runs
             bold: true,
             color: theme.colors.headings,
           },
@@ -103,12 +103,12 @@ function createResumeDocx(resumeData, options = {}) {
             indent: {
               left: 0 // No indentation
             },
-            font: "Arial", // Explicitly set font at paragraph level too
+            font: 'Arial', // Explicitly set font at paragraph level too
           },
         },
       ],
       defaultRunProperties: {
-        font: "Arial", // Set Arial as the default font for all runs
+        font: 'Arial', // Set Arial as the default font for all runs
       },
     },
     sections: [{
@@ -136,7 +136,7 @@ function createHeader(basics) {
   paragraphs.push(
     new Paragraph({
       text: basics.name,
-      style: "applicantName",
+      style: 'applicantName',
       alignment: AlignmentType.LEFT,
       spacing: {
         after: theme.spacingTwips.afterHeader, // 12pt
@@ -194,7 +194,7 @@ function createHeader(basics) {
     
     basics.profiles.forEach((profile, index) => {
       // Clean up the display text by removing protocol and www
-      let displayText = profile.url
+      const displayText = profile.url
         .replace(/^https?:\/\//, '') // Remove http:// or https://
         .replace(/^www\./, '');       // Remove www.
       
@@ -366,10 +366,10 @@ function createSkills(skills) {
             font: theme.fonts.primary,
             color: theme.colors.dimText
           }),
-                  spacing: {
-          after: theme.spacingTwips.xlarge, // 9pt
-          line: theme.spacingTwips.resumeLine
-        }
+          spacing: {
+            after: theme.spacingTwips.xlarge, // 9pt
+            line: theme.spacingTwips.resumeLine
+          }
         })
       );
     }
@@ -716,7 +716,7 @@ function createItemSection(items, config) {
               color: theme.colors.text
             }),
             numbering: {
-              reference: "small-bullet",
+              reference: 'small-bullet',
               level: 0
             },
             spacing: {
@@ -743,7 +743,7 @@ function createItemSection(items, config) {
       
       paragraphs.push(
         new Paragraph({
-          text: "",
+          text: '',
           spacing: {
             after: spacing
           }
@@ -767,7 +767,7 @@ function createSectionHeading(title, pageBreak = false) {
       new TextRun({
         text: title.toUpperCase(),
         size: theme.fontSize.sectionHeading * 2, // Convert to half-points
-        font: "Arial", // Set Arial as the default font for all runs
+        font: 'Arial', // Set Arial as the default font for all runs
         color: theme.colors.headings,
         bold: true
       })
@@ -933,12 +933,12 @@ function createCoverLetterDocx(coverLetterData, options = {}) {
     numbering: {
       config: [
         {
-          reference: "small-bullet",
+          reference: 'small-bullet',
           levels: [
             {
               level: 0,
               format: LevelFormat.BULLET,
-              text: "•",
+              text: '•',
               alignment: AlignmentType.LEFT,
               style: {
                 run: {
@@ -955,13 +955,13 @@ function createCoverLetterDocx(coverLetterData, options = {}) {
     styles: {
       paragraphStyles: [
         {
-          id: "applicantName",
-          name: "Applicant Name",
-          basedOn: "Normal",
-          next: "Normal",
+          id: 'applicantName',
+          name: 'Applicant Name',
+          basedOn: 'Normal',
+          next: 'Normal',
           run: {
             size: theme.fontSize.name * 2, // Convert to half-points
-            font: "Arial", // Set Arial as the default font for all runs
+            font: 'Arial', // Set Arial as the default font for all runs
             bold: true,
             color: theme.colors.headings,
           },
@@ -972,12 +972,12 @@ function createCoverLetterDocx(coverLetterData, options = {}) {
             indent: {
               left: 0 // No indentation
             },
-            font: "Arial", // Explicitly set font at paragraph level too
+            font: 'Arial', // Explicitly set font at paragraph level too
           },
         },
       ],
       defaultRunProperties: {
-        font: "Arial", // Set Arial as the default font for all runs
+        font: 'Arial', // Set Arial as the default font for all runs
       },
     },
     sections: [{
@@ -1080,7 +1080,7 @@ function createCoverLetterContent(content) {
           new Paragraph({
             children: textRuns,
             numbering: {
-              reference: "small-bullet",
+              reference: 'small-bullet',
               level: 0
             },
             spacing: {
@@ -1314,12 +1314,12 @@ function createCombinedDocx(coverLetterData, resumeData, options = {}) {
     numbering: {
       config: [
         {
-          reference: "small-bullet",
+          reference: 'small-bullet',
           levels: [
             {
               level: 0,
               format: LevelFormat.BULLET,
-              text: "•",
+              text: '•',
               alignment: AlignmentType.LEFT,
               style: {
                 run: {
@@ -1336,13 +1336,13 @@ function createCombinedDocx(coverLetterData, resumeData, options = {}) {
     styles: {
       paragraphStyles: [
         {
-          id: "applicantName",
-          name: "Applicant Name",
-          basedOn: "Normal",
-          next: "Normal",
+          id: 'applicantName',
+          name: 'Applicant Name',
+          basedOn: 'Normal',
+          next: 'Normal',
           run: {
             size: theme.fontSize.name * 2, // Convert to half-points
-            font: "Arial",
+            font: 'Arial',
             bold: true,
             color: theme.colors.headings,
           },
@@ -1353,12 +1353,12 @@ function createCombinedDocx(coverLetterData, resumeData, options = {}) {
             indent: {
               left: 0 // No indentation
             },
-            font: "Arial",
+            font: 'Arial',
           },
         },
       ],
       defaultRunProperties: {
-        font: "Arial",
+        font: 'Arial',
       },
     },
     sections: [

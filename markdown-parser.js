@@ -16,7 +16,7 @@ function parseTextWithFormatting(text) {
 
   const parts = [];
   let remainingText = text;
-  let position = 0;
+  const position = 0;
 
   // Process text iteratively to handle overlapping patterns correctly
   while (remainingText.length > 0) {
@@ -96,50 +96,50 @@ function parseTextWithFormatting(text) {
 function runTests() {
   const tests = [
     {
-      input: "Plain text",
-      expected: [{ text: "Plain text", bold: false, italic: false }]
+      input: 'Plain text',
+      expected: [{ text: 'Plain text', bold: false, italic: false }]
     },
     {
-      input: "This is **bold** text",
+      input: 'This is **bold** text',
       expected: [
-        { text: "This is ", bold: false, italic: false },
-        { text: "bold", bold: true, italic: false },
-        { text: " text", bold: false, italic: false }
+        { text: 'This is ', bold: false, italic: false },
+        { text: 'bold', bold: true, italic: false },
+        { text: ' text', bold: false, italic: false }
       ]
     },
     {
-      input: "This is *italic* text",
+      input: 'This is *italic* text',
       expected: [
-        { text: "This is ", bold: false, italic: false },
-        { text: "italic", bold: false, italic: true },
-        { text: " text", bold: false, italic: false }
+        { text: 'This is ', bold: false, italic: false },
+        { text: 'italic', bold: false, italic: true },
+        { text: ' text', bold: false, italic: false }
       ]
     },
     {
-      input: "This is ***bold italic*** text",
+      input: 'This is ***bold italic*** text',
       expected: [
-        { text: "This is ", bold: false, italic: false },
-        { text: "bold italic", bold: true, italic: true },
-        { text: " text", bold: false, italic: false }
+        { text: 'This is ', bold: false, italic: false },
+        { text: 'bold italic', bold: true, italic: true },
+        { text: ' text', bold: false, italic: false }
       ]
     },
     {
-      input: "**Bold** and *italic* and ***both***",
+      input: '**Bold** and *italic* and ***both***',
       expected: [
-        { text: "Bold", bold: true, italic: false },
-        { text: " and ", bold: false, italic: false },
-        { text: "italic", bold: false, italic: true },
-        { text: " and ", bold: false, italic: false },
-        { text: "both", bold: true, italic: true }
+        { text: 'Bold', bold: true, italic: false },
+        { text: ' and ', bold: false, italic: false },
+        { text: 'italic', bold: false, italic: true },
+        { text: ' and ', bold: false, italic: false },
+        { text: 'both', bold: true, italic: true }
       ]
     },
     {
-      input: "Numbers: **16x growth** and **$26.6M CAD**",
+      input: 'Numbers: **16x growth** and **$26.6M CAD**',
       expected: [
-        { text: "Numbers: ", bold: false, italic: false },
-        { text: "16x growth", bold: true, italic: false },
-        { text: " and ", bold: false, italic: false },
-        { text: "$26.6M CAD", bold: true, italic: false }
+        { text: 'Numbers: ', bold: false, italic: false },
+        { text: '16x growth', bold: true, italic: false },
+        { text: ' and ', bold: false, italic: false },
+        { text: '$26.6M CAD', bold: true, italic: false }
       ]
     }
   ];
@@ -152,8 +152,8 @@ function runTests() {
     if (!passed) {
       console.error(`Test ${index + 1} failed:`);
       console.error(`Input: "${test.input}"`);
-      console.error(`Expected:`, test.expected);
-      console.error(`Got:`, result);
+      console.error('Expected:', test.expected);
+      console.error('Got:', result);
       allPassed = false;
     }
   });
