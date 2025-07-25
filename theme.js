@@ -70,9 +70,9 @@ const theme = {
     bulletIndent: 360,    // 0.25 inch - bullet indentation
     bulletHanging: 360,   // 0.25 inch - bullet hanging indent
     
-    // Line spacing multipliers (240 = 1.0x, 384 = 1.6x)
+    // Line spacing multipliers (240 = 1.0x, 408 = 1.7x)
     singleLine: 240,      // 1.0 line spacing
-    oneAndHalfLine: 384,  // 1.6 line spacing
+    oneAndHalfLine: 408,  // 1.7 line spacing
     
     // Specific use cases
     afterHeader: 240,     // 12pt after header elements
@@ -80,7 +80,7 @@ const theme = {
     afterJobTitle: 60,    // 3pt after job titles
     afterCompanyName: 60, // 3pt after company names
     afterDate: 80,        // 4pt after date lines
-    afterSummary: 80,     // 4pt after summary paragraphs
+    afterSummary: 120,    // 6pt after summary paragraphs (increased for better spacing)
     afterBullet: 60,      // 3pt after bullet points
     afterJobEntry: 80,    // 4pt after job entries
     afterProjectEntry: 180, // 9pt after project entries
