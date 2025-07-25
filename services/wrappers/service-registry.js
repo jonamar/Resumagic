@@ -4,10 +4,10 @@
  * Part of Phase 2: Standardize Existing Service Infrastructure
  */
 
-const KeywordAnalysisWrapper = require('./keyword-analysis-wrapper');
-const HiringEvaluationWrapper = require('./hiring-evaluation-wrapper');
-const DocumentGenerationWrapper = require('./document-generation-wrapper');
-const { getFeatureFlags } = require('../../feature-flags');
+import KeywordAnalysisWrapper from './keyword-analysis-wrapper.js';
+import HiringEvaluationWrapper from './hiring-evaluation-wrapper.js';
+import DocumentGenerationWrapper from './document-generation-wrapper.js';
+import { getFeatureFlags } from '../../feature-flags.js';
 
 /**
  * Registry of all available service wrappers
@@ -214,7 +214,7 @@ function getServiceConfiguration() {
   };
 }
 
-module.exports = {
+export {
   getServiceWrapper,
   getAvailableServices,
   isServiceAvailable,

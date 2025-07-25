@@ -1,10 +1,10 @@
-const fs = require('fs');
-const { execSync } = require('child_process');
-const { Packer } = require('docx');
-const JSZip = require('jszip');
-const { createResumeDocx, createCoverLetterDocx, createCombinedDocx } = require('./docx-template');
-const { parseMarkdownCoverLetter } = require('./markdown-to-data');
-const theme = require('./theme');
+import fs from 'fs';
+import { execSync } from 'child_process';
+import { Packer } from 'docx';
+import JSZip from 'jszip';
+import { createResumeDocx, createCoverLetterDocx, createCombinedDocx } from './docx-template.js';
+import { parseMarkdownCoverLetter } from './markdown-to-data.js';
+import theme from './theme.js';
 
 /**
  * Document Orchestrator Module
@@ -241,7 +241,7 @@ async function orchestrateGeneration(generationPlan, paths, resumeData, autoPrev
   }
 }
 
-module.exports = {
+export {
   removeCompatibilityMode,
   generateResumeDocument,
   generateCoverLetterDocument,

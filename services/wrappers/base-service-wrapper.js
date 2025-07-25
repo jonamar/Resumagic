@@ -4,7 +4,7 @@
  * Part of Phase 2: Standardize Existing Service Infrastructure
  */
 
-const { getFeatureFlags } = require('../../feature-flags');
+import { getFeatureFlags } from '../../feature-flags.js';
 
 /**
  * Standard JSON API response format for all services
@@ -153,7 +153,7 @@ class BaseServiceWrapper {
   }
 }
 
-module.exports = {
+export {
   BaseServiceWrapper,
   ServiceResponse
 };

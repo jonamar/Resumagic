@@ -165,7 +165,7 @@ function runTests() {
   return allPassed;
 }
 
-module.exports = {
+export {
   parseTextWithFormatting,
   runTests
 }; 

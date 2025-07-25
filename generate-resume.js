@@ -1,8 +1,16 @@
-const path = require('path');
-const { parseCliArguments, validateCliArguments, determineGenerationPlan, validateGenerationPlan, displayUsage } = require('./cli-parser');
-const { resolvePaths, validatePaths, hasMarkdownFile, loadResumeData, displayApplicationNotFoundError } = require('./path-resolver');
-const { orchestrateGeneration } = require('./document-orchestrator');
-const theme = require('./theme');
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { exec } from 'child_process';
+import { promisify } from 'util';
+import fs from 'fs';
+import { parseCliArguments, validateCliArguments, determineGenerationPlan, validateGenerationPlan, displayUsage } from './cli-parser.js';
+import { resolvePaths, validatePaths, hasMarkdownFile, loadResumeData, displayApplicationNotFoundError } from './path-resolver.js';
+import { orchestrateGeneration } from './document-orchestrator.js';
+import theme from './theme.js';
+
+// ESM equivalent of __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 /**
  * Main Resume Generator Application
@@ -18,11 +26,7 @@ async function runKeywordAnalysis(applicationName) {
   console.log(`${theme.messages.emojis.processing} Starting keyword analysis...`);
   
   try {
-    const { exec } = require('child_process');
-    const { promisify } = require('util');
     const execAsync = promisify(exec);
-    const path = require('path');
-    const fs = require('fs');
     
     // Construct paths to required files
     const applicationPath = path.join(__dirname, '../data/applications', applicationName);
@@ -87,7 +91,7 @@ async function runHiringEvaluation(applicationName, resumeData, fastMode = false
   console.log(`${theme.messages.emojis.processing} Starting hiring ${mode}...`);
   
   try {
-    const EvaluationRunner = require('./services/hiring-evaluation/evaluation-runner');
+    const { EvaluationRunner } = await import('./services/hiring-evaluation/evaluation-runner.js');
     const evaluator = new EvaluationRunner(applicationName);
     
     // Set fast mode if requested

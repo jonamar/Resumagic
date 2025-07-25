@@ -4,10 +4,10 @@
  * Part of Phase 2: Standardize Existing Service Infrastructure
  */
 
-const fs = require('fs');
-const path = require('path');
-const { BaseServiceWrapper } = require('./base-service-wrapper');
-const documentOrchestrator = require('../../document-orchestrator');
+import fs from 'fs';
+import path from 'path';
+import { BaseServiceWrapper } from './base-service-wrapper.js';
+import * as documentOrchestrator from '../../document-orchestrator.js';
 
 class DocumentGenerationWrapper extends BaseServiceWrapper {
   constructor() {
@@ -278,4 +278,4 @@ class DocumentGenerationWrapper extends BaseServiceWrapper {
   }
 }
 
-module.exports = DocumentGenerationWrapper;
+export default DocumentGenerationWrapper;

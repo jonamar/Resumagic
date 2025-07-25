@@ -4,13 +4,13 @@
  * Part of Phase 2: Standardize Existing Service Infrastructure
  */
 
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
 // Import service wrappers directly to avoid registry dependency chain
-const KeywordAnalysisWrapper = require('../../services/wrappers/keyword-analysis-wrapper');
-const HiringEvaluationWrapper = require('../../services/wrappers/hiring-evaluation-wrapper');
-const { BaseServiceWrapper, ServiceResponse } = require('../../services/wrappers/base-service-wrapper');
+import KeywordAnalysisWrapper from '../../services/wrappers/keyword-analysis-wrapper.js';
+import HiringEvaluationWrapper from '../../services/wrappers/hiring-evaluation-wrapper.js';
+import { BaseServiceWrapper, ServiceResponse } from '../../services/wrappers/base-service-wrapper.js';
 
 describe('Core Service Wrapper Validation', () => {
   

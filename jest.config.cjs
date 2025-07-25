@@ -7,6 +7,12 @@ module.exports = {
   // Test environment
   testEnvironment: 'node',
   
+  // ESM Support
+  moduleNameMapper: {
+    '^(\.\.?\/.+)\.js$': '$1'
+  },
+  transform: {},
+  
   // Test file patterns
   testMatch: [
     '**/__tests__/**/*.js',

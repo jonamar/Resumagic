@@ -3,7 +3,7 @@
  * Migrated from inline tests in markdown-parser.js
  */
 
-const { parseTextWithFormatting } = require('../../markdown-parser');
+import { parseTextWithFormatting } from '../../markdown-parser.js';
 
 describe('Markdown Parser', () => {
   describe('parseTextWithFormatting', () => {

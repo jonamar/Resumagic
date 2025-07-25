@@ -4,9 +4,9 @@
  * Part of Phase 2: Standardize Existing Service Infrastructure
  */
 
-const fs = require('fs');
-const path = require('path');
-const { BaseServiceWrapper } = require('./base-service-wrapper');
+import fs from 'fs';
+import path from 'path';
+import { BaseServiceWrapper } from './base-service-wrapper.js';
 
 class HiringEvaluationWrapper extends BaseServiceWrapper {
   constructor() {
@@ -80,7 +80,7 @@ class HiringEvaluationWrapper extends BaseServiceWrapper {
   async executeLegacyEvaluation(input, startTime) {
     try {
       // Import the actual hiring evaluation service
-      const evaluationRunner = require('../hiring-evaluation/evaluation-runner');
+      const { default: evaluationRunner } = await import('../hiring-evaluation/evaluation-runner.js');
       
       // Prepare evaluation context
       const evaluationContext = {
@@ -221,4 +221,4 @@ class HiringEvaluationWrapper extends BaseServiceWrapper {
   }
 }
 
-module.exports = HiringEvaluationWrapper;
+export default HiringEvaluationWrapper;

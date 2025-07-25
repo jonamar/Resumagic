@@ -4,10 +4,10 @@
  * Part of Phase 2: Standardize Existing Service Infrastructure
  */
 
-const fs = require('fs');
-const path = require('path');
-const { getServiceWrapper, getServicesHealthStatus } = require('../../services/wrappers/service-registry');
-const { getFeatureFlags } = require('../../feature-flags');
+import fs from 'fs';
+import path from 'path';
+import { getServiceWrapper, getServicesHealthStatus } from '../../services/wrappers/service-registry.js';
+import { getFeatureFlags } from '../../feature-flags.js';
 
 describe('Service Wrapper Interface Validation', () => {
   let featureFlags;

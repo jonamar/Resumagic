@@ -60,7 +60,7 @@ const CONTEXT_TYPES = {
   USER_INPUT: 'USER_INPUT'
 };
 
-module.exports = {
+export {
   ERROR_TYPES,
   ERROR_SEVERITY,
   CONTEXT_TYPES

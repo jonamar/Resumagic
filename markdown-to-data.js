@@ -3,10 +3,10 @@
  * Converts markdown cover letters with YAML front matter to pipeline-compatible data
  */
 
-const fs = require('fs');
-const path = require('path');
-const matter = require('gray-matter');
-const { marked } = require('marked');
+import fs from 'fs';
+import path from 'path';
+import matter from 'gray-matter';
+import { marked } from 'marked';
 
 /**
  * Parses a markdown cover letter file and transforms it to pipeline-compatible data
@@ -179,7 +179,7 @@ function findMarkdownFile(jsonFilePath) {
   return null;
 }
 
-module.exports = {
+export {
   parseMarkdownCoverLetter,
   findMarkdownFile
 }; 

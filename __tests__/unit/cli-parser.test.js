@@ -3,8 +3,8 @@
  * Tests command line argument parsing and validation
  */
 
-const { parseCliArguments, validateCliArguments, determineGenerationPlan, validateGenerationPlan } = require('../../cli-parser');
-const { MockDataUtils, ConsoleUtils } = require('../helpers/test-utils');
+import { parseCliArguments, validateCliArguments, determineGenerationPlan, validateGenerationPlan } from '../../cli-parser.js';
+import { MockDataUtils, ConsoleUtils } from '../helpers/test-utils.js';
 
 describe('CLI Parser', () => {
   describe('parseCliArguments', () => {

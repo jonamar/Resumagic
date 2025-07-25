@@ -4,12 +4,12 @@
  * Part of Phase 2: Standardize Existing Service Infrastructure
  */
 
-const { exec } = require('child_process');
-const { promisify } = require('util');
+import { exec } from 'child_process';
+import { promisify } from 'util';
 const execAsync = promisify(exec);
-const fs = require('fs');
-const path = require('path');
-const { BaseServiceWrapper } = require('./base-service-wrapper');
+import fs from 'fs';
+import path from 'path';
+import { BaseServiceWrapper } from './base-service-wrapper.js';
 
 class KeywordAnalysisWrapper extends BaseServiceWrapper {
   constructor() {
@@ -193,4 +193,4 @@ class KeywordAnalysisWrapper extends BaseServiceWrapper {
   }
 }
 
-module.exports = KeywordAnalysisWrapper;
+export default KeywordAnalysisWrapper;

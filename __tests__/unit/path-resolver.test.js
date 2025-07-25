@@ -3,10 +3,10 @@
  * Tests path resolution and validation functionality
  */
 
-const { resolvePaths, validatePaths, hasMarkdownFile, loadResumeData } = require('../../path-resolver');
-const { TestFileUtils, MockDataUtils } = require('../helpers/test-utils');
-const fs = require('fs');
-const path = require('path');
+import { resolvePaths, validatePaths, hasMarkdownFile, loadResumeData } from '../../path-resolver.js';
+import { TestFileUtils, MockDataUtils } from '../helpers/test-utils.js';
+import fs from 'fs';
+import path from 'path';
 
 describe('Path Resolver', () => {
   let tempDir;

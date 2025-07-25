@@ -4,12 +4,12 @@
  * Based on styling from visual-design-spec.md
  */
 
-const { Document, Paragraph, TextRun, HeadingLevel, AlignmentType, Table, 
+import { Document, Paragraph, TextRun, HeadingLevel, AlignmentType, Table, 
         TableRow, TableCell, BorderStyle, WidthType, TableLayoutType, 
         UnderlineType, TableBorders, SectionType, PageBreak, LevelFormat,
-        convertInchesToTwip, ExternalHyperlink } = require('docx');
-const theme = require('./theme');
-const { parseTextWithFormatting } = require('./markdown-parser');
+        convertInchesToTwip, ExternalHyperlink } from 'docx';
+import theme from './theme.js';
+import { parseTextWithFormatting } from './markdown-parser.js';
 
 /**
  * Creates formatted TextRun elements from text with markdown-style formatting
@@ -1375,7 +1375,7 @@ function createCombinedDocx(coverLetterData, resumeData, options = {}) {
   return doc;
 }
 
-module.exports = { 
+export { 
   createResumeDocx,
   createCoverLetterDocx,
   createCombinedDocx

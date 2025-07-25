@@ -1,8 +1,8 @@
-const fs = require('fs');
-const path = require('path');
-const theme = require('./theme');
-const ErrorHandler = require('./utils/error-handler');
-const { ERROR_TYPES } = require('./utils/error-types');
+import fs from 'fs';
+import path from 'path';
+import theme from './theme.js';
+import ErrorHandler from './utils/error-handler.js';
+import { ERROR_TYPES } from './utils/error-types.js';
 
 // Initialize error handler for CLI operations
 const errorHandler = new ErrorHandler({
@@ -238,7 +238,7 @@ function displayUsage(applicationsDir, applicationName) {
   console.error(theme.messages.usage.createCommand.replace('{name}', applicationName || '<application-name>'));
 }
 
-module.exports = {
+export {
   parseCliArguments,
   validateCliArguments,
   determineGenerationPlan,

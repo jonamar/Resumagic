@@ -1,8 +1,8 @@
-const path = require('path');
-const fs = require('fs');
-const theme = require('./theme');
-const ErrorHandler = require('./utils/error-handler');
-const { ERROR_TYPES } = require('./utils/error-types');
+import path from 'path';
+import fs from 'fs';
+import theme from './theme.js';
+import ErrorHandler from './utils/error-handler.js';
+import { ERROR_TYPES } from './utils/error-types.js';
 
 // Initialize error handler for path resolution operations
 const errorHandler = new ErrorHandler({
@@ -166,13 +166,10 @@ function hasMarkdownFile(markdownFilePath) {
  */
 function loadResumeData(resumeDataPath) {
   try {
-    // Clear require cache to prevent cross-application contamination
-    delete require.cache[require.resolve(resumeDataPath)];
-    
     // Log the file being loaded for debugging
     console.log(`🔍 Loading resume data from: ${resumeDataPath}`);
     
-    // Use fs.readFileSync instead of require() to avoid caching issues
+    // Use fs.readFileSync to load JSON data
     const resumeDataRaw = fs.readFileSync(resumeDataPath, 'utf8');
     const resumeData = JSON.parse(resumeDataRaw);
     
@@ -233,7 +230,7 @@ function displayApplicationNotFoundError(applicationName, baseDir) {
   console.error(theme.messages.usage.createCommand.replace('{name}', applicationName));
 }
 
-module.exports = {
+export {
   extractCompanyFromFolderName,
   resolvePaths,
   validatePaths,

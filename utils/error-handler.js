@@ -3,8 +3,8 @@
  * Provides consistent error logging, formatting, and result creation across the application
  */
 
-const { ERROR_TYPES, ERROR_SEVERITY, CONTEXT_TYPES } = require('./error-types');
-const theme = require('../theme');
+import { ERROR_TYPES, ERROR_SEVERITY, CONTEXT_TYPES } from './error-types.js';
+import theme from '../theme.js';
 
 /**
  * Configuration for error handling behavior
@@ -204,9 +204,9 @@ class ErrorHandler {
    * @param {Object} [additionalInfo] - Additional file context
    * @returns {Object} File context object
    */
-  static buildFileContext(filePath, additionalInfo = {}) {
-    const fs = require('fs');
-    const path = require('path');
+  static async buildFileContext(filePath, additionalInfo = {}) {
+    const fs = await import('fs');
+    const path = await import('path');
     
     const context = {
       type: CONTEXT_TYPES.FILE,
@@ -285,4 +285,4 @@ class ErrorHandler {
   }
 }
 
-module.exports = ErrorHandler;
+export default ErrorHandler;

@@ -1,0 +1,36 @@
+{
+  "name": "ollama-optimization-experiment",
+  "version": "1.0.0",
+  "description": "Comprehensive performance study on optimizing Ollama for real-world AI applications on Mac Mini M4",
+  "main": "model-performance-test.js",
+  "scripts": {
+    "phase1": "node model-performance-test.js",
+    "phase2": "node comprehensive-optimization-test.js",
+    "test": "echo 'Run npm run phase1 or npm run phase2 to start experiments'"
+  },
+  "keywords": [
+    "ollama",
+    "llm",
+    "performance",
+    "optimization",
+    "mac-mini",
+    "ai",
+    "benchmark"
+  ],
+  "author": "Resumagic Team",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "peerDependencies": {
+    "ollama": "*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/[your-username]/ollama-optimization-experiment"
+  },
+  "bugs": {
+    "url": "https://github.com/[your-username]/ollama-optimization-experiment/issues"
+  },
+  "homepage": "https://github.com/[your-username]/ollama-optimization-experiment#readme"
+}

@@ -3,9 +3,14 @@
  * Shared utilities for testing across the application
  */
 
-const fs = require('fs');
-const path = require('path');
-const os = require('os');
+import fs from 'fs';
+import path from 'path';
+import os from 'os';
+import { fileURLToPath } from 'url';
+
+// ESM equivalent of __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 /**
  * Test file utilities
@@ -210,7 +215,7 @@ const AssertionUtils = {
   }
 };
 
-module.exports = {
+export {
   TestFileUtils,
   ConsoleUtils,
   MockDataUtils,

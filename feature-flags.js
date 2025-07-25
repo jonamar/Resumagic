@@ -4,8 +4,13 @@
  * Part of Phase 1: CI/CD Extensions for Standardization Safety
  */
 
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+// ESM equivalent of __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 /**
  * Feature flags configuration
@@ -307,7 +312,7 @@ function getImplementation(serviceName) {
   return getFeatureFlags().getImplementation(serviceName);
 }
 
-module.exports = {
+export {
   FeatureFlags,
   getFeatureFlags,
   isEnabled,
