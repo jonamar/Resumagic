@@ -24,7 +24,7 @@ const __dirname = path.dirname(__filename);
  * Standardized Service Adapter for [SERVICE_NAME]
  * [SERVICE_DESCRIPTION]
  */
-class [SERVICE_NAME]Adapter {
+class ServiceNameAdapter {
   constructor() {
     this.serviceName = '[SERVICE_NAME]';
     this.version = '1.0.0';
@@ -249,11 +249,11 @@ class [SERVICE_NAME]Adapter {
 }
 
 // Export for use as module
-export default [SERVICE_NAME]Adapter;
+export default ServiceNameAdapter;
 
 // CLI interface for testing and migration
 if (import.meta.url === `file://${process.argv[1]}`) {
-  const adapter = new [SERVICE_NAME]Adapter();
+  const adapter = new ServiceNameAdapter();
   const command = process.argv[2];
 
   switch (command) {

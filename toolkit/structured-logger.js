@@ -358,40 +358,40 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const testLogger = createLogger('test-service');
 
   switch (command) {
-    case 'test':
-      console.log('Testing structured logger...');
-      testLogger.debug('This is a debug message', { debugInfo: 'extra data' });
-      testLogger.info('This is an info message', { operation: 'test' });
-      testLogger.warn('This is a warning message', { warningCode: 'TEST_WARNING' });
-      testLogger.error('This is an error message', { errorCode: 'TEST_ERROR' }, new Error('Test error'));
-      testLogger.fatal('This is a fatal message', { fatalCode: 'TEST_FATAL' }, new Error('Test fatal error'));
-      break;
+  case 'test':
+    console.log('Testing structured logger...');
+    testLogger.debug('This is a debug message', { debugInfo: 'extra data' });
+    testLogger.info('This is an info message', { operation: 'test' });
+    testLogger.warn('This is a warning message', { warningCode: 'TEST_WARNING' });
+    testLogger.error('This is an error message', { errorCode: 'TEST_ERROR' }, new Error('Test error'));
+    testLogger.fatal('This is a fatal message', { fatalCode: 'TEST_FATAL' }, new Error('Test fatal error'));
+    break;
       
-    case 'enable':
-      const flags = new FeatureFlagHelper();
-      flags.enable('logging.useStructuredLogging');
-      console.log('✅ Structured logging enabled');
-      break;
+  case 'enable':
+    const flags = new FeatureFlagHelper();
+    flags.enable('logging.useStructuredLogging');
+    console.log('✅ Structured logging enabled');
+    break;
       
-    case 'disable':
-      const flags2 = new FeatureFlagHelper();
-      flags2.disable('logging.useStructuredLogging');
-      console.log('✅ Structured logging disabled (fallback to console.log)');
-      break;
+  case 'disable':
+    const flags2 = new FeatureFlagHelper();
+    flags2.disable('logging.useStructuredLogging');
+    console.log('✅ Structured logging disabled (fallback to console.log)');
+    break;
       
-    case 'status':
-      const flags3 = new FeatureFlagHelper();
-      const enabled = flags3.useStructuredLogging();
-      console.log(`Structured logging: ${enabled ? 'ENABLED' : 'DISABLED'}`);
-      break;
+  case 'status':
+    const flags3 = new FeatureFlagHelper();
+    const enabled = flags3.useStructuredLogging();
+    console.log(`Structured logging: ${enabled ? 'ENABLED' : 'DISABLED'}`);
+    break;
       
-    default:
-      console.log('Structured Logger CLI');
-      console.log('Usage:');
-      console.log('  node structured-logger.js test          # Test all log levels');
-      console.log('  node structured-logger.js enable        # Enable structured logging');
-      console.log('  node structured-logger.js disable       # Disable structured logging');
-      console.log('  node structured-logger.js status        # Check current status');
-      break;
+  default:
+    console.log('Structured Logger CLI');
+    console.log('Usage:');
+    console.log('  node structured-logger.js test          # Test all log levels');
+    console.log('  node structured-logger.js enable        # Enable structured logging');
+    console.log('  node structured-logger.js disable       # Disable structured logging');
+    console.log('  node structured-logger.js status        # Check current status');
+    break;
   }
 }

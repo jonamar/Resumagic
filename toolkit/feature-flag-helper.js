@@ -240,57 +240,58 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const value = process.argv[4];
 
   switch (command) {
-    case 'list':
-      console.log('Current Feature Flags:');
-      console.log(JSON.stringify(helper.getAllFlags(), null, 2));
-      break;
+  case 'list':
+    console.log('Current Feature Flags:');
+    console.log(JSON.stringify(helper.getAllFlags(), null, 2));
+    break;
       
-    case 'check':
-      if (!flagPath) {
-        console.error('Usage: node feature-flag-helper.js check <flag-path>');
-        process.exit(1);
-      }
-      console.log(`${flagPath}: ${helper.isEnabled(flagPath)}`);
-      break;
+  case 'check':
+    if (!flagPath) {
+      console.error('Usage: node feature-flag-helper.js check <flag-path>');
+      process.exit(1);
+    }
+    console.log(`${flagPath}: ${helper.isEnabled(flagPath)}`);
+    break;
       
-    case 'enable':
-      if (!flagPath) {
-        console.error('Usage: node feature-flag-helper.js enable <flag-path>');
-        process.exit(1);
-      }
-      helper.enable(flagPath);
-      break;
+  case 'enable':
+    if (!flagPath) {
+      console.error('Usage: node feature-flag-helper.js enable <flag-path>');
+      process.exit(1);
+    }
+    helper.enable(flagPath);
+    break;
       
-    case 'disable':
-      if (!flagPath) {
-        console.error('Usage: node feature-flag-helper.js disable <flag-path>');
-        process.exit(1);
-      }
-      helper.disable(flagPath);
-      break;
+  case 'disable':
+    if (!flagPath) {
+      console.error('Usage: node feature-flag-helper.js disable <flag-path>');
+      process.exit(1);
+    }
+    helper.disable(flagPath);
+    break;
       
-    case 'set':
-      if (!flagPath || value === undefined) {
-        console.error('Usage: node feature-flag-helper.js set <flag-path> <value>');
-        process.exit(1);
-      }
-      // Parse boolean and numeric values
-      let parsedValue = value;
-      if (value === 'true') parsedValue = true;
-      else if (value === 'false') parsedValue = false;
-      else if (!isNaN(value)) parsedValue = Number(value);
+  case 'set': {
+    if (!flagPath || value === undefined) {
+      console.error('Usage: node feature-flag-helper.js set <flag-path> <value>');
+      process.exit(1);
+    }
+    // Parse boolean and numeric values
+    let parsedValue = value;
+    if (value === 'true') parsedValue = true;
+    else if (value === 'false') parsedValue = false;
+    else if (!isNaN(value)) parsedValue = Number(value);
       
-      helper.setFlag(flagPath, parsedValue);
-      break;
+    helper.setFlag(flagPath, parsedValue);
+    break;
+  }
       
-    default:
-      console.log('Feature Flag Helper CLI');
-      console.log('Usage:');
-      console.log('  node feature-flag-helper.js list');
-      console.log('  node feature-flag-helper.js check <flag-path>');
-      console.log('  node feature-flag-helper.js enable <flag-path>');
-      console.log('  node feature-flag-helper.js disable <flag-path>');
-      console.log('  node feature-flag-helper.js set <flag-path> <value>');
-      break;
+  default:
+    console.log('Feature Flag Helper CLI');
+    console.log('Usage:');
+    console.log('  node feature-flag-helper.js list');
+    console.log('  node feature-flag-helper.js check <flag-path>');
+    console.log('  node feature-flag-helper.js enable <flag-path>');
+    console.log('  node feature-flag-helper.js disable <flag-path>');
+    console.log('  node feature-flag-helper.js set <flag-path> <value>');
+    break;
   }
 }

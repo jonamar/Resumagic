@@ -350,7 +350,7 @@ class UnifiedConfig {
     const serviceConfig = this.getServiceConfig(serviceName);
     const errors = [];
 
-    if (!serviceConfig.enabled === undefined) {
+    if (serviceConfig.enabled === undefined) {
       errors.push(`${serviceName}.enabled is required`);
     }
 
@@ -457,90 +457,90 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const value = process.argv[4];
 
   switch (command) {
-    case 'get':
-      if (!path) {
-        console.error('Usage: node unified-config.js get <config-path>');
-        process.exit(1);
-      }
-      const configValue = config.get(path);
-      console.log(`${path}:`, configValue);
-      break;
+  case 'get':
+    if (!path) {
+      console.error('Usage: node unified-config.js get <config-path>');
+      process.exit(1);
+    }
+    const configValue = config.get(path);
+    console.log(`${path}:`, configValue);
+    break;
       
-    case 'set':
-      if (!path || value === undefined) {
-        console.error('Usage: node unified-config.js set <config-path> <value>');
-        process.exit(1);
-      }
-      // Parse value
-      let parsedValue = value;
-      if (value === 'true') parsedValue = true;
-      else if (value === 'false') parsedValue = false;
-      else if (!isNaN(value)) parsedValue = Number(value);
+  case 'set':
+    if (!path || value === undefined) {
+      console.error('Usage: node unified-config.js set <config-path> <value>');
+      process.exit(1);
+    }
+    // Parse value
+    let parsedValue = value;
+    if (value === 'true') parsedValue = true;
+    else if (value === 'false') parsedValue = false;
+    else if (!isNaN(value)) parsedValue = Number(value);
       
-      config.set(path, parsedValue);
-      break;
+    config.set(path, parsedValue);
+    break;
       
-    case 'list':
-      console.log('Current Configuration:');
-      console.log(JSON.stringify(config.getAll(), null, 2));
-      break;
+  case 'list':
+    console.log('Current Configuration:');
+    console.log(JSON.stringify(config.getAll(), null, 2));
+    break;
       
-    case 'validate':
-      const serviceName = path;
-      if (!serviceName) {
-        console.error('Usage: node unified-config.js validate <service-name>');
-        process.exit(1);
-      }
-      const validation = config.validateServiceConfig(serviceName);
-      if (validation.isValid) {
-        console.log(`✅ ${serviceName} configuration is valid`);
-      } else {
-        console.log(`❌ ${serviceName} configuration errors:`);
-        validation.errors.forEach(error => console.log(`  - ${error}`));
-      }
-      break;
+  case 'validate':
+    const serviceName = path;
+    if (!serviceName) {
+      console.error('Usage: node unified-config.js validate <service-name>');
+      process.exit(1);
+    }
+    const validation = config.validateServiceConfig(serviceName);
+    if (validation.isValid) {
+      console.log(`✅ ${serviceName} configuration is valid`);
+    } else {
+      console.log(`❌ ${serviceName} configuration errors:`);
+      validation.errors.forEach(error => console.log(`  - ${error}`));
+    }
+    break;
       
-    case 'export-python':
-      console.log(config.exportForPython());
-      break;
+  case 'export-python':
+    console.log(config.exportForPython());
+    break;
       
-    case 'export-go':
-      console.log(config.exportForGo());
-      break;
+  case 'export-go':
+    console.log(config.exportForGo());
+    break;
       
-    case 'enable':
-      const flags = new FeatureFlagHelper();
-      flags.enable('configuration.useUnifiedConfig');
-      console.log('✅ Unified configuration enabled');
-      break;
+  case 'enable':
+    const flags = new FeatureFlagHelper();
+    flags.enable('configuration.useUnifiedConfig');
+    console.log('✅ Unified configuration enabled');
+    break;
       
-    case 'disable':
-      const flags2 = new FeatureFlagHelper();
-      flags2.disable('configuration.useUnifiedConfig');
-      console.log('✅ Unified configuration disabled');
-      break;
+  case 'disable':
+    const flags2 = new FeatureFlagHelper();
+    flags2.disable('configuration.useUnifiedConfig');
+    console.log('✅ Unified configuration disabled');
+    break;
       
-    case 'reload':
-      config.reload();
-      console.log('✅ Configuration reloaded');
-      break;
+  case 'reload':
+    config.reload();
+    console.log('✅ Configuration reloaded');
+    break;
       
-    default:
-      console.log('Unified Configuration CLI');
-      console.log('Usage:');
-      console.log('  node unified-config.js get <path>           # Get configuration value');
-      console.log('  node unified-config.js set <path> <value>   # Set configuration value');
-      console.log('  node unified-config.js list                 # List all configuration');
-      console.log('  node unified-config.js validate <service>   # Validate service config');
-      console.log('  node unified-config.js export-python        # Export for Python services');
-      console.log('  node unified-config.js export-go            # Export for Go services');
-      console.log('  node unified-config.js enable               # Enable unified config');
-      console.log('  node unified-config.js disable              # Disable unified config');
-      console.log('  node unified-config.js reload               # Reload from file');
-      console.log('');
-      console.log('Environment Variables:');
-      console.log('  RESUMAGIC_APP_LOGLEVEL=debug                # Override app.logLevel');
-      console.log('  RESUMAGIC_SERVICES_KEYWORD_ANALYSIS_ENABLED=false  # Override service.keywordAnalysis.enabled');
-      break;
+  default:
+    console.log('Unified Configuration CLI');
+    console.log('Usage:');
+    console.log('  node unified-config.js get <path>           # Get configuration value');
+    console.log('  node unified-config.js set <path> <value>   # Set configuration value');
+    console.log('  node unified-config.js list                 # List all configuration');
+    console.log('  node unified-config.js validate <service>   # Validate service config');
+    console.log('  node unified-config.js export-python        # Export for Python services');
+    console.log('  node unified-config.js export-go            # Export for Go services');
+    console.log('  node unified-config.js enable               # Enable unified config');
+    console.log('  node unified-config.js disable              # Disable unified config');
+    console.log('  node unified-config.js reload               # Reload from file');
+    console.log('');
+    console.log('Environment Variables:');
+    console.log('  RESUMAGIC_APP_LOGLEVEL=debug                # Override app.logLevel');
+    console.log('  RESUMAGIC_SERVICES_KEYWORD_ANALYSIS_ENABLED=false  # Override service.keywordAnalysis.enabled');
+    break;
   }
 }

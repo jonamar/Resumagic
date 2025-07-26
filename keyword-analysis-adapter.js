@@ -394,73 +394,73 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   };
 
   switch (command) {
-    case 'test-legacy':
-      console.log('Testing legacy implementation...');
-      adapter.featureFlags.disable(`services.${adapter.serviceName}.useStandardizedWrapper`);
-      adapter.execute(testInput).then(result => {
-        console.log('Legacy result:', JSON.stringify(result, null, 2));
-      }).catch(error => {
-        console.error('Legacy test failed:', error.message);
-      });
-      break;
+  case 'test-legacy':
+    console.log('Testing legacy implementation...');
+    adapter.featureFlags.disable(`services.${adapter.serviceName}.useStandardizedWrapper`);
+    adapter.execute(testInput).then(result => {
+      console.log('Legacy result:', JSON.stringify(result, null, 2));
+    }).catch(error => {
+      console.error('Legacy test failed:', error.message);
+    });
+    break;
       
-    case 'test-standardized':
-      console.log('Testing standardized implementation...');
-      adapter.featureFlags.enable(`services.${adapter.serviceName}.useStandardizedWrapper`);
-      adapter.execute(testInput).then(result => {
-        console.log('Standardized result:', JSON.stringify(result, null, 2));
-      }).catch(error => {
-        console.error('Standardized test failed:', error.message);
-      });
-      break;
+  case 'test-standardized':
+    console.log('Testing standardized implementation...');
+    adapter.featureFlags.enable(`services.${adapter.serviceName}.useStandardizedWrapper`);
+    adapter.execute(testInput).then(result => {
+      console.log('Standardized result:', JSON.stringify(result, null, 2));
+    }).catch(error => {
+      console.error('Standardized test failed:', error.message);
+    });
+    break;
       
-    case 'create-golden-master':
-      console.log('Creating golden master...');
-      adapter.createGoldenMaster(testInput).then(() => {
-        console.log('✅ Golden master created successfully');
-      }).catch(error => {
-        console.error('❌ Failed to create golden master:', error.message);
-      });
-      break;
+  case 'create-golden-master':
+    console.log('Creating golden master...');
+    adapter.createGoldenMaster(testInput).then(() => {
+      console.log('✅ Golden master created successfully');
+    }).catch(error => {
+      console.error('❌ Failed to create golden master:', error.message);
+    });
+    break;
       
-    case 'validate':
-      console.log('Validating against golden master...');
-      adapter.validateAgainstGoldenMaster(testInput).then(result => {
-        if (result.success) {
-          console.log('✅ Validation passed');
-        } else {
-          console.log('❌ Validation failed:', result.message);
-        }
-      }).catch(error => {
-        console.error('❌ Validation error:', error.message);
-      });
-      break;
+  case 'validate':
+    console.log('Validating against golden master...');
+    adapter.validateAgainstGoldenMaster(testInput).then(result => {
+      if (result.success) {
+        console.log('✅ Validation passed');
+      } else {
+        console.log('❌ Validation failed:', result.message);
+      }
+    }).catch(error => {
+      console.error('❌ Validation error:', error.message);
+    });
+    break;
       
-    case 'compare':
-      console.log('Comparing legacy vs standardized...');
-      adapter.compareLegacyVsStandardized(testInput).then(result => {
-        if (result.identical) {
-          console.log('✅ Implementations produce identical results');
-        } else {
-          console.log('❌ Implementations produce different results');
-          console.log('Differences found:', result.differences.length);
-          result.differences.slice(0, 5).forEach(diff => {
-            console.log(`  - ${diff.path}: legacy="${diff.expected}", standardized="${diff.actual}"`);
-          });
-        }
-      }).catch(error => {
-        console.error('❌ Comparison failed:', error.message);
-      });
-      break;
+  case 'compare':
+    console.log('Comparing legacy vs standardized...');
+    adapter.compareLegacyVsStandardized(testInput).then(result => {
+      if (result.identical) {
+        console.log('✅ Implementations produce identical results');
+      } else {
+        console.log('❌ Implementations produce different results');
+        console.log('Differences found:', result.differences.length);
+        result.differences.slice(0, 5).forEach(diff => {
+          console.log(`  - ${diff.path}: legacy="${diff.expected}", standardized="${diff.actual}"`);
+        });
+      }
+    }).catch(error => {
+      console.error('❌ Comparison failed:', error.message);
+    });
+    break;
       
-    default:
-      console.log('Keyword Analysis Service Adapter');
-      console.log('Usage:');
-      console.log('  node keyword-analysis-adapter.js test-legacy');
-      console.log('  node keyword-analysis-adapter.js test-standardized');
-      console.log('  node keyword-analysis-adapter.js create-golden-master');
-      console.log('  node keyword-analysis-adapter.js validate');
-      console.log('  node keyword-analysis-adapter.js compare');
-      break;
+  default:
+    console.log('Keyword Analysis Service Adapter');
+    console.log('Usage:');
+    console.log('  node keyword-analysis-adapter.js test-legacy');
+    console.log('  node keyword-analysis-adapter.js test-standardized');
+    console.log('  node keyword-analysis-adapter.js create-golden-master');
+    console.log('  node keyword-analysis-adapter.js validate');
+    console.log('  node keyword-analysis-adapter.js compare');
+    break;
   }
 }

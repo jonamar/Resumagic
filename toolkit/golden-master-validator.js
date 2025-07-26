@@ -357,12 +357,12 @@ class GoldenMasterValidator {
     const passedTests = results.filter(r => r.success);
     const failedTests = results.filter(r => !r.success);
     
-    console.log(`\n📊 Golden Master Validation Summary:`);
+    console.log('\n📊 Golden Master Validation Summary:');
     console.log(`✅ Passed: ${passedTests.length}/${results.length}`);
     console.log(`❌ Failed: ${failedTests.length}/${results.length}`);
     
     if (failedTests.length > 0) {
-      console.log(`\nFailed tests:`);
+      console.log('\nFailed tests:');
       failedTests.forEach(test => {
         console.log(`  - ${test.testName}: ${test.message}`);
       });
@@ -388,43 +388,43 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const testName = process.argv[3];
 
   switch (command) {
-    case 'list':
-      const masters = validator.listMasters();
-      console.log('Available Golden Masters:');
-      if (masters.length === 0) {
-        console.log('  (none found)');
-      } else {
-        masters.forEach(master => {
-          console.log(`  - ${master.testName} (created: ${master.createdAt})`);
-        });
-      }
-      break;
-      
-    case 'delete':
-      if (!testName) {
-        console.error('Usage: node golden-master-validator.js delete <test-name>');
-        process.exit(1);
-      }
-      validator.deleteMaster(testName);
-      break;
-      
-    case 'clean':
-      const allMasters = validator.listMasters();
-      console.log(`🧹 Cleaning ${allMasters.length} golden masters...`);
-      allMasters.forEach(master => {
-        validator.deleteMaster(master.testName);
+  case 'list':
+    const masters = validator.listMasters();
+    console.log('Available Golden Masters:');
+    if (masters.length === 0) {
+      console.log('  (none found)');
+    } else {
+      masters.forEach(master => {
+        console.log(`  - ${master.testName} (created: ${master.createdAt})`);
       });
-      console.log('✅ All golden masters deleted');
-      break;
+    }
+    break;
       
-    default:
-      console.log('Golden Master Validator CLI');
-      console.log('Usage:');
-      console.log('  node golden-master-validator.js list');
-      console.log('  node golden-master-validator.js delete <test-name>');
-      console.log('  node golden-master-validator.js clean');
-      console.log('');
-      console.log('Note: Use this utility programmatically to create and validate masters');
-      break;
+  case 'delete':
+    if (!testName) {
+      console.error('Usage: node golden-master-validator.js delete <test-name>');
+      process.exit(1);
+    }
+    validator.deleteMaster(testName);
+    break;
+      
+  case 'clean':
+    const allMasters = validator.listMasters();
+    console.log(`🧹 Cleaning ${allMasters.length} golden masters...`);
+    allMasters.forEach(master => {
+      validator.deleteMaster(master.testName);
+    });
+    console.log('✅ All golden masters deleted');
+    break;
+      
+  default:
+    console.log('Golden Master Validator CLI');
+    console.log('Usage:');
+    console.log('  node golden-master-validator.js list');
+    console.log('  node golden-master-validator.js delete <test-name>');
+    console.log('  node golden-master-validator.js clean');
+    console.log('');
+    console.log('Note: Use this utility programmatically to create and validate masters');
+    break;
   }
 }
