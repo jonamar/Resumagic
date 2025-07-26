@@ -1,0 +1,101 @@
+{
+  "_metadata": {
+    "version": "1.0.0",
+    "lastUpdated": "2025-07-26T01:13:56.357Z",
+    "description": "Unified configuration for Resumagic services"
+  },
+  "app": {
+    "name": "resumagic-app",
+    "version": "1.0.0",
+    "environment": "development",
+    "logLevel": "info",
+    "tempDir": "/Users/jonamar/Documents/resumagic/app/tmp",
+    "dataDir": "/Users/jonamar/Documents/resumagic/data"
+  },
+  "services": {
+    "keywordAnalysis": {
+      "enabled": true,
+      "pythonPath": "python",
+      "scriptPath": "services/keyword-analysis/kw_rank_modular.py",
+      "timeout": 30000,
+      "retries": 3,
+      "config": {
+        "maxKeywords": 100,
+        "semanticThreshold": 0.7
+      }
+    },
+    "hiringEvaluation": {
+      "enabled": true,
+      "scriptPath": "services/hiring-evaluation/evaluation-runner.js",
+      "timeout": 120000,
+      "retries": 1,
+      "config": {
+        "ollamaUrl": "http://localhost:11434",
+        "defaultModel": "dolphin3:latest",
+        "fastModel": "phi3:mini",
+        "temperature": 0.7,
+        "maxTokens": 4000
+      }
+    },
+    "documentGeneration": {
+      "enabled": true,
+      "timeout": 10000,
+      "retries": 2,
+      "config": {
+        "templateDir": "templates",
+        "outputDir": "outputs",
+        "defaultTheme": "professional",
+        "formats": [
+          "docx",
+          "pdf"
+        ]
+      }
+    },
+    "valeLinting": {
+      "enabled": false,
+      "binaryPath": "vale",
+      "configPath": ".vale.ini",
+      "timeout": 15000,
+      "retries": 1,
+      "config": {
+        "styleGuide": "Microsoft",
+        "minScore": 80
+      }
+    }
+  },
+  "logging": {
+    "level": "info",
+    "format": "console",
+    "enableColors": true,
+    "fileLogging": {
+      "enabled": false,
+      "directory": "logs",
+      "rotation": "daily",
+      "maxFiles": 7
+    }
+  },
+  "performance": {
+    "enableMetrics": false,
+    "metricsInterval": 60000,
+    "enableProfiling": false,
+    "maxMemoryUsage": "1GB",
+    "requestTimeout": 300000
+  },
+  "security": {
+    "enableAuditLogging": false,
+    "sanitizeInputs": true,
+    "validateFileAccess": true,
+    "allowedFileExtensions": [
+      ".md",
+      ".docx",
+      ".json",
+      ".txt"
+    ],
+    "maxFileSize": "10MB"
+  },
+  "features": {
+    "useFeatureFlags": true,
+    "flagSource": "file",
+    "defaultFlag": false
+  }
+}

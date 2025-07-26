@@ -1,0 +1,33 @@
+{
+  "_metadata": {
+    "version": "1.0.0",
+    "lastUpdated": "2025-07-26T01:14:19.243Z",
+    "description": "Feature flags for service standardization migration"
+  },
+  "services": {
+    "keywordAnalysis": {
+      "useStandardizedWrapper": true,
+      "description": "Use new JSON API wrapper for keyword analysis service"
+    },
+    "hiringEvaluation": {
+      "useStandardizedWrapper": false,
+      "description": "Use new JSON API wrapper for hiring evaluation service"
+    },
+    "documentGeneration": {
+      "useStandardizedWrapper": false,
+      "description": "Use new JSON API wrapper for document generation service"
+    },
+    "valeLinting": {
+      "useStandardizedWrapper": false,
+      "description": "Use new JSON API wrapper for Vale linting service"
+    }
+  },
+  "logging": {
+    "useStructuredLogging": false,
+    "description": "Use structured logging instead of console.log"
+  },
+  "configuration": {
+    "useUnifiedConfig": false,
+    "description": "Use unified configuration system across services"
+  }
+}
