@@ -1,12 +1,12 @@
 {
   "_metadata": {
     "version": "1.0.0",
-    "lastUpdated": "2025-07-26T01:14:19.243Z",
+    "lastUpdated": "2025-07-26T18:32:12.643Z",
     "description": "Feature flags for service standardization migration"
   },
   "services": {
     "keywordAnalysis": {
-      "useStandardizedWrapper": true,
+      "useStandardizedWrapper": false,
       "description": "Use new JSON API wrapper for keyword analysis service"
     },
     "hiringEvaluation": {
