@@ -25,6 +25,7 @@ const DEFAULT_FLAGS = {
   // Service integration flags  
   STANDARDIZED_KEYWORD_ANALYSIS: false,
   STANDARDIZED_HIRING_EVALUATION: false,
+  STANDARDIZED_VALE_LINTING: false,
   STANDARDIZED_ERROR_HANDLING: false,
   
   // Architecture flags

@@ -144,20 +144,73 @@ class HiringEvaluationWrapper extends BaseServiceWrapper {
   }
 
   /**
-   * Execute standardized evaluation (future implementation)
+   * Execute standardized evaluation using direct EvaluationRunner API
    * @private
    */
   async executeStandardizedEvaluation(input, startTime) {
-    // For now, this is a placeholder that calls the legacy implementation
-    // In future phases, this would use a more standardized API
-    const result = await this.executeLegacyEvaluation(input, startTime);
-    
-    // Mark as standardized implementation
-    if (result.data) {
-      result.data.implementation = 'standardized';
+    try {
+      // Dynamic import of the evaluation runner service
+      const { default: EvaluationRunner } = await import('../../services/hiring-evaluation/evaluation-runner.js');
+      
+      // Initialize evaluation runner with application context
+      const evaluationRunner = new EvaluationRunner(input.applicationName);
+      
+      // Configure fast mode if requested
+      if (input.fastMode) {
+        evaluationRunner.setFastMode(true);
+      }
+      
+      // Extract candidate name from resume data
+      const candidateName = input.resumeData.personalInfo?.name || 
+                           input.resumeData.basics?.name || 
+                           'Unknown Candidate';
+      
+      console.log(`🔄 Running standardized evaluation for ${candidateName} (application: ${input.applicationName})`);
+      
+      // Execute the evaluation using the service's native API
+      const evaluationResult = await evaluationRunner.runEvaluation(candidateName);
+      
+      const duration = Date.now() - startTime;
+      
+      // Return standardized response format
+      return this.createSuccessResponse({
+        evaluation: {
+          overall_score: evaluationResult.summary?.composite_score || evaluationResult.composite_score,
+          summary: evaluationResult.summary?.overall_assessment || 'Evaluation completed successfully',
+          persona_evaluations: evaluationResult.personas || evaluationResult.evaluations,
+          recommendations: evaluationResult.summary?.key_recommendations || [],
+          composite_score: evaluationResult.summary?.composite_score || evaluationResult.composite_score,
+          individual_scores: evaluationResult.summary?.persona_scores || {}
+        },
+        candidate: {
+          name: candidateName,
+          email: input.resumeData.personalInfo?.email || input.resumeData.basics?.email
+        },
+        context: {
+          applicationName: input.applicationName,
+          fastMode: input.fastMode || false,
+          evaluation_timestamp: new Date().toISOString()
+        },
+        implementation: 'standardized'
+      }, duration);
+      
+    } catch (error) {
+      console.error(`Standardized evaluation failed: ${error.message}`);
+      
+      // If standardized evaluation fails, provide a structured error response
+      const duration = Date.now() - startTime;
+      return this.createErrorResponse(
+        'STANDARDIZED_EVALUATION_FAILED',
+        `Standardized hiring evaluation failed: ${error.message}`,
+        { 
+          originalError: error.message,
+          stack: error.stack,
+          applicationName: input.applicationName,
+          candidateName: input.resumeData.personalInfo?.name
+        },
+        duration
+      );
     }
-    
-    return result;
   }
 
   /**

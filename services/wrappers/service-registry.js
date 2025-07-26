@@ -7,6 +7,7 @@
 import KeywordAnalysisWrapper from './keyword-analysis-wrapper.js';
 import HiringEvaluationWrapper from './hiring-evaluation-wrapper.js';
 import DocumentGenerationWrapper from './document-generation-wrapper.js';
+import ValeLintingWrapper from './vale-linting-wrapper.js';
 import { getFeatureFlags } from '../../feature-flags.js';
 
 /**
@@ -15,8 +16,8 @@ import { getFeatureFlags } from '../../feature-flags.js';
 const SERVICE_REGISTRY = {
   'keyword-analysis': KeywordAnalysisWrapper,
   'hiring-evaluation': HiringEvaluationWrapper,
-  'document-generation': DocumentGenerationWrapper
-  // Note: vale-linting service excluded per user request
+  'document-generation': DocumentGenerationWrapper,
+  'vale-linting': ValeLintingWrapper
 };
 
 /**

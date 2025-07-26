@@ -118,20 +118,154 @@ class DocumentGenerationWrapper extends BaseServiceWrapper {
   }
 
   /**
-   * Execute standardized generation (future implementation)
+   * Execute standardized generation using direct document orchestrator API
    * @private
    */
   async executeStandardizedGeneration(input, startTime) {
-    // For now, this is a placeholder that calls the legacy implementation
-    // In future phases, this would use more standardized generation patterns
-    const result = await this.executeLegacyGeneration(input, startTime);
-    
-    // Mark as standardized implementation
-    if (result.data) {
-      result.data.implementation = 'standardized';
+    try {
+      console.log('🔄 Running standardized document generation...');
+      
+      const generatedFiles = [];
+      const generationResults = [];
+      
+      // Generate documents based on the generation plan using direct orchestrator methods
+      if (input.generationPlan.generateResume) {
+        console.log('📄 Generating resume document...');
+        try {
+          const resumePath = await documentOrchestrator.generateResumeDocument(
+            input.resumeData,
+            input.paths.resumeDocxPath
+          );
+          generatedFiles.push(resumePath);
+          generationResults.push({
+            type: 'resume',
+            path: resumePath,
+            success: true,
+            filename: path.basename(resumePath)
+          });
+          console.log(`✅ Resume generated: ${resumePath}`);
+        } catch (error) {
+          console.error(`❌ Resume generation failed: ${error.message}`);
+          generationResults.push({
+            type: 'resume',
+            success: false,
+            error: error.message
+          });
+        }
+      }
+      
+      if (input.generationPlan.generateCoverLetter) {
+        console.log('📝 Generating cover letter document...');
+        try {
+          const coverLetterPath = await documentOrchestrator.generateCoverLetterDocument(
+            input.paths.coverLetterMarkdownPath,
+            input.paths.resumeDataPath,
+            input.paths.coverLetterDocxPath
+          );
+          generatedFiles.push(coverLetterPath);
+          generationResults.push({
+            type: 'cover_letter',
+            path: coverLetterPath,
+            success: true,
+            filename: path.basename(coverLetterPath)
+          });
+          console.log(`✅ Cover letter generated: ${coverLetterPath}`);
+        } catch (error) {
+          console.error(`❌ Cover letter generation failed: ${error.message}`);
+          generationResults.push({
+            type: 'cover_letter',
+            success: false,
+            error: error.message
+          });
+        }
+      }
+      
+      if (input.generationPlan.generateCombined) {
+        console.log('📋 Generating combined document...');
+        try {
+          const combinedPath = await documentOrchestrator.generateCombinedDocument(
+            input.paths.coverLetterMarkdownPath,
+            input.paths.resumeDataPath,
+            input.resumeData,
+            input.paths.combinedDocxPath
+          );
+          generatedFiles.push(combinedPath);
+          generationResults.push({
+            type: 'combined',
+            path: combinedPath,
+            success: true,
+            filename: path.basename(combinedPath)
+          });
+          console.log(`✅ Combined document generated: ${combinedPath}`);
+        } catch (error) {
+          console.error(`❌ Combined document generation failed: ${error.message}`);
+          generationResults.push({
+            type: 'combined',
+            success: false,
+            error: error.message
+          });
+        }
+      }
+      
+      // Auto-preview files if requested
+      if (input.autoPreview && generatedFiles.length > 0) {
+        try {
+          await documentOrchestrator.openGeneratedFiles(generatedFiles, true);
+          console.log('📱 Files opened for preview');
+        } catch (error) {
+          console.warn(`Preview failed: ${error.message}`);
+        }
+      }
+      
+      const duration = Date.now() - startTime;
+      const successfulGenerations = generationResults.filter(r => r.success);
+      const failedGenerations = generationResults.filter(r => !r.success);
+      
+      // Return standardized response format
+      return this.createSuccessResponse({
+        files: successfulGenerations.map(r => ({
+          type: r.type,
+          path: r.path,
+          filename: r.filename,
+          size_bytes: r.path ? (fs.existsSync(r.path) ? fs.statSync(r.path).size : 0) : 0
+        })),
+        summary: {
+          total_files: generationResults.length,
+          successful: successfulGenerations.length,
+          failed: failedGenerations.length,
+          resume_generated: input.generationPlan.generateResume && successfulGenerations.some(r => r.type === 'resume'),
+          cover_letter_generated: input.generationPlan.generateCoverLetter && successfulGenerations.some(r => r.type === 'cover_letter'),
+          combined_generated: input.generationPlan.generateCombined && successfulGenerations.some(r => r.type === 'combined'),
+          auto_preview: !!input.autoPreview
+        },
+        errors: failedGenerations.map(r => ({
+          type: r.type,
+          error: r.error
+        })),
+        context: {
+          applicationName: input.paths.applicationName || 'unknown',
+          generation_timestamp: new Date().toISOString()
+        },
+        implementation: 'standardized'
+      }, duration);
+      
+    } catch (error) {
+      console.error(`Standardized document generation failed: ${error.message}`);
+      
+      // If standardized generation fails, provide a structured error response
+      const duration = Date.now() - startTime;
+      return this.createErrorResponse(
+        'STANDARDIZED_GENERATION_FAILED',
+        `Standardized document generation failed: ${error.message}`,
+        { 
+          originalError: error.message,
+          stack: error.stack,
+          generationPlan: input.generationPlan,
+          applicationName: input.paths?.applicationName
+        },
+        duration
+      );
     }
-    
-    return result;
   }
 
   /**
