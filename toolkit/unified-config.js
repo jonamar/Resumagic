@@ -467,7 +467,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     break;
   }
       
-  case 'set':
+  case 'set': {
     if (!path || value === undefined) {
       console.error('Usage: node unified-config.js set <config-path> <value>');
       process.exit(1);
@@ -480,6 +480,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       
     config.set(path, parsedValue);
     break;
+  }
       
   case 'list':
     console.log('Current Configuration:');
