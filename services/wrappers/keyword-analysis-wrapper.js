@@ -125,10 +125,12 @@ class KeywordAnalysisWrapper extends BaseServiceWrapper {
       const analysisData = JSON.parse(fs.readFileSync(outputPath, 'utf8'));
       const duration = Date.now() - startTime;
       
+      const implementation = 'keyword-analysis';
+      
       return this.createSuccessResponse({
         analysis: analysisData,
         command: command,
-        implementation: 'keyword-analysis'
+        implementation: implementation
       }, duration);
       
     } catch (error) {
