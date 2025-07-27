@@ -8,6 +8,7 @@ import KeywordAnalysisWrapper from './keyword-analysis-wrapper.js';
 import HiringEvaluationWrapper from './hiring-evaluation-wrapper.js';
 import DocumentGenerationWrapper from './document-generation-wrapper.js';
 import ValeLintingWrapper from './vale-linting-wrapper.js';
+import { getFeatureFlags } from '../../utils/feature-flags.js';
 
 /**
  * Registry of all available service wrappers
@@ -69,7 +70,8 @@ async function getServicesHealthStatus() {
   const healthStatus = {
     timestamp: new Date().toISOString(),
     overall_status: 'unknown',
-    services: {}
+    services: {},
+    feature_flags: getFeatureFlags().getAll()
   };
 
   let allHealthy = true;

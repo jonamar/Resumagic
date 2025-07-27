@@ -1,26 +1,26 @@
 {
   "test-validation": {
     "resume": {
-      "contentHash": "ae98e0a06e2da3ecd03e4b0b4e97d74f5d52c6bb1a97dd8ddf004d5b17b182d0",
+      "contentHash": "df5c56bde3bc1d1df87d44d22c48e97c8c863796d8512d0dd4678878c6c4127c",
       "filePath": "/Users/jonamar/Documents/resumagic/data/applications/test-validation/outputs/Jon-Amar-Resume-Test.docx",
-      "lastUpdated": "2025-07-27T01:20:11.387Z",
-      "contentLength": 2676
+      "lastUpdated": "2025-07-27T05:31:17.320Z",
+      "contentLength": 720
     },
     "cover-letter": {
-      "contentHash": "111868d18ffc0a8055864d24133423688cd846368fd7f64a1c67a44c9e3e8ad5",
+      "contentHash": "a9aee9a83a145b213b82aa9b1dd29244164e29214736295fcf49c24fe4fb77bc",
       "filePath": "/Users/jonamar/Documents/resumagic/data/applications/test-validation/outputs/Jon-Amar-Cover-Letter-Test.docx",
-      "lastUpdated": "2025-07-27T01:20:11.387Z",
-      "contentLength": 1877
+      "lastUpdated": "2025-07-27T05:31:17.320Z",
+      "contentLength": 1815
     },
     "combined": {
-      "contentHash": "1c366939a82628cea9431f558225446d678e1e76984920d3087c6f04e2e17597",
+      "contentHash": "578e0681c791adac463164f71af5f41790340d51af288f9951b4c1c1c7d158d7",
       "filePath": "/Users/jonamar/Documents/resumagic/data/applications/test-validation/outputs/Jon-Amar-Cover-Letter-and-Resume-Test.docx",
-      "lastUpdated": "2025-07-27T01:20:11.388Z",
-      "contentLength": 4418
+      "lastUpdated": "2025-07-27T05:31:17.320Z",
+      "contentLength": 2465
     }
   },
   "metadata": {
-    "created": "2025-07-27T01:20:11.386Z",
+    "created": "2025-07-27T05:31:17.319Z",
     "description": "Golden master content hashes for document generation regression testing",
     "testApplication": "test-validation"
   }

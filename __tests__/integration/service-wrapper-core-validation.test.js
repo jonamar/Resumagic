@@ -251,7 +251,7 @@ describe('Core Service Wrapper Validation', () => {
       
       // Should either succeed or fail with proper error, not fallback
       if (!response.success) {
-        expect(response.error.code).toMatch(/EVALUATION_FAILED$/);
+        expect(response.error.code).toMatch(/STANDARDIZED_EVALUATION_FAILED$/);
         expect(response.error.message).not.toContain('temporarily unavailable');
         expect(response.error.message).not.toContain('fallback validation');
       }

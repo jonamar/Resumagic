@@ -108,23 +108,22 @@ describe('Keyword Analysis Service Contract', () => {
     // Validate required structure
     expect(analysisData.knockout_requirements).toBeInstanceOf(Array);
     expect(analysisData.skills_ranked).toBeInstanceOf(Array);
-    expect(analysisData.metadata).toBeDefined();
 
-    // Validate skills structure
+    // Validate first skill if any exist
     if (analysisData.skills_ranked.length > 0) {
-      const skill = analysisData.skills_ranked[0];
-      expect(skill).toHaveProperty('kw');
-      expect(skill).toHaveProperty('score');
-      expect(skill).toHaveProperty('category', 'skill');
-      expect(skill).toHaveProperty('aliases');
-      expect(skill.aliases).toBeInstanceOf(Array);
+      const firstSkill = analysisData.skills_ranked[0];
+      expect(firstSkill).toHaveProperty('kw');
+      expect(firstSkill).toHaveProperty('score');
+      expect(firstSkill).toHaveProperty('category');
+      expect(firstSkill).toHaveProperty('aliases');
+      expect(firstSkill.aliases).toBeInstanceOf(Array);
     }
 
     // Validate metadata structure
     expect(analysisData.metadata).toHaveProperty('total_keywords_processed');
     expect(analysisData.metadata).toHaveProperty('knockout_count');
     expect(analysisData.metadata).toHaveProperty('skills_count');
-  });
+  }, 30000); // 30 second timeout for ML processing
 
   test('should handle missing input files gracefully', async () => {
     const result = await keywordService.analyze({

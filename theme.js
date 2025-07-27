@@ -114,7 +114,7 @@ const theme = {
     combinedPattern: 'Jon-Amar-Cover-Letter-and-Resume-{company}.docx',
     
     // Directory structure
-    dataDir: '../../data',
+    dataDir: '../data',
     applicationsDir: 'applications',
     templateDir: 'template',
     inputsDir: 'inputs',
