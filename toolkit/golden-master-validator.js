@@ -388,7 +388,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const testName = process.argv[3];
 
   switch (command) {
-  case 'list':
+  case 'list': {
     const masters = validator.listMasters();
     console.log('Available Golden Masters:');
     if (masters.length === 0) {
@@ -399,6 +399,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       });
     }
     break;
+  }
       
   case 'delete':
     if (!testName) {
@@ -408,7 +409,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     validator.deleteMaster(testName);
     break;
       
-  case 'clean':
+  case 'clean': {
     const allMasters = validator.listMasters();
     console.log(`🧹 Cleaning ${allMasters.length} golden masters...`);
     allMasters.forEach(master => {
@@ -416,6 +417,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     });
     console.log('✅ All golden masters deleted');
     break;
+  }
       
   default:
     console.log('Golden Master Validator CLI');
