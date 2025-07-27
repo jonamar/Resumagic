@@ -138,7 +138,7 @@ class ValeLintingWrapper extends BaseServiceWrapper {
     try {
       // Import the Vale linting service (CommonJS module)
       const TwoTierAnalyzer = (await import('../../services/vale-linting/two-tier-analyzer.js')).default ||
-                             require('../../services/vale-linting/two-tier-analyzer.js');
+                             (await import('../../services/vale-linting/two-tier-analyzer.js')).default;
       
       console.log(`🔍 Running standardized Vale analysis on: ${path.basename(resumeDataPath)}`);
       
@@ -180,7 +180,7 @@ class ValeLintingWrapper extends BaseServiceWrapper {
       // Count issues by severity across all tiers
       [...processedResults.tier1, ...processedResults.spelling, ...processedResults.tier2].forEach(issue => {
         const severity = issue.Severity?.toLowerCase() || 'suggestion';
-        if (issuesBySeverity.hasOwnProperty(severity)) {
+        if (Object.prototype.hasOwnProperty.call(issuesBySeverity, severity)) {
           issuesBySeverity[severity]++;
         } else {
           issuesBySeverity.suggestion++;
