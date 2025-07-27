@@ -7,6 +7,7 @@ import { ERROR_TYPES } from '../utils/error-types.js';
 /**
  * Path Resolution Module
  * Handles file path resolution, validation, and company name extraction
+ * Includes support for canonical source and test directories
  */
 
 /**
@@ -223,6 +224,47 @@ function displayApplicationNotFoundError(applicationName, baseDir) {
   console.error(theme.messages.usage.createCommand.replace('{name}', applicationName));
 }
 
+/**
+ * Resolves paths for canonical source directory
+ * @param {string} baseDir - Base directory (typically app root)
+ * @returns {Object} Object containing canonical directory paths
+ */
+function resolveCanonicalPaths(baseDir) {
+  const canonicalDir = path.resolve(baseDir, theme.fileNaming.dataDir, theme.fileNaming.canonicalDir);
+  const inputsDir = path.join(canonicalDir, theme.fileNaming.inputsDir);
+  const workingDir = path.join(canonicalDir, theme.fileNaming.workingDir || 'working');
+  const outputsDir = path.join(canonicalDir, theme.fileNaming.outputsDir);
+  
+  return {
+    canonicalDir,
+    inputsDir,
+    workingDir,
+    outputsDir,
+    resumeFile: path.join(inputsDir, theme.fileNaming.resumeFile),
+    coverLetterFile: path.join(inputsDir, theme.fileNaming.coverLetterFile),
+    jobPostingFile: path.join(inputsDir, 'job-posting.md')
+  };
+}
+
+/**
+ * Resolves paths for test directory
+ * @param {string} baseDir - Base directory (typically app root)
+ * @returns {Object} Object containing test directory paths
+ */
+function resolveTestPaths(baseDir) {
+  const testApplicationPath = path.resolve(baseDir, theme.fileNaming.dataDir, theme.fileNaming.testDir, theme.fileNaming.testApplicationName);
+  const inputsDir = path.join(testApplicationPath, theme.fileNaming.inputsDir);
+  const outputsDir = path.join(testApplicationPath, theme.fileNaming.outputsDir);
+  
+  return {
+    testApplicationPath,
+    inputsDir,
+    outputsDir,
+    resumeFile: path.join(inputsDir, theme.fileNaming.resumeFile),
+    coverLetterFile: path.join(inputsDir, theme.fileNaming.coverLetterFile)
+  };
+}
+
 export {
   extractCompanyFromFolderName,
   resolvePaths,
@@ -230,5 +272,7 @@ export {
   hasMarkdownFile,
   loadResumeData,
   getAvailableApplications,
-  displayApplicationNotFoundError
+  displayApplicationNotFoundError,
+  resolveCanonicalPaths,
+  resolveTestPaths
 }; 

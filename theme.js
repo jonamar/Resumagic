@@ -116,9 +116,14 @@ const theme = {
     // Directory structure
     dataDir: '../data',
     applicationsDir: 'applications',
-    templateDir: 'template',
+    templateDir: 'template',  // Deprecated - will be removed
     inputsDir: 'inputs',
     outputsDir: 'outputs',
+    
+    // New paths for clean structure
+    canonicalDir: 'canonical',
+    testDir: 'test',
+    testApplicationName: 'general-application',
     
     // File names
     resumeFile: 'resume.json',
