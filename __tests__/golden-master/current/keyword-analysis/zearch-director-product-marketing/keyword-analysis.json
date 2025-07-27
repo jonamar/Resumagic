@@ -1,0 +1,29 @@
+🔍 Loading keywords from: /Users/jonamar/Documents/resumagic/data/applications/zearch-director-product-marketing/inputs/keywords.json
+📊 Loading 74 keywords
+📄 Loading job posting from: /Users/jonamar/Documents/resumagic/data/applications/zearch-director-product-marketing/inputs/job-posting.md
+⚙️ Processing 74 keywords...
+📉 Buzzword dampening: applied 0.7x penalty to buzzwords
+🎯 Categorized: 1 knockout requirements, 73 skills
+🎯 Final categorization: 1 knockout requirements, 73 skills
+🔗 Clustering aliases (threshold: 0.5)...
+✂️ Trimming skills by median score...
+🏆 Selecting top 5 skills...
+🎯 Finding injection points...
+⚠️  Invalid JSON in resume file: /Users/jonamar/Documents/resumagic/data/applications/zearch-director-product-marketing/inputs/resume.json
+   Proceeding without sentence matching...
+💾 Saving results...
+✅ Keyword analysis saved to: /Users/jonamar/Documents/resumagic/data/applications/zearch-director-product-marketing/working/keyword_analysis.json
+✅ Checklist created at: /Users/jonamar/Documents/resumagic/data/applications/zearch-director-product-marketing/working/keyword-checklist.md
+📊 Processed 74 → 55 canonical → 1 knockouts + 5 top skills
+
+🎯 KNOCKOUT REQUIREMENTS (1):
+  1. Director of Product Marketing (score: 0.882)
+
+🏆 TOP 5 SKILLS:
+  1. Supply Chain (score: 1.143) (aliases: supply chain systems, B2B Tech & Supply Chain Expertise)
+  2. Lead Product Launches (score: 0.826)
+  3. marketing campaigns (score: 0.795) (aliases: integrated, multi-touch marketing campaigns)
+  4. Product Launch Experience (score: 0.789) (aliases: end-to-end launch process)
+  5. SaaS/Integration platform (score: 0.735)
+
+✨ Complete! Run time: <3s

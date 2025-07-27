@@ -7,10 +7,20 @@ import fs from 'fs';
 import path from 'path';
 import { execSync } from 'child_process';
 import { fileURLToPath } from 'url';
+import theme from '../../theme.js';
 
 // ESM equivalent of __dirname
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+// Helper function to get application path (handles test directory structure)
+function getApplicationPath(appName) {
+  if (appName === theme.fileNaming.testApplicationName) {
+    return path.resolve(__dirname, '../../../data', theme.fileNaming.testDir, appName);
+  } else {
+    return path.resolve(__dirname, '../../../data', theme.fileNaming.applicationsDir, appName);
+  }
+}
 
 describe('Application Isolation', () => {
   const testApps = [
@@ -26,7 +36,7 @@ describe('Application Isolation', () => {
   beforeAll(() => {
     // Capture baseline timestamps for all applications
     testApps.forEach(app => {
-      const appPath = path.resolve(__dirname, '../../../data/applications', app);
+      const appPath = getApplicationPath(app);
       if (fs.existsSync(appPath)) {
         const outputsPath = path.join(appPath, 'outputs');
         if (fs.existsSync(outputsPath)) {
@@ -46,7 +56,7 @@ describe('Application Isolation', () => {
     const targetApp = 'zearch-director-of-product-marketing';
     
     // Skip test if target application doesn't exist
-    const targetAppPath = path.resolve(__dirname, '../../../data/applications', targetApp);
+    const targetAppPath = getApplicationPath(targetApp);
     if (!fs.existsSync(targetAppPath)) {
       console.warn(`Skipping test: ${targetApp} application not found`);
       return;
@@ -73,7 +83,7 @@ describe('Application Isolation', () => {
     testApps.forEach(app => {
       if (!baselineTimestamps[app]) return; // Skip if no baseline
 
-      const appPath = path.resolve(__dirname, '../../../data/applications', app);
+      const appPath = getApplicationPath(app);
       if (!fs.existsSync(appPath)) return;
 
       const outputsPath = path.join(appPath, 'outputs');
@@ -117,7 +127,7 @@ describe('Application Isolation', () => {
 
   test('should generate valid output files', () => {
     const targetApp = 'general-application';
-    const appPath = path.resolve(__dirname, '../../../data/applications', targetApp);
+    const appPath = getApplicationPath(targetApp);
     
     // Skip if application doesn't exist
     if (!fs.existsSync(appPath)) {

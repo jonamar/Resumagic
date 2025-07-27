@@ -85,7 +85,16 @@ run_performance_benchmark() {
     print_status $GREEN "    Feature flags: ${ff_duration}ms"
     
     # 3. Document generation performance (if test app exists)
-    if [ -d "../data/applications/$test_app" ]; then
+    # Handle new test directory structure
+    if [ "$test_app" = "general-application" ] && [ -d "../data/test/$test_app" ]; then
+        local test_path="../data/test/$test_app"
+    elif [ -d "../data/applications/$test_app" ]; then
+        local test_path="../data/applications/$test_app"
+    else
+        local test_path=""
+    fi
+    
+    if [ -n "$test_path" ]; then
         print_status $YELLOW "  📄 Benchmarking document generation..."
         local doc_start=$(date +%s)
         timeout 30s node generate-resume.js "$test_app" --quiet > /dev/null 2>&1 || true

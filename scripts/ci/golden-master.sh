@@ -180,7 +180,12 @@ generate_baseline() {
     cd "$APP_DIR"
     
     for app in "${TEST_APPLICATIONS[@]}"; do
-        local app_path="$DATA_DIR/applications/$app"
+        # Handle new test directory structure
+        if [ "$app" = "general-application" ]; then
+            local app_path="$DATA_DIR/test/$app"
+        else
+            local app_path="$DATA_DIR/applications/$app"
+        fi
         
         if [ -d "$app_path" ]; then
             print_step "Processing application: $app"
@@ -244,7 +249,12 @@ run_comparison() {
     
     # Generate current outputs
     for app in "${TEST_APPLICATIONS[@]}"; do
-        local app_path="$DATA_DIR/applications/$app"
+        # Handle new test directory structure
+        if [ "$app" = "general-application" ]; then
+            local app_path="$DATA_DIR/test/$app"
+        else
+            local app_path="$DATA_DIR/applications/$app"
+        fi
         
         if [ -d "$app_path" ]; then
             print_step "Processing application: $app"
