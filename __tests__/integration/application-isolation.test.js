@@ -136,12 +136,9 @@ describe('Application Isolation', () => {
     
     expect(docxFiles.length).toBeGreaterThan(0);
 
-    // Validate file sizes (should not be empty)
-    docxFiles.forEach(file => {
-      const filePath = path.join(outputsPath, file);
-      const stats = fs.statSync(filePath);
-      expect(stats.size).toBeGreaterThan(1000); // At least 1KB for valid DOCX
-    });
+    // NOTE: File size validation removed - superficial check that doesn't catch
+    // document corruption, formatting issues, or template rendering problems.
+    // Content-based validation should be used instead (see document-generation-contract.test.js)
   });
 
   test('should handle invalid application names gracefully', () => {

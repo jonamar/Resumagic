@@ -10,6 +10,7 @@
     "test:coverage": "NODE_OPTIONS=\"--experimental-vm-modules\" jest --coverage --watchAll=false",
     "test:unit": "NODE_OPTIONS=\"--experimental-vm-modules\" jest --testPathIgnorePatterns=integration",
     "test:integration": "NODE_OPTIONS=\"--experimental-vm-modules\" jest __tests__/integration",
+    "test:document-generation": "NODE_OPTIONS=\"--experimental-vm-modules\" jest __tests__/integration/document-generation-contract.test.js",
     "test:ci": "NODE_OPTIONS=\"--experimental-vm-modules\" jest --coverage --watchAll=false --ci --testTimeout=10000",
     "test:all": "npm run test:ci && npm run test:python",
     "test:python": "cd services/keyword-analysis && python -m pytest kw_rank/utils/test_error_handler.py -v",
