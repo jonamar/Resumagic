@@ -457,7 +457,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const value = process.argv[4];
 
   switch (command) {
-  case 'get':
+  case 'get': {
     if (!path) {
       console.error('Usage: node unified-config.js get <config-path>');
       process.exit(1);
@@ -465,6 +465,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     const configValue = config.get(path);
     console.log(`${path}:`, configValue);
     break;
+  }
       
   case 'set':
     if (!path || value === undefined) {
@@ -485,7 +486,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     console.log(JSON.stringify(config.getAll(), null, 2));
     break;
       
-  case 'validate':
+  case 'validate': {
     const serviceName = path;
     if (!serviceName) {
       console.error('Usage: node unified-config.js validate <service-name>');
@@ -499,6 +500,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       validation.errors.forEach(error => console.log(`  - ${error}`));
     }
     break;
+  }
       
   case 'export-python':
     console.log(config.exportForPython());
@@ -508,17 +510,19 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     console.log(config.exportForGo());
     break;
       
-  case 'enable':
+  case 'enable': {
     const flags = new FeatureFlagHelper();
     flags.enable('configuration.useUnifiedConfig');
     console.log('✅ Unified configuration enabled');
     break;
+  }
       
-  case 'disable':
+  case 'disable': {
     const flags2 = new FeatureFlagHelper();
     flags2.disable('configuration.useUnifiedConfig');
     console.log('✅ Unified configuration disabled');
     break;
+  }
       
   case 'reload':
     config.reload();
