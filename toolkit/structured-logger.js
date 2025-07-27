@@ -367,23 +367,26 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     testLogger.fatal('This is a fatal message', { fatalCode: 'TEST_FATAL' }, new Error('Test fatal error'));
     break;
       
-  case 'enable':
+  case 'enable': {
     const flags = new FeatureFlagHelper();
     flags.enable('logging.useStructuredLogging');
     console.log('✅ Structured logging enabled');
     break;
+  }
       
-  case 'disable':
+  case 'disable': {
     const flags2 = new FeatureFlagHelper();
     flags2.disable('logging.useStructuredLogging');
     console.log('✅ Structured logging disabled (fallback to console.log)');
     break;
+  }
       
-  case 'status':
+  case 'status': {
     const flags3 = new FeatureFlagHelper();
     const enabled = flags3.useStructuredLogging();
     console.log(`Structured logging: ${enabled ? 'ENABLED' : 'DISABLED'}`);
     break;
+  }
       
   default:
     console.log('Structured Logger CLI');
