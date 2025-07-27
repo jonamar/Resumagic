@@ -33,9 +33,9 @@ async function removeCompatibilityMode(buffer) {
       settingsXml = settingsXml.replace(/\s+mc:Ignorable="[^"]*"/g, '');
       
       // Remove w14, w15, wp14 namespace declarations
-      settingsXml = settingsXml.replace(/\s+xmlns:w14="[^"]*"/g, '');
-      settingsXml = settingsXml.replace(/\s+xmlns:w15="[^"]*"/g, '');
-      settingsXml = settingsXml.replace(/\s+xmlns:wp14="[^"]*"/g, '');
+      let _settingsXml = settingsXml.replace(/\s+xmlns:w14="[^"]*"/g, '');
+      _settingsXml = settingsXml.replace(/\s+xmlns:w15="[^"]*"/g, '');
+      _settingsXml = settingsXml.replace(/\s+xmlns:wp14="[^"]*"/g, '');
       
       // Create a much simpler settings.xml file
       const cleanSettings = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +

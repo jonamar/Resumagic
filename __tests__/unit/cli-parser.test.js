@@ -4,7 +4,7 @@
  */
 
 import { parseCliArguments, validateCliArguments, determineGenerationPlan, validateGenerationPlan } from '../../cli-parser.js';
-import { MockDataUtils, ConsoleUtils } from '../helpers/test-utils.js';
+import { MockDataUtils as _MockDataUtils, ConsoleUtils as _ConsoleUtils } from '../helpers/test-utils.js';
 
 describe('CLI Parser', () => {
   describe('parseCliArguments', () => {

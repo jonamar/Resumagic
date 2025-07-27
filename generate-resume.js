@@ -1,11 +1,9 @@
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { exec } from 'child_process';
-import { promisify } from 'util';
-import fs from 'fs';
 import { parseCliArguments, validateCliArguments, determineGenerationPlan, validateGenerationPlan, displayUsage } from './cli-parser.js';
 import { resolvePaths, validatePaths, hasMarkdownFile, loadResumeData, displayApplicationNotFoundError } from './path-resolver.js';
 import { orchestrateGeneration } from './document-orchestrator.js';
+import { getServiceWrapper } from './services/wrappers/service-registry.js';
 import theme from './theme.js';
 
 // ESM equivalent of __dirname
@@ -26,7 +24,8 @@ async function runKeywordAnalysis(applicationName) {
   console.log(`${theme.messages.emojis.processing} Starting keyword analysis...`);
   
   try {
-    const execAsync = promisify(exec);
+    // Use standardized keyword analysis service wrapper
+    const keywordService = getServiceWrapper('keyword-analysis');
     
     // Construct paths to required files
     const applicationPath = path.join(__dirname, '../data/applications', applicationName);
@@ -34,45 +33,40 @@ async function runKeywordAnalysis(applicationName) {
     const jobPostingFile = path.join(applicationPath, 'inputs', 'job-posting.md');
     const resumeFile = path.join(applicationPath, 'inputs', 'resume.json');
     
-    // Check if required files exist
-    if (!fs.existsSync(keywordsFile)) {
-      throw new Error(`Keywords file not found: ${keywordsFile}`);
-    }
-    if (!fs.existsSync(jobPostingFile)) {
-      throw new Error(`Job posting file not found: ${jobPostingFile}`);
-    }
+    // Prepare input for service wrapper
+    const input = {
+      applicationName,
+      keywordsFile,
+      jobPostingFile
+    };
     
-    // Construct the command with proper arguments
-    let keywordAnalysisCommand = `python services/keyword-analysis/kw_rank_modular.py "${keywordsFile}" "${jobPostingFile}"`;
-    
-    // Add resume file if it exists for sentence matching
-    if (fs.existsSync(resumeFile)) {
-      keywordAnalysisCommand += ` --resume "${resumeFile}"`;
+    // Add resume file if it exists
+    const fs = await import('fs');
+    if (fs.default.existsSync(resumeFile)) {
+      input.resumeFile = resumeFile;
     }
     
-    console.log(`${theme.messages.emojis.processing} Running: ${keywordAnalysisCommand}`);
+    console.log(`${theme.messages.emojis.processing} Running keyword analysis via service wrapper...`);
     
-    const { stdout, stderr } = await execAsync(keywordAnalysisCommand, {
-      cwd: __dirname,
-      timeout: 120000 // 2 minutes - ML processing takes time
-    });
+    // Execute analysis using service wrapper
+    const result = await keywordService.analyze(input);
     
-    if (stderr) {
-      console.warn(`${theme.messages.emojis.warning} Keyword analysis warnings: ${stderr}`);
+    if (!result.success) {
+      throw new Error(result.error?.message || 'Keyword analysis failed');
     }
     
     console.log(`${theme.messages.emojis.success} Keyword analysis completed successfully!`);
-    return stdout;
+    console.log(`${theme.messages.emojis.folder} Analysis results saved to working directory`);
+    
+    return result.data;
   } catch (error) {
     console.error(`${theme.messages.emojis.error} Keyword analysis failed: ${error.message}`);
     
-    // Check common issues
-    if (error.message.includes('python: command not found')) {
-      console.error(`${theme.messages.emojis.warning} Python not found. Make sure Python is installed and in PATH.`);
-    } else if (error.message.includes('No module named')) {
-      console.error(`${theme.messages.emojis.warning} Missing Python dependencies. Run: pip install -r services/keyword-analysis/requirements.txt`);
-    } else if (error.message.includes('not found:')) {
+    // Enhanced error handling through service wrapper
+    if (error.message.includes('FILE_NOT_FOUND')) {
       console.error(`${theme.messages.emojis.warning} Missing required input files. Ensure keywords.json and job-posting.md exist in inputs/ directory.`);
+    } else if (error.message.includes('python')) {
+      console.error(`${theme.messages.emojis.warning} Python not found or missing dependencies. Run: pip install -r services/keyword-analysis/requirements.txt`);
     }
     
     throw error;
@@ -91,30 +85,36 @@ async function runHiringEvaluation(applicationName, resumeData, fastMode = false
   console.log(`${theme.messages.emojis.processing} Starting hiring ${mode}...`);
   
   try {
-    const { EvaluationRunner } = await import('./services/hiring-evaluation/evaluation-runner.js');
-    const evaluator = new EvaluationRunner(applicationName);
-    
-    // Set fast mode if requested
-    if (fastMode) {
-      evaluator.setFastMode(true);
-    }
+    // Use standardized hiring evaluation service wrapper
+    const hiringService = getServiceWrapper('hiring-evaluation');
     
     // Extract candidate name from resume data
-    const candidateName = resumeData.basics?.name || 'Candidate';
+    const candidateName = resumeData.basics?.name || resumeData.personalInfo?.name || 'Candidate';
     
     console.log(`${theme.messages.emojis.processing} Evaluating candidate: ${candidateName} (${mode})`);
     
-    // Run the evaluation
-    const results = await evaluator.runEvaluation(candidateName);
+    // Prepare input for service wrapper
+    const input = {
+      applicationName,
+      resumeData,
+      fastMode
+    };
+    
+    // Execute evaluation using service wrapper
+    const result = await hiringService.evaluate(input);
+    
+    if (!result.success) {
+      throw new Error(result.error?.message || 'Hiring evaluation failed');
+    }
     
     console.log(`${theme.messages.emojis.success} Hiring ${mode} completed successfully!`);
     console.log(`${theme.messages.emojis.folder} Evaluation results saved to working directory`);
     
-    return results;
+    return result.data;
   } catch (error) {
     console.error(`${theme.messages.emojis.error} Hiring evaluation failed: ${error.message}`);
     
-    // Check if it's an Ollama connection error
+    // Enhanced error handling through service wrapper
     if (error.message.includes('localhost:11434') || error.message.includes('connection refused')) {
       console.error(`${theme.messages.emojis.warning} Make sure Ollama is running: ollama serve`);
       console.error(`${theme.messages.emojis.warning} And dolphin3:latest model is available: ollama pull dolphin3:latest`);
@@ -197,7 +197,7 @@ async function runHiringEvaluation(applicationName, resumeData, fastMode = false
     }
     
     // Execute document generation
-    const generatedFiles = await orchestrateGeneration(generationPlan, paths, resumeData, flags.preview);
+    const _generatedFiles = await orchestrateGeneration(generationPlan, paths, resumeData, flags.preview);
     
     // Execute additional services if requested
     if (generationPlan.runHiringEvaluation) {

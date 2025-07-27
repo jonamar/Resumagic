@@ -343,7 +343,7 @@ class Phase4ValidationSuite {
     // Compare successful results based on service type
     switch (serviceName) {
     case 'document-generation':
-      return await this.compareDocumentOutputs(legacyResult, standardizedResult);
+      return this.compareDocumentOutputs(legacyResult, standardizedResult);
       
     case 'hiring-evaluation':
       return this.compareEvaluationOutputs(legacyResult, standardizedResult);

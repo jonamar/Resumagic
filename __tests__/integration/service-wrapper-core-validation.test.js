@@ -4,8 +4,8 @@
  * Part of Phase 2: Standardize Existing Service Infrastructure
  */
 
-import fs from 'fs';
-import path from 'path';
+import _fs from 'fs';
+import _path from 'path';
 
 // Import service wrappers directly to avoid registry dependency chain
 import KeywordAnalysisWrapper from '../../services/wrappers/keyword-analysis-wrapper.js';

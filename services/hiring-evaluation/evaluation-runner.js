@@ -84,13 +84,13 @@ class EvaluationRunner {
     };
 
     const criteriaFields = {};
-    let personaDisplayName = persona || 'Unknown';
+    const personaDisplayName = persona || 'Unknown';
         
     if (persona) {
       try {
         const yamlPath = path.join(__dirname, 'personas', `${persona}.yaml`);
         const personaData = this.parseSimpleYaml(fs.readFileSync(yamlPath, 'utf8'));
-        personaDisplayName = personaNameMap[persona] || persona;
+        const _personaDisplayName = personaNameMap[persona] || persona;
                 
         // Build specific field properties for this persona
         for (const fieldName of Object.keys(personaData.criteria)) {

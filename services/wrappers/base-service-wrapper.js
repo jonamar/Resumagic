@@ -51,8 +51,19 @@ class ServiceResponse {
  * Base class for all service wrappers
  */
 class BaseServiceWrapper {
-  constructor(serviceName) {
+  constructor(serviceName, legacyFlagName = null) {
     this.serviceName = serviceName;
+    this.legacyFlagName = legacyFlagName || `STANDARDIZED_${serviceName.toUpperCase().replace(/-/g, '_')}`;
+  }
+
+  /**
+   * Determine if legacy implementation should be used based on feature flags
+   * @returns {boolean}
+   */
+  shouldUseLegacyImplementation() {
+    // This is a placeholder implementation
+    // In a real implementation, this would check feature flags
+    return false;
   }
 
   /**

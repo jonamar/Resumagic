@@ -8,7 +8,6 @@ import KeywordAnalysisWrapper from './keyword-analysis-wrapper.js';
 import HiringEvaluationWrapper from './hiring-evaluation-wrapper.js';
 import DocumentGenerationWrapper from './document-generation-wrapper.js';
 import ValeLintingWrapper from './vale-linting-wrapper.js';
-import { getFeatureFlags } from '../../feature-flags.js';
 
 /**
  * Registry of all available service wrappers
@@ -67,16 +66,10 @@ function isServiceAvailable(serviceName) {
  * @returns {Promise<Object>} - Health status for all services
  */
 async function getServicesHealthStatus() {
-  const featureFlags = getFeatureFlags();
   const healthStatus = {
     timestamp: new Date().toISOString(),
     overall_status: 'unknown',
-    services: {},
-    feature_flags: {
-      standardized_services_enabled: featureFlags.isEnabled('STANDARDIZED_SERVICE_COMMUNICATION'),
-      validation_enabled: featureFlags.isEnabled('ENABLE_GOLDEN_MASTER_VALIDATION'),
-      performance_monitoring: featureFlags.isEnabled('ENABLE_PERFORMANCE_REGRESSION_DETECTION')
-    }
+    services: {}
   };
 
   let allHealthy = true;
@@ -93,7 +86,7 @@ async function getServicesHealthStatus() {
         status = result.success ? 'healthy' : 'unhealthy';
         healthStatus.services[serviceName] = {
           status,
-          implementation: service.shouldUseLegacyImplementation() ? 'legacy' : 'standardized',
+          implementation: 'standardized',
           details: result.data || result.error
         };
       } else {
@@ -101,7 +94,7 @@ async function getServicesHealthStatus() {
         status = 'available';
         healthStatus.services[serviceName] = {
           status,
-          implementation: service.shouldUseLegacyImplementation() ? 'legacy' : 'standardized',
+          implementation: 'standardized',
           details: { message: 'Service wrapper instantiated successfully' }
         };
       }
@@ -116,7 +109,7 @@ async function getServicesHealthStatus() {
       allHealthy = false;
       healthStatus.services[serviceName] = {
         status: 'error',
-        implementation: 'unknown',
+        implementation: 'standardized',
         details: { error: error.message }
       };
     }
@@ -195,19 +188,10 @@ function clearServiceInstances() {
  * @returns {Object} - Configuration summary
  */
 function getServiceConfiguration() {
-  const featureFlags = getFeatureFlags();
-  
   return {
     available_services: getAvailableServices(),
     total_services: getAvailableServices().length,
-    feature_flags: {
-      standardized_keyword_analysis: featureFlags.isEnabled('STANDARDIZED_KEYWORD_ANALYSIS'),
-      standardized_hiring_evaluation: featureFlags.isEnabled('STANDARDIZED_HIRING_EVALUATION'),
-      standardized_document_generation: featureFlags.isEnabled('STANDARDIZED_DOCUMENT_GENERATION'),
-      standardized_service_communication: featureFlags.isEnabled('STANDARDIZED_SERVICE_COMMUNICATION'),
-      debug_enabled: featureFlags.isEnabled('DEBUG_FEATURE_FLAGS'),
-      logging_enabled: featureFlags.isEnabled('LOG_SERVICE_TRANSITIONS')
-    },
+    implementation: 'standardized',
     registry_info: {
       singleton_instances: serviceInstances.size,
       initialization_time: new Date().toISOString()

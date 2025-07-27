@@ -5,7 +5,7 @@ import ErrorHandler from './utils/error-handler.js';
 import { ERROR_TYPES } from './utils/error-types.js';
 
 // Initialize error handler for CLI operations
-const errorHandler = new ErrorHandler({
+const _errorHandler = new ErrorHandler({
   component: 'cli-parser',
   includeContext: true,
   includeStackTrace: false

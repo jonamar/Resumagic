@@ -38,17 +38,18 @@ All service wrappers follow the same JSON API pattern:
 }
 ```
 
-## Feature Flag Integration
+## Integration
 
-Each wrapper respects feature flags to toggle between:
-- Legacy shell-based execution
-- New standardized JSON API calls
+All wrappers provide standardized JSON API interfaces that are integrated into the main CLI application through the service registry.
 
 ## Usage
 
 ```javascript
-const { getServiceWrapper } = require('./service-registry');
+import { getServiceWrapper } from './service-registry.js';
 
 const keywordService = getServiceWrapper('keyword-analysis');
 const result = await keywordService.analyze(inputData);
+
+// All services return standardized format:
+// { success: boolean, data: any, metadata: object, error?: object }
 ```

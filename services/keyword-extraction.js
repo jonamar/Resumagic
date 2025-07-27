@@ -239,7 +239,7 @@ Extract all important keywords from this job posting and categorize them appropr
       if (cleanText.startsWith('{') && cleanText.endsWith('}')) {
         try {
           return JSON.parse(cleanText);
-        } catch (e) {
+        } catch {
           // Continue to other methods if direct parsing fails
         }
       }

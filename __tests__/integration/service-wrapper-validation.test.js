@@ -4,8 +4,8 @@
  * Part of Phase 2: Standardize Existing Service Infrastructure
  */
 
-import fs from 'fs';
-import path from 'path';
+import _fs from 'fs';
+import _path from 'path';
 import { getServiceWrapper, getServicesHealthStatus } from '../../services/wrappers/service-registry.js';
 import { getFeatureFlags } from '../../feature-flags.js';
 

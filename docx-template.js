@@ -4,10 +4,10 @@
  * Based on styling from visual-design-spec.md
  */
 
-import { Document, Paragraph, TextRun, HeadingLevel, AlignmentType, Table, 
-  TableRow, TableCell, BorderStyle, WidthType, TableLayoutType, 
-  UnderlineType, TableBorders, SectionType, PageBreak, LevelFormat,
-  convertInchesToTwip, ExternalHyperlink } from 'docx';
+import { Document, Paragraph, TextRun, HeadingLevel, AlignmentType, Table as _Table, 
+  TableRow as _TableRow, TableCell as _TableCell, BorderStyle as _BorderStyle, WidthType as _WidthType, TableLayoutType as _TableLayoutType, 
+  UnderlineType, TableBorders as _TableBorders, SectionType, PageBreak as _PageBreak, LevelFormat,
+  convertInchesToTwip as _convertInchesToTwip, ExternalHyperlink } from 'docx';
 import theme from './theme.js';
 import { parseTextWithFormatting } from './markdown-parser.js';
 

@@ -204,7 +204,7 @@ class UnifiedConfig {
         (value.startsWith('[') && value.endsWith(']'))) {
       try {
         return JSON.parse(value);
-      } catch (error) {
+      } catch (_error) {
         // If JSON parsing fails, treat as string
       }
     }
