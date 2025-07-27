@@ -78,7 +78,7 @@ describe('Keyword Analysis Service Contract', () => {
     // Verify service succeeded
     expect(result.success).toBe(true);
     expect(result.data.analysis).toBeDefined();
-    expect(result.data.implementation).toBe('legacy');
+    expect(result.data.implementation).toBe('keyword-analysis');
 
     // Verify service contract - files created
     expect(fs.existsSync(testPaths.working.analysis)).toBe(true);

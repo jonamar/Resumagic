@@ -121,7 +121,7 @@ class HiringEvaluationWrapper extends BaseServiceWrapper {
       // If evaluation fails, provide a structured error response
       const duration = Date.now() - startTime;
       return this.createErrorResponse(
-        'EVALUATION_FAILED',
+        'STANDARDIZED_EVALUATION_FAILED',
         `Hiring evaluation failed: ${error.message}`,
         { 
           originalError: error.message,

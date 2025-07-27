@@ -3,7 +3,7 @@
  * Tests path resolution and validation functionality
  */
 
-import { resolvePaths, validatePaths, hasMarkdownFile, loadResumeData } from '../../path-resolver.js';
+import { resolvePaths, validatePaths, hasMarkdownFile, loadResumeData } from '../../core/path-resolution.js';
 import { TestFileUtils, MockDataUtils } from '../helpers/test-utils.js';
 import fs from 'fs';
 import path, { dirname } from 'path';

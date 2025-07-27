@@ -2,12 +2,12 @@ import fs from 'fs';
 import { execSync } from 'child_process';
 import { Packer } from 'docx';
 import JSZip from 'jszip';
-import { createResumeDocx, createCoverLetterDocx, createCombinedDocx } from './docx-template.js';
-import { parseMarkdownCoverLetter } from './markdown-to-data.js';
-import theme from './theme.js';
+import { createResumeDocx, createCoverLetterDocx, createCombinedDocx } from './document-templates.js';
+import { parseMarkdownCoverLetter } from './markdown-processing.js';
+import theme from '../theme.js';
 
 /**
- * Document Orchestrator Module
+ * Document Orchestration Module
  * Handles document generation coordination, file operations, and optimization
  */
 
@@ -249,4 +249,4 @@ export {
   openGeneratedFiles,
   displayCompletionSummary,
   orchestrateGeneration
-}; 
+};

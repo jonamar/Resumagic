@@ -8,7 +8,7 @@ import fs from 'fs';
 import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { BaseServiceWrapper } from './base-service-wrapper.js';
-import * as documentOrchestrator from '../../document-orchestrator.js';
+import * as documentOrchestrator from '../../core/document-orchestration.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

@@ -7,7 +7,7 @@
 import _fs from 'fs';
 import _path from 'path';
 import { getServiceWrapper, getServicesHealthStatus } from '../../services/wrappers/service-registry.js';
-import { getFeatureFlags } from '../../feature-flags.js';
+import { getFeatureFlags } from '../../utils/feature-flags.js';
 
 describe('Service Wrapper Interface Validation', () => {
   let featureFlags;

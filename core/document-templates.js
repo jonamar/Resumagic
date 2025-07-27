@@ -8,8 +8,8 @@ import { Document, Paragraph, TextRun, HeadingLevel, AlignmentType, Table as _Ta
   TableRow as _TableRow, TableCell as _TableCell, BorderStyle as _BorderStyle, WidthType as _WidthType, TableLayoutType as _TableLayoutType, 
   UnderlineType, TableBorders as _TableBorders, SectionType, PageBreak as _PageBreak, LevelFormat,
   convertInchesToTwip as _convertInchesToTwip, ExternalHyperlink } from 'docx';
-import theme from './theme.js';
-import { parseTextWithFormatting } from './markdown-parser.js';
+import theme from '../theme.js';
+import { parseTextWithFormatting } from './markdown-processing.js';
 
 /**
  * Creates formatted TextRun elements from text with markdown-style formatting

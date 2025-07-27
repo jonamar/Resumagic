@@ -1,13 +1,11 @@
 import path from 'path';
 import fs from 'fs';
-import theme from './theme.js';
-import ErrorHandler from './utils/error-handler.js';
-import { ERROR_TYPES } from './utils/error-types.js';
-
-
+import theme from '../theme.js';
+import ErrorHandler from '../utils/error-handler.js';
+import { ERROR_TYPES } from '../utils/error-types.js';
 
 /**
- * Path Resolver Module
+ * Path Resolution Module
  * Handles file path resolution, validation, and company name extraction
  */
 

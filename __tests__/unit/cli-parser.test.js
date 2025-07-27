@@ -3,7 +3,8 @@
  * Tests command line argument parsing and validation
  */
 
-import { parseCliArguments, validateCliArguments, determineGenerationPlan, validateGenerationPlan } from '../../cli-parser.js';
+import { parseCliArguments, validateCliArguments } from '../../cli/argument-parser.js';
+import { determineGenerationPlan, validateGenerationPlan } from '../../core/generation-planning.js';
 import { MockDataUtils as _MockDataUtils, ConsoleUtils as _ConsoleUtils } from '../helpers/test-utils.js';
 
 describe('CLI Parser', () => {

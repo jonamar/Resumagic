@@ -4,7 +4,7 @@
  * Part of Phase 2: Standardize Existing Service Infrastructure
  */
 
-import { getFeatureFlags } from '../../feature-flags.js';
+import { getFeatureFlags } from '../../utils/feature-flags.js';
 
 
 /**
