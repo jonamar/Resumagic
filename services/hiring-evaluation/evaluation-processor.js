@@ -12,7 +12,7 @@ class EvaluationProcessor {
       'Director of Design': 0.15,
       'Finance Director': 0.20,
       'CEO': 0.20,
-      'Senior Product Manager': 0.10
+      'Senior Product Manager': 0.10,
     };
 
     // Score thresholds for assessment
@@ -20,7 +20,7 @@ class EvaluationProcessor {
       exceptional: 8.5,
       viable: 8.0,
       belowViable: 7.0,
-      weak: 5.0
+      weak: 5.0,
     };
   }
 
@@ -69,7 +69,7 @@ class EvaluationProcessor {
         calculatedAverage: Math.round(calculatedAverage * 100) / 100, // Round to 2 decimals
         llmAverage: evaluation.overall_assessment?.persona_score || null,
         weight: this.weights[personaName] || 0,
-        recommendation: evaluation.overall_assessment?.recommendation || 'Unknown'
+        recommendation: evaluation.overall_assessment?.recommendation || 'Unknown',
       };
     });
   }
@@ -80,12 +80,24 @@ class EvaluationProcessor {
      * @returns {string} Clean persona name
      */
   extractPersonaName(personaString) {
-    if (personaString.includes('HR Manager')) return 'HR Manager';
-    if (personaString.includes('Director of Engineering')) return 'Director of Engineering';
-    if (personaString.includes('Director of Design')) return 'Director of Design';
-    if (personaString.includes('Finance Director')) return 'Finance Director';
-    if (personaString.includes('CEO')) return 'CEO';
-    if (personaString.includes('Senior Product Manager')) return 'Senior Product Manager';
+    if (personaString.includes('HR Manager')) {
+      return 'HR Manager';
+    }
+    if (personaString.includes('Director of Engineering')) {
+      return 'Director of Engineering';
+    }
+    if (personaString.includes('Director of Design')) {
+      return 'Director of Design';
+    }
+    if (personaString.includes('Finance Director')) {
+      return 'Finance Director';
+    }
+    if (personaString.includes('CEO')) {
+      return 'CEO';
+    }
+    if (personaString.includes('Senior Product Manager')) {
+      return 'Senior Product Manager';
+    }
     return personaString; // Fallback
   }
 
@@ -139,9 +151,13 @@ class EvaluationProcessor {
 
     // Determine consensus level
     let consensusLevel;
-    if (variance <= 0.5) consensusLevel = 'High';
-    else if (variance <= 1.0) consensusLevel = 'Medium';
-    else consensusLevel = 'Low';
+    if (variance <= 0.5) {
+      consensusLevel = 'High';
+    } else if (variance <= 1.0) {
+      consensusLevel = 'Medium';
+    } else {
+      consensusLevel = 'Low';
+    }
 
     // Extract qualitative insights
     const qualitativeInsights = this.extractQualitativeInsights(evaluations, processedData);
@@ -153,7 +169,7 @@ class EvaluationProcessor {
       weakestScore: weakest.calculatedAverage,
       variance: Math.round(variance * 100) / 100,
       consensusLevel,
-      qualitative: qualitativeInsights
+      qualitative: qualitativeInsights,
     };
   }
 
@@ -188,7 +204,7 @@ class EvaluationProcessor {
               theme: this.categorizeTheme(criterion),
               insight: insight,
               persona: persona,
-              score: score
+              score: score,
             });
           }
         } else if (score <= 5 && sentimentType === 'negative') {
@@ -198,7 +214,7 @@ class EvaluationProcessor {
               theme: this.categorizeTheme(criterion),
               insight: insight,
               persona: persona,
-              score: score
+              score: score,
             });
           }
         }
@@ -225,7 +241,7 @@ class EvaluationProcessor {
       strengths: this.dedupAndRankInsights(strengths),
       concerns: this.dedupAndRankInsights(concerns),
       specificExamples: [...new Set(specificExamples)].slice(0, 5), // Top 5 unique examples
-      consensusThemes: consensusThemes
+      consensusThemes: consensusThemes,
     };
   }
 
@@ -235,7 +251,9 @@ class EvaluationProcessor {
      * @returns {string} 'positive', 'negative', or 'neutral'
      */
   detectReasoningSentiment(reasoning) {
-    if (!reasoning) return 'neutral';
+    if (!reasoning) {
+      return 'neutral';
+    }
         
     const text = reasoning.toLowerCase();
         
@@ -243,13 +261,13 @@ class EvaluationProcessor {
     const positiveWords = [
       'strong', 'excellent', 'exceptional', 'proven', 'successful', 'effective', 
       'demonstrates', 'achieved', 'aligns well', 'good', 'solid', 'experience',
-      'track record', 'proficiency', 'relevant', 'capabilities', 'foundation'
+      'track record', 'proficiency', 'relevant', 'capabilities', 'foundation',
     ];
         
     // Strong negative indicators  
     const negativeWords = [
       'lacks', 'limited', 'missing', 'insufficient', 'concerns', 'gap', 'weak',
-      'no evidence', 'does not', 'cannot', 'unclear', 'inadequate', 'poor'
+      'no evidence', 'does not', 'cannot', 'unclear', 'inadequate', 'poor',
     ];
         
     const positiveCount = positiveWords.filter(word => text.includes(word)).length;
@@ -271,7 +289,9 @@ class EvaluationProcessor {
      * @returns {string|null} Extracted insight
      */
   extractKeyInsight(reasoning, type) {
-    if (!reasoning || reasoning.length < 20) return null;
+    if (!reasoning || reasoning.length < 20) {
+      return null;
+    }
 
     // Split into sentences and find the most informative one
     const sentences = reasoning.split(/[.!?]+/).filter(s => s.trim().length > 15);
@@ -280,14 +300,14 @@ class EvaluationProcessor {
       // Look for positive indicators
       const positiveWords = ['strong', 'excellent', 'exceptional', 'proven', 'successful', 'effective', 'demonstrates', 'achieved'];
       const positiveSentence = sentences.find(s => 
-        positiveWords.some(word => s.toLowerCase().includes(word))
+        positiveWords.some(word => s.toLowerCase().includes(word)),
       );
       return positiveSentence ? positiveSentence.trim() : sentences[0]?.trim();
     } else {
       // Look for negative indicators
       const negativeWords = ['lacks', 'limited', 'missing', 'insufficient', 'concerns', 'gap', 'weak', 'no evidence'];
       const negativeSentence = sentences.find(s => 
-        negativeWords.some(word => s.toLowerCase().includes(word))
+        negativeWords.some(word => s.toLowerCase().includes(word)),
       );
       return negativeSentence ? negativeSentence.trim() : sentences[0]?.trim();
     }
@@ -303,19 +323,27 @@ class EvaluationProcessor {
         
     // Extract monetary values
     const moneyMatches = reasoning.match(/CAD?\s*\$[\d.,]+[MBK]?/gi);
-    if (moneyMatches) examples.push(...moneyMatches);
+    if (moneyMatches) {
+      examples.push(...moneyMatches);
+    }
 
     // Extract percentages
     const percentMatches = reasoning.match(/\d+(\.\d+)?%/g);
-    if (percentMatches) examples.push(...percentMatches);
+    if (percentMatches) {
+      examples.push(...percentMatches);
+    }
 
     // Extract large numbers with context
     const numberMatches = reasoning.match(/\b\d{1,3}[,\d]*\+?\s*(?:users|engineers|artists|deployments|companies|years)\b/gi);
-    if (numberMatches) examples.push(...numberMatches);
+    if (numberMatches) {
+      examples.push(...numberMatches);
+    }
 
     // Extract company names
     const companyMatches = reasoning.match(/\b(?:Meta|Google|Apple|Microsoft|Amazon|Spotify|Airbnb|Netflix|Tesla|Uber|LinkedIn|Twitter|Facebook|Instagram|WhatsApp|YouTube|TikTok|Snapchat|Pinterest|Reddit|Slack|Zoom|Shopify|Square|PayPal|Stripe|Salesforce|Oracle|SAP|Adobe|IBM|Intel|NVIDIA|AMD|Qualcomm|Cisco|VMware|ServiceNow|Workday|Atlassian|MongoDB|Snowflake|Datadog|Splunk|CrowdStrike|Okta|Twilio|SendGrid|Mailchimp|HubSpot|Zendesk|Freshworks|Canva|Figma|Notion|Airtable|Asana|Trello|Monday|GitLab|GitHub|BitBucket|Jenkins|Docker|Kubernetes|AWS|Azure|GCP|Heroku|Vercel|Netlify|CloudFlare|DigitalOcean|Linode|Vultr)\b/gi);
-    if (companyMatches) examples.push(...companyMatches);
+    if (companyMatches) {
+      examples.push(...companyMatches);
+    }
 
     return examples.slice(0, 3); // Limit per reasoning block
   }
@@ -350,7 +378,7 @@ class EvaluationProcessor {
       'management_mentorship': 'Management',
       'communication_collaboration': 'Collaboration',
       'practical_leadership': 'Leadership',
-      'professional_development': 'Development'
+      'professional_development': 'Development',
     };
         
     return themeMap[criterion] || 'Other';
@@ -378,7 +406,7 @@ class EvaluationProcessor {
           level,
           sentiment,
           avgScore: Math.round(avgScore * 10) / 10,
-          personaCount: evaluations.length
+          personaCount: evaluations.length,
         });
       }
     });
@@ -396,7 +424,7 @@ class EvaluationProcessor {
     const unique = [];
     insights.forEach(insight => {
       const isDuplicate = unique.some(existing => 
-        this.calculateSimilarity(insight.insight, existing.insight) > 0.7
+        this.calculateSimilarity(insight.insight, existing.insight) > 0.7,
       );
       if (!isDuplicate) {
         unique.push(insight);

@@ -35,7 +35,7 @@ async function runKeywordAnalysis(applicationName) {
     const input = {
       applicationName,
       keywordsFile,
-      jobPostingFile
+      jobPostingFile,
     };
     
     // Add resume file if it exists
@@ -95,7 +95,7 @@ async function runHiringEvaluation(applicationName, resumeData, fastMode = false
     const input = {
       applicationName,
       resumeData,
-      fastMode
+      fastMode,
     };
     
     // Execute evaluation using service wrapper

@@ -3,7 +3,7 @@
  * Shared constants for consistent error categorization across the application
  */
 
-const ERROR_TYPES = {
+export const ERROR_TYPES = {
   // File system errors
   FILE_NOT_FOUND: 'FILE_NOT_FOUND',
   FILE_ACCESS_ERROR: 'FILE_ACCESS_ERROR',
@@ -36,32 +36,32 @@ const ERROR_TYPES = {
   
   // General errors
   UNKNOWN_ERROR: 'UNKNOWN_ERROR',
-  INTERNAL_ERROR: 'INTERNAL_ERROR'
-};
+  INTERNAL_ERROR: 'INTERNAL_ERROR',
+} as const;
+
+export type ErrorType = typeof ERROR_TYPES[keyof typeof ERROR_TYPES];
 
 /**
  * Error severity levels for categorization and handling
  */
-const ERROR_SEVERITY = {
+export const ERROR_SEVERITY = {
   LOW: 'LOW',       // Warning-level issues that don't prevent operation
   MEDIUM: 'MEDIUM', // Errors that prevent current operation but allow recovery
   HIGH: 'HIGH',     // Critical errors that require immediate attention
-  FATAL: 'FATAL'    // System-level errors that prevent application from continuing
-};
+  FATAL: 'FATAL',    // System-level errors that prevent application from continuing
+} as const;
+
+export type ErrorSeverity = typeof ERROR_SEVERITY[keyof typeof ERROR_SEVERITY];
 
 /**
  * Context types for structured error information
  */
-const CONTEXT_TYPES = {
+export const CONTEXT_TYPES = {
   FILE: 'FILE',
   SERVICE: 'SERVICE',
   VALIDATION: 'VALIDATION',
   CONFIGURATION: 'CONFIGURATION',
-  USER_INPUT: 'USER_INPUT'
-};
+  USER_INPUT: 'USER_INPUT',
+} as const;
 
-export {
-  ERROR_TYPES,
-  ERROR_SEVERITY,
-  CONTEXT_TYPES
-};
+export type ContextType = typeof CONTEXT_TYPES[keyof typeof CONTEXT_TYPES];

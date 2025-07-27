@@ -44,7 +44,7 @@ async function testIntegratedReliability() {
     const testError = new Error('socket hang up');
     const diagnosis = await tester.diagnoseFailure(testError, {
       test_id: 'integration_test',
-      configuration: 'baseline_default'
+      configuration: 'baseline_default',
     });
     console.log(`   🔍 Error classification: ${diagnosis.error_type}`);
     console.log(`   💡 Diagnosis: ${diagnosis.likely_cause}`);
@@ -55,7 +55,7 @@ async function testIntegratedReliability() {
     // Validate that we have consistent monitoring across different scenarios
     const scenarios = [
       { name: 'baseline_test', concurrency: 1 },
-      { name: 'parallel_test', concurrency: concurrency.optimal_concurrency }
+      { name: 'parallel_test', concurrency: concurrency.optimal_concurrency },
     ];
     
     for (const scenario of scenarios) {
@@ -83,27 +83,27 @@ async function testIntegratedReliability() {
         ollama_health_check: health.healthy,
         connection_tracking: typeof systemState.active_connections === 'number',
         failure_diagnosis: !!diagnosis.error_type,
-        status: 'operational'
+        status: 'operational',
       },
       phase_1b_discovery: {
         resource_thresholds: !!thresholds.memory_warning_gb,
         concurrency_optimization: concurrency.optimal_concurrency > 0,
         confidence_level: concurrency.confidence,
         production_readiness: concurrency.confidence === 'high' ? 'ready' : 'needs_validation',
-        status: 'operational'
+        status: 'operational',
       },
       scientific_approach: {
         consistent_monitoring: true,
         equal_footing_testing: true,
         evidence_based_configuration: true,
-        reliability_first: true
+        reliability_first: true,
       },
       overall_assessment: {
         phase_1a_complete: true,
         phase_1b_complete: true,
         ready_for_experiment: concurrency.confidence !== 'low',
-        expected_reliability_improvement: '94.7% → 99%+ (estimated)'
-      }
+        expected_reliability_improvement: '94.7% → 99%+ (estimated)',
+      },
     };
     
     // Save the report
@@ -117,7 +117,7 @@ async function testIntegratedReliability() {
     console.log(`Phase 1A (Monitoring): ${reliabilityReport.phase_1a_monitoring.status}`);
     console.log(`Phase 1B (Discovery): ${reliabilityReport.phase_1b_discovery.status}`);
     console.log(`Production Ready: ${reliabilityReport.phase_1b_discovery.production_readiness}`);
-    console.log(`Scientific Approach: ✅ Evidence-based, equal footing testing`);
+    console.log('Scientific Approach: ✅ Evidence-based, equal footing testing');
     console.log(`Expected Reliability: ${reliabilityReport.overall_assessment.expected_reliability_improvement}`);
     
     console.log(`\n💾 Full report saved to: ${reportFile}`);

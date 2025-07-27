@@ -19,7 +19,7 @@ class EvaluationRunner {
     // Per-model optimized temperature settings
     this.modelTemperatures = {
       'dolphin3:latest': 0.7,   // Higher temp for better variance in quality model
-      'phi3:mini': 0.3          // Lower temp for more focused output in fast model
+      'phi3:mini': 0.3,          // Lower temp for more focused output in fast model
     };
     this.personas = ['hr', 'technical', 'design', 'finance', 'ceo', 'team'];
     this.weights = {
@@ -28,7 +28,7 @@ class EvaluationRunner {
       design: 0.15,
       finance: 0.20,
       ceo: 0.20,
-      team: 0.10
+      team: 0.10,
     };
   }
 
@@ -80,7 +80,7 @@ class EvaluationRunner {
       'design': 'Director of Design',
       'finance': 'Finance Director',
       'ceo': 'CEO',
-      'team': 'Senior Product Manager'
+      'team': 'Senior Product Manager',
     };
 
     const criteriaFields = {};
@@ -98,9 +98,9 @@ class EvaluationRunner {
             type: 'object',
             properties: {
               score: { type: 'integer', minimum: 1, maximum: 10 },
-              reasoning: { type: 'string', maxLength: 300 }
+              reasoning: { type: 'string', maxLength: 300 },
             },
-            required: ['score', 'reasoning']
+            required: ['score', 'reasoning'],
           };
         }
       } catch (error) {
@@ -116,18 +116,18 @@ class EvaluationRunner {
           type: 'object',
           properties: criteriaFields,
           additionalProperties: false,
-          required: Object.keys(criteriaFields)  // Require all criteria
+          required: Object.keys(criteriaFields),  // Require all criteria
         },
         overall_assessment: {
           type: 'object',
           properties: {
             persona_score: { type: 'number', minimum: 1.0, maximum: 10.0 },
-            recommendation: { type: 'string', maxLength: 200 }
+            recommendation: { type: 'string', maxLength: 200 },
           },
-          required: ['persona_score', 'recommendation']
-        }
+          required: ['persona_score', 'recommendation'],
+        },
       },
-      required: ['scores', 'overall_assessment']
+      required: ['scores', 'overall_assessment'],
     };
 
     return new Promise((resolve, reject) => {
@@ -145,8 +145,8 @@ class EvaluationRunner {
           top_p: 0.9,
           repeat_penalty: 1.1,
           max_tokens: 4000,
-          num_ctx: 12288
-        }
+          num_ctx: 12288,
+        },
       });
 
       const options = {
@@ -156,8 +156,8 @@ class EvaluationRunner {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Content-Length': Buffer.byteLength(postData)
-        }
+          'Content-Length': Buffer.byteLength(postData),
+        },
       };
 
       const req = http.request(options, (res) => {
@@ -222,7 +222,7 @@ class EvaluationRunner {
       'design': keywords.design_keywords,
       'finance': keywords.finance_keywords,
       'ceo': keywords.ceo_keywords,
-      'team': keywords.team_keywords
+      'team': keywords.team_keywords,
     };
         
     if (keywordMap[persona]) {
@@ -304,7 +304,7 @@ class EvaluationRunner {
           'design': 'Director of Design',
           'finance': 'Finance Director',
           'ceo': 'CEO',
-          'team': 'Senior Product Manager'
+          'team': 'Senior Product Manager',
         };
                 
         parsed.persona = personaNameMap[persona] || persona;
@@ -380,20 +380,20 @@ class EvaluationRunner {
       evaluation_timestamp: new Date().toISOString(),
       model: this.modelName,
       candidate: candidateName,
-      evaluations: evaluations
+      evaluations: evaluations,
     };
         
     const applicationPath = path.join(this.baseDir, '..', '..', '..', 'data', 'applications', this.applicationName);
         
     await this.saveFile(
       path.join(applicationPath, 'working', 'evaluation-results.json'),
-      JSON.stringify(results, null, 2)
+      JSON.stringify(results, null, 2),
     );
         
     // Save markdown summary to working directory (not outputs)
     await this.saveFile(
       path.join(applicationPath, 'working', `${candidateName.toLowerCase().replace(/\s+/g, '-')}-evaluation.md`),
-      summary
+      summary,
     );
         
     console.log(`✅ Evaluation completed for ${candidateName}`);

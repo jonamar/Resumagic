@@ -6,7 +6,7 @@
  * Part of Phase 1: CI/CD Extensions for Standardization Safety
  */
 
-import { getFeatureFlags } from '../utils/feature-flags.js';
+import { getFeatureFlags } from '../utils/feature-flags.ts';
 
 function printUsage() {
   console.log(`
@@ -73,27 +73,27 @@ function listFlags() {
     'Document Generation': [
       'STANDARDIZED_DOCUMENT_GENERATION',
       'STANDARDIZED_RESUME_PROCESSING', 
-      'STANDARDIZED_COVER_LETTER_PROCESSING'
+      'STANDARDIZED_COVER_LETTER_PROCESSING',
     ],
     'Service Integration': [
       'STANDARDIZED_KEYWORD_ANALYSIS',
       'STANDARDIZED_HIRING_EVALUATION',
-      'STANDARDIZED_ERROR_HANDLING'
+      'STANDARDIZED_ERROR_HANDLING',
     ],
     'Architecture': [
       'STANDARDIZED_CLI_INTERFACE',
       'STANDARDIZED_SERVICE_COMMUNICATION',
-      'STANDARDIZED_CONFIGURATION'
+      'STANDARDIZED_CONFIGURATION',
     ],
     'Safety & Testing': [
       'ENABLE_GOLDEN_MASTER_VALIDATION',
       'ENABLE_PERFORMANCE_REGRESSION_DETECTION',
-      'STRICT_COMPATIBILITY_MODE'
+      'STRICT_COMPATIBILITY_MODE',
     ],
     'Development': [
       'DEBUG_FEATURE_FLAGS',
-      'LOG_SERVICE_TRANSITIONS'
-    ]
+      'LOG_SERVICE_TRANSITIONS',
+    ],
   };
   
   Object.entries(categories).forEach(([category, flagNames]) => {
@@ -267,5 +267,5 @@ export {
   toggleFlag,
   resetFlags,
   validateFlags,
-  showImplementation
+  showImplementation,
 };

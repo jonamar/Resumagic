@@ -1,8 +1,8 @@
 import path from 'path';
 import fs from 'fs';
 import theme from '../theme.js';
-import ErrorHandler from '../utils/error-handler.js';
-import { ERROR_TYPES } from '../utils/error-types.js';
+import ErrorHandler from '../utils/error-handler.ts';
+import { ERROR_TYPES } from '../utils/error-types.ts';
 
 /**
  * Path Resolution Module
@@ -53,7 +53,7 @@ function resolvePaths(applicationName, baseDir) {
     markdownFilePath,
     resumeDocxPath,
     coverLetterDocxPath,
-    combinedDocxPath
+    combinedDocxPath,
   };
 }
 
@@ -70,13 +70,13 @@ function validatePaths(paths) {
     const context = ErrorHandler.buildFileContext(applicationFolderPath, {
       operation: 'application folder validation',
       required: true,
-      expectedType: 'directory'
+      expectedType: 'directory',
     });
     
     ErrorHandler.logAppError(
       'Application folder not found or not a directory',
       ERROR_TYPES.FILE_NOT_FOUND,
-      context
+      context,
     );
     
     return ErrorHandler.createResult(
@@ -85,7 +85,7 @@ function validatePaths(paths) {
       theme.messages.errors.applicationNotFound.replace('{path}', applicationFolderPath),
       ERROR_TYPES.FILE_NOT_FOUND,
       [],
-      'APPLICATION_NOT_FOUND'
+      'APPLICATION_NOT_FOUND',
     );
   }
   
@@ -94,13 +94,13 @@ function validatePaths(paths) {
     const context = ErrorHandler.buildFileContext(resumeDataPath, {
       operation: 'resume data validation',
       required: true,
-      expectedType: 'file'
+      expectedType: 'file',
     });
     
     ErrorHandler.logAppError(
       'Resume data file not found',
       ERROR_TYPES.FILE_NOT_FOUND,
-      context
+      context,
     );
     
     return ErrorHandler.createResult(
@@ -109,7 +109,7 @@ function validatePaths(paths) {
       theme.messages.errors.resumeNotFound.replace('{path}', resumeDataPath),
       ERROR_TYPES.FILE_NOT_FOUND,
       [theme.messages.errors.resumeRequired],
-      'RESUME_NOT_FOUND'
+      'RESUME_NOT_FOUND',
     );
   }
   
@@ -121,13 +121,13 @@ function validatePaths(paths) {
       const context = ErrorHandler.buildFileContext(outputsDir, {
         operation: 'output directory creation',
         error: error.message,
-        required: true
+        required: true,
       });
       
       ErrorHandler.logAppError(
         'Failed to create outputs directory',
         ERROR_TYPES.FILE_SYSTEM_ERROR,
-        context
+        context,
       );
       
       return ErrorHandler.createResult(
@@ -136,7 +136,7 @@ function validatePaths(paths) {
         `Failed to create outputs directory: ${error.message}`,
         ERROR_TYPES.FILE_SYSTEM_ERROR,
         [],
-        'OUTPUT_DIR_CREATION_FAILED'
+        'OUTPUT_DIR_CREATION_FAILED',
       );
     }
   }
@@ -169,13 +169,13 @@ function loadResumeData(resumeDataPath) {
     
     return {
       isValid: true,
-      data: resumeData
+      data: resumeData,
     };
   } catch (error) {
     return {
       isValid: false,
       error: `Error loading resume data: ${error.message}`,
-      errorType: 'RESUME_DATA_INVALID'
+      errorType: 'RESUME_DATA_INVALID',
     };
   }
 }
@@ -242,7 +242,7 @@ function resolveCanonicalPaths(baseDir) {
     outputsDir,
     resumeFile: path.join(inputsDir, theme.fileNaming.resumeFile),
     coverLetterFile: path.join(inputsDir, theme.fileNaming.coverLetterFile),
-    jobPostingFile: path.join(inputsDir, 'job-posting.md')
+    jobPostingFile: path.join(inputsDir, 'job-posting.md'),
   };
 }
 
@@ -261,7 +261,7 @@ function resolveTestPaths(baseDir) {
     inputsDir,
     outputsDir,
     resumeFile: path.join(inputsDir, theme.fileNaming.resumeFile),
-    coverLetterFile: path.join(inputsDir, theme.fileNaming.coverLetterFile)
+    coverLetterFile: path.join(inputsDir, theme.fileNaming.coverLetterFile),
   };
 }
 
@@ -274,5 +274,5 @@ export {
   getAvailableApplications,
   displayApplicationNotFoundError,
   resolveCanonicalPaths,
-  resolveTestPaths
+  resolveTestPaths,
 }; 

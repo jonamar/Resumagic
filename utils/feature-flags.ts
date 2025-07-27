@@ -12,11 +12,43 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Define types for our feature flags
+interface FeatureFlagsConfig {
+  // Document generation flags
+  STANDARDIZED_DOCUMENT_GENERATION: boolean;
+  STANDARDIZED_RESUME_PROCESSING: boolean;
+  STANDARDIZED_COVER_LETTER_PROCESSING: boolean;
+  
+  // Service integration flags  
+  STANDARDIZED_KEYWORD_ANALYSIS: boolean;
+  STANDARDIZED_HIRING_EVALUATION: boolean;
+  STANDARDIZED_VALE_LINTING: boolean;
+  STANDARDIZED_ERROR_HANDLING: boolean;
+  
+  // Architecture flags
+  STANDARDIZED_CLI_INTERFACE: boolean;
+  STANDARDIZED_SERVICE_COMMUNICATION: boolean;
+  STANDARDIZED_CONFIGURATION: boolean;
+  
+  // Testing and validation flags
+  ENABLE_GOLDEN_MASTER_VALIDATION: boolean;
+  ENABLE_PERFORMANCE_REGRESSION_DETECTION: boolean;
+  STRICT_COMPATIBILITY_MODE: boolean;
+  
+  // Development flags
+  DEBUG_FEATURE_FLAGS: boolean;
+  LOG_SERVICE_TRANSITIONS: boolean;
+}
+
+interface FlagMapping {
+  [key: string]: keyof FeatureFlagsConfig;
+}
+
 /**
  * Feature flags configuration
  * Each flag controls whether to use standardized vs legacy implementation
  */
-const DEFAULT_FLAGS = {
+const DEFAULT_FLAGS: FeatureFlagsConfig = {
   // Document generation flags
   STANDARDIZED_DOCUMENT_GENERATION: false,
   STANDARDIZED_RESUME_PROCESSING: false,
@@ -40,13 +72,17 @@ const DEFAULT_FLAGS = {
   
   // Development flags
   DEBUG_FEATURE_FLAGS: false,
-  LOG_SERVICE_TRANSITIONS: true
+  LOG_SERVICE_TRANSITIONS: true,
 };
 
 /**
  * Feature flag manager class
  */
 class FeatureFlags {
+  private flags: FeatureFlagsConfig;
+  private configPath: string;
+  private envPrefix: string;
+  
   constructor() {
     this.flags = { ...DEFAULT_FLAGS };
     this.configPath = path.join(__dirname, '.feature-flags.json');
@@ -58,13 +94,13 @@ class FeatureFlags {
   /**
    * Load flags from config file and environment variables
    */
-  loadFlags() {
+  loadFlags(): void {
     // Load from config file if it exists
     if (fs.existsSync(this.configPath)) {
       try {
-        const fileFlags = JSON.parse(fs.readFileSync(this.configPath, 'utf8'));
-        this.flags = { ...this.flags, ...fileFlags };
-      } catch (error) {
+        const fileFlags: Partial<FeatureFlagsConfig> = JSON.parse(fs.readFileSync(this.configPath, 'utf8'));
+        this.flags = { ...this.flags, ...fileFlags } as FeatureFlagsConfig;
+      } catch (error: any) {
         console.warn(`Warning: Could not load feature flags from ${this.configPath}:`, error.message);
       }
     }
@@ -77,9 +113,9 @@ class FeatureFlags {
       if (envValue !== undefined) {
         // Parse boolean values
         if (envValue.toLowerCase() === 'true') {
-          this.flags[flagName] = true;
+          (this.flags as any)[flagName] = true;
         } else if (envValue.toLowerCase() === 'false') {
-          this.flags[flagName] = false;
+          (this.flags as any)[flagName] = false;
         } else {
           // Keep original value if not a clear boolean
           console.warn(`Warning: Invalid boolean value for ${envVar}: ${envValue}`);
@@ -94,12 +130,13 @@ class FeatureFlags {
   
   /**
    * Save current flags to config file
+   * @returns {boolean} - Whether the save was successful
    */
-  saveFlags() {
+  saveFlags(): boolean {
     try {
       fs.writeFileSync(this.configPath, JSON.stringify(this.flags, null, 2));
       return true;
-    } catch (error) {
+    } catch (error: any) {
       console.error(`Error saving feature flags to ${this.configPath}:`, error.message);
       return false;
     }
@@ -110,7 +147,7 @@ class FeatureFlags {
    * @param {string} flagName - Name of the feature flag
    * @returns {boolean} - Whether the flag is enabled
    */
-  isEnabled(flagName) {
+  isEnabled(flagName: keyof FeatureFlagsConfig): boolean {
     if (!(flagName in this.flags)) {
       console.warn(`Warning: Unknown feature flag: ${flagName}`);
       return false;
@@ -129,14 +166,15 @@ class FeatureFlags {
    * Enable a feature flag
    * @param {string} flagName - Name of the feature flag
    * @param {boolean} persist - Whether to save to config file
+   * @returns {boolean} - Whether the operation was successful
    */
-  enable(flagName, persist = false) {
+  enable(flagName: keyof FeatureFlagsConfig, persist: boolean = false): boolean {
     if (!(flagName in this.flags)) {
       console.warn(`Warning: Unknown feature flag: ${flagName}`);
       return false;
     }
     
-    this.flags[flagName] = true;
+    this.flags[flagName] = true as any;
     
     if (persist) {
       this.saveFlags();
@@ -153,14 +191,15 @@ class FeatureFlags {
    * Disable a feature flag
    * @param {string} flagName - Name of the feature flag
    * @param {boolean} persist - Whether to save to config file
+   * @returns {boolean} - Whether the operation was successful
    */
-  disable(flagName, persist = false) {
+  disable(flagName: keyof FeatureFlagsConfig, persist: boolean = false): boolean {
     if (!(flagName in this.flags)) {
       console.warn(`Warning: Unknown feature flag: ${flagName}`);
       return false;
     }
     
-    this.flags[flagName] = false;
+    this.flags[flagName] = false as any;
     
     if (persist) {
       this.saveFlags();
@@ -177,14 +216,15 @@ class FeatureFlags {
    * Toggle a feature flag
    * @param {string} flagName - Name of the feature flag
    * @param {boolean} persist - Whether to save to config file
+   * @returns {boolean} - The new value of the flag
    */
-  toggle(flagName, persist = false) {
+  toggle(flagName: keyof FeatureFlagsConfig, persist: boolean = false): boolean {
     if (!(flagName in this.flags)) {
       console.warn(`Warning: Unknown feature flag: ${flagName}`);
       return false;
     }
     
-    this.flags[flagName] = !this.flags[flagName];
+    this.flags[flagName] = !this.flags[flagName] as any;
     
     if (persist) {
       this.saveFlags();
@@ -199,8 +239,9 @@ class FeatureFlags {
   
   /**
    * Get all flags and their current values
+   * @returns {FeatureFlagsConfig} - Copy of all flags
    */
-  getAll() {
+  getAll(): FeatureFlagsConfig {
     return { ...this.flags };
   }
   
@@ -208,7 +249,7 @@ class FeatureFlags {
    * Reset all flags to defaults
    * @param {boolean} persist - Whether to save to config file
    */
-  resetToDefaults(persist = false) {
+  resetToDefaults(persist: boolean = false): void {
     this.flags = { ...DEFAULT_FLAGS };
     
     if (persist) {
@@ -220,15 +261,16 @@ class FeatureFlags {
   
   /**
    * Validate that critical safety flags are properly configured
+   * @returns {boolean} - Whether validation passed
    */
-  validateSafetyFlags() {
-    const criticalFlags = [
+  validateSafetyFlags(): boolean {
+    const criticalFlags: (keyof FeatureFlagsConfig)[] = [
       'ENABLE_GOLDEN_MASTER_VALIDATION',
       'ENABLE_PERFORMANCE_REGRESSION_DETECTION',
-      'STRICT_COMPATIBILITY_MODE'
+      'STRICT_COMPATIBILITY_MODE',
     ];
     
-    const issues = [];
+    const issues: string[] = [];
     
     criticalFlags.forEach(flagName => {
       if (!this.flags[flagName]) {
@@ -258,8 +300,8 @@ class FeatureFlags {
    * @param {string} serviceName - Name of the service
    * @returns {string} - 'standardized' or 'legacy'
    */
-  getImplementation(serviceName) {
-    const flagMapping = {
+  getImplementation(serviceName: string): string {
+    const flagMapping: FlagMapping = {
       'document-generation': 'STANDARDIZED_DOCUMENT_GENERATION',
       'resume-processing': 'STANDARDIZED_RESUME_PROCESSING',
       'cover-letter-processing': 'STANDARDIZED_COVER_LETTER_PROCESSING',
@@ -268,7 +310,7 @@ class FeatureFlags {
       'error-handling': 'STANDARDIZED_ERROR_HANDLING',
       'cli-interface': 'STANDARDIZED_CLI_INTERFACE',
       'service-communication': 'STANDARDIZED_SERVICE_COMMUNICATION',
-      'configuration': 'STANDARDIZED_CONFIGURATION'
+      'configuration': 'STANDARDIZED_CONFIGURATION',
     };
     
     const flagName = flagMapping[serviceName];
@@ -282,13 +324,13 @@ class FeatureFlags {
 }
 
 // Singleton instance
-let instance = null;
+let instance: FeatureFlags | null = null;
 
 /**
  * Get the feature flags singleton instance
  * @returns {FeatureFlags} - The feature flags instance
  */
-function getFeatureFlags() {
+function getFeatureFlags(): FeatureFlags {
   if (!instance) {
     instance = new FeatureFlags();
   }
@@ -297,10 +339,10 @@ function getFeatureFlags() {
 
 /**
  * Convenience function to check if a flag is enabled
- * @param {string} flagName - Name of the feature flag
+ * @param {keyof FeatureFlagsConfig} flagName - Name of the feature flag
  * @returns {boolean} - Whether the flag is enabled
  */
-function isEnabled(flagName) {
+function isEnabled(flagName: keyof FeatureFlagsConfig): boolean {
   return getFeatureFlags().isEnabled(flagName);
 }
 
@@ -309,7 +351,7 @@ function isEnabled(flagName) {
  * @param {string} serviceName - Name of the service
  * @returns {string} - 'standardized' or 'legacy'
  */
-function getImplementation(serviceName) {
+function getImplementation(serviceName: string): string {
   return getFeatureFlags().getImplementation(serviceName);
 }
 
@@ -318,5 +360,6 @@ export {
   getFeatureFlags,
   isEnabled,
   getImplementation,
-  DEFAULT_FLAGS
+  DEFAULT_FLAGS,
+  type FeatureFlagsConfig,
 };

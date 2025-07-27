@@ -1,14 +1,14 @@
 import fs from 'fs';
 import path from 'path';
 import theme from '../theme.js';
-import ErrorHandler from '../utils/error-handler.js';
-import { ERROR_TYPES } from '../utils/error-types.js';
+import ErrorHandler from '../utils/error-handler.ts';
+import { ERROR_TYPES } from '../utils/error-types.ts';
 
 // Initialize error handler for CLI operations
 const _errorHandler = new ErrorHandler({
   component: 'cli-parser',
   includeContext: true,
-  includeStackTrace: false
+  includeStackTrace: false,
 });
 
 /**
@@ -51,14 +51,14 @@ function parseCliArguments(args) {
     evaluate: args.includes(theme.cli.flags.evaluate),
     all: args.includes(theme.cli.flags.all),
     fast: args.includes(theme.cli.flags.fast),
-    newApp: newAppIndex !== -1
+    newApp: newAppIndex !== -1,
   };
   
   return {
     applicationName,
     flags,
     newAppConfig,
-    rawArgs: args
+    rawArgs: args,
   };
 }
 
@@ -82,8 +82,8 @@ function validateCliArguments(config) {
           'Usage: node generate-resume.js --new-app "company-name" "job-title"',
           'Example: node generate-resume.js --new-app "spotify" "senior-product-manager"',
           '',
-          'Both company name and job title are required.'
-        ]
+          'Both company name and job title are required.',
+        ],
       );
     }
     
@@ -94,7 +94,7 @@ function validateCliArguments(config) {
         null,
         'Invalid company name provided',
         ERROR_TYPES.VALIDATION_ERROR,
-        ['Company name must be a non-empty string']
+        ['Company name must be a non-empty string'],
       );
     }
     
@@ -104,7 +104,7 @@ function validateCliArguments(config) {
         null,
         'Invalid job title provided',
         ERROR_TYPES.VALIDATION_ERROR,
-        ['Job title must be a non-empty string']
+        ['Job title must be a non-empty string'],
       );
     }
     
@@ -116,13 +116,13 @@ function validateCliArguments(config) {
   if (!applicationName) {
     const context = ErrorHandler.buildValidationContext('applicationName', {
       provided: applicationName,
-      expectedFormat: 'non-empty string'
+      expectedFormat: 'non-empty string',
     });
     
     ErrorHandler.logAppError(
       'Missing application name in CLI arguments',
       ERROR_TYPES.VALIDATION_ERROR,
-      context
+      context,
     );
     
     return ErrorHandler.createResult(
@@ -135,8 +135,8 @@ function validateCliArguments(config) {
         theme.messages.usage.example,
         '',
         theme.messages.usage.createApplication,
-        theme.messages.usage.createCommand.replace('{name}', '<application-name>')
-      ]
+        theme.messages.usage.createCommand.replace('{name}', '<application-name>'),
+      ],
     );
   }
   
@@ -154,8 +154,8 @@ function displayUsage(applicationsDir, applicationName) {
     ERROR_TYPES.VALIDATION_ERROR,
     {
       provided: applicationName,
-      expectedFormat: 'non-empty string'
-    }
+      expectedFormat: 'non-empty string',
+    },
   );
   
   console.error(theme.messages.usage.command);
@@ -185,5 +185,5 @@ function displayUsage(applicationsDir, applicationName) {
 export {
   parseCliArguments,
   validateCliArguments,
-  displayUsage
+  displayUsage,
 }; 

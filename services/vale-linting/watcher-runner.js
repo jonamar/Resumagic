@@ -8,21 +8,21 @@
 const ValeWatcher = require('./watcher');
 
 async function main() {
-    const applicationsDir = process.argv[2];
+  const applicationsDir = process.argv[2];
     
-    if (!applicationsDir) {
-        console.error('❌ Applications directory path required');
-        process.exit(1);
-    }
+  if (!applicationsDir) {
+    console.error('❌ Applications directory path required');
+    process.exit(1);
+  }
     
-    const watcher = new ValeWatcher();
+  const watcher = new ValeWatcher();
     
-    try {
-        watcher.start(applicationsDir);
-    } catch (error) {
-        console.error(`❌ Failed to start watcher: ${error.message}`);
-        process.exit(1);
-    }
+  try {
+    watcher.start(applicationsDir);
+  } catch (error) {
+    console.error(`❌ Failed to start watcher: ${error.message}`);
+    process.exit(1);
+  }
 }
 
 main();

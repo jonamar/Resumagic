@@ -7,7 +7,7 @@
 import _fs from 'fs';
 import _path from 'path';
 import { getServiceWrapper, getServicesHealthStatus } from '../../services/wrappers/service-registry.js';
-import { getFeatureFlags } from '../../utils/feature-flags.js';
+import { getFeatureFlags } from '../../utils/feature-flags.ts';
 
 describe('Service Wrapper Interface Validation', () => {
   let featureFlags;
@@ -69,12 +69,12 @@ describe('Service Wrapper Interface Validation', () => {
             response = await service.analyze({
               applicationName: 'test-app',
               keywordsFile: 'nonexistent.json',
-              jobPostingFile: 'nonexistent.md'
+              jobPostingFile: 'nonexistent.md',
             });
           } else if (serviceName === 'hiring-evaluation') {
             response = await service.evaluate({
               applicationName: 'test-app',
-              resumeData: { personalInfo: { name: 'Test User' } }
+              resumeData: { personalInfo: { name: 'Test User' } },
             });
           } else if (serviceName === 'document-generation') {
             response = await service.validateCapabilities();
@@ -147,7 +147,7 @@ describe('Service Wrapper Interface Validation', () => {
       // Test invalid resume data
       const response = await hiringService.evaluate({
         applicationName: 'test-app',
-        resumeData: {} // Missing personalInfo
+        resumeData: {}, // Missing personalInfo
       });
       
       expect(response.success).toBe(false);
@@ -172,7 +172,7 @@ describe('Service Wrapper Interface Validation', () => {
       const response = await docService.generate({
         generationPlan: {}, // Empty plan
         paths: { applicationName: 'test' },
-        resumeData: { personalInfo: { name: 'Test' } }
+        resumeData: { personalInfo: { name: 'Test' } },
       });
       
       expect(response.success).toBe(false);
@@ -210,7 +210,7 @@ describe('Service Wrapper Interface Validation', () => {
       const response = await keywordService.analyze({
         applicationName: 'test-app',
         keywordsFile: '/nonexistent/keywords.json',
-        jobPostingFile: '/nonexistent/job.md'
+        jobPostingFile: '/nonexistent/job.md',
       });
       
       expect(response.success).toBe(false);
@@ -224,7 +224,7 @@ describe('Service Wrapper Interface Validation', () => {
       const response = await keywordService.analyze({
         applicationName: 'test-app',
         keywordsFile: '/nonexistent/keywords.json',
-        jobPostingFile: '/nonexistent/job.md'
+        jobPostingFile: '/nonexistent/job.md',
       });
       
       expect(response.error.details).toBeDefined();

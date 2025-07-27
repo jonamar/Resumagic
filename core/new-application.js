@@ -2,8 +2,8 @@ import path from 'path';
 import fs from 'fs';
 import theme from '../theme.js';
 import { resolveCanonicalPaths } from './path-resolution.js';
-import ErrorHandler from '../utils/error-handler.js';
-import { ERROR_TYPES } from '../utils/error-types.js';
+import ErrorHandler from '../utils/error-handler.ts';
+import { ERROR_TYPES } from '../utils/error-types.ts';
 
 /**
  * New Application Creation Module
@@ -52,7 +52,7 @@ function createNewApplication(company, jobTitle, baseDir) {
         null,
         `Application already exists: ${applicationName}`,
         ERROR_TYPES.VALIDATION_ERROR,
-        [`Directory already exists: ${newAppDir}`]
+        [`Directory already exists: ${newAppDir}`],
       );
     }
     
@@ -65,8 +65,8 @@ function createNewApplication(company, jobTitle, baseDir) {
         ERROR_TYPES.FILE_NOT_FOUND,
         [
           `Expected canonical directory: ${canonicalPaths.canonicalDir}`,
-          'Run data directory setup first'
-        ]
+          'Run data directory setup first',
+        ],
       );
     }
     
@@ -83,7 +83,7 @@ function createNewApplication(company, jobTitle, baseDir) {
     const filesToCopy = [
       { src: canonicalPaths.resumeFile, dest: path.join(inputsDir, theme.fileNaming.resumeFile) },
       { src: canonicalPaths.coverLetterFile, dest: path.join(inputsDir, theme.fileNaming.coverLetterFile) },
-      { src: canonicalPaths.jobPostingFile, dest: path.join(inputsDir, 'job-posting.md') }
+      { src: canonicalPaths.jobPostingFile, dest: path.join(inputsDir, 'job-posting.md') },
     ];
     
     for (const file of filesToCopy) {
@@ -112,8 +112,8 @@ function createNewApplication(company, jobTitle, baseDir) {
         `${inputsDir}/${theme.fileNaming.coverLetterFile}`,
         `${inputsDir}/job-posting.md`,
         workingDir,
-        outputsDir
-      ]
+        outputsDir,
+      ],
     };
     
     return ErrorHandler.createResult(true, result);
@@ -124,12 +124,12 @@ function createNewApplication(company, jobTitle, baseDir) {
       null,
       `Failed to create new application: ${error.message}`,
       ERROR_TYPES.INTERNAL_ERROR,
-      [error.stack]
+      [error.stack],
     );
   }
 }
 
 export {
   generateApplicationName,
-  createNewApplication
+  createNewApplication,
 };

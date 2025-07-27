@@ -73,7 +73,6 @@ module.exports = {
   clearMocks: true,
   
   // Make Jest globals available
-  injectGlobals: true,
-  
+  injectGlobals: true
 
 };

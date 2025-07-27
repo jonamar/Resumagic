@@ -229,7 +229,7 @@ const theme = {
       languages: 'LANGUAGES',
     },
     dateFormat: 'MMM-YYYY', // ATS-friendly date format
-  }
+  },
 };
 
 export default theme;

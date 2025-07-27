@@ -39,7 +39,7 @@ async function runKeywordAnalysis(applicationName) {
     const input = {
       applicationName,
       keywordsFile,
-      jobPostingFile
+      jobPostingFile,
     };
     
     // Add resume file if it exists
@@ -99,7 +99,7 @@ async function runHiringEvaluation(applicationName, resumeData, fastMode = false
     const input = {
       applicationName,
       resumeData,
-      fastMode
+      fastMode,
     };
     
     console.log(`${theme.messages.emojis.processing} Running hiring evaluation via service wrapper...`);
@@ -265,5 +265,5 @@ async function executeCommand(args) {
 export {
   executeCommand,
   runKeywordAnalysis,
-  runHiringEvaluation
+  runHiringEvaluation,
 };

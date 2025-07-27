@@ -16,7 +16,7 @@ const __dirname = path.dirname(__filename);
 // Expected content hashes for baseline validation
 const expectedHashes = {
   'keyword_analysis.json': '99e04f7203effa7d45037206d234ea0a7710be28d60b51a382af6e5268ab8644',
-  'keyword-checklist.md': '93706d638de0a5e71424e3ec665a7e9bfadd2d31eaa40e14292ba4127e48079c'
+  'keyword-checklist.md': '93706d638de0a5e71424e3ec665a7e9bfadd2d31eaa40e14292ba4127e48079c',
 };
 
 /**
@@ -39,12 +39,12 @@ function getTestPaths() {
     inputs: {
       keywords: path.join(dataRoot, 'inputs', 'keywords.json'),
       jobPosting: path.join(dataRoot, 'inputs', 'job-posting.md'),
-      resume: path.join(dataRoot, 'inputs', 'resume.json')
+      resume: path.join(dataRoot, 'inputs', 'resume.json'),
     },
     working: {
       analysis: path.join(dataRoot, 'working', 'keyword_analysis.json'),
-      checklist: path.join(dataRoot, 'working', 'keyword-checklist.md')
-    }
+      checklist: path.join(dataRoot, 'working', 'keyword-checklist.md'),
+    },
   };
 }
 
@@ -72,7 +72,7 @@ describe('Keyword Analysis Service Contract', () => {
       applicationName: 'test-validation',
       keywordsFile: testPaths.inputs.keywords,
       jobPostingFile: testPaths.inputs.jobPosting,
-      resumeFile: testPaths.inputs.resume
+      resumeFile: testPaths.inputs.resume,
     });
 
     // Verify service succeeded
@@ -100,7 +100,7 @@ describe('Keyword Analysis Service Contract', () => {
       applicationName: 'test-validation',
       keywordsFile: testPaths.inputs.keywords,
       jobPostingFile: testPaths.inputs.jobPosting,
-      resumeFile: testPaths.inputs.resume
+      resumeFile: testPaths.inputs.resume,
     });
 
     const analysisData = JSON.parse(fs.readFileSync(testPaths.working.analysis, 'utf8'));
@@ -130,7 +130,7 @@ describe('Keyword Analysis Service Contract', () => {
       applicationName: 'test-validation',
       keywordsFile: '/nonexistent/keywords.json',
       jobPostingFile: testPaths.inputs.jobPosting,
-      resumeFile: testPaths.inputs.resume
+      resumeFile: testPaths.inputs.resume,
     });
 
     expect(result.success).toBe(false);
@@ -143,7 +143,7 @@ describe('Keyword Analysis Service Contract', () => {
       applicationName: 'test-validation',
       keywordsFile: testPaths.inputs.keywords,
       jobPostingFile: '/nonexistent/job-posting.md',
-      resumeFile: testPaths.inputs.resume
+      resumeFile: testPaths.inputs.resume,
     });
 
     expect(result.success).toBe(false);
@@ -155,7 +155,7 @@ describe('Keyword Analysis Service Contract', () => {
     const result = await keywordService.analyze({
       applicationName: 'test-validation',
       keywordsFile: testPaths.inputs.keywords,
-      jobPostingFile: testPaths.inputs.jobPosting
+      jobPostingFile: testPaths.inputs.jobPosting,
       // No resume file provided
     });
 
@@ -185,6 +185,6 @@ export function updateGoldenMasters() {
   
   return {
     'keyword_analysis.json': analysisHash,
-    'keyword-checklist.md': checklistHash
+    'keyword-checklist.md': checklistHash,
   };
 }

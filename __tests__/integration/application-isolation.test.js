@@ -12,7 +12,7 @@ import {
   discoverApplications, 
   getTestableApplications, 
   validateRequiredApplications,
-  ApplicationHealth 
+  ApplicationHealth, 
 } from '../helpers/application-registry.js';
 
 // ESM equivalent of __dirname
@@ -87,7 +87,7 @@ describe('Application Isolation', () => {
       const output = execSync(`node generate-resume.js ${targetApp} --both`, {
         cwd: path.resolve(__dirname, '../..'),
         encoding: 'utf8',
-        timeout: 30000 // 30 second timeout
+        timeout: 30000, // 30 second timeout
       });
       
       expect(output).toContain('✅'); // Should contain success indicators
@@ -101,13 +101,19 @@ describe('Application Isolation', () => {
     const unchangedApps = [];
 
     testApps.forEach(app => {
-      if (!baselineTimestamps[app]) return; // Skip if no baseline
+      if (!baselineTimestamps[app]) {
+        return;
+      } // Skip if no baseline
 
       const appPath = getApplicationPath(app);
-      if (!fs.existsSync(appPath)) return;
+      if (!fs.existsSync(appPath)) {
+        return;
+      }
 
       const outputsPath = path.join(appPath, 'outputs');
-      if (!fs.existsSync(outputsPath)) return;
+      if (!fs.existsSync(outputsPath)) {
+        return;
+      }
 
       const files = fs.readdirSync(outputsPath).filter(f => f.endsWith('.docx'));
       let appModified = false;
@@ -176,7 +182,7 @@ describe('Application Isolation', () => {
       execSync('node generate-resume.js nonexistent-application', {
         cwd: path.resolve(__dirname, '../..'),
         encoding: 'utf8',
-        timeout: 10000
+        timeout: 10000,
       });
     }).toThrow(); // Should throw/exit with error for invalid application
   });

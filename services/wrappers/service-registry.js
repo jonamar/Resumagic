@@ -8,7 +8,7 @@ import KeywordAnalysisWrapper from './keyword-analysis-wrapper.js';
 import HiringEvaluationWrapper from './hiring-evaluation-wrapper.js';
 import DocumentGenerationWrapper from './document-generation-wrapper.js';
 import ValeLintingWrapper from './vale-linting-wrapper.js';
-import { getFeatureFlags } from '../../utils/feature-flags.js';
+import { getFeatureFlags } from '../../utils/feature-flags.ts';
 
 /**
  * Registry of all available service wrappers
@@ -17,7 +17,7 @@ const SERVICE_REGISTRY = {
   'keyword-analysis': KeywordAnalysisWrapper,
   'hiring-evaluation': HiringEvaluationWrapper,
   'document-generation': DocumentGenerationWrapper,
-  'vale-linting': ValeLintingWrapper
+  'vale-linting': ValeLintingWrapper,
 };
 
 /**
@@ -71,7 +71,7 @@ async function getServicesHealthStatus() {
     timestamp: new Date().toISOString(),
     overall_status: 'unknown',
     services: {},
-    feature_flags: getFeatureFlags().getAll()
+    feature_flags: getFeatureFlags().getAll(),
   };
 
   let allHealthy = true;
@@ -89,7 +89,7 @@ async function getServicesHealthStatus() {
         healthStatus.services[serviceName] = {
           status,
           implementation: 'standardized',
-          details: result.data || result.error
+          details: result.data || result.error,
         };
       } else {
         // Basic availability check
@@ -97,7 +97,7 @@ async function getServicesHealthStatus() {
         healthStatus.services[serviceName] = {
           status,
           implementation: 'standardized',
-          details: { message: 'Service wrapper instantiated successfully' }
+          details: { message: 'Service wrapper instantiated successfully' },
         };
       }
 
@@ -112,7 +112,7 @@ async function getServicesHealthStatus() {
       healthStatus.services[serviceName] = {
         status: 'error',
         implementation: 'standardized',
-        details: { error: error.message }
+        details: { error: error.message },
       };
     }
   }
@@ -160,7 +160,7 @@ async function batchExecute(operations) {
       return {
         operation_index: index,
         success: true,
-        result
+        result,
       };
 
     } catch (error) {
@@ -169,8 +169,8 @@ async function batchExecute(operations) {
         success: false,
         error: {
           message: error.message,
-          operation: operation
-        }
+          operation: operation,
+        },
       };
     }
   });
@@ -196,8 +196,8 @@ function getServiceConfiguration() {
     implementation: 'standardized',
     registry_info: {
       singleton_instances: serviceInstances.size,
-      initialization_time: new Date().toISOString()
-    }
+      initialization_time: new Date().toISOString(),
+    },
   };
 }
 
@@ -208,5 +208,5 @@ export {
   getServicesHealthStatus,
   batchExecute,
   clearServiceInstances,
-  getServiceConfiguration
+  getServiceConfiguration,
 };

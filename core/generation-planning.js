@@ -1,12 +1,12 @@
 import theme from '../theme.js';
-import ErrorHandler from '../utils/error-handler.js';
-import { ERROR_TYPES } from '../utils/error-types.js';
+import ErrorHandler from '../utils/error-handler.ts';
+import { ERROR_TYPES } from '../utils/error-types.ts';
 
 // Initialize error handler for generation planning operations
 const _errorHandler = new ErrorHandler({
   component: 'generation-planning',
   includeContext: true,
-  includeStackTrace: false
+  includeStackTrace: false,
 });
 
 /**
@@ -87,7 +87,7 @@ function determineGenerationPlan(flags, hasMarkdownFile) {
     generateCoverLetter,
     generateCombinedDoc,
     runHiringEvaluation,
-    behaviorDescription
+    behaviorDescription,
   };
 }
 
@@ -107,13 +107,13 @@ function validateGenerationPlan(plan, hasMarkdownFile, markdownFilePath) {
       operation: 'cover letter generation',
       required: true,
       generateCoverLetter,
-      generateCombinedDoc
+      generateCombinedDoc,
     });
     
     ErrorHandler.logAppError(
       'Cover letter generation requested but markdown file not found',
       ERROR_TYPES.FILE_NOT_FOUND,
-      context
+      context,
     );
     
     return ErrorHandler.createResult(
@@ -122,8 +122,8 @@ function validateGenerationPlan(plan, hasMarkdownFile, markdownFilePath) {
       theme.messages.errors.coverLetterNotFound,
       ERROR_TYPES.FILE_NOT_FOUND,
       [
-        theme.messages.errors.coverLetterRequired.replace('{path}', markdownFilePath)
-      ]
+        theme.messages.errors.coverLetterRequired.replace('{path}', markdownFilePath),
+      ],
     );
   }
   
@@ -132,5 +132,5 @@ function validateGenerationPlan(plan, hasMarkdownFile, markdownFilePath) {
 
 export {
   determineGenerationPlan,
-  validateGenerationPlan
+  validateGenerationPlan,
 };

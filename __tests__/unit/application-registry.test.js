@@ -8,7 +8,7 @@ import {
   getApplication,
   validateRequiredApplications,
   generateHealthReport,
-  ApplicationHealth 
+  ApplicationHealth, 
 } from '../helpers/application-registry.js';
 
 describe('Application Registry', () => {

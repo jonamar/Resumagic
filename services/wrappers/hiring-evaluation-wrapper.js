@@ -26,14 +26,14 @@ class HiringEvaluationWrapper extends BaseServiceWrapper {
     this.logOperation('evaluate', {
       applicationName: input.applicationName,
       candidateName: input.resumeData?.personalInfo?.name || 'Unknown',
-      fastMode: !!input.fastMode
+      fastMode: !!input.fastMode,
     });
 
     try {
       // Validate input
       this.validateInput(input, {
         applicationName: { type: 'string', required: true },
-        resumeData: { type: 'object', required: true }
+        resumeData: { type: 'object', required: true },
       });
 
       // Ensure resume data has basic structure
@@ -43,7 +43,7 @@ class HiringEvaluationWrapper extends BaseServiceWrapper {
           'INVALID_RESUME_DATA',
           'Resume data must include personalInfo section',
           { provided: Object.keys(input.resumeData) },
-          duration
+          duration,
         );
       }
 
@@ -58,9 +58,9 @@ class HiringEvaluationWrapper extends BaseServiceWrapper {
         `Hiring evaluation failed: ${error.message}`,
         { 
           originalError: error.message,
-          stack: error.stack 
+          stack: error.stack, 
         },
-        duration
+        duration,
       );
     }
   }
@@ -101,18 +101,18 @@ class HiringEvaluationWrapper extends BaseServiceWrapper {
           persona_evaluations: evaluationResult.personas || evaluationResult.evaluations,
           recommendations: evaluationResult.summary?.key_recommendations || [],
           composite_score: evaluationResult.summary?.composite_score || evaluationResult.composite_score,
-          individual_scores: evaluationResult.summary?.persona_scores || {}
+          individual_scores: evaluationResult.summary?.persona_scores || {},
         },
         candidate: {
           name: candidateName,
-          email: input.resumeData.personalInfo?.email || input.resumeData.basics?.email
+          email: input.resumeData.personalInfo?.email || input.resumeData.basics?.email,
         },
         context: {
           applicationName: input.applicationName,
           fastMode: input.fastMode || false,
-          evaluation_timestamp: new Date().toISOString()
+          evaluation_timestamp: new Date().toISOString(),
         },
-        implementation: 'hiring-evaluation'
+        implementation: 'hiring-evaluation',
       }, duration);
       
     } catch (error) {
@@ -127,9 +127,9 @@ class HiringEvaluationWrapper extends BaseServiceWrapper {
           originalError: error.message,
           stack: error.stack,
           applicationName: input.applicationName,
-          candidateName: input.resumeData.personalInfo?.name
+          candidateName: input.resumeData.personalInfo?.name,
         },
-        duration
+        duration,
       );
     }
   }
@@ -145,7 +145,7 @@ class HiringEvaluationWrapper extends BaseServiceWrapper {
     
     try {
       this.validateInput(input, {
-        candidates: { type: 'object', required: true } // Array shows as object in typeof
+        candidates: { type: 'object', required: true }, // Array shows as object in typeof
       });
 
       if (!Array.isArray(input.candidates) || input.candidates.length === 0) {
@@ -154,7 +154,7 @@ class HiringEvaluationWrapper extends BaseServiceWrapper {
           'INVALID_CANDIDATES',
           'candidates must be a non-empty array',
           { provided: typeof input.candidates },
-          duration
+          duration,
         );
       }
 
@@ -162,8 +162,8 @@ class HiringEvaluationWrapper extends BaseServiceWrapper {
         this.evaluate({
           applicationName: candidate.applicationName || 'batch-evaluation',
           resumeData: candidate.resumeData,
-          fastMode: true // Use fast mode for batch processing
-        })
+          fastMode: true, // Use fast mode for batch processing
+        }),
       );
 
       const results = await Promise.all(evaluationPromises);
@@ -177,10 +177,10 @@ class HiringEvaluationWrapper extends BaseServiceWrapper {
         batch_summary: {
           total: input.candidates.length,
           successful: successful.length,
-          failed: failed.length
+          failed: failed.length,
         },
         evaluations: results,
-        implementation: 'hiring-evaluation'
+        implementation: 'hiring-evaluation',
       }, duration);
 
     } catch (error) {
@@ -189,7 +189,7 @@ class HiringEvaluationWrapper extends BaseServiceWrapper {
         'BATCH_EVALUATION_FAILED',
         `Batch evaluation failed: ${error.message}`,
         { originalError: error.message },
-        duration
+        duration,
       );
     }
   }

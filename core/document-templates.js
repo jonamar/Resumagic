@@ -24,7 +24,7 @@ function createFormattedTextRuns(text, baseStyle = {}) {
     text: part.text,
     bold: part.bold,
     italics: part.italic,
-    ...baseStyle
+    ...baseStyle,
   }));
 }
 
@@ -75,13 +75,13 @@ function createResumeDocx(resumeData, options = {}) {
                 run: {
                   font: theme.fonts.primary,
                   size: 16, // 8pt bullet (smaller than default 10pt text)
-                  color: theme.colors.text
-                }
-              }
-            }
-          ]
-        }
-      ]
+                  color: theme.colors.text,
+                },
+              },
+            },
+          ],
+        },
+      ],
     },
     styles: {
       paragraphStyles: [
@@ -101,7 +101,7 @@ function createResumeDocx(resumeData, options = {}) {
               after: theme.spacingTwips.afterHeader, // 12pt
             },
             indent: {
-              left: 0 // No indentation
+              left: 0, // No indentation
             },
             font: 'Arial', // Explicitly set font at paragraph level too
           },
@@ -117,8 +117,8 @@ function createResumeDocx(resumeData, options = {}) {
           margin: theme.margins.document,
         },
       },
-      children: children
-    }]
+      children: children,
+    }],
   });
 
   return doc;
@@ -141,8 +141,8 @@ function createHeader(basics) {
       spacing: {
         after: theme.spacingTwips.afterHeader, // 12pt
       },
-      thematicBreak: false
-    })
+      thematicBreak: false,
+    }),
   );
 
   // Create contact information with ATS-friendly format
@@ -164,12 +164,18 @@ function createHeader(basics) {
     }
     
     // Add "Address:" label for ATS recognition
-    if (locationText) contactParts.push(`Address: ${locationText}`);
+    if (locationText) {
+      contactParts.push(`Address: ${locationText}`);
+    }
   }
   
   // Add phone and email
-  if (basics.phone) contactParts.push(basics.phone);
-  if (basics.email) contactParts.push(basics.email);
+  if (basics.phone) {
+    contactParts.push(basics.phone);
+  }
+  if (basics.email) {
+    contactParts.push(basics.email);
+  }
 
   // Add contact info line with bullet separators
   paragraphs.push(
@@ -179,13 +185,13 @@ function createHeader(basics) {
           text: contactParts.join(' • '),
           size: theme.fontSize.meta * 2, // Convert to half-points
           color: theme.colors.dimText,
-          font: theme.fonts.primary
-        })
+          font: theme.fonts.primary,
+        }),
       ],
       spacing: {
-        after: theme.spacingTwips.afterContact // 5pt
-      }
-    })
+        after: theme.spacingTwips.afterContact, // 5pt
+      },
+    }),
   );
 
   // Add profiles if any
@@ -209,12 +215,12 @@ function createHeader(basics) {
               font: theme.fonts.primary,
               underline: {
                 type: UnderlineType.SINGLE,
-                color: theme.colors.dimText
-              }
-            })
+                color: theme.colors.dimText,
+              },
+            }),
           ],
-          link: profile.url
-        })
+          link: profile.url,
+        }),
       );
       
       // Add bullet separator if not the last item
@@ -224,8 +230,8 @@ function createHeader(basics) {
             text: ' • ',
             size: theme.fontSize.meta * 2,
             color: theme.colors.dimText,
-            font: theme.fonts.primary
-          })
+            font: theme.fonts.primary,
+          }),
         );
       }
     });
@@ -234,9 +240,9 @@ function createHeader(basics) {
       new Paragraph({
         children: profileChildren,
         spacing: {
-          after: theme.spacingTwips.afterHeader // 12pt
-        }
-      })
+          after: theme.spacingTwips.afterHeader, // 12pt
+        },
+      }),
     );
   }
 
@@ -251,11 +257,13 @@ function createHeader(basics) {
 function createSummary(basics) {
   const paragraphs = [];
 
-  if (!basics.summary) return paragraphs;
+  if (!basics.summary) {
+    return paragraphs;
+  }
 
   // Add section heading
   paragraphs.push(
-    createSectionHeading('Summary')
+    createSectionHeading('Summary'),
   );
 
   // Add summary text
@@ -264,12 +272,12 @@ function createSummary(basics) {
       children: createFormattedTextRuns(basics.summary, {
         size: theme.fontSize.body * 2, // Convert to half-points
         font: theme.fonts.primary,
-        color: theme.colors.text
+        color: theme.colors.text,
       }),
       spacing: {
-        after: theme.spacingTwips.afterSummary // 4pt
-      }
-    })
+        after: theme.spacingTwips.afterSummary, // 4pt
+      },
+    }),
   );
 
   return paragraphs;
@@ -291,19 +299,19 @@ function createExperience(work) {
         // Job title/position
         field: 'position',
         spacing: theme.spacingTwips.afterJobTitle,
-        keepNext: true
+        keepNext: true,
       },
       {
         // Company name
         field: 'name',
         spacing: theme.spacingTwips.afterCompanyName,
-        keepNext: true
+        keepNext: true,
       },
       {
         // Date and location
         fields: [
           { field: 'startDate', format: formatDate },
-          { field: 'endDate', format: (date) => date ? formatDate(date) : 'Present' }
+          { field: 'endDate', format: (date) => date ? formatDate(date) : 'Present' },
         ],
         includeLocation: true,
         separator: ' - ',
@@ -313,11 +321,11 @@ function createExperience(work) {
         bold: false,
         conditionalSpacing: {
           withContent: theme.spacingTwips.minimal, // 1pt if more content
-          standalone: theme.spacingTwips.afterDate   // 4pt if standalone
-        }
-      }
+          standalone: theme.spacingTwips.afterDate,   // 4pt if standalone
+        },
+      },
     ],
-    itemSpacing: theme.spacingTwips.afterJobEntry // 4pt after each job entry
+    itemSpacing: theme.spacingTwips.afterJobEntry, // 4pt after each job entry
   };
 
   return createItemSection(work, experienceConfig);
@@ -333,7 +341,7 @@ function createSkills(skills) {
 
   // Add section heading with page break
   paragraphs.push(
-    createSectionHeading(theme.ats.sectionTitles.skills, true)
+    createSectionHeading(theme.ats.sectionTitles.skills, true),
   );
 
   // Add each skill category
@@ -347,14 +355,14 @@ function createSkills(skills) {
             size: theme.fontSize.body * 2, // Convert to half-points
             font: theme.fonts.primary,
             bold: true,
-            color: theme.colors.text
-          })
+            color: theme.colors.text,
+          }),
         ],
         spacing: {
           after: theme.spacingTwips.afterJobTitle, // 3pt
-          line: theme.spacingTwips.resumeLine
-        }
-      })
+          line: theme.spacingTwips.resumeLine,
+        },
+      }),
     );
 
     // Keywords if present
@@ -364,13 +372,13 @@ function createSkills(skills) {
           children: createFormattedTextRuns(skill.keywords.join(', '), {
             size: theme.fontSize.meta * 2, // Convert to half-points
             font: theme.fonts.primary,
-            color: theme.colors.dimText
+            color: theme.colors.dimText,
           }),
           spacing: {
             after: theme.spacingTwips.xlarge, // 9pt
-            line: theme.spacingTwips.resumeLine
-          }
-        })
+            line: theme.spacingTwips.resumeLine,
+          },
+        }),
       );
     }
   });
@@ -388,14 +396,16 @@ function createEducation(education) {
 
   // Add section heading
   paragraphs.push(
-    createSectionHeading(theme.ats.sectionTitles.education)
+    createSectionHeading(theme.ats.sectionTitles.education),
   );
 
   // Add each education entry
   education.forEach(edu => {
     // Degree
     let degreeText = edu.area;
-    if (edu.studyType) degreeText += ` - ${edu.studyType}`;
+    if (edu.studyType) {
+      degreeText += ` - ${edu.studyType}`;
+    }
     
     paragraphs.push(
       new Paragraph({
@@ -405,15 +415,15 @@ function createEducation(education) {
             size: theme.fontSize.body * 2, // Convert to half-points
             font: theme.fonts.primary,
             bold: true,
-            color: theme.colors.text
-          })
+            color: theme.colors.text,
+          }),
         ],
         spacing: {
           after: theme.spacingTwips.afterJobTitle, // 3pt
-          line: theme.spacingTwips.resumeLine
+          line: theme.spacingTwips.resumeLine,
         },
-        keepNext: true // Keep with institution
-      })
+        keepNext: true, // Keep with institution
+      }),
     );
 
     // Institution
@@ -425,21 +435,23 @@ function createEducation(education) {
             size: theme.fontSize.body * 2, // Convert to half-points
             font: theme.fonts.primary,
             bold: true,
-            color: theme.colors.text
-          })
+            color: theme.colors.text,
+          }),
         ],
         spacing: {
           after: theme.spacingTwips.afterCompanyName, // 3pt
-          line: theme.spacingTwips.resumeLine
+          line: theme.spacingTwips.resumeLine,
         },
-        keepNext: true // Keep with date/location
-      })
+        keepNext: true, // Keep with date/location
+      }),
     );
 
     // Date and location
     const dateParts = [];
     dateParts.push(`${formatDate(edu.startDate)} - ${edu.endDate ? formatDate(edu.endDate) : 'Present'}`);
-    if (edu.location) dateParts.push(edu.location);
+    if (edu.location) {
+      dateParts.push(edu.location);
+    }
 
     paragraphs.push(
       new Paragraph({
@@ -448,13 +460,13 @@ function createEducation(education) {
             text: dateParts.join(' • '),
             size: theme.fontSize.meta * 2, // Convert to half-points
             font: theme.fonts.primary,
-            color: theme.colors.dimText
-          })
+            color: theme.colors.dimText,
+          }),
         ],
         spacing: {
-          after: theme.spacingTwips.afterSectionEntry // 12pt
-        }
-      })
+          after: theme.spacingTwips.afterSectionEntry, // 12pt
+        },
+      }),
     );
   });
 
@@ -477,10 +489,10 @@ function createProjects(projects) {
         // Project name
         field: 'name',
         spacing: theme.spacingTwips.afterJobTitle, // 3pt
-        keepNext: true
-      }
+        keepNext: true,
+      },
     ],
-    itemSpacing: theme.spacingTwips.afterProjectEntry // 9pt after each project entry
+    itemSpacing: theme.spacingTwips.afterProjectEntry, // 9pt after each project entry
   };
 
   return createItemSection(projects, projectsConfig);
@@ -502,13 +514,13 @@ function createSpeakingEngagements(publications) {
         // Speaking engagement name/title
         field: 'name',
         spacing: theme.spacingTwips.afterJobTitle, // 3pt
-        keepNext: true
+        keepNext: true,
       },
       {
         // Publisher/venue
         field: 'publisher',
         spacing: theme.spacingTwips.afterCompanyName, // 3pt
-        keepNext: true
+        keepNext: true,
       },
       {
         // Date
@@ -519,14 +531,14 @@ function createSpeakingEngagements(publications) {
         bold: false,
         conditionalSpacing: {
           withContent: theme.spacingTwips.afterDate, // 4pt if more content
-          standalone: (isLastItem) => isLastItem ? theme.spacingTwips.large : theme.spacingTwips.afterSectionEntry // 6pt if last entry, 12pt between entries
-        }
-      }
+          standalone: (isLastItem) => isLastItem ? theme.spacingTwips.large : theme.spacingTwips.afterSectionEntry, // 6pt if last entry, 12pt between entries
+        },
+      },
     ],
     // Complex highlight spacing for speaking engagements
     highlightSpacing: (isLastItem, itemIndex) => {
       return isLastItem ? theme.spacingTwips.large : theme.spacingTwips.afterSectionEntry; // 6pt after last entry, 12pt between entries
-    }
+    },
     // No itemSpacing - speaking engagements don't add extra space after each entry
   };
 
@@ -543,7 +555,7 @@ function createLanguages(languages) {
 
   // Add section heading
   paragraphs.push(
-    createSectionHeading(theme.ats.sectionTitles.languages)
+    createSectionHeading(theme.ats.sectionTitles.languages),
   );
 
   // Create a simple list of languages with fluency levels
@@ -560,21 +572,21 @@ function createLanguages(languages) {
             size: theme.fontSize.body * 2, // Convert to half-points
             font: theme.fonts.primary,
             bold: true,
-            color: theme.colors.text
+            color: theme.colors.text,
           }),
           ...(language.fluency ? [
             new TextRun({
               text: `: ${language.fluency}`,
               size: theme.fontSize.body * 2, // Convert to half-points
               font: theme.fonts.primary,
-              color: theme.colors.text
-            })
-          ] : [])
+              color: theme.colors.text,
+            }),
+          ] : []),
         ],
         spacing: {
-          after: index < languages.length - 1 ? 80 : 240 // 4pt between items, 12pt after section
-        }
-      })
+          after: index < languages.length - 1 ? 80 : 240, // 4pt between items, 12pt after section
+        },
+      }),
     );
   });
 
@@ -592,7 +604,7 @@ function createItemSection(items, config) {
 
   // Add section heading
   paragraphs.push(
-    createSectionHeading(config.sectionTitle)
+    createSectionHeading(config.sectionTitle),
   );
 
   // Process each item
@@ -634,7 +646,9 @@ function createItemSection(items, config) {
       }
 
       // Skip if no text to show
-      if (!headerText) return;
+      if (!headerText) {
+        return;
+      }
 
       // Determine spacing and keepNext logic
       let spacing = headerConfig.spacing || theme.spacingTwips.afterJobTitle;
@@ -662,15 +676,15 @@ function createItemSection(items, config) {
               size: (headerConfig.fontSize || theme.fontSize.body) * 2, // Convert to half-points
               font: theme.fonts.primary,
               bold: headerConfig.bold !== false, // Default to bold unless explicitly false
-              color: headerConfig.color || theme.colors.text
-            })
+              color: headerConfig.color || theme.colors.text,
+            }),
           ],
           spacing: {
             after: spacing,
-            line: theme.spacingTwips.resumeLine
+            line: theme.spacingTwips.resumeLine,
           },
-          keepNext: keepNext
-        })
+          keepNext: keepNext,
+        }),
       );
     });
 
@@ -681,15 +695,15 @@ function createItemSection(items, config) {
           children: createFormattedTextRuns(item[config.descriptionField], {
             size: theme.fontSize.body * 2, // Convert to half-points
             font: theme.fonts.primary,
-            color: theme.colors.text
+            color: theme.colors.text,
           }),
           spacing: {
             after: config.descriptionSpacing || theme.spacingTwips.large, // 6pt
-            line: theme.spacingTwips.resumeLine
+            line: theme.spacingTwips.resumeLine,
           },
           keepLines: true, // Keep description lines together
-          keepNext: hasHighlights // Keep with highlights if they exist
-        })
+          keepNext: hasHighlights, // Keep with highlights if they exist
+        }),
       );
     }
 
@@ -713,23 +727,23 @@ function createItemSection(items, config) {
             children: createFormattedTextRuns(highlight, {
               size: theme.fontSize.body * 2, // Convert to half-points
               font: theme.fonts.primary,
-              color: theme.colors.text
+              color: theme.colors.text,
             }),
             numbering: {
               reference: 'small-bullet',
-              level: 0
+              level: 0,
             },
             spacing: {
               after: highlightSpacing,
-              line: theme.spacingTwips.resumeLine
+              line: theme.spacingTwips.resumeLine,
             },
             indent: {
               left: theme.spacingTwips.bulletIndent, // 0.25 inch left indent for bullet
-              hanging: theme.spacingTwips.bulletHanging // 0.25 inch hanging indent so text aligns properly
+              hanging: theme.spacingTwips.bulletHanging, // 0.25 inch hanging indent so text aligns properly
             },
             keepLines: true, // Keep long bullet points together
-            keepNext: !isLastHighlight // Keep with next highlight (but not after the last one)
-          })
+            keepNext: !isLastHighlight, // Keep with next highlight (but not after the last one)
+          }),
         );
       });
     }
@@ -745,9 +759,9 @@ function createItemSection(items, config) {
         new Paragraph({
           text: '',
           spacing: {
-            after: spacing
-          }
-        })
+            after: spacing,
+          },
+        }),
       );
     }
   });
@@ -769,13 +783,13 @@ function createSectionHeading(title, pageBreak = false) {
         size: theme.fontSize.sectionHeading * 2, // Convert to half-points
         font: 'Arial', // Set Arial as the default font for all runs
         color: theme.colors.headings,
-        bold: true
-      })
+        bold: true,
+      }),
     ],
     heading: HeadingLevel.HEADING_2,
     spacing: {
       before: 400, // 20pt
-      after: theme.spacingTwips.large   // 6pt
+      after: theme.spacingTwips.large,   // 6pt
     },
     keepNext: true, // Prevent section headings from being orphaned on previous page
     pageBreakBefore: pageBreak, // Add page break if requested
@@ -789,7 +803,9 @@ function createSectionHeading(title, pageBreak = false) {
  * @returns {String} Formatted date string (Month YYYY)
  */
 function formatDate(dateStr) {
-  if (!dateStr) return '';
+  if (!dateStr) {
+    return '';
+  }
   
   try {
     // Handle different input formats
@@ -851,7 +867,7 @@ function getRegionAbbreviation(region) {
     'Quebec': 'QC',
     'Québec': 'QC',
     'Saskatchewan': 'SK',
-    'Yukon': 'YT'
+    'Yukon': 'YT',
   };
   
   // US states (common ones)
@@ -906,7 +922,7 @@ function getRegionAbbreviation(region) {
     'Alaska': 'AK',
     'District of Columbia': 'DC',
     'Vermont': 'VT',
-    'Wyoming': 'WY'
+    'Wyoming': 'WY',
   };
   
   // Check Canadian provinces first, then US states
@@ -925,7 +941,7 @@ function createCoverLetterDocx(coverLetterData, options = {}) {
     ...createCoverLetterDate(coverLetterData.coverLetter.metadata),
     ...createCoverLetterContent(coverLetterData.coverLetter.content),
     ...createCoverLetterClosing(coverLetterData.coverLetter.metadata),
-    ...createCoverLetterFooter(coverLetterData.basics)
+    ...createCoverLetterFooter(coverLetterData.basics),
   ];
 
   // Create the document with identical styling to resume
@@ -944,13 +960,13 @@ function createCoverLetterDocx(coverLetterData, options = {}) {
                 run: {
                   font: theme.fonts.primary,
                   size: 16, // 8pt bullet (smaller than default 10pt text)
-                  color: theme.colors.text
-                }
-              }
-            }
-          ]
-        }
-      ]
+                  color: theme.colors.text,
+                },
+              },
+            },
+          ],
+        },
+      ],
     },
     styles: {
       paragraphStyles: [
@@ -970,7 +986,7 @@ function createCoverLetterDocx(coverLetterData, options = {}) {
               after: theme.spacingTwips.afterHeader, // 12pt
             },
             indent: {
-              left: 0 // No indentation
+              left: 0, // No indentation
             },
             font: 'Arial', // Explicitly set font at paragraph level too
           },
@@ -986,8 +1002,8 @@ function createCoverLetterDocx(coverLetterData, options = {}) {
           margin: theme.margins.document,
         },
       },
-      children: children
-    }]
+      children: children,
+    }],
   });
 
   return doc;
@@ -1011,15 +1027,15 @@ function createCoverLetterDate(metadata) {
           text: formattedDate,
           size: theme.fontSize.body * 2, // Convert to half-points
           font: theme.fonts.primary,
-          color: theme.colors.text
-        })
+          color: theme.colors.text,
+        }),
       ],
       spacing: {
         before: theme.spacingTwips.beforeDate, // 12pt breathing room before
-        after: theme.spacingTwips.afterDate   // 24pt breathing room after
+        after: theme.spacingTwips.afterDate,   // 24pt breathing room after
       },
-      alignment: AlignmentType.RIGHT
-    })
+      alignment: AlignmentType.RIGHT,
+    }),
   );
   
   return paragraphs;
@@ -1045,7 +1061,7 @@ function createCoverLetterContent(content) {
           font: theme.fonts.primary,
           color: theme.colors.text,
           bold: textPart.bold || false,
-          italics: textPart.italic || false
+          italics: textPart.italic || false,
         }));
       });
       
@@ -1054,10 +1070,10 @@ function createCoverLetterContent(content) {
           children: textRuns,
           spacing: {
             after: theme.spacingTwips.coverLetterParagraph, // 12pt between paragraphs
-            line: theme.spacingTwips.oneAndHalfLine   // 1.5 line spacing (240 = 1.0, 360 = 1.5)
+            line: theme.spacingTwips.oneAndHalfLine,   // 1.5 line spacing (240 = 1.0, 360 = 1.5)
           },
-          alignment: AlignmentType.JUSTIFIED
-        })
+          alignment: AlignmentType.JUSTIFIED,
+        }),
       );
       
     } else if (section.type === 'list') {
@@ -1072,7 +1088,7 @@ function createCoverLetterContent(content) {
             font: theme.fonts.primary,
             color: theme.colors.text,
             bold: textPart.bold || false,
-            italics: textPart.italic || false
+            italics: textPart.italic || false,
           }));
         });
         
@@ -1081,14 +1097,14 @@ function createCoverLetterContent(content) {
             children: textRuns,
             numbering: {
               reference: 'small-bullet',
-              level: 0
+              level: 0,
             },
             spacing: {
               after: itemIndex < section.items.length - 1 ? theme.spacingTwips.medium : theme.spacingTwips.coverLetterParagraph, // 4pt between items, 12pt after list
-              line: theme.spacingTwips.oneAndHalfLine   // 1.5 line spacing
+              line: theme.spacingTwips.oneAndHalfLine,   // 1.5 line spacing
             },
-            alignment: AlignmentType.LEFT
-          })
+            alignment: AlignmentType.LEFT,
+          }),
         );
       });
     }
@@ -1113,15 +1129,15 @@ function createCoverLetterClosing(metadata) {
           text: `${metadata.customClosing || 'Warmly'},`,
           size: theme.fontSize.body * 2, // Convert to half-points
           font: theme.fonts.primary,
-          color: theme.colors.text
-        })
+          color: theme.colors.text,
+        }),
       ],
       spacing: {
         after: 0, // No extra paragraph spacing
-        line: theme.spacingTwips.oneAndHalfLine   // 1.5 line spacing
+        line: theme.spacingTwips.oneAndHalfLine,   // 1.5 line spacing
       },
-      alignment: AlignmentType.LEFT
-    })
+      alignment: AlignmentType.LEFT,
+    }),
   );
   
   // Add the name
@@ -1132,15 +1148,15 @@ function createCoverLetterClosing(metadata) {
           text: 'Jon Amar',
           size: theme.fontSize.body * 2, // Convert to half-points
           font: theme.fonts.primary,
-          color: theme.colors.text
-        })
+          color: theme.colors.text,
+        }),
       ],
       spacing: {
         after: 0, // No extra paragraph spacing
-        line: theme.spacingTwips.oneAndHalfLine   // 1.5 line spacing
+        line: theme.spacingTwips.oneAndHalfLine,   // 1.5 line spacing
       },
-      alignment: AlignmentType.LEFT
-    })
+      alignment: AlignmentType.LEFT,
+    }),
   );
   
   // Add the pronouns
@@ -1151,15 +1167,15 @@ function createCoverLetterClosing(metadata) {
           text: 'they/them',
           size: theme.fontSize.body * 2, // Convert to half-points
           font: theme.fonts.primary,
-          color: theme.colors.text
-        })
+          color: theme.colors.text,
+        }),
       ],
       spacing: {
         after: theme.spacingTwips.page, // 24pt extra space before next section
-        line: theme.spacingTwips.oneAndHalfLine   // 1.5 line spacing
+        line: theme.spacingTwips.oneAndHalfLine,   // 1.5 line spacing
       },
-      alignment: AlignmentType.LEFT
-    })
+      alignment: AlignmentType.LEFT,
+    }),
   );
   
   return paragraphs;
@@ -1198,12 +1214,18 @@ function createCoverLetterFooter(basics, isComboMode = false) {
     }
     
     // Add "Address:" label for ATS recognition
-    if (locationText) contactParts.push(`Address: ${locationText}`);
+    if (locationText) {
+      contactParts.push(`Address: ${locationText}`);
+    }
   }
   
   // Add phone and email
-  if (basics.phone) contactParts.push(basics.phone);
-  if (basics.email) contactParts.push(basics.email);
+  if (basics.phone) {
+    contactParts.push(basics.phone);
+  }
+  if (basics.email) {
+    contactParts.push(basics.email);
+  }
 
   // Add contact info line with bullet separators
   paragraphs.push(
@@ -1213,14 +1235,14 @@ function createCoverLetterFooter(basics, isComboMode = false) {
           text: contactParts.join(' • '),
           size: theme.fontSize.meta * 2, // Convert to half-points
           color: theme.colors.dimText,
-          font: theme.fonts.primary
-        })
+          font: theme.fonts.primary,
+        }),
       ],
       spacing: {
         before: theme.spacingTwips.beforeContact, // 12pt before contact info
-        after: theme.spacingTwips.afterContact   // 5pt
-      }
-    })
+        after: theme.spacingTwips.afterContact,   // 5pt
+      },
+    }),
   );
 
   // Add profiles if any
@@ -1234,7 +1256,7 @@ function createCoverLetterFooter(basics, isComboMode = false) {
           text: ' • ',
           size: theme.fontSize.meta * 2, // Convert to half-points
           color: theme.colors.dimText,
-          font: theme.fonts.primary
+          font: theme.fonts.primary,
         }));
       }
       
@@ -1249,12 +1271,12 @@ function createCoverLetterFooter(basics, isComboMode = false) {
               font: theme.fonts.primary,
               underline: {
                 type: UnderlineType.SINGLE,
-                color: theme.colors.dimText
-              }
-            })
+                color: theme.colors.dimText,
+              },
+            }),
           ],
-          link: profile.url
-        })
+          link: profile.url,
+        }),
       );
     });
 
@@ -1262,9 +1284,9 @@ function createCoverLetterFooter(basics, isComboMode = false) {
       new Paragraph({
         children: profileChildren,
         spacing: {
-          after: theme.spacingTwips.afterContact // 5pt
-        }
-      })
+          after: theme.spacingTwips.afterContact, // 5pt
+        },
+      }),
     );
   }
   
@@ -1284,7 +1306,7 @@ function createCombinedDocx(coverLetterData, resumeData, options = {}) {
     ...createCoverLetterDate(coverLetterData.coverLetter.metadata),
     ...createCoverLetterContent(coverLetterData.coverLetter.content),
     ...createCoverLetterClosing(coverLetterData.coverLetter.metadata),
-    ...createCoverLetterFooter(coverLetterData.basics, true) // Pass true for combo mode
+    ...createCoverLetterFooter(coverLetterData.basics, true), // Pass true for combo mode
   ];
 
   // Resume sections
@@ -1325,13 +1347,13 @@ function createCombinedDocx(coverLetterData, resumeData, options = {}) {
                 run: {
                   font: theme.fonts.primary,
                   size: 16, // 8pt bullet (smaller than default 10pt text)
-                  color: theme.colors.text
-                }
-              }
-            }
-          ]
-        }
-      ]
+                  color: theme.colors.text,
+                },
+              },
+            },
+          ],
+        },
+      ],
     },
     styles: {
       paragraphStyles: [
@@ -1351,7 +1373,7 @@ function createCombinedDocx(coverLetterData, resumeData, options = {}) {
               after: theme.spacingTwips.afterHeader, // 12pt
             },
             indent: {
-              left: 0 // No indentation
+              left: 0, // No indentation
             },
             font: 'Arial',
           },
@@ -1369,7 +1391,7 @@ function createCombinedDocx(coverLetterData, resumeData, options = {}) {
             margin: theme.margins.document,
           },
         },
-        children: coverLetterChildren
+        children: coverLetterChildren,
       },
       {
         // Resume section (starts on new page)
@@ -1379,9 +1401,9 @@ function createCombinedDocx(coverLetterData, resumeData, options = {}) {
           },
           type: SectionType.NEXT_PAGE, // Force new page
         },
-        children: resumeChildren
-      }
-    ]
+        children: resumeChildren,
+      },
+    ],
   });
 
   return doc;
@@ -1390,5 +1412,5 @@ function createCombinedDocx(coverLetterData, resumeData, options = {}) {
 export { 
   createResumeDocx,
   createCoverLetterDocx,
-  createCombinedDocx
+  createCombinedDocx,
 };

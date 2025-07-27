@@ -41,17 +41,17 @@ async function testConfigurationDiscovery() {
         max_concurrent_requests: concurrencyResults.optimal_concurrency,
         memory_monitoring_thresholds: {
           warning_gb: thresholds.memory_warning_gb,
-          critical_gb: thresholds.memory_critical_gb
+          critical_gb: thresholds.memory_critical_gb,
         },
         connection_limit: thresholds.connection_limit,
-        confidence_level: concurrencyResults.confidence
+        confidence_level: concurrencyResults.confidence,
       },
       performance_characteristics: {
         baseline_memory_usage: parseFloat(thresholds.baseline_state.memory?.used_gb || 0),
         optimal_response_time_ms: concurrencyResults.average_response_time,
-        success_rate_at_optimal: concurrencyResults.success_rate
+        success_rate_at_optimal: concurrencyResults.success_rate,
       },
-      production_readiness: concurrencyResults.confidence === 'high' ? 'ready' : 'needs_validation'
+      production_readiness: concurrencyResults.confidence === 'high' ? 'ready' : 'needs_validation',
     };
     
     console.log('\n📋 Configuration Discovery Summary:');
@@ -72,8 +72,8 @@ async function testConfigurationDiscovery() {
       recommendations,
       raw_data: {
         thresholds,
-        concurrency_analysis: concurrencyResults
-      }
+        concurrency_analysis: concurrencyResults,
+      },
     }, null, 2));
     
     console.log(`\n💾 Results saved to: ${resultsFile}`);

@@ -81,7 +81,7 @@ describe('Core Service Wrapper Validation', () => {
     test('should validate input correctly', () => {
       const schema = {
         name: { type: 'string', required: true },
-        age: { type: 'number', required: false }
+        age: { type: 'number', required: false },
       };
 
       // Valid input should not throw
@@ -120,7 +120,7 @@ describe('Core Service Wrapper Validation', () => {
       const response = await wrapper.analyze({
         applicationName: 'test-app',
         keywordsFile: '/nonexistent/keywords.json',
-        jobPostingFile: '/nonexistent/job.md'
+        jobPostingFile: '/nonexistent/job.md',
       });
       
       expect(response.success).toBe(false);
@@ -134,7 +134,7 @@ describe('Core Service Wrapper Validation', () => {
       const response = await wrapper.analyze({
         applicationName: 'test-app',
         keywordsFile: '/nonexistent/keywords.json',
-        jobPostingFile: '/nonexistent/job.md'
+        jobPostingFile: '/nonexistent/job.md',
       });
       
       // Even for errors, should have standard format
@@ -165,7 +165,7 @@ describe('Core Service Wrapper Validation', () => {
     test('should validate resume data structure', async () => {
       const response = await wrapper.evaluate({
         applicationName: 'test-app',
-        resumeData: {} // Missing personalInfo
+        resumeData: {}, // Missing personalInfo
       });
       
       expect(response.success).toBe(false);
@@ -179,9 +179,9 @@ describe('Core Service Wrapper Validation', () => {
         resumeData: {
           personalInfo: {
             name: 'Test User',
-            email: 'test@example.com'
-          }
-        }
+            email: 'test@example.com',
+          },
+        },
       });
       
       // Should either succeed or fail gracefully, but with proper format
@@ -203,7 +203,7 @@ describe('Core Service Wrapper Validation', () => {
     test('should handle batch evaluation input validation', async () => {
       // Test with invalid candidates array
       const response = await wrapper.batchEvaluate({
-        candidates: 'not-an-array'
+        candidates: 'not-an-array',
       });
       
       expect(response.success).toBe(false);
@@ -219,9 +219,9 @@ describe('Core Service Wrapper Validation', () => {
         resumeData: {
           personalInfo: {
             name: 'Test Candidate',
-            email: 'test@example.com'
-          }
-        }
+            email: 'test@example.com',
+          },
+        },
       });
       
       // Should either succeed with proper service call or fail with clear error
@@ -246,7 +246,7 @@ describe('Core Service Wrapper Validation', () => {
       
       const response = await wrapper.evaluate({
         applicationName: 'nonexistent-application',
-        resumeData: { personalInfo: { name: 'Test' } }
+        resumeData: { personalInfo: { name: 'Test' } },
       });
       
       // Should either succeed or fail with proper error, not fallback

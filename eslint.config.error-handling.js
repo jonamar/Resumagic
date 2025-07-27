@@ -16,14 +16,14 @@ export default [
       // Encourage proper error handling patterns
       'consistent-return': 'error', // Require consistent return statements
       'no-implicit-coercion': 'error', // Disallow implicit type conversions
-      'no-unused-vars': ['error', { 'argsIgnorePattern': '^_', 'varsIgnorePattern': '^_' }]
-    }
+      'no-unused-vars': ['error', { 'argsIgnorePattern': '^_', 'varsIgnorePattern': '^_' }],
+    },
   },
   {
     // Test files - allow console usage
     files: ['**/*.test.js', '**/*.spec.js', '**/__tests__/**/*.js'],
     rules: {
-      'no-console': 'off' // Allow console usage in tests
-    }
-  }
+      'no-console': 'off', // Allow console usage in tests
+    },
+  },
 ];

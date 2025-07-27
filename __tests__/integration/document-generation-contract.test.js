@@ -83,7 +83,7 @@ describe('Document Generation Service Contract', () => {
       
       // Find the generated resume file
       const resumeFile = generatedFiles.find(f => 
-        f.includes('Resume') && f.endsWith('.docx')
+        f.includes('Resume') && f.endsWith('.docx'),
       );
       expect(resumeFile).toBeDefined();
       expect(fs.existsSync(resumeFile)).toBe(true);
@@ -116,7 +116,7 @@ describe('Document Generation Service Contract', () => {
       
       // Find the generated cover letter file
       const coverLetterFile = generatedFiles.find(f => 
-        f.includes('Cover-Letter') && f.endsWith('.docx')
+        f.includes('Cover-Letter') && f.endsWith('.docx'),
       );
       expect(coverLetterFile).toBeDefined();
       expect(fs.existsSync(coverLetterFile)).toBe(true);
@@ -143,7 +143,7 @@ describe('Document Generation Service Contract', () => {
       
       // Find the generated combined file
       const combinedFile = generatedFiles.find(f => 
-        f.includes('Cover-Letter-and-Resume') && f.endsWith('.docx')
+        f.includes('Cover-Letter-and-Resume') && f.endsWith('.docx'),
       );
       expect(combinedFile).toBeDefined();
       expect(fs.existsSync(combinedFile)).toBe(true);
@@ -176,21 +176,21 @@ describe('Document Generation Service Contract', () => {
         determineGenerationPlan({ resume: true }, true), 
         testPaths, 
         testResumeData, 
-        false
+        false,
       );
       
       const coverLetterFiles = await orchestrateGeneration(
         determineGenerationPlan({ 'cover-letter': true }, true), 
         testPaths, 
         testResumeData, 
-        false
+        false,
       );
       
       const combinedFiles = await orchestrateGeneration(
         determineGenerationPlan({ combined: true }, true), 
         testPaths, 
         testResumeData, 
-        false
+        false,
       );
       
       // Combine all generated files (matches golden master approach)
@@ -204,12 +204,12 @@ describe('Document Generation Service Contract', () => {
       const documentTypes = [
         { type: 'resume', pattern: 'Resume' },
         { type: 'cover-letter', pattern: 'Cover-Letter' },
-        { type: 'combined', pattern: 'Cover-Letter-and-Resume' }
+        { type: 'combined', pattern: 'Cover-Letter-and-Resume' },
       ];
       
       for (const { type: docType, pattern } of documentTypes) {
         const generatedFile = generatedFiles.find(f => 
-          f.includes(pattern) && f.endsWith('.docx')
+          f.includes(pattern) && f.endsWith('.docx'),
         );
         
         if (generatedFile && expectedHashes[TEST_APPLICATION] && expectedHashes[TEST_APPLICATION][docType]) {

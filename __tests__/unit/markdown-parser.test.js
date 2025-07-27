@@ -10,7 +10,7 @@ describe('Markdown Parser', () => {
     test('should parse plain text without formatting', () => {
       const result = parseTextWithFormatting('Plain text');
       expect(result).toEqual([
-        { text: 'Plain text', bold: false, italic: false }
+        { text: 'Plain text', bold: false, italic: false },
       ]);
     });
 
@@ -19,7 +19,7 @@ describe('Markdown Parser', () => {
       expect(result).toEqual([
         { text: 'This is ', bold: false, italic: false },
         { text: 'bold', bold: true, italic: false },
-        { text: ' text', bold: false, italic: false }
+        { text: ' text', bold: false, italic: false },
       ]);
     });
 
@@ -28,7 +28,7 @@ describe('Markdown Parser', () => {
       expect(result).toEqual([
         { text: 'This is ', bold: false, italic: false },
         { text: 'italic', bold: false, italic: true },
-        { text: ' text', bold: false, italic: false }
+        { text: ' text', bold: false, italic: false },
       ]);
     });
 
@@ -37,7 +37,7 @@ describe('Markdown Parser', () => {
       expect(result).toEqual([
         { text: 'This is ', bold: false, italic: false },
         { text: 'bold and italic', bold: true, italic: true },
-        { text: ' text', bold: false, italic: false }
+        { text: ' text', bold: false, italic: false },
       ]);
     });
 
@@ -46,7 +46,7 @@ describe('Markdown Parser', () => {
       expect(result).toEqual([
         { text: 'First bold', bold: true, italic: false },
         { text: ' and ', bold: false, italic: false },
-        { text: 'second bold', bold: true, italic: false }
+        { text: 'second bold', bold: true, italic: false },
       ]);
     });
 
@@ -54,7 +54,7 @@ describe('Markdown Parser', () => {
       const result = parseTextWithFormatting('**Bold with *italic* inside**');
       // Current implementation treats the entire content as bold, doesn't handle nested italic
       expect(result).toEqual([
-        { text: 'Bold with *italic* inside', bold: true, italic: false }
+        { text: 'Bold with *italic* inside', bold: true, italic: false },
       ]);
     });
 
@@ -62,7 +62,7 @@ describe('Markdown Parser', () => {
       const result = parseTextWithFormatting('');
       // Current implementation returns array with empty text object
       expect(result).toEqual([
-        { text: '', bold: false, italic: false }
+        { text: '', bold: false, italic: false },
       ]);
     });
 
@@ -70,7 +70,7 @@ describe('Markdown Parser', () => {
       const result = parseTextWithFormatting('**Unclosed bold');
       // Current implementation treats unclosed markers as plain text
       expect(result).toEqual([
-        { text: 'Unclosed bold', bold: false, italic: false }
+        { text: 'Unclosed bold', bold: false, italic: false },
       ]);
     });
 
@@ -80,14 +80,14 @@ describe('Markdown Parser', () => {
         { text: 'Led ', bold: false, italic: false },
         { text: '16x growth', bold: true, italic: false },
         { text: ' and ', bold: false, italic: false },
-        { text: '$26.6M CAD', bold: true, italic: false }
+        { text: '$26.6M CAD', bold: true, italic: false },
       ]);
     });
 
     test('should handle single asterisk without formatting', () => {
       const result = parseTextWithFormatting('This * is not italic');
       expect(result).toEqual([
-        { text: 'This * is not italic', bold: false, italic: false }
+        { text: 'This * is not italic', bold: false, italic: false },
       ]);
     });
 
@@ -95,7 +95,7 @@ describe('Markdown Parser', () => {
       const result = parseTextWithFormatting('**bold****another bold**');
       expect(result).toEqual([
         { text: 'bold', bold: true, italic: false },
-        { text: 'another bold', bold: true, italic: false }
+        { text: 'another bold', bold: true, italic: false },
       ]);
     });
   });

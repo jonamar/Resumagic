@@ -3,8 +3,8 @@
  * Comprehensive test suite for error handling utilities
  */
 
-import ErrorHandler from '../error-handler.js';
-import { ERROR_TYPES, ERROR_SEVERITY, CONTEXT_TYPES } from '../error-types.js';
+import ErrorHandler from '../error-handler.ts';
+import { ERROR_TYPES, ERROR_SEVERITY, CONTEXT_TYPES } from '../error-types.ts';
 
 // Mock console methods to capture output
 const originalConsoleError = console.error;
@@ -25,7 +25,7 @@ describe('ErrorHandler', () => {
   describe('logError', () => {
     test('should log basic error message', () => {
       ErrorHandler.logError({
-        message: 'Test error message'
+        message: 'Test error message',
       });
 
       expect(console.error).toHaveBeenCalled();
@@ -37,7 +37,7 @@ describe('ErrorHandler', () => {
       
       ErrorHandler.logError({
         message: 'Test error message',
-        error: originalError
+        error: originalError,
       });
 
       expect(consoleOutput).toHaveLength(2);
@@ -50,8 +50,8 @@ describe('ErrorHandler', () => {
         message: 'Test error message',
         context: {
           filePath: '/test/path.js',
-          operation: 'read'
-        }
+          operation: 'read',
+        },
       });
 
       expect(consoleOutput).toContain('   filePath: /test/path.js');
@@ -61,7 +61,7 @@ describe('ErrorHandler', () => {
     test('should log error with details array', () => {
       ErrorHandler.logError({
         message: 'Test error message',
-        details: ['Detail 1', 'Detail 2', 'Detail 3']
+        details: ['Detail 1', 'Detail 2', 'Detail 3'],
       });
 
       expect(consoleOutput).toContain('   Detail 1');
@@ -74,7 +74,7 @@ describe('ErrorHandler', () => {
       
       ErrorHandler.logError({
         message: 'Test error message',
-        details: manyDetails
+        details: manyDetails,
       });
 
       // Should show first 5 details plus truncation message
@@ -85,18 +85,18 @@ describe('ErrorHandler', () => {
 
     test('should not log when logging is disabled', () => {
       ErrorHandler.updateConfig({
-        logging: { logToConsole: false }
+        logging: { logToConsole: false },
       });
 
       ErrorHandler.logError({
-        message: 'Test error message'
+        message: 'Test error message',
       });
 
       expect(console.error).not.toHaveBeenCalled();
 
       // Reset config
       ErrorHandler.updateConfig({
-        logging: { logToConsole: true }
+        logging: { logToConsole: true },
       });
     });
   });
@@ -107,7 +107,7 @@ describe('ErrorHandler', () => {
       
       ErrorHandler.logServiceError('KeywordExtraction', 'extraction', error, {
         url: 'http://localhost:11434',
-        timeout: 5000
+        timeout: 5000,
       });
 
       expect(consoleOutput[0]).toContain('❌ KeywordExtraction extraction failed');
@@ -125,7 +125,7 @@ describe('ErrorHandler', () => {
       
       ErrorHandler.logAppError('CLI', 'Invalid application name', error, 
         ['Application name contains invalid characters'], 
-        { providedName: 'invalid/name' }
+        { providedName: 'invalid/name' },
       );
 
       expect(consoleOutput[0]).toContain('❌ CLI: Invalid application name');
@@ -142,7 +142,7 @@ describe('ErrorHandler', () => {
       expect(result).toEqual({
         isValid: true,
         success: true,
-        data: { data: 'test' }
+        data: { data: 'test' },
       });
     });
 
@@ -154,7 +154,7 @@ describe('ErrorHandler', () => {
         success: false,
         error: 'Test error',
         errorType: ERROR_TYPES.INVALID_INPUT,
-        details: ['Detail 1']
+        details: ['Detail 1'],
       });
     });
   });
@@ -180,7 +180,9 @@ describe('ErrorHandler', () => {
     });
 
     test('should handle validator exceptions', () => {
-      const validator = () => { throw new Error('Validator error'); };
+      const validator = () => {
+        throw new Error('Validator error'); 
+      };
       const result = ErrorHandler.validateInput('test', validator, 'testField');
 
       expect(result.isValid).toBe(false);
@@ -192,7 +194,7 @@ describe('ErrorHandler', () => {
     test('should use custom error message', () => {
       const validator = () => false;
       const result = ErrorHandler.validateInput('test', validator, 'testField', {
-        customMessage: 'Custom validation failed'
+        customMessage: 'Custom validation failed',
       });
 
       expect(result.error).toBe('Custom validation failed');
@@ -201,7 +203,7 @@ describe('ErrorHandler', () => {
     test('should include expected format in details', () => {
       const validator = () => false;
       const result = ErrorHandler.validateInput('test', validator, 'testField', {
-        expectedFormat: 'string with length > 5'
+        expectedFormat: 'string with length > 5',
       });
 
       expect(result.details).toContain('Expected: string with length > 5');
@@ -251,7 +253,7 @@ describe('ErrorHandler', () => {
     test('should include additional info', async () => {
       const context = await ErrorHandler.buildFileContext('/test/file.js', {
         operation: 'read',
-        encoding: 'utf8'
+        encoding: 'utf8',
       });
 
       expect(context.operation).toBe('read');
@@ -279,7 +281,7 @@ describe('ErrorHandler', () => {
     test('should include additional info', () => {
       const context = ErrorHandler.buildServiceContext('TestService', 'testOperation', {
         url: 'http://localhost:3000',
-        timeout: 5000
+        timeout: 5000,
       });
 
       expect(context.url).toBe('http://localhost:3000');
@@ -310,7 +312,7 @@ describe('ErrorHandler', () => {
       const originalConfig = ErrorHandler.getConfig();
       
       ErrorHandler.updateConfig({
-        formatting: { useEmojis: false }
+        formatting: { useEmojis: false },
       });
 
       const updatedConfig = ErrorHandler.getConfig();
@@ -339,7 +341,7 @@ describe('ErrorHandler', () => {
         ErrorHandler.logError({
           message: `Performance test error ${i}`,
           context: { iteration: i },
-          details: [`Detail ${i}`]
+          details: [`Detail ${i}`],
         });
       }
       

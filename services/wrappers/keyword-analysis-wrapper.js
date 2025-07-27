@@ -36,7 +36,7 @@ class KeywordAnalysisWrapper extends BaseServiceWrapper {
     this.logOperation('analyze', {
       applicationName: input.applicationName,
       hasResumeFile: !!input.resumeFile,
-      topCount: input.topCount
+      topCount: input.topCount,
     });
 
     try {
@@ -44,7 +44,7 @@ class KeywordAnalysisWrapper extends BaseServiceWrapper {
       this.validateInput(input, {
         applicationName: { type: 'string', required: true },
         keywordsFile: { type: 'string', required: true },
-        jobPostingFile: { type: 'string', required: true }
+        jobPostingFile: { type: 'string', required: true },
       });
 
       // Check file existence
@@ -54,7 +54,7 @@ class KeywordAnalysisWrapper extends BaseServiceWrapper {
           'FILE_NOT_FOUND',
           `Keywords file not found: ${input.keywordsFile}`,
           { file: input.keywordsFile },
-          duration
+          duration,
         );
       }
 
@@ -64,7 +64,7 @@ class KeywordAnalysisWrapper extends BaseServiceWrapper {
           'FILE_NOT_FOUND',
           `Job posting file not found: ${input.jobPostingFile}`,
           { file: input.jobPostingFile },
-          duration
+          duration,
         );
       }
 
@@ -79,9 +79,9 @@ class KeywordAnalysisWrapper extends BaseServiceWrapper {
         `Keyword analysis failed: ${error.message}`,
         { 
           originalError: error.message,
-          stack: error.stack 
+          stack: error.stack, 
         },
-        duration
+        duration,
       );
     }
   }
@@ -107,7 +107,7 @@ class KeywordAnalysisWrapper extends BaseServiceWrapper {
     try {
       const { stderr } = await execAsync(command, {
         cwd: path.resolve(__dirname, '../..'),
-        timeout: 120000 // 2 minutes - ML processing takes time
+        timeout: 120000, // 2 minutes - ML processing takes time
       });
 
       if (stderr) {
@@ -130,7 +130,7 @@ class KeywordAnalysisWrapper extends BaseServiceWrapper {
       return this.createSuccessResponse({
         analysis: analysisData,
         command: command,
-        implementation: implementation
+        implementation: implementation,
       }, duration);
       
     } catch (error) {
@@ -164,10 +164,10 @@ class KeywordAnalysisWrapper extends BaseServiceWrapper {
         recommendations: [
           'Include more relevant keywords from the job posting',
           'Focus on technical skills mentioned in the job description',
-          'Align experience descriptions with job requirements'
+          'Align experience descriptions with job requirements',
         ],
         based_on_analysis: analysisResult.data,
-        implementation: 'keyword-analysis'
+        implementation: 'keyword-analysis',
       }, duration);
 
     } catch (error) {
@@ -176,7 +176,7 @@ class KeywordAnalysisWrapper extends BaseServiceWrapper {
         'RECOMMENDATIONS_FAILED',
         `Failed to generate recommendations: ${error.message}`,
         { originalError: error.message },
-        duration
+        duration,
       );
     }
   }

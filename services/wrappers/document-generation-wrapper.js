@@ -34,7 +34,7 @@ class DocumentGenerationWrapper extends BaseServiceWrapper {
       generateResume: input.generationPlan?.generateResume,
       generateCoverLetter: input.generationPlan?.generateCoverLetter,
       generateCombined: input.generationPlan?.generateCombined,
-      applicationName: input.paths?.applicationName
+      applicationName: input.paths?.applicationName,
     });
 
     try {
@@ -42,7 +42,7 @@ class DocumentGenerationWrapper extends BaseServiceWrapper {
       this.validateInput(input, {
         generationPlan: { type: 'object', required: true },
         paths: { type: 'object', required: true },
-        resumeData: { type: 'object', required: true }
+        resumeData: { type: 'object', required: true },
       });
 
       // Validate generation plan structure
@@ -52,7 +52,7 @@ class DocumentGenerationWrapper extends BaseServiceWrapper {
           'INVALID_GENERATION_PLAN',
           'Generation plan must specify at least one document type to generate',
           { plan: input.generationPlan },
-          duration
+          duration,
         );
       }
 
@@ -67,9 +67,9 @@ class DocumentGenerationWrapper extends BaseServiceWrapper {
         `Document generation failed: ${error.message}`,
         { 
           originalError: error.message,
-          stack: error.stack 
+          stack: error.stack, 
         },
-        duration
+        duration,
       );
     }
   }
@@ -91,14 +91,14 @@ class DocumentGenerationWrapper extends BaseServiceWrapper {
         try {
           const resumePath = await documentOrchestrator.generateResumeDocument(
             input.resumeData,
-            input.paths.resumeDocxPath
+            input.paths.resumeDocxPath,
           );
           generatedFiles.push(resumePath);
           generationResults.push({
             type: 'resume',
             path: resumePath,
             success: true,
-            filename: path.basename(resumePath)
+            filename: path.basename(resumePath),
           });
           console.log(`✅ Resume generated: ${resumePath}`);
         } catch (error) {
@@ -106,7 +106,7 @@ class DocumentGenerationWrapper extends BaseServiceWrapper {
           generationResults.push({
             type: 'resume',
             success: false,
-            error: error.message
+            error: error.message,
           });
         }
       }
@@ -117,14 +117,14 @@ class DocumentGenerationWrapper extends BaseServiceWrapper {
           const coverLetterPath = await documentOrchestrator.generateCoverLetterDocument(
             input.paths.coverLetterMarkdownPath,
             input.paths.resumeDataPath,
-            input.paths.coverLetterDocxPath
+            input.paths.coverLetterDocxPath,
           );
           generatedFiles.push(coverLetterPath);
           generationResults.push({
             type: 'cover_letter',
             path: coverLetterPath,
             success: true,
-            filename: path.basename(coverLetterPath)
+            filename: path.basename(coverLetterPath),
           });
           console.log(`✅ Cover letter generated: ${coverLetterPath}`);
         } catch (error) {
@@ -132,7 +132,7 @@ class DocumentGenerationWrapper extends BaseServiceWrapper {
           generationResults.push({
             type: 'cover_letter',
             success: false,
-            error: error.message
+            error: error.message,
           });
         }
       }
@@ -144,14 +144,14 @@ class DocumentGenerationWrapper extends BaseServiceWrapper {
             input.paths.coverLetterMarkdownPath,
             input.paths.resumeDataPath,
             input.resumeData,
-            input.paths.combinedDocxPath
+            input.paths.combinedDocxPath,
           );
           generatedFiles.push(combinedPath);
           generationResults.push({
             type: 'combined',
             path: combinedPath,
             success: true,
-            filename: path.basename(combinedPath)
+            filename: path.basename(combinedPath),
           });
           console.log(`✅ Combined document generated: ${combinedPath}`);
         } catch (error) {
@@ -159,7 +159,7 @@ class DocumentGenerationWrapper extends BaseServiceWrapper {
           generationResults.push({
             type: 'combined',
             success: false,
-            error: error.message
+            error: error.message,
           });
         }
       }
@@ -184,7 +184,7 @@ class DocumentGenerationWrapper extends BaseServiceWrapper {
           type: r.type,
           path: r.path,
           filename: r.filename,
-          size_bytes: r.path ? (fs.existsSync(r.path) ? fs.statSync(r.path).size : 0) : 0
+          size_bytes: r.path ? (fs.existsSync(r.path) ? fs.statSync(r.path).size : 0) : 0,
         })),
         summary: {
           total_files: generationResults.length,
@@ -193,17 +193,17 @@ class DocumentGenerationWrapper extends BaseServiceWrapper {
           resume_generated: input.generationPlan.generateResume && successfulGenerations.some(r => r.type === 'resume'),
           cover_letter_generated: input.generationPlan.generateCoverLetter && successfulGenerations.some(r => r.type === 'cover_letter'),
           combined_generated: input.generationPlan.generateCombined && successfulGenerations.some(r => r.type === 'combined'),
-          auto_preview: !!input.autoPreview
+          auto_preview: !!input.autoPreview,
         },
         errors: failedGenerations.map(r => ({
           type: r.type,
-          error: r.error
+          error: r.error,
         })),
         context: {
           applicationName: input.paths.applicationName || 'unknown',
-          generation_timestamp: new Date().toISOString()
+          generation_timestamp: new Date().toISOString(),
         },
-        implementation: 'document-generation'
+        implementation: 'document-generation',
       }, duration);
       
     } catch (error) {
@@ -218,9 +218,9 @@ class DocumentGenerationWrapper extends BaseServiceWrapper {
           originalError: error.message,
           stack: error.stack,
           generationPlan: input.generationPlan,
-          applicationName: input.paths?.applicationName
+          applicationName: input.paths?.applicationName,
         },
-        duration
+        duration,
       );
     }
   }
@@ -238,12 +238,12 @@ class DocumentGenerationWrapper extends BaseServiceWrapper {
     try {
       this.validateInput(input, {
         resumeData: { type: 'object', required: true },
-        outputPath: { type: 'string', required: true }
+        outputPath: { type: 'string', required: true },
       });
 
       const filePath = await documentOrchestrator.generateResumeDocument(
         input.resumeData,
-        input.outputPath
+        input.outputPath,
       );
 
       const duration = Date.now() - startTime;
@@ -255,9 +255,9 @@ class DocumentGenerationWrapper extends BaseServiceWrapper {
           path: filePath,
           name: path.basename(filePath),
           size: fs.existsSync(filePath) ? fs.statSync(filePath).size : 0,
-          exists: fs.existsSync(filePath)
+          exists: fs.existsSync(filePath),
         },
-        implementation: 'document-generation'
+        implementation: 'document-generation',
       }, duration);
 
     } catch (error) {
@@ -266,7 +266,7 @@ class DocumentGenerationWrapper extends BaseServiceWrapper {
         'RESUME_GENERATION_FAILED',
         `Resume generation failed: ${error.message}`,
         { originalError: error.message },
-        duration
+        duration,
       );
     }
   }
@@ -286,7 +286,7 @@ class DocumentGenerationWrapper extends BaseServiceWrapper {
       this.validateInput(input, {
         markdownFilePath: { type: 'string', required: true },
         resumeDataPath: { type: 'string', required: true },
-        outputPath: { type: 'string', required: true }
+        outputPath: { type: 'string', required: true },
       });
 
       // Check if markdown file exists
@@ -296,14 +296,14 @@ class DocumentGenerationWrapper extends BaseServiceWrapper {
           'FILE_NOT_FOUND',
           `Cover letter markdown file not found: ${input.markdownFilePath}`,
           { file: input.markdownFilePath },
-          duration
+          duration,
         );
       }
 
       const filePath = await documentOrchestrator.generateCoverLetterDocument(
         input.markdownFilePath,
         input.resumeDataPath,
-        input.outputPath
+        input.outputPath,
       );
 
       const duration = Date.now() - startTime;
@@ -315,10 +315,10 @@ class DocumentGenerationWrapper extends BaseServiceWrapper {
           path: filePath,
           name: path.basename(filePath),
           size: fs.existsSync(filePath) ? fs.statSync(filePath).size : 0,
-          exists: fs.existsSync(filePath)
+          exists: fs.existsSync(filePath),
         },
         source_markdown: input.markdownFilePath,
-        implementation: 'document-generation'
+        implementation: 'document-generation',
       }, duration);
 
     } catch (error) {
@@ -327,7 +327,7 @@ class DocumentGenerationWrapper extends BaseServiceWrapper {
         'COVER_LETTER_GENERATION_FAILED',
         `Cover letter generation failed: ${error.message}`,
         { originalError: error.message },
-        duration
+        duration,
       );
     }
   }
@@ -346,7 +346,7 @@ class DocumentGenerationWrapper extends BaseServiceWrapper {
         template_processing: true, // template system available
         markdown_parsing: true, // markdown parser available
         file_operations: true, // fs operations available
-        orchestration: true // orchestrator available
+        orchestration: true, // orchestrator available
       };
 
       // Test basic file operations
@@ -358,7 +358,7 @@ class DocumentGenerationWrapper extends BaseServiceWrapper {
       return this.createSuccessResponse({
         capabilities,
         service_status: 'operational',
-        implementation: 'document-generation'
+        implementation: 'document-generation',
       }, duration);
 
     } catch (error) {
@@ -367,7 +367,7 @@ class DocumentGenerationWrapper extends BaseServiceWrapper {
         'CAPABILITY_CHECK_FAILED',
         `Capability validation failed: ${error.message}`,
         { originalError: error.message },
-        duration
+        duration,
       );
     }
   }

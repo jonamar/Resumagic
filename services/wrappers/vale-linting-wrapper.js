@@ -31,7 +31,7 @@ class ValeLintingWrapper extends BaseServiceWrapper {
       hasResumeData: !!input.resumeData,
       tier1Only: !!input.tier1Only,
       tier2Only: !!input.tier2Only,
-      spellingOnly: !!input.spellingOnly
+      spellingOnly: !!input.spellingOnly,
     });
 
     try {
@@ -42,7 +42,7 @@ class ValeLintingWrapper extends BaseServiceWrapper {
           'INVALID_INPUT',
           'Must provide either resumeDataPath or resumeData',
           { provided: Object.keys(input) },
-          duration
+          duration,
         );
       }
 
@@ -62,7 +62,7 @@ class ValeLintingWrapper extends BaseServiceWrapper {
           'FILE_NOT_FOUND',
           `Resume data file not found: ${resumeDataPath}`,
           { path: resumeDataPath },
-          duration
+          duration,
         );
       }
 
@@ -86,9 +86,9 @@ class ValeLintingWrapper extends BaseServiceWrapper {
         `Vale linting failed: ${error.message}`,
         { 
           originalError: error.message,
-          stack: error.stack 
+          stack: error.stack, 
         },
-        duration
+        duration,
       );
     }
   }
@@ -117,7 +117,7 @@ class ValeLintingWrapper extends BaseServiceWrapper {
       let processedResults = {
         tier1: input.tier2Only || input.spellingOnly ? [] : analysisResult.tier1 || [],
         spelling: input.tier1Only || input.tier2Only ? [] : analysisResult.spelling || [],
-        tier2: input.tier1Only || input.spellingOnly ? [] : analysisResult.tier2 || []
+        tier2: input.tier1Only || input.spellingOnly ? [] : analysisResult.tier2 || [],
       };
       
       // If specific analysis requested, filter accordingly
@@ -137,7 +137,7 @@ class ValeLintingWrapper extends BaseServiceWrapper {
       const issuesBySeverity = {
         error: 0,
         warning: 0,
-        suggestion: 0
+        suggestion: 0,
       };
       
       // Count issues by severity across all tiers
@@ -160,7 +160,7 @@ class ValeLintingWrapper extends BaseServiceWrapper {
           tier2_issues: processedResults.tier2.length,
           issues_by_severity: issuesBySeverity,
           sections_analyzed: analysisResult.stats?.sectionsAnalyzed || 0,
-          analysis_duration_ms: analysisResult.stats?.duration || duration
+          analysis_duration_ms: analysisResult.stats?.duration || duration,
         },
         context: {
           resume_file: path.basename(resumeDataPath),
@@ -168,10 +168,10 @@ class ValeLintingWrapper extends BaseServiceWrapper {
           analysis_filters: {
             tier1_only: !!input.tier1Only,
             tier2_only: !!input.tier2Only,
-            spelling_only: !!input.spellingOnly
-          }
+            spelling_only: !!input.spellingOnly,
+          },
         },
-        implementation: 'vale-linting'
+        implementation: 'vale-linting',
       }, duration);
       
     } catch (error) {
@@ -189,10 +189,10 @@ class ValeLintingWrapper extends BaseServiceWrapper {
           analysisFilters: {
             tier1Only: input.tier1Only,
             tier2Only: input.tier2Only,
-            spellingOnly: input.spellingOnly
-          }
+            spellingOnly: input.spellingOnly,
+          },
         },
-        duration
+        duration,
       );
     }
   }
@@ -207,7 +207,7 @@ class ValeLintingWrapper extends BaseServiceWrapper {
   async quickSpellingCheck(input) {
     return this.analyze({
       ...input,
-      spellingOnly: true
+      spellingOnly: true,
     });
   }
 

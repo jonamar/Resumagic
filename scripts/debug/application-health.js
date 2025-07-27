@@ -8,7 +8,7 @@
 import { 
   discoverApplications, 
   generateHealthReport,
-  ApplicationHealth 
+  ApplicationHealth, 
 } from '../../__tests__/helpers/application-registry.js';
 
 function printSeparator(char = '=', length = 60) {
@@ -20,7 +20,7 @@ function printHealthStatus(health) {
     [ApplicationHealth.HEALTHY]: '✅',
     [ApplicationHealth.INCOMPLETE]: '⚠️',
     [ApplicationHealth.MISSING]: '❌',
-    [ApplicationHealth.ERROR]: '💥'
+    [ApplicationHealth.ERROR]: '💥',
   };
   
   return `${statusEmojis[health.status] || '❓'} ${health.status.toUpperCase()}`;
@@ -84,7 +84,7 @@ function main() {
   
   // Issues summary
   const unhealthyApps = report.applications.filter(app => 
-    app.health.status !== ApplicationHealth.HEALTHY
+    app.health.status !== ApplicationHealth.HEALTHY,
   );
   
   if (unhealthyApps.length > 0) {

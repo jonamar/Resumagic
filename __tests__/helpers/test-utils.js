@@ -51,7 +51,9 @@ const TestFileUtils = {
   createTempDir(dirName) {
     const tempDir = path.join(os.tmpdir(), 'resumagic-test', dirName + '-' + Date.now());
     fs.mkdirSync(tempDir, { recursive: true });
-    if (!this.tempPaths) this.tempPaths = [];
+    if (!this.tempPaths) {
+      this.tempPaths = [];
+    }
     this.tempPaths.push(tempDir);
     return tempDir;
   },
@@ -64,7 +66,7 @@ const TestFileUtils = {
   readFixture(fixtureName) {
     const fixturePath = path.join(__dirname, '../fixtures', fixtureName);
     return fs.readFileSync(fixturePath, 'utf8');
-  }
+  },
 };
 
 /**
@@ -95,14 +97,14 @@ const ConsoleUtils = {
         result,
         stdout,
         stderr,
-        warnings
+        warnings,
       };
     } finally {
       console.log = originalLog;
       console.error = originalError;
       console.warn = originalWarn;
     }
-  }
+  },
 };
 
 /**
@@ -124,18 +126,18 @@ const MockDataUtils = {
           title: 'Software Engineer',
           company: 'Tech Corp',
           duration: '2020-2023',
-          bullets: ['Developed applications', 'Led team of 3 developers']
-        }
+          bullets: ['Developed applications', 'Led team of 3 developers'],
+        },
       ],
       education: [
         {
           degree: 'Bachelor of Science in Computer Science',
           school: 'University of Technology',
-          year: '2020'
-        }
+          year: '2020',
+        },
       ],
       skills: ['JavaScript', 'Python', 'React', 'Node.js'],
-      ...overrides
+      ...overrides,
     };
   },
 
@@ -151,13 +153,21 @@ const MockDataUtils = {
       args.push(options.applicationName);
     }
     
-    if (options.preview) args.push('--preview');
-    if (options.coverLetter) args.push('--cover-letter');
-    if (options.both) args.push('--both');
-    if (options.auto) args.push('--auto');
+    if (options.preview) {
+      args.push('--preview');
+    }
+    if (options.coverLetter) {
+      args.push('--cover-letter');
+    }
+    if (options.both) {
+      args.push('--both');
+    }
+    if (options.auto) {
+      args.push('--auto');
+    }
     
     return args;
-  }
+  },
 };
 
 /**
@@ -212,14 +222,14 @@ const AssertionUtils = {
     if (expectedData !== null) {
       expect(result).toHaveProperty('data', expectedData);
     }
-  }
+  },
 };
 
 export {
   TestFileUtils,
   ConsoleUtils,
   MockDataUtils,
-  AssertionUtils
+  AssertionUtils,
 };
 
 // Simple test to prevent Jest from complaining about no tests in this file

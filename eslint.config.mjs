@@ -1,0 +1,107 @@
+/**
+ * ESLint Flat Configuration for ESM Codebase with TypeScript Support
+ * Modern configuration supporting ES modules, TypeScript, and Jest testing
+ */
+
+import js from '@eslint/js';
+import ts from '@typescript-eslint/eslint-plugin';
+import tsParser from '@typescript-eslint/parser';
+
+export default [
+  // Base JavaScript recommended rules
+  js.configs.recommended,
+  
+  // TypeScript plugin recommended rules
+  {
+    files: ['**/*.ts'],
+    languageOptions: {
+      parser: tsParser,
+      parserOptions: {
+        project: './tsconfig.json',
+        ecmaVersion: 2022,
+        sourceType: 'module',
+      },
+    },
+    plugins: {
+      '@typescript-eslint': ts,
+    },
+    rules: {
+      ...ts.configs.recommended.rules,
+      ...ts.configs['recommended-requiring-type-checking'].rules,
+      // Additional TypeScript-specific rules
+      '@typescript-eslint/no-unused-vars': ['warn', { 
+        argsIgnorePattern: '^_',
+        varsIgnorePattern: '^_' 
+      }],
+      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/explicit-function-return-type': 'off',
+      '@typescript-eslint/explicit-module-boundary-types': 'off',
+      '@typescript-eslint/no-empty-function': 'warn',
+      '@typescript-eslint/no-non-null-assertion': 'warn',
+    },
+  },
+  
+  {
+    // Global configuration for all files
+    languageOptions: {
+      ecmaVersion: 2024,
+      sourceType: 'module',
+      globals: {
+        // Node.js globals
+        console: 'readonly',
+        process: 'readonly',
+        Buffer: 'readonly',
+        __dirname: 'readonly',
+        __filename: 'readonly',
+        global: 'readonly',
+        setTimeout: 'readonly',
+        setInterval: 'readonly',
+        clearTimeout: 'readonly',
+        clearInterval: 'readonly',
+        // Jest globals (for test files)
+        describe: 'readonly',
+        test: 'readonly',
+        it: 'readonly',
+        expect: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
+        beforeAll: 'readonly',
+        afterAll: 'readonly',
+        jest: 'readonly'
+      }
+    },
+    
+    // Files to lint
+    files: ['**/*.js', '**/*.ts'],
+    
+    // Basic rules for code quality
+    rules: {
+      // Error prevention (relaxed for development)
+      'no-unused-vars': ['warn', { 
+        argsIgnorePattern: '^_',
+        varsIgnorePattern: '^_' 
+      }],
+      'no-undef': 'error',
+      'no-console': 'warn',
+      
+      // Code style (relaxed for development)
+      'indent': ['error', 2],
+      'quotes': ['error', 'single', { 'avoidEscape': true }],
+      'semi': ['error', 'always'],
+      'comma-dangle': ['error', 'always-multiline'],
+      'object-curly-spacing': ['error', 'always'],
+      'array-bracket-spacing': ['error', 'never'],
+      'arrow-spacing': 'error',
+      'brace-style': ['error', '1tbs'],
+      'eol-last': ['error', 'always'],
+      
+      // Best practices
+      'eqeqeq': 'error',
+      'curly': 'error',
+      'no-var': 'error',
+      'prefer-const': 'error',
+      'prefer-arrow-callback': 'error',
+      'no-duplicate-imports': 'error'
+    }
+  }
+];

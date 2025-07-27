@@ -28,7 +28,7 @@ class KeywordExtractor {
       design_keywords: this.filterForDesign(allPriorities),
       finance_keywords: this.filterForFinance(allPriorities),
       ceo_keywords: this.filterForCEO(allPriorities),
-      team_keywords: this.filterForTeam(allPriorities)
+      team_keywords: this.filterForTeam(allPriorities),
     };
   }
 
@@ -39,13 +39,13 @@ class KeywordExtractor {
         'experience', 'years of experience', 'leadership experience', 'team management',
         'people management', 'hiring', 'recruitment', 'cultural fit', 'collaboration',
         'communication skills', 'travel requirements', 'work experience', 'career progression',
-        'progressive experience', 'product manager experience', 'manager experience', 'up to 50%'
+        'progressive experience', 'product manager experience', 'manager experience', 'up to 50%',
       ],
       technical: [
         'computer science', 'engineering', 'software development', 'technical skills',
         'programming', 'architecture', 'system design', 'agile methodologies',
         'technical leadership', 'saas development', 'web development', 'mobile development',
-        'technical depth', 'coding', 'algorithms', 'data structures'
+        'technical depth', 'coding', 'algorithms', 'data structures',
       ],
       design: [
         'user experience', 'user interface', 'design systems', 'user research',
@@ -53,28 +53,28 @@ class KeywordExtractor {
         'interaction design', 'design collaboration', 'product design', 'design tools',
         'user journey', 'wireframes', 'prototyping', 'accessibility', 'product vision',
         'product strategy', 'design strategy', 'product roadmap', 'user-centered product',
-        'product craft', 'design leadership'
+        'product craft', 'design leadership',
       ],
       finance: [
         'budget management', 'financial planning', 'roi', 'revenue growth', 'cost management',
         'financial metrics', 'business impact', 'unit economics', 'saas metrics',
         'investment', 'resource allocation', 'financial analysis', 'profitability',
         'product investment', 'financial targets', 'revenue strategy', 'product profitability',
-        'business growth', 'market expansion', 'pricing strategy'
+        'business growth', 'market expansion', 'pricing strategy',
       ],
       ceo: [
         'product strategy', 'business strategy', 'product vision', 'strategic thinking',
         'market analysis', 'product roadmap', 'business impact', 'stakeholder management',
         'executive leadership', 'strategic planning', 'vision alignment', 'product management',
-        'business development', 'competitive analysis', 'market positioning', 'organizational growth'
+        'business development', 'competitive analysis', 'market positioning', 'organizational growth',
       ],
       team: [
         'mentorship', 'coaching', 'team development', 'performance management',
         'leadership development', 'career growth', 'team collaboration', 'management skills',
         'people development', 'leadership style', 'direct reports', 'team building',
         'people leadership', 'team management', 'high-performing team', 'product management team',
-        'leadership experience', 'management experience', 'team scaling'
-      ]
+        'leadership experience', 'management experience', 'team scaling',
+      ],
     };
   }
 
@@ -96,8 +96,8 @@ class KeywordExtractor {
       // Calculate word overlap score
       const intersection = keywordWords.filter(word => 
         domainWords.some(domainWord => 
-          word.includes(domainWord) || domainWord.includes(word)
-        )
+          word.includes(domainWord) || domainWord.includes(word),
+        ),
       );
             
       const similarity = intersection.length / Math.max(keywordWords.length, domainWords.length);
@@ -119,7 +119,7 @@ class KeywordExtractor {
         design: this.calculateSimilarity(keyword.kw, domainKeywords.design),
         finance: this.calculateSimilarity(keyword.kw, domainKeywords.finance),
         ceo: this.calculateSimilarity(keyword.kw, domainKeywords.ceo),
-        team: this.calculateSimilarity(keyword.kw, domainKeywords.team)
+        team: this.calculateSimilarity(keyword.kw, domainKeywords.team),
       };
             
       // Assign to domain with highest similarity (threshold 0.25)
@@ -165,7 +165,9 @@ class KeywordExtractor {
   }
 
   generateContextPrompt(keywords) {
-    if (keywords.length === 0) return '';
+    if (keywords.length === 0) {
+      return '';
+    }
         
     const keywordList = keywords.map(kw => `"${kw.kw}"`).join(', ');
         
@@ -208,7 +210,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       design: extractor.calculateSimilarity(kw.kw, domainKeywords.design),
       finance: extractor.calculateSimilarity(kw.kw, domainKeywords.finance),
       ceo: extractor.calculateSimilarity(kw.kw, domainKeywords.ceo),
-      team: extractor.calculateSimilarity(kw.kw, domainKeywords.team)
+      team: extractor.calculateSimilarity(kw.kw, domainKeywords.team),
     };
     console.log(`"${kw.kw}": HR=${similarities.hr.toFixed(2)}, Tech=${similarities.technical.toFixed(2)}, Design=${similarities.design.toFixed(2)}, Finance=${similarities.finance.toFixed(2)}, CEO=${similarities.ceo.toFixed(2)}, Team=${similarities.team.toFixed(2)}`);
   });

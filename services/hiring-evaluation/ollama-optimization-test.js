@@ -20,7 +20,7 @@ class OllamaOptimizationTester {
     this.testModels = [
       'dolphin3:latest',  // baseline
       'phi3:mini',        // speed winner 
-      'deepseek-r1:8b'    // quality winner
+      'deepseek-r1:8b',    // quality winner
     ];
     
     // Optimization configurations to test
@@ -29,39 +29,39 @@ class OllamaOptimizationTester {
         OLLAMA_NUM_PARALLEL: null,     // Use default
         OLLAMA_NUM_THREADS: null,
         OLLAMA_MAX_LOADED_MODELS: null,
-        description: 'Default Ollama settings (current)'
+        description: 'Default Ollama settings (current)',
       },
       'parallel_basic': {
         OLLAMA_NUM_PARALLEL: 6,        // 6 personas in parallel
         OLLAMA_NUM_THREADS: null,
         OLLAMA_MAX_LOADED_MODELS: null,
-        description: 'Enable 6 parallel requests'
+        description: 'Enable 6 parallel requests',
       },
       'parallel_threads': {
         OLLAMA_NUM_PARALLEL: 6,
         OLLAMA_NUM_THREADS: 8,         // Use more CPU threads on M4
         OLLAMA_MAX_LOADED_MODELS: null,
-        description: 'Parallel + optimized threading'
+        description: 'Parallel + optimized threading',
       },
       'memory_optimized': {
         OLLAMA_NUM_PARALLEL: 4,        // Slightly fewer to save memory
         OLLAMA_NUM_THREADS: 8,
         OLLAMA_MAX_LOADED_MODELS: 1,   // Keep only one model loaded
-        description: 'Memory-constrained optimization'
-      }
+        description: 'Memory-constrained optimization',
+      },
     };
     
     this.testCandidate = { 
       name: 'Alex Johnson', 
       folder: 'test-weak-candidate', 
-      expected: 'weak' 
+      expected: 'weak', 
     };
     
     this.testResults = {
       timestamp: new Date().toISOString(),
       test_purpose: 'Ollama performance optimization for single-applicant 6-persona evaluations',
       configurations: this.configurations,
-      results: {}
+      results: {},
     };
   }
   
@@ -122,7 +122,9 @@ class OllamaOptimizationTester {
         return true;
       } catch (e) {
         await this.sleep(1000);
-        if (i % 5 === 0) console.log(`   Attempt ${i + 1}/${maxRetries}...`);
+        if (i % 5 === 0) {
+          console.log(`   Attempt ${i + 1}/${maxRetries}...`);
+        }
       }
     }
     
@@ -161,7 +163,7 @@ class OllamaOptimizationTester {
         scores: scores,
         memory_usage: memoryUsage,
         test_id: testId,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
       
       console.log(`✅ ${configName}/${model} completed in ${duration.toFixed(1)}s`);
@@ -181,13 +183,15 @@ class OllamaOptimizationTester {
         duration_seconds: duration,
         success: false,
         error: error.message,
-        test_id: testId
+        test_id: testId,
       };
     }
   }
   
   extractScores(rawResults) {
-    if (!rawResults.evaluations) return null;
+    if (!rawResults.evaluations) {
+      return null;
+    }
     
     const scores = {};
     let totalScore = 0;
@@ -204,7 +208,7 @@ class OllamaOptimizationTester {
     return {
       by_persona: scores,
       average: count > 0 ? (totalScore / count).toFixed(2) : null,
-      count: count
+      count: count,
     };
   }
   
@@ -228,7 +232,7 @@ class OllamaOptimizationTester {
         return {
           free_gb: freeGB.toFixed(2),
           used_gb: usedGB.toFixed(2),
-          total_gb: '16.00'
+          total_gb: '16.00',
         };
       }
     } catch (error) {
@@ -258,7 +262,7 @@ class OllamaOptimizationTester {
       
       this.testResults.results[configName] = {
         configuration: config,
-        model_results: {}
+        model_results: {},
       };
       
       // Test each model with this configuration
@@ -290,14 +294,14 @@ class OllamaOptimizationTester {
   generateOptimizationReport() {
     const results = this.testResults.results;
     
-    let content = `# Ollama Performance Optimization Results\n\n`;
+    let content = '# Ollama Performance Optimization Results\n\n';
     content += `**Test Date**: ${this.testResults.timestamp}\n`;
-    content += `**Objective**: Optimize single-applicant 6-persona parallel evaluations\n\n`;
+    content += '**Objective**: Optimize single-applicant 6-persona parallel evaluations\n\n';
     
     // Performance comparison table
-    content += `## 🚀 Performance Results\n\n`;
-    content += `| Configuration | Model | Duration (s) | Speedup | Avg Score | Memory (GB) | Status |\n`;
-    content += `|---------------|--------|-------------|---------|-----------|-------------|--------|\n`;
+    content += '## 🚀 Performance Results\n\n';
+    content += '| Configuration | Model | Duration (s) | Speedup | Avg Score | Memory (GB) | Status |\n';
+    content += '|---------------|--------|-------------|---------|-----------|-------------|--------|\n';
     
     const baselineTimes = {};
     
@@ -325,7 +329,7 @@ class OllamaOptimizationTester {
     });
     
     // Recommendations
-    content += `\n## 🏆 Recommendations\n\n`;
+    content += '\n## 🏆 Recommendations\n\n';
     content += this.generateRecommendations();
     
     // Save report
@@ -354,11 +358,11 @@ class OllamaOptimizationTester {
     let recommendations = '';
     
     if (fastestConfig && fastestModel) {
-      recommendations += `### 🥇 Fastest Configuration\n`;
+      recommendations += '### 🥇 Fastest Configuration\n';
       recommendations += `**${fastestConfig}** with **${fastestModel}**: ${fastestTime.toFixed(1)}s\n\n`;
       
       const configDetails = this.configurations[fastestConfig];
-      recommendations += `**Settings**:\n`;
+      recommendations += '**Settings**:\n';
       Object.entries(configDetails).forEach(([key, value]) => {
         if (key.startsWith('OLLAMA_') && value !== null) {
           recommendations += `- ${key}=${value}\n`;
@@ -366,8 +370,8 @@ class OllamaOptimizationTester {
       });
     }
     
-    recommendations += `\n### 💡 Production Recommendations\n`;
-    recommendations += `Based on the test results, apply the fastest configuration for real-world usage.\n`;
+    recommendations += '\n### 💡 Production Recommendations\n';
+    recommendations += 'Based on the test results, apply the fastest configuration for real-world usage.\n';
     
     return recommendations;
   }

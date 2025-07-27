@@ -46,21 +46,21 @@ async function updateDocumentGenerationMasters() {
     determineGenerationPlan({ resume: true }, true), 
     testPaths, 
     testResumeData, 
-    false
+    false,
   );
   
   const coverLetterResults = await orchestrateGeneration(
     determineGenerationPlan({ 'cover-letter': true }, true), 
     testPaths, 
     testResumeData, 
-    false
+    false,
   );
   
   const combinedResults = await orchestrateGeneration(
     determineGenerationPlan({ combined: true }, true), 
     testPaths, 
     testResumeData, 
-    false
+    false,
   );
   
   // Combine all generated files (same as production would create)
@@ -73,7 +73,7 @@ async function updateDocumentGenerationMasters() {
   const documentTypes = [
     { type: 'resume', pattern: 'Resume' },
     { type: 'cover-letter', pattern: 'Cover-Letter' },
-    { type: 'combined', pattern: 'Cover-Letter-and-Resume' }
+    { type: 'combined', pattern: 'Cover-Letter-and-Resume' },
   ];
   
   const masterHashes = {
@@ -81,13 +81,13 @@ async function updateDocumentGenerationMasters() {
     metadata: {
       created: new Date().toISOString(),
       description: 'Golden master content hashes for document generation regression testing',
-      testApplication: TEST_APPLICATION
-    }
+      testApplication: TEST_APPLICATION,
+    },
   };
   
   for (const { type: docType, pattern } of documentTypes) {
     const generatedFile = generatedFiles.find(f => 
-      f.includes(pattern) && f.endsWith('.docx')
+      f.includes(pattern) && f.endsWith('.docx'),
     );
     
     if (generatedFile) {
@@ -99,7 +99,7 @@ async function updateDocumentGenerationMasters() {
           contentHash: contentHash,
           filePath: generatedFile,
           lastUpdated: new Date().toISOString(),
-          contentLength: content.length
+          contentLength: content.length,
         };
         
         console.log(`✅ ${docType}: ${contentHash.substring(0, 16)}...`);
@@ -111,7 +111,7 @@ async function updateDocumentGenerationMasters() {
           contentHash: 'extraction-failed',
           filePath: generatedFile,
           lastUpdated: new Date().toISOString(),
-          error: error.message
+          error: error.message,
         };
       }
     } else {

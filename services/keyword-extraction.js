@@ -89,7 +89,7 @@ class KeywordExtractionService {
             role: 'core',
             source: 'direct_extraction',
             originalYears: years,
-            originalDescription: cleanDesc
+            originalDescription: cleanDesc,
           });
         }
       }
@@ -185,8 +185,8 @@ Extract all important keywords from this job posting and categorize them appropr
         stream: false,
         options: {
           temperature: 0.1,  // Low temperature for consistent output
-          top_p: 0.9
-        }
+          top_p: 0.9,
+        },
       });
 
       const options = {
@@ -196,8 +196,8 @@ Extract all important keywords from this job posting and categorize them appropr
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Content-Length': Buffer.byteLength(postData)
-        }
+          'Content-Length': Buffer.byteLength(postData),
+        },
       };
 
       const req = http.request(options, (res) => {

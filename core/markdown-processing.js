@@ -32,7 +32,7 @@ function parseTextWithFormatting(text) {
     const patterns = [
       { regex: /\*\*\*(.*?)\*\*\*/g, bold: true, italic: true, name: 'bold-italic' },
       { regex: /\*\*(.*?)\*\*/g, bold: true, italic: false, name: 'bold' },
-      { regex: /\*(.*?)\*/g, bold: false, italic: true, name: 'italic' }
+      { regex: /\*(.*?)\*/g, bold: false, italic: true, name: 'italic' },
     ];
 
     patterns.forEach(pattern => {
@@ -45,7 +45,7 @@ function parseTextWithFormatting(text) {
           match: match,
           startIndex: match.index,
           endIndex: match.index + match[0].length,
-          content: match[1]
+          content: match[1],
         };
         foundMatch = true;
       }
@@ -57,7 +57,7 @@ function parseTextWithFormatting(text) {
         parts.push({
           text: remainingText.substring(0, earliestMatch.startIndex),
           bold: false,
-          italic: false
+          italic: false,
         });
       }
 
@@ -66,7 +66,7 @@ function parseTextWithFormatting(text) {
         parts.push({
           text: earliestMatch.content,
           bold: earliestMatch.bold,
-          italic: earliestMatch.italic
+          italic: earliestMatch.italic,
         });
       }
 
@@ -78,7 +78,7 @@ function parseTextWithFormatting(text) {
         parts.push({
           text: remainingText,
           bold: false,
-          italic: false
+          italic: false,
         });
       }
       remainingText = '';
@@ -101,31 +101,31 @@ function runTests() {
   const tests = [
     {
       input: 'Plain text',
-      expected: [{ text: 'Plain text', bold: false, italic: false }]
+      expected: [{ text: 'Plain text', bold: false, italic: false }],
     },
     {
       input: 'This is **bold** text',
       expected: [
         { text: 'This is ', bold: false, italic: false },
         { text: 'bold', bold: true, italic: false },
-        { text: ' text', bold: false, italic: false }
-      ]
+        { text: ' text', bold: false, italic: false },
+      ],
     },
     {
       input: 'This is *italic* text',
       expected: [
         { text: 'This is ', bold: false, italic: false },
         { text: 'italic', bold: false, italic: true },
-        { text: ' text', bold: false, italic: false }
-      ]
+        { text: ' text', bold: false, italic: false },
+      ],
     },
     {
       input: 'This is ***bold italic*** text',
       expected: [
         { text: 'This is ', bold: false, italic: false },
         { text: 'bold italic', bold: true, italic: true },
-        { text: ' text', bold: false, italic: false }
-      ]
+        { text: ' text', bold: false, italic: false },
+      ],
     },
     {
       input: '**Bold** and *italic* and ***both***',
@@ -134,8 +134,8 @@ function runTests() {
         { text: ' and ', bold: false, italic: false },
         { text: 'italic', bold: false, italic: true },
         { text: ' and ', bold: false, italic: false },
-        { text: 'both', bold: true, italic: true }
-      ]
+        { text: 'both', bold: true, italic: true },
+      ],
     },
     {
       input: 'Numbers: **16x growth** and **$26.6M CAD**',
@@ -143,9 +143,9 @@ function runTests() {
         { text: 'Numbers: ', bold: false, italic: false },
         { text: '16x growth', bold: true, italic: false },
         { text: ' and ', bold: false, italic: false },
-        { text: '$26.6M CAD', bold: true, italic: false }
-      ]
-    }
+        { text: '$26.6M CAD', bold: true, italic: false },
+      ],
+    },
   ];
 
   let allPassed = true;
@@ -203,7 +203,7 @@ function parseMarkdownCoverLetter(markdownFilePath, resumeJsonPath) {
         email: resumeData.basics.email,
         phone: resumeData.basics.phone,
         location: resumeData.basics.location,
-        profiles: resumeData.basics.profiles
+        profiles: resumeData.basics.profiles,
       },
       
       // Cover letter specific data
@@ -211,9 +211,9 @@ function parseMarkdownCoverLetter(markdownFilePath, resumeJsonPath) {
         content: contentParagraphs,
         metadata: {
           date: frontMatter.date || new Date().toISOString().split('T')[0],
-          customClosing: frontMatter.customClosing || 'Sincerely'
-        }
-      }
+          customClosing: frontMatter.customClosing || 'Sincerely',
+        },
+      },
     };
     
     return coverLetterData;
@@ -241,13 +241,13 @@ function parseMarkdownContent(content) {
       const listItems = trimmedParagraph.split('\n').filter(line => line.trim().startsWith('- '));
       return {
         type: 'list',
-        items: listItems.map(item => parseInlineMarkdown(item.substring(2).trim()))
+        items: listItems.map(item => parseInlineMarkdown(item.substring(2).trim())),
       };
     } else {
       // Regular paragraph
       return {
         type: 'paragraph',
-        text: parseInlineMarkdown(trimmedParagraph)
+        text: parseInlineMarkdown(trimmedParagraph),
       };
     }
   });
@@ -340,7 +340,7 @@ function findMarkdownFile(jsonFilePath) {
     `${baseName}.markdown`,
     'cover-letter.md',
     'coverLetter.md',
-    'cover_letter.md'
+    'cover_letter.md',
   ];
   
   for (const name of possibleNames) {
@@ -357,5 +357,5 @@ export {
   parseTextWithFormatting,
   runTests,
   parseMarkdownCoverLetter,
-  findMarkdownFile
+  findMarkdownFile,
 };

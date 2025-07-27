@@ -30,7 +30,7 @@ function loadYaml(filePath) {
     data.criteria[key] = {
       title: match[2],
       description: match[3],
-      bullets: bullets
+      bullets: bullets,
     };
   }
     

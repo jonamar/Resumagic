@@ -18,7 +18,7 @@ export const ApplicationHealth = {
   HEALTHY: 'healthy',
   MISSING: 'missing',
   INCOMPLETE: 'incomplete',
-  ERROR: 'error'
+  ERROR: 'error',
 };
 
 /**
@@ -40,7 +40,7 @@ export function discoverApplications() {
         name,
         type: 'test',
         path: path.join(testDir, name),
-        health: checkApplicationHealth(path.join(testDir, name))
+        health: checkApplicationHealth(path.join(testDir, name)),
       });
     });
   }
@@ -59,7 +59,7 @@ export function discoverApplications() {
         name,
         type: 'live',
         path: path.join(appsDir, name),
-        health: checkApplicationHealth(path.join(appsDir, name))
+        health: checkApplicationHealth(path.join(appsDir, name)),
       });
     });
   }
@@ -77,7 +77,7 @@ export function checkApplicationHealth(appPath) {
     return {
       status: ApplicationHealth.MISSING,
       message: 'Application directory does not exist',
-      details: {}
+      details: {},
     };
   }
   
@@ -90,8 +90,8 @@ export function checkApplicationHealth(appPath) {
       hasResume: false,
       hasCoverLetter: false,
       outputCount: 0,
-      missingComponents: []
-    }
+      missingComponents: [],
+    },
   };
   
   try {
@@ -203,13 +203,17 @@ export function generateHealthReport() {
     error: 0,
     testApps: 0,
     liveApps: 0,
-    applications: applications
+    applications: applications,
   };
   
   applications.forEach(app => {
     report[app.health.status]++;
-    if (app.type === 'test') report.testApps++;
-    if (app.type === 'live') report.liveApps++;
+    if (app.type === 'test') {
+      report.testApps++;
+    }
+    if (app.type === 'live') {
+      report.liveApps++;
+    }
   });
   
   return report;

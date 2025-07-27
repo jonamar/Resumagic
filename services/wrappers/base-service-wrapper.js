@@ -4,7 +4,7 @@
  * Part of Phase 2: Standardize Existing Service Infrastructure
  */
 
-import { getFeatureFlags } from '../../utils/feature-flags.js';
+import { getFeatureFlags } from '../../utils/feature-flags.ts';
 
 
 /**
@@ -25,7 +25,7 @@ class ServiceResponse {
       service: serviceName,
       version: '1.0.0',
       duration: Math.round(duration),
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
@@ -36,13 +36,13 @@ class ServiceResponse {
         service: serviceName,
         version: '1.0.0',
         duration: Math.round(duration),
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       },
       error: {
         code,
         message,
-        details
-      }
+        details,
+      },
     };
     // Don't include data property for error responses
     return response;
@@ -149,5 +149,5 @@ class BaseServiceWrapper {
 
 export {
   BaseServiceWrapper,
-  ServiceResponse
+  ServiceResponse,
 };

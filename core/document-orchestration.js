@@ -248,5 +248,5 @@ export {
   generateCombinedDocument,
   openGeneratedFiles,
   displayCompletionSummary,
-  orchestrateGeneration
+  orchestrateGeneration,
 };

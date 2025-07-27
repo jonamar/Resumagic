@@ -23,7 +23,7 @@ class ComprehensiveOptimizationTester {
     this.testModels = [
       { name: 'dolphin3:latest', category: 'baseline', description: 'Current production baseline' },
       { name: 'phi3:mini', category: 'speed', description: 'Phase 1 speed winner' },
-      { name: 'deepseek-r1:8b', category: 'quality', description: 'Phase 1 quality winner' }
+      { name: 'deepseek-r1:8b', category: 'quality', description: 'Phase 1 quality winner' },
     ];
     
     // Comprehensive optimization configurations
@@ -31,14 +31,14 @@ class ComprehensiveOptimizationTester {
       'baseline_default': {
         env_vars: {},
         description: 'Default Ollama settings (current production)',
-        expected_improvement: '1.0x (baseline)'
+        expected_improvement: '1.0x (baseline)',
       },
       'parallel_6_personas': {
         env_vars: {
           OLLAMA_NUM_PARALLEL: 6,
         },
         description: 'Enable 6 parallel requests for 6-persona evaluations',
-        expected_improvement: '5-6x faster'
+        expected_improvement: '5-6x faster',
       },
       'parallel_threads_optimized': {
         env_vars: {
@@ -46,7 +46,7 @@ class ComprehensiveOptimizationTester {
           OLLAMA_NUM_THREADS: 8,
         },
         description: 'Parallel requests + optimized CPU threading for M4',
-        expected_improvement: '5-8x faster'
+        expected_improvement: '5-8x faster',
       },
       'memory_conservative': {
         env_vars: {
@@ -55,7 +55,7 @@ class ComprehensiveOptimizationTester {
           OLLAMA_NUM_THREADS: 6,
         },
         description: 'Memory-constrained optimization (16GB RAM limit)',
-        expected_improvement: '3-4x faster'
+        expected_improvement: '3-4x faster',
       },
       'aggressive_parallel': {
         env_vars: {
@@ -64,8 +64,8 @@ class ComprehensiveOptimizationTester {
           OLLAMA_MAX_LOADED_MODELS: 1,
         },
         description: 'Maximum parallelization (may hit memory limits)',
-        expected_improvement: '6-10x faster or failure'
-      }
+        expected_improvement: '6-10x faster or failure',
+      },
     };
     
     // Test candidates for comprehensive validation
@@ -83,7 +83,7 @@ class ComprehensiveOptimizationTester {
         timestamp: new Date().toISOString(),
         test_purpose: 'Comprehensive Ollama optimization for real-world single-applicant evaluations',
         system_specs: this.getSystemInfo(),
-        test_matrix_size: Object.keys(this.optimizationConfigs).length * this.testModels.length * this.testCandidates.length * this.runsPerConfig
+        test_matrix_size: Object.keys(this.optimizationConfigs).length * this.testModels.length * this.testCandidates.length * this.runsPerConfig,
       },
       configurations: this.optimizationConfigs,
       models: this.testModels,
@@ -91,7 +91,7 @@ class ComprehensiveOptimizationTester {
       runs_per_config: this.runsPerConfig,
       detailed_results: {},
       statistical_summary: {},
-      production_recommendations: {}
+      production_recommendations: {},
     };
   }
   
@@ -113,7 +113,7 @@ class ComprehensiveOptimizationTester {
         os: osInfo,
         memory: memInfo,
         cpu: cpuInfo,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     } catch (error) {
       return { error: error.message };
@@ -142,7 +142,7 @@ class ComprehensiveOptimizationTester {
       console.log('🚀 Starting Ollama with new configuration...');
       const ollamaProcess = spawn('bash', ['-c', `${envCommand}ollama serve`], {
         detached: true,
-        stdio: 'ignore'
+        stdio: 'ignore',
       });
       ollamaProcess.unref();
       
@@ -201,7 +201,7 @@ class ComprehensiveOptimizationTester {
       system_state: await this.captureSystemState(),
       ollama_health: await this.checkOllamaHealth(),
       active_connections: await this.getActiveConnections(),
-      memory_snapshot: this.captureMemorySnapshot('before')
+      memory_snapshot: this.captureMemorySnapshot('before'),
     };
     
     console.log(`🔍 Pre-test: ${preTestTelemetry.active_connections} connections, Ollama ${preTestTelemetry.ollama_health.healthy ? '✅' : '❌'} (${preTestTelemetry.ollama_health.response_time_ms}ms)`);
@@ -214,7 +214,7 @@ class ComprehensiveOptimizationTester {
       
       // Create timeout promise
       const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Evaluation timeout')), this.timeoutSeconds * 1000)
+        setTimeout(() => reject(new Error('Evaluation timeout')), this.timeoutSeconds * 1000),
       );
       
       // Run evaluation with timeout
@@ -228,7 +228,7 @@ class ComprehensiveOptimizationTester {
         system_state: await this.captureSystemState(),
         ollama_health: await this.checkOllamaHealth(),
         active_connections: await this.getActiveConnections(),
-        memory_snapshot: this.captureMemorySnapshot('after')
+        memory_snapshot: this.captureMemorySnapshot('after'),
       };
       
       // Comprehensive data extraction
@@ -244,20 +244,20 @@ class ComprehensiveOptimizationTester {
           candidate: candidate.name,
           candidate_type: candidate.expected,
           run_number: runNumber,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         },
         performance_metrics: {
           total_duration_seconds: duration,
           personas_completed: scores.personas_count,
           average_persona_time: duration / Math.max(scores.personas_count, 1),
-          success: true
+          success: true,
         },
         quality_metrics: qualityMetrics,
         scoring_results: scores,
         system_metrics: {
           memory_before: preTestTelemetry.memory_snapshot,
           memory_after: postTestTelemetry.memory_snapshot,
-          memory_delta: this.calculateMemoryDelta(preTestTelemetry.memory_snapshot, postTestTelemetry.memory_snapshot)
+          memory_delta: this.calculateMemoryDelta(preTestTelemetry.memory_snapshot, postTestTelemetry.memory_snapshot),
         },
         // Enhanced telemetry data - Phase 1A
         telemetry: {
@@ -266,15 +266,15 @@ class ComprehensiveOptimizationTester {
           connection_stability: {
             connections_before: preTestTelemetry.active_connections,
             connections_after: postTestTelemetry.active_connections,
-            connection_delta: postTestTelemetry.active_connections - preTestTelemetry.active_connections
+            connection_delta: postTestTelemetry.active_connections - preTestTelemetry.active_connections,
           },
           ollama_performance: {
             health_before: preTestTelemetry.ollama_health,
             health_after: postTestTelemetry.ollama_health,
-            response_time_delta: postTestTelemetry.ollama_health.response_time_ms - preTestTelemetry.ollama_health.response_time_ms
-          }
+            response_time_delta: postTestTelemetry.ollama_health.response_time_ms - preTestTelemetry.ollama_health.response_time_ms,
+          },
         },
-        raw_data_archive: `${testId}_complete.json`
+        raw_data_archive: `${testId}_complete.json`,
       };
       
       // Archive complete results
@@ -292,7 +292,7 @@ class ComprehensiveOptimizationTester {
         system_state: await this.captureSystemState(),
         ollama_health: await this.checkOllamaHealth(),
         active_connections: await this.getActiveConnections(),
-        memory_snapshot: this.captureMemorySnapshot('error')
+        memory_snapshot: this.captureMemorySnapshot('error'),
       };
       
       const diagnosis = await this.diagnoseFailure(error, {
@@ -301,7 +301,7 @@ class ComprehensiveOptimizationTester {
         model: model.name,
         candidate: candidate.name,
         run_number: runNumber,
-        duration_before_failure: duration
+        duration_before_failure: duration,
       });
       
       console.log(`❌ Failed after ${duration.toFixed(1)}s: ${error.message}`);
@@ -314,17 +314,17 @@ class ComprehensiveOptimizationTester {
           model: model.name,
           candidate: candidate.name,
           run_number: runNumber,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         },
         performance_metrics: {
           total_duration_seconds: duration,
           success: false,
           error: error.message,
-          timeout: error.message.includes('timeout')
+          timeout: error.message.includes('timeout'),
         },
         system_metrics: {
           memory_before: preTestTelemetry.memory_snapshot,
-          memory_after: failureTelemetry.memory_snapshot
+          memory_after: failureTelemetry.memory_snapshot,
         },
         // Enhanced failure analysis - Phase 1A
         failure_analysis: diagnosis,
@@ -334,15 +334,17 @@ class ComprehensiveOptimizationTester {
           connection_stability: {
             connections_before: preTestTelemetry.active_connections,
             connections_at_failure: failureTelemetry.active_connections,
-            connection_delta: failureTelemetry.active_connections - preTestTelemetry.active_connections
-          }
-        }
+            connection_delta: failureTelemetry.active_connections - preTestTelemetry.active_connections,
+          },
+        },
       };
     }
   }
   
   extractComprehensiveScores(rawResults) {
-    if (!rawResults.evaluations) return { personas_count: 0, average: null, by_persona: {} };
+    if (!rawResults.evaluations) {
+      return { personas_count: 0, average: null, by_persona: {} };
+    }
     
     const scores = {};
     let totalScore = 0;
@@ -353,7 +355,7 @@ class ComprehensiveOptimizationTester {
         const score = evaluation.overall_assessment.persona_score;
         scores[evaluation.persona] = {
           score: score,
-          reasoning_length: evaluation.overall_assessment.recommendation ? evaluation.overall_assessment.recommendation.length : 0
+          reasoning_length: evaluation.overall_assessment.recommendation ? evaluation.overall_assessment.recommendation.length : 0,
         };
         totalScore += score;
         count++;
@@ -365,7 +367,7 @@ class ComprehensiveOptimizationTester {
       average: count > 0 ? (totalScore / count).toFixed(2) : null,
       personas_count: count,
       score_variance: this.calculateVariance(Object.values(scores).map(s => s.score)),
-      total_reasoning_chars: Object.values(scores).reduce((sum, s) => sum + s.reasoning_length, 0)
+      total_reasoning_chars: Object.values(scores).reduce((sum, s) => sum + s.reasoning_length, 0),
     };
   }
   
@@ -377,7 +379,7 @@ class ComprehensiveOptimizationTester {
     const expectedRanges = {
       weak: [3, 6],
       average: [5, 7],
-      strong: [7, 9]
+      strong: [7, 9],
     };
     
     const [minExpected, maxExpected] = expectedRanges[expectedType] || [1, 10];
@@ -409,12 +411,14 @@ class ComprehensiveOptimizationTester {
       score_appropriateness: avgScore >= minExpected && avgScore <= maxExpected,
       score_variance: scores.score_variance,
       avg_reasoning_length: Math.round(avgReasoningLength),
-      issues: issues
+      issues: issues,
     };
   }
   
   calculateVariance(numbers) {
-    if (numbers.length === 0) return 0;
+    if (numbers.length === 0) {
+      return 0;
+    }
     const mean = numbers.reduce((a, b) => a + b, 0) / numbers.length;
     const variance = numbers.reduce((sum, num) => sum + Math.pow(num - mean, 2), 0) / numbers.length;
     return Math.sqrt(variance);
@@ -441,7 +445,7 @@ class ComprehensiveOptimizationTester {
           used_gb: (((activePages + wiredPages) * pageSize) / (1024 ** 3)).toFixed(2),
           free_pages: freePages,
           active_pages: activePages,
-          wired_pages: wiredPages
+          wired_pages: wiredPages,
         };
       }
     } catch (error) {
@@ -451,14 +455,16 @@ class ComprehensiveOptimizationTester {
   }
   
   calculateMemoryDelta(before, after) {
-    if (before.error || after.error) return { error: 'Unable to calculate delta' };
+    if (before.error || after.error) {
+      return { error: 'Unable to calculate delta' };
+    }
     
     const usedBefore = parseFloat(before.used_gb);
     const usedAfter = parseFloat(after.used_gb);
     
     return {
       used_gb_delta: (usedAfter - usedBefore).toFixed(2),
-      memory_efficiency: usedAfter < usedBefore + 2.0 ? 'good' : 'concerning'
+      memory_efficiency: usedAfter < usedBefore + 2.0 ? 'good' : 'concerning',
     };
   }
   
@@ -496,12 +502,12 @@ class ComprehensiveOptimizationTester {
         cpu_usage: cpuUsage,
         active_connections: parseInt(connections) || 0,
         ollama_processes: ollamaProcesses,
-        memory: this.captureMemorySnapshot('system_state')
+        memory: this.captureMemorySnapshot('system_state'),
       };
     } catch (error) {
       return {
         timestamp: new Date().toISOString(),
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -516,13 +522,13 @@ class ComprehensiveOptimizationTester {
         healthy: response.statusCode === 200,
         response_time_ms: responseTime,
         status_code: response.statusCode,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     } catch (error) {
       return {
         healthy: false,
         error: error.message,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     }
   }
@@ -543,7 +549,7 @@ class ComprehensiveOptimizationTester {
       error_type: this.classifyError(error),
       system_state: await this.captureSystemState(),
       ollama_health: await this.checkOllamaHealth(),
-      test_context: testContext
+      test_context: testContext,
     };
     
     // Additional diagnostics based on error type
@@ -552,21 +558,21 @@ class ComprehensiveOptimizationTester {
       diagnosis.recommendations = [
         'Check Ollama server capacity',
         'Reduce concurrent requests',
-        'Add connection retry logic'
+        'Add connection retry logic',
       ];
     } else if (error?.message?.includes('timeout')) {
       diagnosis.likely_cause = 'Request exceeded timeout threshold';
       diagnosis.recommendations = [
         'Increase timeout duration',
         'Check model loading time',
-        'Monitor system resources'
+        'Monitor system resources',
       ];
     } else if (error?.message?.includes('ECONNREFUSED')) {
       diagnosis.likely_cause = 'Ollama server not running or not accepting connections';
       diagnosis.recommendations = [
         'Verify Ollama server is running',
         'Check port 11434 availability',
-        'Restart Ollama service'
+        'Restart Ollama service',
       ];
     }
     
@@ -574,14 +580,26 @@ class ComprehensiveOptimizationTester {
   }
   
   classifyError(error) {
-    if (!error?.message) return 'unknown';
+    if (!error?.message) {
+      return 'unknown';
+    }
     
     const message = error.message.toLowerCase();
-    if (message.includes('socket hang up')) return 'connection_terminated';
-    if (message.includes('timeout')) return 'timeout';
-    if (message.includes('econnrefused')) return 'connection_refused';
-    if (message.includes('enotfound')) return 'dns_resolution';
-    if (message.includes('parse')) return 'response_parsing';
+    if (message.includes('socket hang up')) {
+      return 'connection_terminated';
+    }
+    if (message.includes('timeout')) {
+      return 'timeout';
+    }
+    if (message.includes('econnrefused')) {
+      return 'connection_refused';
+    }
+    if (message.includes('enotfound')) {
+      return 'dns_resolution';
+    }
+    if (message.includes('parse')) {
+      return 'response_parsing';
+    }
     
     return 'other';
   }
@@ -600,7 +618,7 @@ class ComprehensiveOptimizationTester {
       const testResult = await this.testConcurrencyLevel(configName, model, concurrency);
       results.push({
         concurrency_level: concurrency,
-        ...testResult
+        ...testResult,
       });
       
       // Stop testing if we hit failure threshold
@@ -650,7 +668,7 @@ class ComprehensiveOptimizationTester {
           concurrent_requests: concurrency,
           successful_requests: successCount,
           average_response_time: avgDuration,
-          success_rate: successCount / concurrency
+          success_rate: successCount / concurrency,
         });
         
         if (successCount === concurrency) {
@@ -664,7 +682,7 @@ class ComprehensiveOptimizationTester {
           run_number: run,
           concurrent_requests: concurrency,
           error: error.message,
-          success_rate: 0
+          success_rate: 0,
         });
       }
     }
@@ -683,9 +701,9 @@ class ComprehensiveOptimizationTester {
         cpu_after: systemAfter.cpu_usage,
         connections_before: systemBefore.active_connections,
         connections_after: systemAfter.active_connections,
-        memory_delta: this.calculateMemoryDelta(systemBefore.memory, systemAfter.memory)
+        memory_delta: this.calculateMemoryDelta(systemBefore.memory, systemAfter.memory),
       },
-      detailed_runs: runResults
+      detailed_runs: runResults,
     };
   }
   
@@ -702,7 +720,7 @@ class ComprehensiveOptimizationTester {
         optimal_concurrency: 1, 
         confidence: 'low', 
         reason: 'No concurrency level achieved >90% success rate',
-        all_results: results
+        all_results: results,
       };
     }
     
@@ -719,7 +737,7 @@ class ComprehensiveOptimizationTester {
       average_response_time: optimal.average_response_time,
       reason: `Best performance at ${optimal.concurrency_level} concurrent requests with ${(optimal.success_rate * 100).toFixed(1)}% success rate`,
       system_impact: optimal.system_impact,
-      all_results: results
+      all_results: results,
     };
   }
   
@@ -732,7 +750,7 @@ class ComprehensiveOptimizationTester {
       memory_critical_gb: null,
       cpu_warning_percent: null,
       connection_limit: null,
-      baseline_state: baseline
+      baseline_state: baseline,
     };
     
     // Test memory usage patterns
@@ -765,7 +783,7 @@ class ComprehensiveOptimizationTester {
     const archiveData = {
       test_result: testResult,
       full_evaluation_output: evaluationResults.rawResults,
-      evaluation_summary: evaluationResults.summary
+      evaluation_summary: evaluationResults.summary,
     };
     
     fs.writeFileSync(archiveFile, JSON.stringify(archiveData, null, 2));
@@ -795,7 +813,7 @@ class ComprehensiveOptimizationTester {
       optimal_concurrency: baselineOptimal.optimal_concurrency,
       confidence: baselineOptimal.confidence,
       success_rate: baselineOptimal.success_rate,
-      thresholds: await this.measureResourceThresholds('baseline_default', baselineModel)
+      thresholds: await this.measureResourceThresholds('baseline_default', baselineModel),
     };
     
     console.log(`✅ Baseline optimal concurrency: ${baselineOptimal.optimal_concurrency} (${baselineOptimal.confidence} confidence)`);
@@ -826,7 +844,7 @@ class ComprehensiveOptimizationTester {
       
       this.masterResults.detailed_results[configName] = {
         configuration: config,
-        test_runs: {}
+        test_runs: {},
       };
       
       // Test each model
@@ -885,7 +903,7 @@ class ComprehensiveOptimizationTester {
     Object.entries(this.masterResults.detailed_results).forEach(([configName, configData]) => {
       stats[configName] = {
         configuration: configData.configuration,
-        model_performance: {}
+        model_performance: {},
       };
       
       Object.entries(configData.test_runs).forEach(([modelName, modelData]) => {
@@ -906,16 +924,16 @@ class ComprehensiveOptimizationTester {
               median: this.calculateMedian(durations),
               std_dev: this.calculateStdDev(durations),
               min: Math.min(...durations),
-              max: Math.max(...durations)
+              max: Math.max(...durations),
             },
             score_accuracy: {
               mean_score: this.calculateMean(scores),
-              score_consistency: this.calculateStdDev(scores)
+              score_consistency: this.calculateStdDev(scores),
             },
             quality_stats: {
               mean_quality: this.calculateMean(qualityScores),
-              quality_consistency: this.calculateStdDev(qualityScores)
-            }
+              quality_consistency: this.calculateStdDev(qualityScores),
+            },
           };
         }
       });
@@ -924,13 +942,13 @@ class ComprehensiveOptimizationTester {
     this.masterResults.statistical_summary = stats;
     
     // Generate markdown report
-    let content = `# Statistical Analysis: Ollama Optimization Results\n\n`;
+    let content = '# Statistical Analysis: Ollama Optimization Results\n\n';
     content += `**Test Completed**: ${new Date().toISOString()}\n`;
     content += `**Total Evaluations**: ${this.masterResults.test_metadata.test_matrix_size}\n\n`;
     
-    content += `## Performance Summary by Configuration\n\n`;
-    content += `| Configuration | Model | Mean Duration (s) | Std Dev | Quality Score | Success Rate |\n`;
-    content += `|---------------|-------|------------------|---------|---------------|--------------|\n`;
+    content += '## Performance Summary by Configuration\n\n';
+    content += '| Configuration | Model | Mean Duration (s) | Std Dev | Quality Score | Success Rate |\n';
+    content += '|---------------|-------|------------------|---------|---------------|--------------|\n';
     
     Object.entries(stats).forEach(([configName, configStats]) => {
       Object.entries(configStats.model_performance).forEach(([modelName, modelStats]) => {
@@ -977,33 +995,33 @@ class ComprehensiveOptimizationTester {
         model_name: bestModel,
         expected_duration: bestDuration,
         environment_variables: bestConfig ? this.optimizationConfigs[bestConfig].env_vars : {},
-        implementation_notes: 'Apply these environment variables before starting Ollama'
+        implementation_notes: 'Apply these environment variables before starting Ollama',
       },
       performance_gains: {
         baseline_duration: stats.baseline_default?.model_performance[bestModel]?.duration_stats.mean || 'N/A',
         optimized_duration: bestDuration,
         speedup_factor: stats.baseline_default?.model_performance[bestModel] ? 
-          (stats.baseline_default.model_performance[bestModel].duration_stats.mean / bestDuration).toFixed(1) + 'x' : 'N/A'
+          (stats.baseline_default.model_performance[bestModel].duration_stats.mean / bestDuration).toFixed(1) + 'x' : 'N/A',
       },
-      deployment_instructions: this.generateDeploymentInstructions(bestConfig)
+      deployment_instructions: this.generateDeploymentInstructions(bestConfig),
     };
     
     this.masterResults.production_recommendations = recommendations;
     
     // Generate markdown recommendations
-    let content = `# Production Deployment Recommendations\n\n`;
+    let content = '# Production Deployment Recommendations\n\n';
     content += `**Optimal Configuration**: ${bestConfig}\n`;
     content += `**Recommended Model**: ${bestModel}\n`;
     content += `**Expected Performance**: ${bestDuration.toFixed(1)}s per evaluation\n\n`;
     
     if (recommendations.performance_gains.speedup_factor !== 'N/A') {
-      content += `## Performance Improvement\n`;
+      content += '## Performance Improvement\n';
       content += `- **Baseline**: ${recommendations.performance_gains.baseline_duration.toFixed(1)}s\n`;
       content += `- **Optimized**: ${recommendations.performance_gains.optimized_duration.toFixed(1)}s\n`;  
       content += `- **Speedup**: ${recommendations.performance_gains.speedup_factor}\n\n`;
     }
     
-    content += `## Deployment Instructions\n\n`;
+    content += '## Deployment Instructions\n\n';
     content += recommendations.deployment_instructions;
     
     const recommendationsFile = path.join(this.resultsDir, 'production_recommendations.md');
@@ -1018,21 +1036,21 @@ class ComprehensiveOptimizationTester {
     const config = this.optimizationConfigs[configName];
     const envVars = config.env_vars;
     
-    let instructions = `### Step 1: Stop Current Ollama\n`;
-    instructions += `\`\`\`bash\npkill -f "ollama serve"\n\`\`\`\n\n`;
+    let instructions = '### Step 1: Stop Current Ollama\n';
+    instructions += '```bash\npkill -f "ollama serve"\n```\n\n';
     
-    instructions += `### Step 2: Set Environment Variables\n`;
-    instructions += `\`\`\`bash\n`;
+    instructions += '### Step 2: Set Environment Variables\n';
+    instructions += '```bash\n';
     Object.entries(envVars).forEach(([key, value]) => {
       instructions += `export ${key}=${value}\n`;
     });
-    instructions += `\`\`\`\n\n`;
+    instructions += '```\n\n';
     
-    instructions += `### Step 3: Start Optimized Ollama\n`;
-    instructions += `\`\`\`bash\nollama serve\n\`\`\`\n\n`;
+    instructions += '### Step 3: Start Optimized Ollama\n';
+    instructions += '```bash\nollama serve\n```\n\n';
     
-    instructions += `### Step 4: Verify Configuration\n`;
-    instructions += `Run a test evaluation to confirm performance improvements.\n`;
+    instructions += '### Step 4: Verify Configuration\n';
+    instructions += 'Run a test evaluation to confirm performance improvements.\n';
     
     return instructions;
   }
@@ -1062,7 +1080,7 @@ class ComprehensiveOptimizationTester {
         port: urlObj.port || (urlObj.protocol === 'https:' ? 443 : 80),
         path: urlObj.pathname + urlObj.search,
         method: method,
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json' },
       };
       
       const client = urlObj.protocol === 'https:' ? https : http;
@@ -1075,7 +1093,9 @@ class ComprehensiveOptimizationTester {
       req.on('error', reject);
       req.setTimeout(5000, () => reject(new Error('Request timeout')));
       
-      if (data) req.write(JSON.stringify(data));
+      if (data) {
+        req.write(JSON.stringify(data));
+      }
       req.end();
     });
   }

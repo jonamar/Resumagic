@@ -8,12 +8,22 @@ import fs from 'fs';
 import crypto from 'crypto';
 import JSZip from 'jszip';
 
+interface ValidationResult {
+  valid: boolean;
+  actualHash: string;
+  content?: string;
+}
+
+interface ContentHashes {
+  [fileName: string]: string;
+}
+
 /**
  * Extract text content from DOCX file
  * @param {string} filePath - Path to DOCX file
  * @returns {Promise<string>} - Extracted text content
  */
-export async function extractDocxContent(filePath) {
+export async function extractDocxContent(filePath: string): Promise<string> {
   try {
     if (!fs.existsSync(filePath)) {
       throw new Error(`DOCX file not found: ${filePath}`);
@@ -34,7 +44,7 @@ export async function extractDocxContent(filePath) {
     const textContent = extractTextFromWordXml(documentXml);
     return textContent.trim();
     
-  } catch (error) {
+  } catch (error: any) {
     throw new Error(`Failed to extract DOCX content: ${error.message}`);
   }
 }
@@ -44,32 +54,37 @@ export async function extractDocxContent(filePath) {
  * @param {string} xmlContent - Raw XML content from word/document.xml
  * @returns {string} - Extracted text content
  */
-export function extractTextFromWordXml(xmlContent) {
+export function extractTextFromWordXml(xmlContent: string): string {
   try {
     // Remove all XML tags and extract text content
     // This handles the most common text elements in Word documents
-    const textContent = xmlContent
-      // Extract text from <w:t> elements (text runs)
-      .replace(/<w:t[^>]*>([^<]*)<\/w:t>/g, '$1')
-      // Extract text from other common text elements
-      .replace(/<w:tab[^>]*>/g, '\t')
-      .replace(/<w:br[^>]*>/g, '\n')
-      // Remove all remaining XML tags
-      .replace(/<[^>]*>/g, '')
-      // Decode XML entities
-      .replace(/&lt;/g, '<')
-      .replace(/&gt;/g, '>')
-      .replace(/&amp;/g, '&')
-      .replace(/&quot;/g, '"')
-      .replace(/&apos;/g, "'")
-      // Normalize whitespace
-      .replace(/\s+/g, ' ')
-      .trim();
-
-    return textContent;
+    let textContent = xmlContent;
     
-  } catch (error) {
-    throw new Error(`Failed to extract text from XML: ${error.message}`);
+    // Remove XML tags but preserve text content
+    textContent = textContent.replace(/<[^>]+>/g, ' ');
+    
+    // Handle common Word XML entities
+    const entities: { [key: string]: string } = {
+      '&amp;': '&',
+      '&lt;': '<',
+      '&gt;': '>',
+      '&quot;': '"',
+      '&apos;': "'",
+    };
+    
+    Object.keys(entities).forEach(entity => {
+      const replacement = entities[entity];
+      if (replacement !== undefined) {
+        textContent = textContent.replace(new RegExp(entity, 'g'), replacement);
+      }
+    });
+    
+    // Clean up whitespace
+    textContent = textContent.replace(/\s+/g, ' ');
+    
+    return textContent;
+  } catch (error: any) {
+    throw new Error(`Failed to extract text from Word XML: ${error.message}`);
   }
 }
 
@@ -78,32 +93,31 @@ export function extractTextFromWordXml(xmlContent) {
  * @param {string} content - Text content to hash
  * @returns {string} - SHA256 hash in hexadecimal
  */
-export function generateContentHash(content) {
-  return crypto.createHash('sha256').update(content, 'utf8').digest('hex');
+export function generateContentHash(content: string): string {
+  return crypto.createHash('sha256').update(content).digest('hex');
 }
 
 /**
  * Validate DOCX content against expected hash
  * @param {string} filePath - Path to DOCX file
  * @param {string} expectedHash - Expected SHA256 hash
- * @returns {Promise<{valid: boolean, actualHash: string, content?: string}>}
+ * @returns {Promise<ValidationResult>} - Validation result
  */
-export async function validateDocxContentHash(filePath, expectedHash) {
+export async function validateDocxContentHash(filePath: string, expectedHash: string): Promise<ValidationResult> {
   try {
-    const extractedContent = await extractDocxContent(filePath);
-    const actualHash = generateContentHash(extractedContent);
+    const content = await extractDocxContent(filePath);
+    const actualHash = generateContentHash(content);
     
     return {
       valid: actualHash === expectedHash,
       actualHash,
-      content: extractedContent
+      content,
     };
-    
-  } catch (error) {
+  } catch (error: any) {
     return {
       valid: false,
-      actualHash: null,
-      error: error.message
+      actualHash: '',
+      content: `Error: ${error.message}`,
     };
   }
 }
@@ -111,31 +125,20 @@ export async function validateDocxContentHash(filePath, expectedHash) {
 /**
  * Extract content hashes from multiple DOCX files
  * @param {Array<string>} filePaths - Array of DOCX file paths
- * @returns {Promise<Object>} - Object mapping file names to content hashes
+ * @returns {Promise<ContentHashes>} - Object mapping file names to content hashes
  */
-export async function extractMultipleContentHashes(filePaths) {
-  const hashes = {};
+export async function extractMultipleContentHashes(filePaths: string[]): Promise<ContentHashes> {
+  const hashes: ContentHashes = {};
   
   for (const filePath of filePaths) {
     try {
       const content = await extractDocxContent(filePath);
       const hash = generateContentHash(content);
-      const fileName = filePath.split('/').pop();
-      
-      hashes[fileName] = {
-        contentHash: hash,
-        lastUpdated: new Date().toISOString(),
-        extractedSuccessfully: true
-      };
-      
-    } catch (error) {
-      const fileName = filePath.split('/').pop();
-      hashes[fileName] = {
-        contentHash: null,
-        lastUpdated: new Date().toISOString(),
-        extractedSuccessfully: false,
-        error: error.message
-      };
+      const fileName = filePath.split('/').pop() || filePath;
+      hashes[fileName] = hash;
+    } catch (error: any) {
+      const fileName = filePath.split('/').pop() || filePath;
+      hashes[fileName] = `Error: ${error.message}`;
     }
   }
   
