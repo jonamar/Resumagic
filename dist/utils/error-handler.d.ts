@@ -60,7 +60,7 @@ interface ValidationContext extends ErrorContext {
     expectedFormat?: string;
 }
 declare class ErrorHandler {
-    static logError({ message, error, type, severity, details, context }: LogErrorConfig): void;
+    static logError({ message, error, type, severity, details, context, }: LogErrorConfig): void;
     static logServiceError(serviceName: string, operation: string, error: Error, context?: ErrorContext): void;
     static logAppError(component: string, message: string, error?: Error | null, details?: string[], context?: ErrorContext): void;
     static createResult(success: boolean, data?: any, errorMessage?: string | null, errorType?: ErrorType, details?: string[], legacyErrorType?: string | null): Result;

@@ -35,5 +35,5 @@ declare class FeatureFlags {
 declare function getFeatureFlags(): FeatureFlags;
 declare function isEnabled(flagName: keyof FeatureFlagsConfig): boolean;
 declare function getImplementation(serviceName: string): string;
-export { FeatureFlags, getFeatureFlags, isEnabled, getImplementation, DEFAULT_FLAGS, type FeatureFlagsConfig };
+export { FeatureFlags, getFeatureFlags, isEnabled, getImplementation, DEFAULT_FLAGS, type FeatureFlagsConfig, };
 //# sourceMappingURL=feature-flags.d.ts.map

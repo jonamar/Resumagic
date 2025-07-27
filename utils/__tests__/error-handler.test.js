@@ -3,8 +3,8 @@
  * Comprehensive test suite for error handling utilities
  */
 
-import ErrorHandler from '../error-handler.ts';
-import { ERROR_TYPES, ERROR_SEVERITY, CONTEXT_TYPES } from '../error-types.ts';
+import ErrorHandler from '../error-handler.js';
+import { ERROR_TYPES, ERROR_SEVERITY, CONTEXT_TYPES } from '../error-types.js';
 
 // Mock console methods to capture output
 const originalConsoleError = console.error;
