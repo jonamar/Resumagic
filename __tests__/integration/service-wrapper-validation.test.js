@@ -109,10 +109,9 @@ describe('Service Wrapper Interface Validation', () => {
       
       services.forEach(serviceName => {
         const service = getServiceWrapper(serviceName);
-        expect(typeof service.shouldUseLegacyImplementation).toBe('function');
-        
-        const usesLegacy = service.shouldUseLegacyImplementation();
-        expect(typeof usesLegacy).toBe('boolean');
+        expect(typeof service.execute).toBe('function');
+        expect(typeof service.getServiceName).toBe('function');
+        expect(service.getServiceName()).toBe(serviceName);
       });
     });
 

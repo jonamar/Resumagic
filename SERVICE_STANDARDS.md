@@ -12,11 +12,11 @@ This document defines the standardized patterns for service interfaces across th
 - **Standard Response Structure**: Identical response format for all services
 - **Metadata Inclusion**: Performance and operational data in every response
 
-### 2. Feature Flag Architecture
-- **Safe Migration**: Feature flags control legacy vs standardized implementations
-- **Instant Rollback**: Immediate reversion capability for any service
-- **Gradual Rollout**: Percentage-based rollout for risk mitigation
-- **Golden Master Validation**: Behavioral consistency verification
+### 2. Service Wrapper Architecture
+- **Unified Interface**: All services implement consistent JSON APIs through service wrappers
+- **Performance Monitoring**: Automatic duration tracking and metadata collection
+- **Error Standardization**: Consistent error handling patterns across all services
+- **Registry Pattern**: Centralized service discovery and management
 
 ### 3. Configuration Standardization
 - **Unified Config System**: Single configuration source across all languages
@@ -83,50 +83,46 @@ Standard error codes that all services must use:
 
 ## Service Implementation Pattern
 
-### 1. Adapter Pattern
-All services implement the adapter pattern using the service adapter template:
+### 1. Service Wrapper Pattern
+All services implement the service wrapper pattern extending BaseServiceWrapper:
 
 ```javascript
-// Use templates/service-adapter-template.js as starting point
-class ServiceAdapter {
+class ServiceWrapper extends BaseServiceWrapper {
+  constructor() {
+    super('service-name');
+  }
+
   async execute(input) {
     // 1. Validate input
-    // 2. Check feature flag for implementation choice
-    // 3. Execute legacy or standardized implementation
-    // 4. Return standardized response
+    // 2. Execute service implementation
+    // 3. Return standardized response
   }
-  
-  async executeLegacyService(input) {
-    // Call existing service implementation
-  }
-  
-  async executeStandardizedService(input) {
-    // New JSON-based implementation
+
+  async executeService(input, startTime) {
+    // Service-specific implementation
+    // Returns standardized JSON response
   }
 }
 ```
 
-### 2. Feature Flag Integration
-Every service must support feature flag toggling:
+### 2. Service Registry Integration
+All services must be registered in the service registry:
 
 ```javascript
-import FeatureFlagHelper from '../toolkit/feature-flag-helper.js';
+import { getServiceWrapper } from './services/wrappers/service-registry.js';
 
-const featureFlags = new FeatureFlagHelper();
-const useStandardized = featureFlags.useStandardizedService('serviceName');
+const service = getServiceWrapper('service-name');
+const result = await service.execute(input);
 ```
 
-### 3. Golden Master Validation
-Services must validate behavioral consistency:
+### 3. Input Validation
+Services must validate input using BaseServiceWrapper validation:
 
 ```javascript
-import GoldenMasterValidator from '../toolkit/golden-master-validator.js';
-
-// Create baseline from legacy implementation
-await validator.createBaseline('service-test', legacyFunction, testInput);
-
-// Validate standardized implementation matches
-const result = await validator.validate('service-test', standardizedFunction, testInput);
+this.validateInput(input, {
+  requiredField: { type: 'string', required: true },
+  optionalField: { type: 'number', required: false }
+});
 ```
 
 ## Logging Standards
@@ -158,15 +154,14 @@ logger.serviceError('processData', error, input);
 
 ## Configuration Standards
 
-### Unified Configuration
-Services must use the unified configuration system:
+### Configuration Access
+Services access configuration through BaseServiceWrapper:
 
 ```javascript
-import UnifiedConfig from '../toolkit/unified-config.js';
-
-const config = new UnifiedConfig();
-const serviceConfig = config.getServiceConfig('serviceName');
-const timeout = config.get('services.serviceName.timeout', 30000);
+// Service wrappers inherit configuration access from BaseServiceWrapper
+// Configuration is automatically loaded and available to all services
+const timeout = this.getTimeout(); // Returns service-specific timeout
+const config = this.getServiceConfig(); // Returns service-specific configuration
 ```
 
 ### Service Configuration Structure
@@ -195,36 +190,31 @@ RESUMAGIC_SERVICES_SERVICENAME_TIMEOUT=60000
 RESUMAGIC_SERVICES_SERVICENAME_CONFIG_MAXITEMS=500
 ```
 
-## Migration Process
+## Service Development Process
 
-### Phase 1: Preparation
-1. **Copy Template**: Use `templates/service-adapter-template.js`
-2. **Rename and Customize**: Replace placeholders with service-specific values
-3. **Implement Legacy Wrapper**: Wrap existing service calls
-4. **Add Input Validation**: Implement service-specific validation rules
+### Phase 1: Setup
+1. **Extend BaseServiceWrapper**: Create new service wrapper extending BaseServiceWrapper
+2. **Implement Constructor**: Call super() with service name
+3. **Add Input Validation**: Define service-specific validation rules
+4. **Register Service**: Add to service registry for discovery
 
-### Phase 2: Golden Master Creation
-1. **Create Test Input**: Define representative test data
-2. **Generate Baseline**: `node service-adapter.js create-golden-master`
-3. **Verify Legacy Works**: `node service-adapter.js test-legacy`
-4. **Document Expected Output**: Save golden master for comparison
+### Phase 2: Implementation
+1. **Implement execute() Method**: Main service entry point
+2. **Add Service Logic**: Implement executeService() with business logic
+3. **Error Handling**: Use standardized error response patterns
+4. **Logging**: Add structured logging throughout
 
-### Phase 3: Standardized Implementation
-1. **Implement New Logic**: Build JSON-in/JSON-out version
-2. **Iterative Development**: Compare outputs with `node service-adapter.js compare`
-3. **Achieve Parity**: Ensure identical outputs between implementations
-4. **Validate Thoroughly**: Run comprehensive test suite
+### Phase 3: Testing
+1. **Unit Tests**: Test service wrapper functionality
+2. **Integration Tests**: Test service registry integration
+3. **Performance Testing**: Establish baseline performance metrics
+4. **Error Testing**: Validate error handling scenarios
 
-### Phase 4: Migration
-1. **Enable Feature Flag**: `node feature-flag-helper.js enable services.serviceName.useStandardizedWrapper`
-2. **Validate in Production**: Monitor for issues
-3. **Performance Testing**: Ensure no performance regression
-4. **Remove Legacy Code**: After validation period
-
-### Phase 5: Cleanup
-1. **Update Documentation**: Document new standardized interface
-2. **Remove Feature Flag**: Once migration is complete
-3. **Archive Legacy Code**: Keep for reference but remove from active codebase
+### Phase 4: Integration
+1. **Update CLI**: Integrate service through service registry
+2. **Documentation**: Update service documentation
+3. **Monitoring**: Add performance and health monitoring
+4. **Deployment**: Deploy and monitor service behavior
 
 ## Service-Specific Guidelines
 
@@ -249,16 +239,16 @@ RESUMAGIC_SERVICES_SERVICENAME_CONFIG_MAXITEMS=500
 ## Testing Requirements
 
 ### Unit Tests
-- Test both legacy and standardized implementations
+- Test service wrapper functionality
 - Validate input/output contracts
 - Test error conditions and edge cases
 - Performance benchmarking
 
 ### Integration Tests
-- Golden master validation
+- Service registry integration
 - End-to-end workflow testing
-- Feature flag toggle testing
-- Configuration validation
+- CLI integration validation
+- Error handling validation
 
 ### Performance Tests
 - Baseline performance measurement
@@ -268,96 +258,86 @@ RESUMAGIC_SERVICES_SERVICENAME_CONFIG_MAXITEMS=500
 
 ## Quality Checklist
 
-Before marking a service as "standardized", verify:
+Before marking a service as \"complete\", verify:
 
+- [ ] Extends BaseServiceWrapper properly
 - [ ] Implements standard interface contract
-- [ ] Uses feature flags for safe migration
-- [ ] Has golden master validation
-- [ ] Uses structured logging
-- [ ] Uses unified configuration
+- [ ] Uses structured logging through BaseServiceWrapper
+- [ ] Registered in service registry
 - [ ] Has comprehensive test coverage
 - [ ] Passes all integration tests
 - [ ] Performance meets baseline requirements
 - [ ] Documentation is updated
-- [ ] Migration process is documented
+- [ ] CLI integration is complete
 
 ## Maintenance Guidelines
 
 ### Regular Maintenance
-- **Weekly**: Review feature flag status
-- **Monthly**: Update golden masters if business logic changes
+- **Weekly**: Review service performance metrics
+- **Monthly**: Update service tests if business logic changes
 - **Quarterly**: Performance baseline review
 - **Annually**: Architecture pattern review
 
 ### Emergency Procedures
-- **Rollback**: Disable feature flag immediately
 - **Debug**: Check structured logs for error context
-- **Validate**: Re-run golden master tests
+- **Validate**: Re-run service tests
+- **Monitor**: Check service registry health status
 - **Escalate**: Contact development team with full context
 
 ## Tools and Utilities
 
-### Migration Toolkit
-- `toolkit/feature-flag-helper.js`: Feature flag management
-- `toolkit/golden-master-validator.js`: Behavioral validation
-- `toolkit/structured-logger.js`: Consistent logging
-- `toolkit/unified-config.js`: Configuration management
+### Service Development Toolkit
+- `services/wrappers/base-service-wrapper.js`: Base class for all service wrappers
+- `services/wrappers/service-registry.js`: Service discovery and management
+- Built-in structured logging through BaseServiceWrapper
+- Built-in configuration management through BaseServiceWrapper
 
-### Templates
-- `templates/service-adapter-template.js`: Service standardization template
+### Examples
+- See existing service wrappers in `services/wrappers/` for implementation patterns
 
 ### CLI Commands
 ```bash
-# Feature flag management
-node toolkit/feature-flag-helper.js list
-node toolkit/feature-flag-helper.js enable services.serviceName.useStandardizedWrapper
+# Service registry management
+node -e "import { getAvailableServices } from './services/wrappers/service-registry.js'; console.log(getAvailableServices());"
 
-# Configuration management
-node toolkit/unified-config.js get services.serviceName
-node toolkit/unified-config.js validate serviceName
+# Service testing
+npm test  # Run complete test suite including service wrapper tests
 
-# Golden master validation
-node toolkit/golden-master-validator.js list
-node service-adapter.js compare
+# Service health check
+node -e "import { getServicesHealthStatus } from './services/wrappers/service-registry.js'; getServicesHealthStatus().then(console.log);"
 
-# Logging management
-node toolkit/structured-logger.js enable
-node toolkit/structured-logger.js test
+
 ```
 
 ## Troubleshooting
 
 ### Common Issues
 
-**Golden Master Validation Fails**
-- Check for timestamp fields being included in comparison
-- Verify input normalization is working correctly
-- Ensure both implementations use same input
+**Service Not Found in Registry**
+- Verify service wrapper is properly exported
+- Check service name matches registry configuration
+- Ensure service extends BaseServiceWrapper correctly
 
-**Feature Flag Not Working**
-- Verify `.feature-flags.json` file exists and is readable
-- Check flag path syntax (dot notation)
-- Ensure feature flag helper is imported correctly
+**Service Execution Fails**
+- Check input validation requirements
+- Verify service dependencies are available
+- Review structured logs for error details
 
-**Configuration Not Loading**
-- Check `.resumagic-config.json` file exists
-- Verify environment variable naming (RESUMAGIC_ prefix)
-- Ensure unified config feature flag is enabled
+**Performance Issues**
+- Check service timeout configuration
+- Monitor memory usage during execution
+- Review service implementation for bottlenecks
 
-**Structured Logging Not Working**
-- Verify structured logging feature flag is enabled
-- Check log level configuration
-- Ensure logger is created with correct service name
-
-### Performance Issues
-- **High Memory Usage**: Check for memory leaks in new implementation
-- **Slow Response Times**: Compare with baseline performance metrics
-- **High CPU Usage**: Profile both implementations for comparison
+**Configuration Issues**
+- Verify service configuration structure
+- Check environment variable overrides
+- Ensure BaseServiceWrapper inheritance is correct
 
 ### Integration Issues
 - **Service Timeouts**: Check service timeout configuration
 - **Dependency Failures**: Validate external service availability
 - **Data Format Issues**: Verify JSON serialization/deserialization
+- **Registry Issues**: Ensure service is properly registered and discoverable
 
 ## Future Considerations
 
@@ -367,12 +347,12 @@ node toolkit/structured-logger.js test
 - **Circuit Breakers**: Fault tolerance patterns
 - **Load Balancing**: Multiple service instance support
 
-### Migration Path
-This standardization approach provides a clear path for:
-- **Microservice Extraction**: Services can be easily extracted
+### Evolution Path
+This service wrapper architecture provides a foundation for:
+- **Microservice Extraction**: Services can be easily extracted as independent services
 - **Container Deployment**: Standard interfaces support containerization
 - **API Gateway Integration**: Unified interfaces work with API gateways
-- **Monitoring Integration**: Standard patterns enable observability
+- **Monitoring Integration**: Standard patterns enable comprehensive observability
 
 ## Conclusion
 
@@ -382,4 +362,4 @@ Following these standards ensures:
 - **Reliability**: Proven patterns with safety mechanisms
 - **Evolution**: Foundation for future architectural improvements
 
-The standardization toolkit provides all necessary utilities for safe, gradual migration while maintaining full backward compatibility and operational safety.
+The service wrapper architecture provides a clean, maintainable foundation for polyglot service integration with comprehensive monitoring and error handling.

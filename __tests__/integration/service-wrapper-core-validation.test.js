@@ -46,12 +46,11 @@ describe('Core Service Wrapper Validation', () => {
     let wrapper;
 
     beforeEach(() => {
-      wrapper = new BaseServiceWrapper('test-service', 'TEST_FLAG');
+      wrapper = new BaseServiceWrapper('test-service');
     });
 
-    test('should initialize with correct service name and flag', () => {
+    test('should initialize with correct service name', () => {
       expect(wrapper.serviceName).toBe('test-service');
-      expect(wrapper.legacyFlagName).toBe('TEST_FLAG');
       expect(wrapper.featureFlags).toBeDefined();
     });
 
@@ -105,8 +104,8 @@ describe('Core Service Wrapper Validation', () => {
 
     test('should initialize correctly', () => {
       expect(wrapper.serviceName).toBe('keyword-analysis');
-      expect(wrapper.legacyFlagName).toBe('STANDARDIZED_KEYWORD_ANALYSIS');
-      expect(typeof wrapper.shouldUseLegacyImplementation).toBe('function');
+      expect(typeof wrapper.analyze).toBe('function');
+      expect(typeof wrapper.getServiceName).toBe('function');
     });
 
     test('should validate required input fields', async () => {
@@ -159,7 +158,8 @@ describe('Core Service Wrapper Validation', () => {
 
     test('should initialize correctly', () => {
       expect(wrapper.serviceName).toBe('hiring-evaluation');
-      expect(wrapper.legacyFlagName).toBe('STANDARDIZED_HIRING_EVALUATION');
+      expect(typeof wrapper.evaluate).toBe('function');
+      expect(typeof wrapper.getServiceName).toBe('function');
     });
 
     test('should validate resume data structure', async () => {
@@ -258,15 +258,16 @@ describe('Core Service Wrapper Validation', () => {
     });
   });
 
-  describe('Feature Flag Integration', () => {
-    test('wrappers should respond to feature flag checks', () => {
+  describe('Service Integration', () => {
+    test('wrappers should integrate properly with base class', () => {
       const keywordWrapper = new KeywordAnalysisWrapper();
       const hiringWrapper = new HiringEvaluationWrapper();
       
-      // Should be able to check legacy implementation without error
-      expect(typeof keywordWrapper.shouldUseLegacyImplementation).toBe('function');
-      expect(typeof hiringWrapper.shouldUseLegacyImplementation).toBe('function');
-      expect(typeof hiringWrapper.shouldUseLegacyImplementation()).toBe('boolean');
+      // Should extend BaseServiceWrapper correctly
+      expect(keywordWrapper.serviceName).toBe('keyword-analysis');
+      expect(hiringWrapper.serviceName).toBe('hiring-evaluation');
+      expect(typeof keywordWrapper.getServiceName).toBe('function');
+      expect(typeof hiringWrapper.getServiceName).toBe('function');
     });
   });
 

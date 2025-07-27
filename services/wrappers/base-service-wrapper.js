@@ -4,6 +4,8 @@
  * Part of Phase 2: Standardize Existing Service Infrastructure
  */
 
+import { getFeatureFlags } from '../../feature-flags.js';
+
 
 /**
  * Standard JSON API response format for all services
@@ -53,6 +55,15 @@ class ServiceResponse {
 class BaseServiceWrapper {
   constructor(serviceName) {
     this.serviceName = serviceName;
+    this.featureFlags = getFeatureFlags();
+  }
+
+  /**
+   * Get the service name
+   * @returns {string} The service name
+   */
+  getServiceName() {
+    return this.serviceName;
   }
 
 
