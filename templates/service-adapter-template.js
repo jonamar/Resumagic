@@ -257,7 +257,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const command = process.argv[2];
 
   switch (command) {
-  case 'test-legacy':
+  case 'test-legacy': {
     console.log('Testing legacy implementation...');
     // Add test input for your service
     const testInput = {}; // TODO: Add appropriate test input
@@ -268,8 +268,9 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       console.error('Legacy test failed:', error.message);
     });
     break;
+  }
       
-  case 'test-standardized':
+  case 'test-standardized': {
     console.log('Testing standardized implementation...');
     // Add test input for your service
     const testInput2 = {}; // TODO: Add appropriate test input
@@ -280,8 +281,9 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       console.error('Standardized test failed:', error.message);
     });
     break;
+  }
       
-  case 'create-golden-master':
+  case 'create-golden-master': {
     console.log('Creating golden master...');
     const goldenInput = {}; // TODO: Add appropriate test input
     adapter.createGoldenMaster(goldenInput).then(() => {
@@ -290,8 +292,9 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       console.error('❌ Failed to create golden master:', error.message);
     });
     break;
+  }
       
-  case 'validate':
+  case 'validate': {
     console.log('Validating against golden master...');
     const validateInput = {}; // TODO: Add appropriate test input
     adapter.validateAgainstGoldenMaster(validateInput).then(result => {
@@ -304,8 +307,9 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       console.error('❌ Validation error:', error.message);
     });
     break;
+  }
       
-  case 'compare':
+  case 'compare': {
     console.log('Comparing legacy vs standardized...');
     const compareInput = {}; // TODO: Add appropriate test input
     adapter.compareLegacyVsStandardized(compareInput).then(result => {
@@ -319,6 +323,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       console.error('❌ Comparison failed:', error.message);
     });
     break;
+  }
       
   default:
     console.log('[SERVICE_NAME] Service Adapter');
