@@ -79,33 +79,35 @@ class HiringEvaluationWrapper extends BaseServiceWrapper {
    */
   async executeLegacyEvaluation(input, startTime) {
     try {
-      // Import the actual hiring evaluation service
-      const { default: evaluationRunner } = await import('../hiring-evaluation/evaluation-runner.js');
+      // Import and instantiate the evaluation service correctly
+      const { default: EvaluationRunner } = await import('../hiring-evaluation/evaluation-runner.js');
+      const evaluationRunner = new EvaluationRunner(input.applicationName);
       
-      // Prepare evaluation context
-      const evaluationContext = {
-        applicationName: input.applicationName,
-        candidateName: input.resumeData.personalInfo.name,
-        resumeData: input.resumeData,
-        fastMode: input.fastMode || false
-      };
-
-      // Add job posting context if available
-      if (input.jobPostingFile && fs.existsSync(input.jobPostingFile)) {
-        const jobPosting = fs.readFileSync(input.jobPostingFile, 'utf8');
-        evaluationContext.jobPosting = jobPosting;
+      // Configure fast mode if requested
+      if (input.fastMode) {
+        evaluationRunner.setFastMode(true);
       }
-
-      // Run the evaluation
-      const evaluationResult = await evaluationRunner.runEvaluation(evaluationContext);
+      
+      // Extract candidate name properly
+      const candidateName = input.resumeData.personalInfo?.name || 
+                           input.resumeData.basics?.name || 
+                           'Unknown Candidate';
+      
+      // Run evaluation with correct method signature
+      const evaluationResult = await evaluationRunner.runEvaluation(candidateName);
       
       const duration = Date.now() - startTime;
       
       return this.createSuccessResponse({
-        evaluation: evaluationResult,
+        evaluation: {
+          overall_score: evaluationResult.summary?.composite_score || evaluationResult.composite_score,
+          summary: evaluationResult.summary?.overall_assessment || 'Evaluation completed successfully',
+          persona_evaluations: evaluationResult.personas || evaluationResult.evaluations,
+          recommendations: evaluationResult.summary?.key_recommendations || []
+        },
         candidate: {
-          name: input.resumeData.personalInfo.name,
-          email: input.resumeData.personalInfo.email
+          name: candidateName,
+          email: input.resumeData.personalInfo?.email || input.resumeData.basics?.email
         },
         context: {
           applicationName: input.applicationName,
@@ -113,33 +115,19 @@ class HiringEvaluationWrapper extends BaseServiceWrapper {
         },
         implementation: 'legacy'
       }, duration);
-
+      
     } catch (error) {
-      // If the direct service call fails, fall back to a simulated evaluation
-      console.warn(`Direct evaluation service failed, using fallback: ${error.message}`);
-      
       const duration = Date.now() - startTime;
-      
-      return this.createSuccessResponse({
-        evaluation: {
-          overall_score: 'Unable to complete full evaluation',
-          summary: 'Evaluation service temporarily unavailable. Resume data validated successfully.',
-          recommendations: [
-            'Resume structure appears valid',
-            'Consider running evaluation again when service is available'
-          ]
-        },
-        candidate: {
-          name: input.resumeData.personalInfo.name,
-          email: input.resumeData.personalInfo.email
-        },
-        context: {
+      return this.createErrorResponse(
+        'LEGACY_EVALUATION_FAILED',
+        `Legacy hiring evaluation failed: ${error.message}`,
+        { 
+          originalError: error.message,
           applicationName: input.applicationName,
-          fastMode: input.fastMode || false
+          candidateName: input.resumeData.personalInfo?.name
         },
-        implementation: 'legacy-fallback',
-        warning: 'Full evaluation service not available, using fallback validation'
-      }, duration);
+        duration
+      );
     }
   }
 
