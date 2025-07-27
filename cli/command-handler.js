@@ -161,7 +161,9 @@ async function executeCommand(args) {
     console.log(`${theme.messages.emojis.start} ResumeMagic CLI starting...`);
     
     // Resolve and validate paths
-    const paths = resolvePaths(applicationName, __dirname);
+    // Need to go up one level from cli/ to app/, then resolvePaths handles ../data
+    const appDir = path.dirname(__dirname);
+    const paths = resolvePaths(applicationName, appDir);
     const pathValidation = validatePaths(paths);
     if (!pathValidation.isValid) {
       console.error(`${theme.messages.emojis.error} ${pathValidation.error}`);
