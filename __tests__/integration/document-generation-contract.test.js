@@ -33,8 +33,27 @@ describe('Document Generation Service Contract', () => {
 
   beforeAll(async () => {
     // Verify test application exists
-    expect(fs.existsSync(TEST_APP_PATH)).toBe(true);
+    if (!fs.existsSync(TEST_APP_PATH)) {
+      throw new Error(`Test application not found: ${TEST_APP_PATH}`);
+    }
     
+    // STATIC DATA VALIDATION: Ensure we're using fixed test data, not live data
+    const expectedTestApp = 'test-validation';
+    if (TEST_APPLICATION !== expectedTestApp) {
+      throw new Error(`Contract tests must use static test data. Expected: ${expectedTestApp}, Got: ${TEST_APPLICATION}`);
+    }
+    
+    // Verify test data hasn't been accidentally modified to point to live applications
+    const forbiddenApplications = ['general-application', 'live-application', 'production'];
+    if (forbiddenApplications.includes(TEST_APPLICATION)) {
+      throw new Error(`Contract tests cannot use live application data: ${TEST_APPLICATION}. Use 'test-validation' for static testing.`);
+    }
+    
+    // Verify test data paths are within the data/applications/test-validation directory
+    const normalizedTestPath = path.normalize(TEST_APP_PATH);
+    if (!normalizedTestPath.includes('data/applications/test-validation')) {
+      throw new Error(`Test data path security violation. Expected test-validation directory, got: ${normalizedTestPath}`);
+    }
     // Use CLI path resolver to get proper paths (same as CLI)
     testPaths = resolvePaths(TEST_APPLICATION, path.resolve(__dirname, '../../'));
     
@@ -152,11 +171,30 @@ describe('Document Generation Service Contract', () => {
       // Load expected hashes
       const expectedHashes = JSON.parse(fs.readFileSync(GOLDEN_MASTER_PATH, 'utf8'));
       
-      // Generate all document types for hash validation using CLI interface
-      const generationPlan = determineGenerationPlan({ resume: true, 'cover-letter': true, combined: true }, true);
+      // Generate each document type individually to match production pipeline
+      const resumeFiles = await orchestrateGeneration(
+        determineGenerationPlan({ resume: true }, true), 
+        testPaths, 
+        testResumeData, 
+        false
+      );
       
-      // Generate documents using CLI interface
-      const generatedFiles = await orchestrateGeneration(generationPlan, testPaths, testResumeData, false);
+      const coverLetterFiles = await orchestrateGeneration(
+        determineGenerationPlan({ 'cover-letter': true }, true), 
+        testPaths, 
+        testResumeData, 
+        false
+      );
+      
+      const combinedFiles = await orchestrateGeneration(
+        determineGenerationPlan({ combined: true }, true), 
+        testPaths, 
+        testResumeData, 
+        false
+      );
+      
+      // Combine all generated files (matches golden master approach)
+      const generatedFiles = [...resumeFiles, ...coverLetterFiles, ...combinedFiles];
       
       // Verify generation succeeded
       expect(generatedFiles).toBeDefined();

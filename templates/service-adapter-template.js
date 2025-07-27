@@ -257,78 +257,78 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const command = process.argv[2];
 
   switch (command) {
-    case 'test-legacy':
-      console.log('Testing legacy implementation...');
-      // Add test input for your service
-      const testInput = {}; // TODO: Add appropriate test input
-      adapter.featureFlags.disable(`services.${adapter.serviceName}.useStandardizedWrapper`);
-      adapter.execute(testInput).then(result => {
-        console.log('Legacy result:', JSON.stringify(result, null, 2));
-      }).catch(error => {
-        console.error('Legacy test failed:', error.message);
-      });
-      break;
+  case 'test-legacy':
+    console.log('Testing legacy implementation...');
+    // Add test input for your service
+    const testInput = {}; // TODO: Add appropriate test input
+    adapter.featureFlags.disable(`services.${adapter.serviceName}.useStandardizedWrapper`);
+    adapter.execute(testInput).then(result => {
+      console.log('Legacy result:', JSON.stringify(result, null, 2));
+    }).catch(error => {
+      console.error('Legacy test failed:', error.message);
+    });
+    break;
       
-    case 'test-standardized':
-      console.log('Testing standardized implementation...');
-      // Add test input for your service
-      const testInput2 = {}; // TODO: Add appropriate test input
-      adapter.featureFlags.enable(`services.${adapter.serviceName}.useStandardizedWrapper`);
-      adapter.execute(testInput2).then(result => {
-        console.log('Standardized result:', JSON.stringify(result, null, 2));
-      }).catch(error => {
-        console.error('Standardized test failed:', error.message);
-      });
-      break;
+  case 'test-standardized':
+    console.log('Testing standardized implementation...');
+    // Add test input for your service
+    const testInput2 = {}; // TODO: Add appropriate test input
+    adapter.featureFlags.enable(`services.${adapter.serviceName}.useStandardizedWrapper`);
+    adapter.execute(testInput2).then(result => {
+      console.log('Standardized result:', JSON.stringify(result, null, 2));
+    }).catch(error => {
+      console.error('Standardized test failed:', error.message);
+    });
+    break;
       
-    case 'create-golden-master':
-      console.log('Creating golden master...');
-      const goldenInput = {}; // TODO: Add appropriate test input
-      adapter.createGoldenMaster(goldenInput).then(() => {
-        console.log('✅ Golden master created successfully');
-      }).catch(error => {
-        console.error('❌ Failed to create golden master:', error.message);
-      });
-      break;
+  case 'create-golden-master':
+    console.log('Creating golden master...');
+    const goldenInput = {}; // TODO: Add appropriate test input
+    adapter.createGoldenMaster(goldenInput).then(() => {
+      console.log('✅ Golden master created successfully');
+    }).catch(error => {
+      console.error('❌ Failed to create golden master:', error.message);
+    });
+    break;
       
-    case 'validate':
-      console.log('Validating against golden master...');
-      const validateInput = {}; // TODO: Add appropriate test input
-      adapter.validateAgainstGoldenMaster(validateInput).then(result => {
-        if (result.success) {
-          console.log('✅ Validation passed');
-        } else {
-          console.log('❌ Validation failed:', result.message);
-        }
-      }).catch(error => {
-        console.error('❌ Validation error:', error.message);
-      });
-      break;
+  case 'validate':
+    console.log('Validating against golden master...');
+    const validateInput = {}; // TODO: Add appropriate test input
+    adapter.validateAgainstGoldenMaster(validateInput).then(result => {
+      if (result.success) {
+        console.log('✅ Validation passed');
+      } else {
+        console.log('❌ Validation failed:', result.message);
+      }
+    }).catch(error => {
+      console.error('❌ Validation error:', error.message);
+    });
+    break;
       
-    case 'compare':
-      console.log('Comparing legacy vs standardized...');
-      const compareInput = {}; // TODO: Add appropriate test input
-      adapter.compareLegacyVsStandardized(compareInput).then(result => {
-        if (result.identical) {
-          console.log('✅ Implementations produce identical results');
-        } else {
-          console.log('❌ Implementations produce different results');
-          console.log('Use this information to debug the standardized implementation');
-        }
-      }).catch(error => {
-        console.error('❌ Comparison failed:', error.message);
-      });
-      break;
+  case 'compare':
+    console.log('Comparing legacy vs standardized...');
+    const compareInput = {}; // TODO: Add appropriate test input
+    adapter.compareLegacyVsStandardized(compareInput).then(result => {
+      if (result.identical) {
+        console.log('✅ Implementations produce identical results');
+      } else {
+        console.log('❌ Implementations produce different results');
+        console.log('Use this information to debug the standardized implementation');
+      }
+    }).catch(error => {
+      console.error('❌ Comparison failed:', error.message);
+    });
+    break;
       
-    default:
-      console.log('[SERVICE_NAME] Service Adapter');
-      console.log('Usage:');
-      console.log('  node [service-name]-adapter.js test-legacy');
-      console.log('  node [service-name]-adapter.js test-standardized');
-      console.log('  node [service-name]-adapter.js create-golden-master');
-      console.log('  node [service-name]-adapter.js validate');
-      console.log('  node [service-name]-adapter.js compare');
-      break;
+  default:
+    console.log('[SERVICE_NAME] Service Adapter');
+    console.log('Usage:');
+    console.log('  node [service-name]-adapter.js test-legacy');
+    console.log('  node [service-name]-adapter.js test-standardized');
+    console.log('  node [service-name]-adapter.js create-golden-master');
+    console.log('  node [service-name]-adapter.js validate');
+    console.log('  node [service-name]-adapter.js compare');
+    break;
   }
 }
 

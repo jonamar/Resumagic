@@ -48,7 +48,7 @@ export function extractTextFromWordXml(xmlContent) {
   try {
     // Remove all XML tags and extract text content
     // This handles the most common text elements in Word documents
-    let textContent = xmlContent
+    const textContent = xmlContent
       // Extract text from <w:t> elements (text runs)
       .replace(/<w:t[^>]*>([^<]*)<\/w:t>/g, '$1')
       // Extract text from other common text elements

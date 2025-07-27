@@ -108,13 +108,13 @@ class Phase4ValidationSuite {
       const legacyFlagName = this.getLegacyFlagName(serviceName);
       this.featureFlags.disable(legacyFlagName);
       
-      console.log(`   🔄 Running legacy implementation...`);
+      console.log('   🔄 Running legacy implementation...');
       const legacyResult = await this.executeServiceTest(service, serviceName, testData);
       
       // Test with standardized implementation  
       this.featureFlags.enable(legacyFlagName);
       
-      console.log(`   🔄 Running standardized implementation...`);
+      console.log('   🔄 Running standardized implementation...');
       const standardizedResult = await this.executeServiceTest(service, serviceName, testData);
       
       // Reset flag to default
@@ -148,17 +148,17 @@ class Phase4ValidationSuite {
    */
   async executeServiceTest(service, serviceName, testData) {
     switch (serviceName) {
-      case 'hiring-evaluation':
-        return await service.evaluate(testData);
+    case 'hiring-evaluation':
+      return await service.evaluate(testData);
       
-      case 'document-generation':
-        return await service.generate(testData);
+    case 'document-generation':
+      return await service.generate(testData);
       
-      case 'vale-linting':
-        return await service.analyze(testData);
+    case 'vale-linting':
+      return await service.analyze(testData);
       
-      default:
-        throw new Error(`Unknown service: ${serviceName}`);
+    default:
+      throw new Error(`Unknown service: ${serviceName}`);
     }
   }
 
@@ -205,17 +205,17 @@ class Phase4ValidationSuite {
    */
   generateTestDataForApp(serviceName, appName, appPath) {
     switch (serviceName) {
-      case 'hiring-evaluation':
-        return this.generateHiringEvaluationTestData(appName, appPath);
+    case 'hiring-evaluation':
+      return this.generateHiringEvaluationTestData(appName, appPath);
       
-      case 'document-generation':
-        return this.generateDocumentGenerationTestData(appName, appPath);
+    case 'document-generation':
+      return this.generateDocumentGenerationTestData(appName, appPath);
       
-      case 'vale-linting':
-        return this.generateValeLintingTestData(appName, appPath);
+    case 'vale-linting':
+      return this.generateValeLintingTestData(appName, appPath);
       
-      default:
-        return null;
+    default:
+      return null;
     }
   }
 
@@ -383,20 +383,20 @@ class Phase4ValidationSuite {
 
     // Compare successful results based on service type
     switch (serviceName) {
-      case 'document-generation':
-        return await this.compareDocumentOutputs(legacyResult, standardizedResult);
+    case 'document-generation':
+      return await this.compareDocumentOutputs(legacyResult, standardizedResult);
       
-      case 'hiring-evaluation':
-        return this.compareEvaluationOutputs(legacyResult, standardizedResult);
+    case 'hiring-evaluation':
+      return this.compareEvaluationOutputs(legacyResult, standardizedResult);
       
-      case 'vale-linting':
-        return this.compareLintingOutputs(legacyResult, standardizedResult);
+    case 'vale-linting':
+      return this.compareLintingOutputs(legacyResult, standardizedResult);
       
-      default:
-        return {
-          equivalent: false,
-          reason: `Unknown service: ${serviceName}`
-        };
+    default:
+      return {
+        equivalent: false,
+        reason: `Unknown service: ${serviceName}`
+      };
     }
   }
 
@@ -819,25 +819,25 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const testType = process.argv[2] || 'all';
   
   switch (testType) {
-    case 'golden-master':
-    case 'gm':
-      await validator.runGoldenMasterTests();
-      break;
+  case 'golden-master':
+  case 'gm':
+    await validator.runGoldenMasterTests();
+    break;
     
-    case 'end-to-end':
-    case 'e2e':
-      await validator.runEndToEndTests();
-      break;
+  case 'end-to-end':
+  case 'e2e':
+    await validator.runEndToEndTests();
+    break;
     
-    case 'performance':
-    case 'perf':
-      await validator.runPerformanceTests();
-      break;
+  case 'performance':
+  case 'perf':
+    await validator.runPerformanceTests();
+    break;
     
-    case 'all':
-    default:
-      await validator.runCompleteValidation();
-      break;
+  case 'all':
+  default:
+    await validator.runCompleteValidation();
+    break;
   }
 }
 
