@@ -195,7 +195,7 @@ function getAvailableApplications(baseDir) {
   return fs.readdirSync(applicationsDir)
     .filter(item => {
       const itemPath = path.join(applicationsDir, item);
-      return fs.statSync(itemPath).isDirectory() && item !== theme.fileNaming.templateDir;
+      return fs.statSync(itemPath).isDirectory();
     });
 }
 

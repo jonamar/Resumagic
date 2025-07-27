@@ -50,7 +50,7 @@ setup_directories() {
 # Benchmark core operations
 run_performance_benchmark() {
     local output_file=$1
-    local test_app="general-application"
+    local test_app="test-application"
     
     print_step "Running performance benchmark"
     
@@ -86,7 +86,7 @@ run_performance_benchmark() {
     
     # 3. Document generation performance (if test app exists)
     # Handle new test directory structure
-    if [ "$test_app" = "general-application" ] && [ -d "../data/test/$test_app" ]; then
+    if [ "$test_app" = "test-application" ] && [ -d "../data/test/$test_app" ]; then
         local test_path="../data/test/$test_app"
     elif [ -d "../data/applications/$test_app" ]; then
         local test_path="../data/applications/$test_app"

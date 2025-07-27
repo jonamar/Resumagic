@@ -45,7 +45,7 @@ print_error() {
 
 # Test applications for golden master baseline
 TEST_APPLICATIONS=(
-    "general-application"
+    "test-application"
     "zearch-director-product-marketing"
 )
 
@@ -180,8 +180,8 @@ generate_baseline() {
     cd "$APP_DIR"
     
     for app in "${TEST_APPLICATIONS[@]}"; do
-        # Handle new test directory structure
-        if [ "$app" = "general-application" ]; then
+        # Handle new test directory structure  
+        if [ "$app" = "test-application" ]; then
             local app_path="$DATA_DIR/test/$app"
         else
             local app_path="$DATA_DIR/applications/$app"
@@ -249,8 +249,8 @@ run_comparison() {
     
     # Generate current outputs
     for app in "${TEST_APPLICATIONS[@]}"; do
-        # Handle new test directory structure
-        if [ "$app" = "general-application" ]; then
+        # Handle new test directory structure  
+        if [ "$app" = "test-application" ]; then
             local app_path="$DATA_DIR/test/$app"
         else
             local app_path="$DATA_DIR/applications/$app"

@@ -3,7 +3,7 @@
   "git_commit": "f9c4acf2615d99fbe7fb9cae9eaaccc70818e80a",
   "git_branch": "main",
   "applications": [
-    "general-application",
+    "test-application",
     "zearch-director-product-marketing"
   ],
   "node_version": "v24.3.0",

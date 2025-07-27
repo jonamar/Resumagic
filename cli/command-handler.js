@@ -4,6 +4,7 @@ import { parseCliArguments, validateCliArguments, displayUsage } from './argumen
 import { determineGenerationPlan, validateGenerationPlan } from '../core/generation-planning.js';
 import { resolvePaths, validatePaths, hasMarkdownFile, loadResumeData, displayApplicationNotFoundError } from '../core/path-resolution.js';
 import { orchestrateGeneration } from '../core/document-orchestration.js';
+import { createNewApplication } from '../core/new-application.js';
 import { getServiceWrapper } from '../services/wrappers/service-registry.js';
 import theme from '../theme.js';
 
@@ -142,7 +143,7 @@ async function executeCommand(args) {
   try {
     // Parse command line arguments
     const cliConfig = parseCliArguments(args);
-    const { applicationName, flags } = cliConfig;
+    const { applicationName, flags, newAppConfig } = cliConfig;
     
     // Validate CLI arguments
     const validation = validateCliArguments(cliConfig);
@@ -152,13 +153,43 @@ async function executeCommand(args) {
         validation.details.forEach(detail => console.error(`   ${detail}`));
       }
       
-      // Display usage information
-      const applicationsDir = path.resolve(__dirname, '../data/applications');
-      displayUsage(applicationsDir, applicationName);
+      // Display usage information (only for non-new-app cases)
+      if (!flags.newApp) {
+        const applicationsDir = path.resolve(__dirname, '../data/applications');
+        displayUsage(applicationsDir, applicationName);
+      }
       process.exit(1);
     }
     
     console.log(`${theme.messages.emojis.start} ResumeMagic CLI starting...`);
+    
+    // Handle new application creation
+    if (flags.newApp) {
+      const appDir = path.dirname(__dirname);
+      const result = createNewApplication(newAppConfig.company, newAppConfig.jobTitle, appDir);
+      
+      if (!result.isValid) {
+        console.error(`${theme.messages.emojis.error} ${result.error}`);
+        if (result.details) {
+          result.details.forEach(detail => console.error(`   ${detail}`));
+        }
+        process.exit(1);
+      }
+      
+      const appInfo = result.data;
+      console.log(`${theme.messages.emojis.success} New application created successfully!`);
+      console.log(`${theme.messages.emojis.folder} Application: ${appInfo.applicationName}`);
+      console.log(`${theme.messages.emojis.folder} Directory: ${appInfo.applicationPath}`);
+      console.log(`${theme.messages.emojis.document} Company: ${appInfo.company}`);
+      console.log(`${theme.messages.emojis.document} Role: ${appInfo.jobTitle}`);
+      console.log('');
+      console.log(`${theme.messages.emojis.document} Next steps:`);
+      console.log('   1. Edit inputs/job-posting.md with the full job description');
+      console.log('   2. Customize inputs/cover-letter.md for this role');
+      console.log(`   3. Generate documents: node generate-resume.js ${appInfo.applicationName}`);
+      
+      process.exit(0);
+    }
     
     // Resolve and validate paths
     // Need to go up one level from cli/ to app/, then resolvePaths handles ../data

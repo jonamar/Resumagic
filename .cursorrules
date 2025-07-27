@@ -13,7 +13,10 @@ Professional resume and cover letter generator with intelligent keyword analysis
 
 ### Repository Layout
 - `/app/` - Main codebase (this directory)
-- `/data/applications/` - Private application data (separate git repo)
+- `/data/` - Private data directory (separate git repo)
+  - `canonical/` - Single source of truth for resume data
+  - `test/` - Test applications (test-application)
+  - `applications/` - Live application folders
 
 ### Application Folder Structure (3-tier)
 ```
@@ -69,9 +72,10 @@ node services/hiring-evaluation/evaluation-runner.js company-role
 
 ### Testing Strategy
 - **Unit Tests**: Individual component testing with Jest
-- **Integration Tests**: End-to-end workflow testing
+- **Integration Tests**: End-to-end workflow testing with dynamic application discovery
 - **Coverage**: 85%+ test coverage requirement
-- **Real Data Testing**: Use applications in `/data/applications/` for testing
+- **Real Data Testing**: Uses application registry for automatic healthy app detection
+- **Health Validation**: Built-in application health checks prevent false alarms
 
 ## Development Best Practices
 
@@ -113,13 +117,20 @@ npm test
 # Test keyword analysis
 cd services/keyword-analysis && python run_tests.py --coverage
 
+# Check application health
+node scripts/debug/application-health.js
+
 # Test with real application
 node generate-resume.js relay-director-of-product --evaluate
 ```
 
 ### Creating New Applications
 ```bash
-cp -r ../data/applications/template ../data/applications/new-company-role
+# Use CLI to create new application from canonical source
+node generate-resume.js --new-app "Company Name" "Job Title"
+
+# Manual creation (not recommended)
+cp -r ../data/canonical ../data/applications/new-company-role
 # Edit inputs/resume.json, inputs/cover-letter.md, inputs/keywords.json
 ```
 
@@ -130,7 +141,7 @@ cp -r ../data/applications/template ../data/applications/new-company-role
 
 ## Git Workflow
 - Code changes: Commit from `/app/` directory
-- Data changes: Commit from `/data/applications/` directory  
+- Data changes: Commit from `/data/` directory  
 - Never create git repo in root `/resumagic/` directory
 - Use descriptive commit messages with `feat:` prefix for new features
 

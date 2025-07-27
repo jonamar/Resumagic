@@ -22,8 +22,24 @@ const _errorHandler = new ErrorHandler({
  * @returns {Object} Parsed CLI configuration
  */
 function parseCliArguments(args) {
+  // Check for --new-app flag first (special case with arguments)
+  const newAppIndex = args.indexOf(theme.cli.flags.newApp);
+  let newAppConfig = null;
+  const filteredArgs = [...args];
+  
+  if (newAppIndex !== -1) {
+    // Extract company and job title arguments following --new-app
+    const company = args[newAppIndex + 1];
+    const jobTitle = args[newAppIndex + 2];
+    
+    newAppConfig = { company, jobTitle };
+    
+    // Remove --new-app and its arguments from args for normal processing
+    filteredArgs.splice(newAppIndex, 3);
+  }
+  
   // Extract application name (first non-flag argument)
-  const applicationName = args.find(arg => !arg.startsWith('--'));
+  const applicationName = filteredArgs.find(arg => !arg.startsWith('--'));
   
   // Parse flags
   const flags = {
@@ -34,12 +50,14 @@ function parseCliArguments(args) {
     combined: args.includes(theme.cli.flags.combined),
     evaluate: args.includes(theme.cli.flags.evaluate),
     all: args.includes(theme.cli.flags.all),
-    fast: args.includes(theme.cli.flags.fast)
+    fast: args.includes(theme.cli.flags.fast),
+    newApp: newAppIndex !== -1
   };
   
   return {
     applicationName,
     flags,
+    newAppConfig,
     rawArgs: args
   };
 }
@@ -50,9 +68,51 @@ function parseCliArguments(args) {
  * @returns {Object} Validation result with isValid boolean and error details
  */
 function validateCliArguments(config) {
-  const { applicationName } = config;
+  const { applicationName, flags, newAppConfig } = config;
   
-  // Check if application name is provided
+  // Handle --new-app flag validation
+  if (flags.newApp) {
+    if (!newAppConfig || !newAppConfig.company || !newAppConfig.jobTitle) {
+      return ErrorHandler.createResult(
+        false,
+        null,
+        'Missing required arguments for --new-app flag',
+        ERROR_TYPES.VALIDATION_ERROR,
+        [
+          'Usage: node generate-resume.js --new-app "company-name" "job-title"',
+          'Example: node generate-resume.js --new-app "spotify" "senior-product-manager"',
+          '',
+          'Both company name and job title are required.'
+        ]
+      );
+    }
+    
+    // Validate company and job title format
+    if (typeof newAppConfig.company !== 'string' || newAppConfig.company.trim().length === 0) {
+      return ErrorHandler.createResult(
+        false,
+        null,
+        'Invalid company name provided',
+        ERROR_TYPES.VALIDATION_ERROR,
+        ['Company name must be a non-empty string']
+      );
+    }
+    
+    if (typeof newAppConfig.jobTitle !== 'string' || newAppConfig.jobTitle.trim().length === 0) {
+      return ErrorHandler.createResult(
+        false,
+        null,
+        'Invalid job title provided',
+        ERROR_TYPES.VALIDATION_ERROR,
+        ['Job title must be a non-empty string']
+      );
+    }
+    
+    // For new app creation, we don't need an application name
+    return ErrorHandler.createResult(true);
+  }
+  
+  // Check if application name is provided (for normal operation)
   if (!applicationName) {
     const context = ErrorHandler.buildValidationContext('applicationName', {
       provided: applicationName,

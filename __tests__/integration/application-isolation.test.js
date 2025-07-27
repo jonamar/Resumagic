@@ -8,6 +8,12 @@ import path from 'path';
 import { execSync } from 'child_process';
 import { fileURLToPath } from 'url';
 import theme from '../../theme.js';
+import { 
+  discoverApplications, 
+  getTestableApplications, 
+  validateRequiredApplications,
+  ApplicationHealth 
+} from '../helpers/application-registry.js';
 
 // ESM equivalent of __dirname
 const __filename = fileURLToPath(import.meta.url);
@@ -23,17 +29,33 @@ function getApplicationPath(appName) {
 }
 
 describe('Application Isolation', () => {
-  const testApps = [
-    'clearer-vp-of-product',
-    'general-application', 
-    'pointclick-product-manager',
-    'relay-director-of-product',
-    'zearch-director-of-product-marketing'
-  ];
+  // Dynamically discover healthy applications for testing
+  let testApps = [];
+  let targetApp = null;
 
   const baselineTimestamps = {};
 
   beforeAll(() => {
+    // Discover and validate applications before testing
+    const healthyApps = getTestableApplications();
+    
+    if (healthyApps.length === 0) {
+      throw new Error('No healthy applications found for isolation testing');
+    }
+    
+    testApps = healthyApps.map(app => app.name);
+    
+    // Use a live application as target (not test-application to avoid self-modification)
+    const liveApps = healthyApps.filter(app => app.type === 'live');
+    if (liveApps.length === 0) {
+      throw new Error('No live applications found for isolation testing');
+    }
+    
+    targetApp = liveApps[0].name; // Use first available live app
+    
+    console.log(`[Application Registry] Found ${testApps.length} healthy applications`);
+    console.log(`[Application Registry] Using '${targetApp}' as target for isolation testing`);
+    
     // Capture baseline timestamps for all applications
     testApps.forEach(app => {
       const appPath = getApplicationPath(app);
@@ -53,14 +75,12 @@ describe('Application Isolation', () => {
   });
 
   test('should only modify target application files when generating documents', () => {
-    const targetApp = 'zearch-director-of-product-marketing';
-    
-    // Skip test if target application doesn't exist
-    const targetAppPath = getApplicationPath(targetApp);
-    if (!fs.existsSync(targetAppPath)) {
-      console.warn(`Skipping test: ${targetApp} application not found`);
-      return;
+    // Fail fast if no target application was found during setup
+    if (!targetApp) {
+      throw new Error('No target application available for isolation testing');
     }
+    
+    const targetAppPath = getApplicationPath(targetApp);
 
     // Generate documents for target application only
     try {
@@ -126,7 +146,7 @@ describe('Application Isolation', () => {
   }, 60000); // 60 second timeout for this test
 
   test('should generate valid output files', () => {
-    const targetApp = 'general-application';
+    const targetApp = 'test-application';
     const appPath = getApplicationPath(targetApp);
     
     // Skip if application doesn't exist
