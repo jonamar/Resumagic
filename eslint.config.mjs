@@ -8,6 +8,23 @@ import ts from '@typescript-eslint/eslint-plugin';
 import tsParser from '@typescript-eslint/parser';
 
 export default [
+  // Global ignores (must be first)
+  {
+    ignores: [
+      'node_modules/**',
+      'coverage/**', 
+      'dist/**',
+      'venv/**',
+      '**/*.min.js',
+      '**/.git/**',
+      'services/vale-linting/node_modules/**',
+      'services/keyword-analysis/venv/**',
+      '**/__pycache__/**',
+      '**/*.pyc',
+      '**/site-packages/**'
+    ]
+  },
+  
   // Base JavaScript recommended rules
   js.configs.recommended,
   
