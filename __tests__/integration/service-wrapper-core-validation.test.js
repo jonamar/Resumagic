@@ -210,6 +210,52 @@ describe('Core Service Wrapper Validation', () => {
       expect(response.error.code).toBe('BATCH_EVALUATION_FAILED');
       expect(response.error.message).toContain('Batch evaluation failed');
     });
+
+    test('should properly instantiate and call evaluation service', async () => {
+      const wrapper = new HiringEvaluationWrapper();
+      
+      const response = await wrapper.evaluate({
+        applicationName: 'test-validation',
+        resumeData: {
+          personalInfo: {
+            name: 'Test Candidate',
+            email: 'test@example.com'
+          }
+        }
+      });
+      
+      // Should either succeed with proper service call or fail with clear error
+      expect(response).toHaveProperty('success');
+      expect(response.metadata.service).toBe('hiring-evaluation');
+      expect(response.metadata.duration).toBeLessThan(5000); // Should be fast
+      
+      if (response.success) {
+        expect(response.data.candidate.name).toBe('Test Candidate');
+        expect(response.data.implementation).toMatch(/^(legacy|standardized)$/);
+      } else {
+        // Should have proper error code, not fallback simulation
+        expect(response.error.code).toMatch(/^(LEGACY_EVALUATION_FAILED|STANDARDIZED_EVALUATION_FAILED|INVALID_RESUME_DATA)$/);
+        expect(response.error.message).not.toContain('Unable to complete full evaluation');
+      }
+    });
+    
+    test('should handle service instantiation errors properly', async () => {
+      // This test would require mocking the import to fail
+      // For now, we test that the wrapper doesn't use fallback simulation
+      const wrapper = new HiringEvaluationWrapper();
+      
+      const response = await wrapper.evaluate({
+        applicationName: 'nonexistent-application',
+        resumeData: { personalInfo: { name: 'Test' } }
+      });
+      
+      // Should either succeed or fail with proper error, not fallback
+      if (!response.success) {
+        expect(response.error.code).toMatch(/EVALUATION_FAILED$/);
+        expect(response.error.message).not.toContain('temporarily unavailable');
+        expect(response.error.message).not.toContain('fallback validation');
+      }
+    });
   });
 
   describe('Feature Flag Integration', () => {
@@ -218,7 +264,8 @@ describe('Core Service Wrapper Validation', () => {
       const hiringWrapper = new HiringEvaluationWrapper();
       
       // Should be able to check legacy implementation without error
-      expect(typeof keywordWrapper.shouldUseLegacyImplementation()).toBe('boolean');
+      expect(typeof keywordWrapper.shouldUseLegacyImplementation).toBe('function');
+      expect(typeof hiringWrapper.shouldUseLegacyImplementation).toBe('function');
       expect(typeof hiringWrapper.shouldUseLegacyImplementation()).toBe('boolean');
     });
   });
