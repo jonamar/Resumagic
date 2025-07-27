@@ -71,7 +71,7 @@ function validateCliArguments(config) {
   const { applicationName, flags, newAppConfig } = config;
   
   // Handle --new-app flag validation
-  if (flags.newApp) {
+  if (flags && flags.newApp) {
     if (!newAppConfig || !newAppConfig.company || !newAppConfig.jobTitle) {
       return ErrorHandler.createResult(
         false,

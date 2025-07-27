@@ -15,7 +15,8 @@ module.exports = {
   
   // Test file patterns
   testMatch: [
-    '**/__tests__/**/*.js',
+    '**/__tests__/**/*.test.js',
+    '**/__tests__/**/*.spec.js',
     '**/*.test.js',
     '**/*.spec.js'
   ],
@@ -61,7 +62,8 @@ module.exports = {
   // Module paths
   testPathIgnorePatterns: [
     '/node_modules/',
-    '/coverage/'
+    '/coverage/',
+    '/__tests__/helpers/'
   ],
   
   // Verbose output for better debugging
