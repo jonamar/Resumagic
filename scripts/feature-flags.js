@@ -6,7 +6,7 @@
  * Part of Phase 1: CI/CD Extensions for Standardization Safety
  */
 
-const { getFeatureFlags } = require('../feature-flags');
+import { getFeatureFlags } from '../utils/feature-flags.js';
 
 function printUsage() {
   console.log(`
@@ -256,11 +256,11 @@ function main() {
 }
 
 // Run the CLI
-if (require.main === module) {
+if (import.meta.url === `file://${process.argv[1]}`) {
   main();
 }
 
-module.exports = {
+export {
   listFlags,
   enableFlag,
   disableFlag,

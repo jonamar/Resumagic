@@ -17,7 +17,7 @@ NC='\033[0m' # No Color
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 APP_DIR="$PROJECT_ROOT"
 DATA_DIR="$(cd "$PROJECT_ROOT/../data" && pwd)"
-GOLDEN_MASTER_DIR="$APP_DIR/__tests__/golden-master"
+GOLDEN_MASTER_DIR="$DATA_DIR/test/golden-master"
 BASELINE_DIR="$GOLDEN_MASTER_DIR/baseline"
 CURRENT_DIR="$GOLDEN_MASTER_DIR/current"
 
@@ -75,13 +75,18 @@ capture_document_outputs() {
     
     print_step "Capturing document outputs for $app_name"
     
-    local app_outputs_dir="$DATA_DIR/applications/$app_name/outputs"
+    # Handle new test directory structure
+    if [ "$app_name" = "test-application" ]; then
+        local app_outputs_dir="$DATA_DIR/test/$app_name/outputs"
+    else
+        local app_outputs_dir="$DATA_DIR/applications/$app_name/outputs"
+    fi
     local capture_dir="$output_dir/documents/$app_name"
     
     mkdir -p "$capture_dir"
     
     if [ -d "$app_outputs_dir" ]; then
-        # Copy DOCX files
+        # Copy DOCX files (now safely in data directory)
         find "$app_outputs_dir" -name "*.docx" -exec cp {} "$capture_dir/" \; 2>/dev/null || true
         
         # Create metadata about the documents
