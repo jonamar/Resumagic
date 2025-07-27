@@ -136,12 +136,12 @@ async function updateDocumentGenerationMasters() {
 async function main() {
   try {
     switch (SERVICE_TYPE) {
-      case 'document-generation':
-        await updateDocumentGenerationMasters();
-        break;
-      default:
-        console.error(`Unknown service type: ${SERVICE_TYPE}`);
-        process.exit(1);
+    case 'document-generation':
+      await updateDocumentGenerationMasters();
+      break;
+    default:
+      console.error(`Unknown service type: ${SERVICE_TYPE}`);
+      process.exit(1);
     }
   } catch (error) {
     console.error('❌ Failed to update golden masters:', error.message);

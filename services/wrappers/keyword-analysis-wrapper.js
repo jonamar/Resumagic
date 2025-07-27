@@ -9,7 +9,11 @@ import { promisify } from 'util';
 const execAsync = promisify(exec);
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 import { BaseServiceWrapper } from './base-service-wrapper.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 class KeywordAnalysisWrapper extends BaseServiceWrapper {
   constructor() {
@@ -106,34 +110,37 @@ class KeywordAnalysisWrapper extends BaseServiceWrapper {
       command += ` --top ${input.topCount}`;
     }
 
-    const { stdout, stderr } = await execAsync(command, {
-      cwd: path.resolve(__dirname, '../..'),
-      timeout: 120000 // 2 minutes - ML processing takes time
-    });
-
-    if (stderr) {
-      console.warn(`Keyword analysis warnings: ${stderr}`);
-    }
-
-    const duration = Date.now() - startTime;
-    
-    // Parse the Python output (assuming it's JSON or structured text)
-    let parsedOutput;
     try {
-      parsedOutput = JSON.parse(stdout);
-    } catch (parseError) {
-      // If not JSON, return raw text output
-      parsedOutput = {
-        raw_output: stdout.trim(),
-        parsed: false
-      };
-    }
+      const { stdout, stderr } = await execAsync(command, {
+        cwd: path.resolve(__dirname, '../..'),
+        timeout: 120000 // 2 minutes - ML processing takes time
+      });
 
-    return this.createSuccessResponse({
-      analysis: parsedOutput,
-      command: command,
-      implementation: 'legacy'
-    }, duration);
+      if (stderr) {
+        console.warn(`Keyword analysis warnings: ${stderr}`);
+      }
+
+      // Check for service output files instead of parsing stdout
+      const applicationPath = path.dirname(path.dirname(input.keywordsFile));
+      const outputPath = path.join(applicationPath, 'working', 'keyword_analysis.json');
+      
+      if (!fs.existsSync(outputPath)) {
+        throw new Error(`Service failed to generate output file: ${outputPath}`);
+      }
+      
+      const analysisData = JSON.parse(fs.readFileSync(outputPath, 'utf8'));
+      const duration = Date.now() - startTime;
+      
+      return this.createSuccessResponse({
+        analysis: analysisData,
+        command: command,
+        implementation: 'legacy'
+      }, duration);
+      
+    } catch (error) {
+      const duration = Date.now() - startTime;
+      throw new Error(`Keyword analysis failed: ${error.message}`);
+    }
   }
 
   /**
