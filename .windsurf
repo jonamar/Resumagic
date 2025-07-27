@@ -1,0 +1,86 @@
+# Resumagic - Resume & Cover Letter Generator
+
+## Project Overview
+Professional resume and cover letter generator using Node.js + Python microservices.
+
+**Architecture**: 
+- Node.js: Document generation (DOCX), CLI, orchestration
+- Python: Keyword analysis, TF-IDF scoring  
+- Ollama: Hiring evaluation (optional)
+
+## Repository Structure
+
+**IMPORTANT**: Two separate git repositories for privacy:
+- `/app/` - Application code (this directory)
+- `/data/` - Private data (canonical source, test data, applications)
+
+**Data Organization**:
+```
+data/
+├── canonical/           # Single source of truth for resume data
+├── test/               # Test applications and golden masters
+└── applications/       # Live job application folders
+```
+
+**Application Folder Pattern**:
+```
+{company}-{role}/
+├── inputs/             # Source: resume.json, cover-letter.md, keywords.json
+├── working/            # Intermediate: analysis, evaluations
+└── outputs/            # Final: DOCX documents
+```
+
+## Key Commands
+
+**Document Generation**:
+```bash
+# Basic usage
+node generate-resume.js company-role
+
+# New application setup (recommended)
+node generate-resume.js --new-app "Company" "Job Title"
+
+# Full workflow
+node generate-resume.js company-role --all
+```
+
+**Development**:
+```bash
+# Run tests
+npm test
+
+# Application health check
+node scripts/debug/application-health.js
+
+# CI validation
+npm run test:ci
+```
+
+## Development Guidelines
+
+**Code Quality**:
+- Always read files before editing
+- Use centralized ErrorHandler class
+- Follow established naming conventions
+- Maintain 85%+ test coverage
+
+**Service Integration**:
+- Services use `working/` directory for output
+- Use async/await patterns
+- Handle dependencies gracefully
+- Provide clear progress feedback
+
+**Testing**:
+- Dynamic application discovery (no hardcoded lists)
+- Health validation prevents false alarms
+- Golden masters in `/data/test/golden-master/`
+
+## Dependencies
+
+**Required**: Node.js, Python 3.8+, npm packages (docx, gray-matter, marked)
+**Optional**: Ollama with dolphin3:latest (hiring evaluation)
+
+## Git Workflow
+- Code changes: Commit from `/app/`
+- Data changes: Commit from `/data/`
+- Never create git repo in root directory
