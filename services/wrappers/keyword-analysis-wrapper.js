@@ -17,7 +17,7 @@ const __dirname = path.dirname(__filename);
 
 class KeywordAnalysisWrapper extends BaseServiceWrapper {
   constructor() {
-    super('keyword-analysis', 'STANDARDIZED_KEYWORD_ANALYSIS');
+    super('keyword-analysis');
   }
 
   /**
@@ -32,13 +32,12 @@ class KeywordAnalysisWrapper extends BaseServiceWrapper {
    */
   async analyze(input) {
     const startTime = Date.now();
-    const useLegacy = this.shouldUseLegacyImplementation();
     
     this.logOperation('analyze', {
       applicationName: input.applicationName,
       hasResumeFile: !!input.resumeFile,
       topCount: input.topCount
-    }, useLegacy);
+    });
 
     try {
       // Validate input
@@ -69,12 +68,7 @@ class KeywordAnalysisWrapper extends BaseServiceWrapper {
         );
       }
 
-      let result;
-      if (useLegacy) {
-        result = await this.executeLegacyAnalysis(input, startTime);
-      } else {
-        result = await this.executeStandardizedAnalysis(input, startTime);
-      }
+      const result = await this.executeAnalysis(input, startTime);
 
       return result;
 
@@ -93,10 +87,10 @@ class KeywordAnalysisWrapper extends BaseServiceWrapper {
   }
 
   /**
-   * Execute legacy Python shell command
+   * Execute Python keyword analysis service
    * @private
    */
-  async executeLegacyAnalysis(input, startTime) {
+  async executeAnalysis(input, startTime) {
     // Construct the command with proper arguments
     let command = `python services/keyword-analysis/kw_rank_modular.py "${input.keywordsFile}" "${input.jobPostingFile}"`;
     
@@ -111,7 +105,7 @@ class KeywordAnalysisWrapper extends BaseServiceWrapper {
     }
 
     try {
-      const { stdout, stderr } = await execAsync(command, {
+      const { stderr } = await execAsync(command, {
         cwd: path.resolve(__dirname, '../..'),
         timeout: 120000 // 2 minutes - ML processing takes time
       });
@@ -134,7 +128,7 @@ class KeywordAnalysisWrapper extends BaseServiceWrapper {
       return this.createSuccessResponse({
         analysis: analysisData,
         command: command,
-        implementation: 'legacy'
+        implementation: 'keyword-analysis'
       }, duration);
       
     } catch (error) {
@@ -143,20 +137,6 @@ class KeywordAnalysisWrapper extends BaseServiceWrapper {
     }
   }
 
-  /**
-   * Execute standardized analysis (future implementation)
-   * @private
-   */
-  async executeStandardizedAnalysis(input, startTime) {
-    // For now, this is a placeholder that calls the legacy implementation
-    // In future phases, this would call a more direct API
-    const result = await this.executeLegacyAnalysis(input, startTime);
-    
-    // Mark as standardized implementation
-    result.data.implementation = 'standardized';
-    
-    return result;
-  }
 
   /**
    * Get analysis recommendations based on keywords
@@ -185,7 +165,7 @@ class KeywordAnalysisWrapper extends BaseServiceWrapper {
           'Align experience descriptions with job requirements'
         ],
         based_on_analysis: analysisResult.data,
-        implementation: this.shouldUseLegacyImplementation() ? 'legacy' : 'standardized'
+        implementation: 'keyword-analysis'
       }, duration);
 
     } catch (error) {

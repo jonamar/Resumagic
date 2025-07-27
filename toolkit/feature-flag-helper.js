@@ -194,10 +194,10 @@ class FeatureFlagHelper {
   async conditional(flagPath, newImplementation, fallbackImplementation) {
     if (this.isEnabled(flagPath)) {
       console.log(`🚀 Using new implementation for ${flagPath}`);
-      return await newImplementation();
+      return newImplementation();
     } else {
       console.log(`⚡ Using legacy implementation for ${flagPath}`);
-      return await fallbackImplementation();
+      return fallbackImplementation();
     }
   }
 

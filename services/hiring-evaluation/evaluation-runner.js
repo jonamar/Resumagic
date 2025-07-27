@@ -2,7 +2,6 @@
 
 import fs from 'fs';
 import path, { dirname } from 'path';
-import https from 'https';
 import http from 'http';
 import { fileURLToPath } from 'url';
 
@@ -40,7 +39,7 @@ class EvaluationRunner {
     console.log(`🚀 Fast mode ${enabled ? 'enabled' : 'disabled'}: using ${selectedModel} @ temperature ${temperature}`);
   }
 
-  async loadFile(filePath) {
+  loadFile(filePath) {
     try {
       const content = fs.readFileSync(filePath, 'utf8');
       return content;
@@ -50,7 +49,7 @@ class EvaluationRunner {
     }
   }
 
-  async saveFile(filePath, content) {
+  saveFile(filePath, content) {
     try {
       const dir = path.dirname(filePath);
       if (!fs.existsSync(dir)) {
@@ -73,7 +72,7 @@ class EvaluationRunner {
     return data;
   }
 
-  async callOllama(prompt, model = this.modelName, persona = null) {
+  callOllama(prompt, model = this.modelName, persona = null) {
     // Map persona keys to proper names for evaluation processor
     const personaNameMap = {
       'hr': 'HR Manager',

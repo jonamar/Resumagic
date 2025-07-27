@@ -15,7 +15,7 @@ const __dirname = dirname(__filename);
 
 class DocumentGenerationWrapper extends BaseServiceWrapper {
   constructor() {
-    super('document-generation', 'STANDARDIZED_DOCUMENT_GENERATION');
+    super('document-generation');
   }
 
   /**
@@ -29,14 +29,13 @@ class DocumentGenerationWrapper extends BaseServiceWrapper {
    */
   async generate(input) {
     const startTime = Date.now();
-    const useLegacy = this.shouldUseLegacyImplementation();
     
     this.logOperation('generate', {
       generateResume: input.generationPlan?.generateResume,
       generateCoverLetter: input.generationPlan?.generateCoverLetter,
       generateCombined: input.generationPlan?.generateCombined,
       applicationName: input.paths?.applicationName
-    }, useLegacy);
+    });
 
     try {
       // Validate input
@@ -57,12 +56,7 @@ class DocumentGenerationWrapper extends BaseServiceWrapper {
         );
       }
 
-      let result;
-      if (useLegacy) {
-        result = await this.executeLegacyGeneration(input, startTime);
-      } else {
-        result = await this.executeStandardizedGeneration(input, startTime);
-      }
+      const result = await this.executeGeneration(input, startTime);
 
       return result;
 
@@ -81,47 +75,10 @@ class DocumentGenerationWrapper extends BaseServiceWrapper {
   }
 
   /**
-   * Execute legacy document generation
+   * Execute document generation using direct orchestrator API
    * @private
    */
-  async executeLegacyGeneration(input, startTime) {
-    const generatedFiles = await documentOrchestrator.orchestrateGeneration(
-      input.generationPlan,
-      input.paths,
-      input.resumeData,
-      input.autoPreview || false
-    );
-
-    const duration = Date.now() - startTime;
-
-    // Analyze generated files for metadata
-    const fileMetadata = generatedFiles.map(filePath => ({
-      path: filePath,
-      name: path.basename(filePath),
-      size: fs.existsSync(filePath) ? fs.statSync(filePath).size : 0,
-      type: path.extname(filePath).toLowerCase(),
-      exists: fs.existsSync(filePath)
-    }));
-
-    return this.createSuccessResponse({
-      generated_files: generatedFiles,
-      file_metadata: fileMetadata,
-      generation_plan: input.generationPlan,
-      summary: {
-        total_files: generatedFiles.length,
-        resume_generated: input.generationPlan.generateResume,
-        cover_letter_generated: input.generationPlan.generateCoverLetter,
-        combined_generated: input.generationPlan.generateCombined
-      },
-      implementation: 'legacy'
-    }, duration);
-  }
-
-  /**
-   * Execute standardized generation using direct document orchestrator API
-   * @private
-   */
-  async executeStandardizedGeneration(input, startTime) {
+  async executeGeneration(input, startTime) {
     try {
       console.log('🔄 Running standardized document generation...');
       
@@ -246,17 +203,17 @@ class DocumentGenerationWrapper extends BaseServiceWrapper {
           applicationName: input.paths.applicationName || 'unknown',
           generation_timestamp: new Date().toISOString()
         },
-        implementation: 'standardized'
+        implementation: 'document-generation'
       }, duration);
       
     } catch (error) {
-      console.error(`Standardized document generation failed: ${error.message}`);
+      console.error(`Document generation failed: ${error.message}`);
       
-      // If standardized generation fails, provide a structured error response
+      // If generation fails, provide a structured error response
       const duration = Date.now() - startTime;
       return this.createErrorResponse(
-        'STANDARDIZED_GENERATION_FAILED',
-        `Standardized document generation failed: ${error.message}`,
+        'GENERATION_FAILED',
+        `Document generation failed: ${error.message}`,
         { 
           originalError: error.message,
           stack: error.stack,
@@ -300,7 +257,7 @@ class DocumentGenerationWrapper extends BaseServiceWrapper {
           size: fs.existsSync(filePath) ? fs.statSync(filePath).size : 0,
           exists: fs.existsSync(filePath)
         },
-        implementation: this.shouldUseLegacyImplementation() ? 'legacy' : 'standardized'
+        implementation: 'document-generation'
       }, duration);
 
     } catch (error) {
@@ -361,7 +318,7 @@ class DocumentGenerationWrapper extends BaseServiceWrapper {
           exists: fs.existsSync(filePath)
         },
         source_markdown: input.markdownFilePath,
-        implementation: this.shouldUseLegacyImplementation() ? 'legacy' : 'standardized'
+        implementation: 'document-generation'
       }, duration);
 
     } catch (error) {
@@ -379,7 +336,7 @@ class DocumentGenerationWrapper extends BaseServiceWrapper {
    * Validate document generation capabilities
    * @returns {Promise<ServiceResponse>}
    */
-  async validateCapabilities() {
+  validateCapabilities() {
     const startTime = Date.now();
 
     try {
@@ -401,7 +358,7 @@ class DocumentGenerationWrapper extends BaseServiceWrapper {
       return this.createSuccessResponse({
         capabilities,
         service_status: 'operational',
-        implementation: this.shouldUseLegacyImplementation() ? 'legacy' : 'standardized'
+        implementation: 'document-generation'
       }, duration);
 
     } catch (error) {

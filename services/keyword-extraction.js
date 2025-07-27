@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 import fs from 'fs';
-import path from 'path';
 import http from 'http';
 
 class KeywordExtractionService {
@@ -178,7 +177,7 @@ ${jobPosting}
 Extract all important keywords from this job posting and categorize them appropriately. Focus on keywords that a candidate would need to include in their resume to match this role.`;
   }
 
-  async callOllama(prompt) {
+  callOllama(prompt) {
     return new Promise((resolve, reject) => {
       const postData = JSON.stringify({
         model: this.modelName,

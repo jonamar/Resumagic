@@ -10,7 +10,7 @@ import { BaseServiceWrapper } from './base-service-wrapper.js';
 
 class ValeLintingWrapper extends BaseServiceWrapper {
   constructor() {
-    super('vale-linting', 'STANDARDIZED_VALE_LINTING');
+    super('vale-linting');
   }
 
   /**
@@ -25,7 +25,6 @@ class ValeLintingWrapper extends BaseServiceWrapper {
    */
   async analyze(input) {
     const startTime = Date.now();
-    const useLegacy = this.shouldUseLegacyImplementation();
     
     this.logOperation('analyze', {
       hasResumeDataPath: !!input.resumeDataPath,
@@ -33,7 +32,7 @@ class ValeLintingWrapper extends BaseServiceWrapper {
       tier1Only: !!input.tier1Only,
       tier2Only: !!input.tier2Only,
       spellingOnly: !!input.spellingOnly
-    }, useLegacy);
+    });
 
     try {
       // Validate input - need either resumeDataPath or resumeData
@@ -67,12 +66,7 @@ class ValeLintingWrapper extends BaseServiceWrapper {
         );
       }
 
-      let result;
-      if (useLegacy) {
-        result = await this.executeLegacyLinting(resumeDataPath, input, startTime);
-      } else {
-        result = await this.executeStandardizedLinting(resumeDataPath, input, startTime);
-      }
+      const result = await this.executeLinting(resumeDataPath, input, startTime);
 
       // Clean up temporary file if we created one
       if (!input.resumeDataPath && input.resumeData && fs.existsSync(resumeDataPath)) {
@@ -100,41 +94,10 @@ class ValeLintingWrapper extends BaseServiceWrapper {
   }
 
   /**
-   * Execute legacy Vale linting (placeholder for now)
+   * Execute Vale linting using TwoTierAnalyzer
    * @private
    */
-  async executeLegacyLinting(resumeDataPath, input, startTime) {
-    try {
-      // For now, call the standardized implementation
-      // In a real scenario, this would call the old Vale implementation
-      const result = await this.executeStandardizedLinting(resumeDataPath, input, startTime);
-      
-      // Mark as legacy implementation
-      if (result.data) {
-        result.data.implementation = 'legacy';
-      }
-      
-      return result;
-      
-    } catch (error) {
-      const duration = Date.now() - startTime;
-      return this.createErrorResponse(
-        'LEGACY_LINTING_FAILED',
-        `Legacy Vale linting failed: ${error.message}`,
-        { 
-          originalError: error.message,
-          resumeDataPath 
-        },
-        duration
-      );
-    }
-  }
-
-  /**
-   * Execute standardized Vale linting using TwoTierAnalyzer
-   * @private
-   */
-  async executeStandardizedLinting(resumeDataPath, input, startTime) {
+  async executeLinting(resumeDataPath, input, startTime) {
     try {
       // Import the Vale linting service (CommonJS module)
       const TwoTierAnalyzer = (await import('../../services/vale-linting/two-tier-analyzer.js')).default ||
@@ -208,17 +171,17 @@ class ValeLintingWrapper extends BaseServiceWrapper {
             spelling_only: !!input.spellingOnly
           }
         },
-        implementation: 'standardized'
+        implementation: 'vale-linting'
       }, duration);
       
     } catch (error) {
-      console.error(`Standardized Vale linting failed: ${error.message}`);
+      console.error(`Vale linting failed: ${error.message}`);
       
-      // If standardized linting fails, provide a structured error response
+      // If linting fails, provide a structured error response
       const duration = Date.now() - startTime;
       return this.createErrorResponse(
-        'STANDARDIZED_LINTING_FAILED',
-        `Standardized Vale linting failed: ${error.message}`,
+        'LINTING_FAILED',
+        `Vale linting failed: ${error.message}`,
         { 
           originalError: error.message,
           stack: error.stack,
@@ -242,7 +205,7 @@ class ValeLintingWrapper extends BaseServiceWrapper {
    * @returns {Promise<ServiceResponse>}
    */
   async quickSpellingCheck(input) {
-    return await this.analyze({
+    return this.analyze({
       ...input,
       spellingOnly: true
     });
@@ -256,7 +219,7 @@ class ValeLintingWrapper extends BaseServiceWrapper {
    * @returns {Promise<ServiceResponse>}
    */
   async comprehensiveAnalysis(input) {
-    return await this.analyze(input); // Default is all tiers
+    return this.analyze(input); // Default is all tiers
   }
 }
 

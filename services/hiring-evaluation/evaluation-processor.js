@@ -172,7 +172,6 @@ class EvaluationProcessor {
     evaluations.forEach((evaluation, index) => {
       const persona = processedData[index].persona;
       const scores = evaluation.scores;
-      const personaScore = processedData[index].calculatedAverage;
 
       // Extract reasoning from each criterion
       Object.entries(scores).forEach(([criterion, data]) => {

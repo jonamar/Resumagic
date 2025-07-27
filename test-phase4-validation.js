@@ -149,13 +149,13 @@ class Phase4ValidationSuite {
   async executeServiceTest(service, serviceName, testData) {
     switch (serviceName) {
     case 'hiring-evaluation':
-      return await service.evaluate(testData);
+      return service.evaluate(testData);
       
     case 'document-generation':
-      return await service.generate(testData);
+      return service.generate(testData);
       
     case 'vale-linting':
-      return await service.analyze(testData);
+      return service.analyze(testData);
       
     default:
       throw new Error(`Unknown service: ${serviceName}`);

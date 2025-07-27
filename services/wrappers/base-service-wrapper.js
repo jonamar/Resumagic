@@ -4,7 +4,6 @@
  * Part of Phase 2: Standardize Existing Service Infrastructure
  */
 
-import { getFeatureFlags } from '../../feature-flags.js';
 
 /**
  * Standard JSON API response format for all services
@@ -52,18 +51,8 @@ class ServiceResponse {
  * Base class for all service wrappers
  */
 class BaseServiceWrapper {
-  constructor(serviceName, legacyFlagName) {
+  constructor(serviceName) {
     this.serviceName = serviceName;
-    this.legacyFlagName = legacyFlagName;
-    this.featureFlags = getFeatureFlags();
-  }
-
-  /**
-   * Check if service should use legacy implementation
-   * @returns {boolean}
-   */
-  shouldUseLegacyImplementation() {
-    return !this.featureFlags.isEnabled(this.legacyFlagName);
   }
 
   /**
@@ -108,17 +97,10 @@ class BaseServiceWrapper {
   /**
    * Log service operation for debugging
    * @param {string} operation - Operation name
-   * @param {any} input - Input data (sanitized)
-   * @param {boolean} usedLegacy - Whether legacy implementation was used
+   * @param {any} _input - Input data (sanitized, currently unused)
    */
-  logOperation(operation, input, usedLegacy) {
-    if (this.featureFlags.isEnabled('LOG_SERVICE_TRANSITIONS')) {
-      console.log(`[${this.serviceName}] ${operation} - Implementation: ${usedLegacy ? 'legacy' : 'standardized'}`);
-      
-      if (this.featureFlags.isEnabled('DEBUG_FEATURE_FLAGS')) {
-        console.log(`[${this.serviceName}] Input: ${JSON.stringify(input, null, 2)}`);
-      }
-    }
+  logOperation(operation, _input) {
+    console.log(`[${this.serviceName}] ${operation}`);
   }
 
   /**

@@ -4,12 +4,7 @@ import theme from './theme.js';
 import ErrorHandler from './utils/error-handler.js';
 import { ERROR_TYPES } from './utils/error-types.js';
 
-// Initialize error handler for path resolution operations
-const errorHandler = new ErrorHandler({
-  component: 'path-resolver',
-  includeContext: true,
-  includeStackTrace: false
-});
+
 
 /**
  * Path Resolver Module

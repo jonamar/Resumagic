@@ -226,7 +226,7 @@ class ErrorHandler {
         context.size = stats.size;
         context.modified = stats.mtime.toISOString();
       }
-    } catch (error) {
+    } catch {
       // Ignore errors when building context
       context.contextError = 'Unable to read file stats';
     }

@@ -192,7 +192,7 @@ class KeywordAnalysisAdapter {
    * Execute the new standardized service implementation
    * (This would be implemented as a pure JavaScript version)
    */
-  async executeStandardizedService(input) {
+  executeStandardizedService(input) {
     // For now, this is a placeholder that mirrors the legacy output
     // In a real implementation, this would be a pure JavaScript/Node.js implementation
     // that produces the same results as the Python service
@@ -295,7 +295,7 @@ class KeywordAnalysisAdapter {
     
     try {
       await this.validator.createBaseline(testName, async (input) => {
-        return await this.execute(input);
+        return this.execute(input);
       }, testInput);
     } finally {
       // Restore original flag state
@@ -311,8 +311,8 @@ class KeywordAnalysisAdapter {
   async validateAgainstGoldenMaster(testInput) {
     const testName = `${this.serviceName}-golden-master`;
     
-    return await this.validator.validate(testName, async (input) => {
-      return await this.execute(input);
+    return this.validator.validate(testName, async (input) => {
+      return this.execute(input);
     }, testInput);
   }
 
@@ -320,46 +320,15 @@ class KeywordAnalysisAdapter {
    * Migration helper: Test both implementations and compare
    */
   async compareLegacyVsStandardized(testInput) {
-    this.logger.info(`Comparing legacy vs standardized implementation for ${this.serviceName}`);
+    const testName = `${this.serviceName}-comparison`;
     
-    // Test legacy implementation
-    this.featureFlags.disable(`services.${this.serviceName}.useStandardizedWrapper`);
-    const legacyResult = await this.execute(testInput);
-    
-    // Test standardized implementation  
-    this.featureFlags.enable(`services.${this.serviceName}.useStandardizedWrapper`);
-    const standardizedResult = await this.execute(testInput);
-    
-    // Compare results
-    const legacyNormalized = this.validator.normalizeData(legacyResult.data);
-    const standardizedNormalized = this.validator.normalizeData(standardizedResult.data);
-    
-    const legacyHash = this.validator.generateHash(legacyNormalized);
-    const standardizedHash = this.validator.generateHash(standardizedNormalized);
-    
-    const identical = legacyHash === standardizedHash;
-    
-    this.logger.info('Implementation comparison results', {
-      legacyHash,
-      standardizedHash,
-      identical
-    });
-    
-    if (!identical) {
-      const differences = this.validator.findDifferences(legacyNormalized, standardizedNormalized);
-      this.logger.warn('Implementation differences found', { differenceCount: differences.length });
-      differences.forEach(diff => {
-        this.logger.debug('Difference', { path: diff.path, legacy: diff.expected, standardized: diff.actual });
-      });
-    }
-    
-    return {
-      identical,
-      legacyResult,
-      standardizedResult,
-      differences: identical ? [] : this.validator.findDifferences(legacyNormalized, standardizedNormalized)
-    };
+    return this.validator.compareImplementations(testName, 
+      async (input) => this.executeLegacyService(input),
+      async (input) => this.executeStandardizedService(input),
+      testInput
+    );
   }
+
 }
 
 // Export for use as module

@@ -11,7 +11,6 @@
  * 6. Test with golden master validation before switching feature flag
  */
 
-import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import FeatureFlagHelper from '../toolkit/feature-flag-helper.js';
@@ -106,7 +105,7 @@ class ServiceNameAdapter {
    * Execute the legacy service implementation
    * CUSTOMIZE: Implement calls to existing service logic
    */
-  async executeLegacyService(input) {
+  async executeLegacyService(_input) {
     // TODO: Implement legacy service call
     // This should call your existing service implementation
     // Examples:
@@ -121,7 +120,7 @@ class ServiceNameAdapter {
    * Execute the new standardized service implementation
    * CUSTOMIZE: Implement new JSON-based service logic
    */
-  async executeStandardizedService(input) {
+  async executeStandardizedService(_input) {
     // TODO: Implement standardized service logic
     // This should be a clean, JSON-in/JSON-out implementation
     // that produces the same output as the legacy version
@@ -182,7 +181,7 @@ class ServiceNameAdapter {
     
     try {
       await this.validator.createBaseline(testName, async (input) => {
-        return await this.execute(input);
+        return this.execute(input);
       }, testInput);
     } finally {
       // Restore original flag state
@@ -198,8 +197,8 @@ class ServiceNameAdapter {
   async validateAgainstGoldenMaster(testInput) {
     const testName = `${this.serviceName}-golden-master`;
     
-    return await this.validator.validate(testName, async (input) => {
-      return await this.execute(input);
+    return this.validator.validate(testName, async (input) => {
+      return this.execute(input);
     }, testInput);
   }
 
