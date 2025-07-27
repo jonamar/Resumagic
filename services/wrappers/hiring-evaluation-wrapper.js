@@ -4,8 +4,6 @@
  * Part of Phase 2: Standardize Existing Service Infrastructure
  */
 
-import fs from 'fs';
-import path from 'path';
 import { BaseServiceWrapper } from './base-service-wrapper.js';
 
 class HiringEvaluationWrapper extends BaseServiceWrapper {
@@ -138,7 +136,7 @@ class HiringEvaluationWrapper extends BaseServiceWrapper {
   async executeStandardizedEvaluation(input, startTime) {
     try {
       // Dynamic import of the evaluation runner service
-      const { default: EvaluationRunner } = await import('../../services/hiring-evaluation/evaluation-runner.js');
+      const { default: EvaluationRunner } = await import('../hiring-evaluation/evaluation-runner.js');
       
       // Initialize evaluation runner with application context
       const evaluationRunner = new EvaluationRunner(input.applicationName);
