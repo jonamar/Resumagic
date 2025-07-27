@@ -317,47 +317,6 @@ class Phase4ValidationSuite {
   }
 
   /**
-   * Compare service results for equivalence
-   */
-  compareServiceResults(legacyResult, standardizedResult, serviceName) {
-    const comparison = {
-      equivalent: false,
-      differences: [],
-      successMatch: false,
-      dataStructureMatch: false
-    };
-
-    // Check success status match
-    comparison.successMatch = legacyResult.success === standardizedResult.success;
-    
-    if (!comparison.successMatch) {
-      comparison.differences.push(`Success status mismatch: legacy=${legacyResult.success}, standardized=${standardizedResult.success}`);
-    }
-
-    // If both failed, check error structure
-    if (!legacyResult.success && !standardizedResult.success) {
-      comparison.dataStructureMatch = true; // Both failed consistently
-      comparison.equivalent = true;
-      return comparison;
-    }
-
-    // If both succeeded, compare data structure based on service type
-    if (legacyResult.success && standardizedResult.success) {
-      comparison.dataStructureMatch = this.compareServiceSpecificData(
-        legacyResult.data, 
-        standardizedResult.data, 
-        serviceName
-      );
-      
-      if (!comparison.dataStructureMatch) {
-        comparison.differences.push(`Data structure mismatch for ${serviceName}`);
-      }
-    }
-
-    comparison.equivalent = comparison.successMatch && comparison.dataStructureMatch;
-    return comparison;
-  }
-
   /**
    * Compare service outputs for equivalence using appropriate validation method
    */
