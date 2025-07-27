@@ -18,7 +18,7 @@
     "test:python": "cd services/keyword-analysis && python -m pytest kw_rank/utils/test_error_handler.py -v",
     "test:python:coverage": "cd services/keyword-analysis && python -m pytest kw_rank/utils/test_error_handler.py -v --cov=kw_rank.utils --cov-report=xml",
     "lint": "eslint .",
-    "lint:errors": "eslint . --config .eslintrc.error-handling.js",
+    "lint:errors": "eslint . --config eslint.config.error-handling.js",
     "lint:fix": "eslint . --fix",
     "lint:ci": "eslint . --format=json --output-file=eslint-results.json || true",
     "validate:error-handling": "node -e \"import('./utils/error-handler.js').then(() => import('./utils/error-types.js')).then(() => console.log('✅ Error handling validation passed')).catch(e => {console.error('❌ Error handling validation failed:', e.message); process.exit(1);});\"",
