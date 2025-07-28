@@ -19,17 +19,14 @@ export function formatDate(dateStr) {
     // Format: "Sep 2022", "Jan 2021", etc.
     if (/^[A-Za-z]{3}\s\d{4}$/.test(dateStr)) {
       parsedDate = new Date(dateStr + ' 01'); // Add day for parsing
-    }
-    // Format: "2007-01", "2015-11", etc.
-    else if (/^\d{4}-\d{2}$/.test(dateStr)) {
+    } else if (/^\d{4}-\d{2}$/.test(dateStr)) {
+      // Format: "2007-01", "2015-11", etc.
       parsedDate = new Date(dateStr + '-01'); // Add day for parsing
-    }
-    // Format: "2020", "2021", etc. (year only)
-    else if (/^\d{4}$/.test(dateStr)) {
+    } else if (/^\d{4}$/.test(dateStr)) {
+      // Format: "2020", "2021", etc. (year only)
       return dateStr; // Return as-is for year-only dates
-    }
-    // Standard ISO format: "2020-01-15", etc.
-    else {
+    } else {
+      // Standard ISO format: "2020-01-15", etc.
       parsedDate = new Date(dateStr);
     }
     
