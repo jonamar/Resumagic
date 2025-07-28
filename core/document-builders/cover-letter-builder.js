@@ -38,7 +38,7 @@ export function createCoverLetterDocx(coverLetterData, options = {}) {
               alignment: AlignmentType.LEFT,
               style: {
                 run: {
-                  font: theme.fonts.primary,
+                  font: theme.typography.fonts.primary,
                   size: 16, // 8pt bullet (smaller than default 10pt text)
                   color: theme.colors.text,
                 },
@@ -56,14 +56,14 @@ export function createCoverLetterDocx(coverLetterData, options = {}) {
           basedOn: 'Normal',
           next: 'Normal',
           run: {
-            size: theme.fontSize.name * 2, // Convert to half-points
+            size: theme.typography.fontSize.name * 2, // Convert to half-points
             font: 'Arial', // Set Arial as the default font for all runs
             bold: true,
             color: theme.colors.headings,
           },
           paragraph: {
             spacing: {
-              after: theme.spacingTwips.afterHeader, // 12pt
+              after: theme.spacing.twips.afterHeader, // 12pt
             },
             indent: {
               left: 0, // No indentation
@@ -79,7 +79,7 @@ export function createCoverLetterDocx(coverLetterData, options = {}) {
     sections: [{
       properties: {
         page: {
-          margin: theme.margins.document,
+          margin: theme.layout.margins.document,
         },
       },
       children: children,

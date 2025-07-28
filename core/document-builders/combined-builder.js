@@ -69,7 +69,7 @@ export function createCombinedDocx(coverLetterData, resumeData, options = {}) {
               alignment: AlignmentType.LEFT,
               style: {
                 run: {
-                  font: theme.fonts.primary,
+                  font: theme.typography.fonts.primary,
                   size: 16, // 8pt bullet (smaller than default 10pt text)
                   color: theme.colors.text,
                 },
@@ -87,14 +87,14 @@ export function createCombinedDocx(coverLetterData, resumeData, options = {}) {
           basedOn: 'Normal',
           next: 'Normal',
           run: {
-            size: theme.fontSize.name * 2, // Convert to half-points
+            size: theme.typography.fontSize.name * 2, // Convert to half-points
             font: 'Arial',
             bold: true,
             color: theme.colors.headings,
           },
           paragraph: {
             spacing: {
-              after: theme.spacingTwips.afterHeader, // 12pt
+              after: theme.spacing.twips.afterHeader, // 12pt
             },
             indent: {
               left: 0, // No indentation
@@ -112,7 +112,7 @@ export function createCombinedDocx(coverLetterData, resumeData, options = {}) {
         // Cover letter section
         properties: {
           page: {
-            margin: theme.margins.document,
+            margin: theme.layout.margins.document,
           },
         },
         children: coverLetterChildren,
@@ -121,7 +121,7 @@ export function createCombinedDocx(coverLetterData, resumeData, options = {}) {
         // Resume section (starts on new page)
         properties: {
           page: {
-            margin: theme.margins.document,
+            margin: theme.layout.margins.document,
           },
           type: SectionType.NEXT_PAGE, // Force new page
         },

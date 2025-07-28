@@ -22,14 +22,14 @@ export function createCoverLetterDate(metadata) {
       children: [
         new TextRun({
           text: formattedDate,
-          size: theme.fontSize.body * 2, // Convert to half-points
-          font: theme.fonts.primary,
+          size: theme.typography.fontSize.body * 2, // Convert to half-points
+          font: theme.typography.fonts.primary,
           color: theme.colors.text,
         }),
       ],
       spacing: {
-        before: theme.spacingTwips.beforeDate, // 12pt breathing room before
-        after: theme.spacingTwips.afterDate,   // 24pt breathing room after
+        before: theme.spacing.twips.beforeDate, // 12pt breathing room before
+        after: theme.spacing.twips.afterDate,   // 24pt breathing room after
       },
       alignment: AlignmentType.RIGHT,
     }),

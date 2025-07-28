@@ -33,15 +33,15 @@ export function createEducation(education) {
         children: [
           new TextRun({
             text: degreeText,
-            size: theme.fontSize.body * 2, // Convert to half-points
-            font: theme.fonts.primary,
+            size: theme.typography.fontSize.body * 2, // Convert to half-points
+            font: theme.typography.fonts.primary,
             bold: true,
             color: theme.colors.text,
           }),
         ],
         spacing: {
-          after: theme.spacingTwips.afterJobTitle, // 3pt
-          line: theme.spacingTwips.resumeLine,
+          after: theme.spacing.twips.afterJobTitle, // 3pt
+          line: theme.spacing.twips.resumeLine,
         },
         keepNext: true, // Keep with institution
       }),
@@ -53,15 +53,15 @@ export function createEducation(education) {
         children: [
           new TextRun({
             text: edu.institution,
-            size: theme.fontSize.body * 2, // Convert to half-points
-            font: theme.fonts.primary,
+            size: theme.typography.fontSize.body * 2, // Convert to half-points
+            font: theme.typography.fonts.primary,
             bold: true,
             color: theme.colors.text,
           }),
         ],
         spacing: {
-          after: theme.spacingTwips.afterCompanyName, // 3pt
-          line: theme.spacingTwips.resumeLine,
+          after: theme.spacing.twips.afterCompanyName, // 3pt
+          line: theme.spacing.twips.resumeLine,
         },
         keepNext: true, // Keep with date/location
       }),
@@ -79,13 +79,13 @@ export function createEducation(education) {
         children: [
           new TextRun({
             text: dateParts.join(' • '),
-            size: theme.fontSize.meta * 2, // Convert to half-points
-            font: theme.fonts.primary,
+            size: theme.typography.fontSize.meta * 2, // Convert to half-points
+            font: theme.typography.fonts.primary,
             color: theme.colors.dimText,
           }),
         ],
         spacing: {
-          after: theme.spacingTwips.afterSectionEntry, // 12pt
+          after: theme.spacing.twips.afterSectionEntry, // 12pt
         },
       }),
     );

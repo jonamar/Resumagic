@@ -21,8 +21,8 @@ export function createCoverLetterContent(content) {
       section.text.forEach(textPart => {
         textRuns.push(new TextRun({
           text: textPart.text,
-          size: theme.fontSize.body * 2, // Convert to half-points
-          font: theme.fonts.primary,
+          size: theme.typography.fontSize.body * 2, // Convert to half-points
+          font: theme.typography.fonts.primary,
           color: theme.colors.text,
           bold: textPart.bold || false,
           italics: textPart.italic || false,
@@ -33,8 +33,8 @@ export function createCoverLetterContent(content) {
         new Paragraph({
           children: textRuns,
           spacing: {
-            after: theme.spacingTwips.coverLetterParagraph, // 12pt between paragraphs
-            line: theme.spacingTwips.oneAndHalfLine,   // 1.5 line spacing (240 = 1.0, 360 = 1.5)
+            after: theme.spacing.twips.coverLetterParagraph, // 12pt between paragraphs
+            line: theme.spacing.twips.oneAndHalfLine,   // 1.5 line spacing (240 = 1.0, 360 = 1.5)
           },
           alignment: AlignmentType.JUSTIFIED,
         }),
@@ -48,8 +48,8 @@ export function createCoverLetterContent(content) {
         item.forEach(textPart => {
           textRuns.push(new TextRun({
             text: textPart.text,
-            size: theme.fontSize.body * 2, // Convert to half-points
-            font: theme.fonts.primary,
+            size: theme.typography.fontSize.body * 2, // Convert to half-points
+            font: theme.typography.fonts.primary,
             color: theme.colors.text,
             bold: textPart.bold || false,
             italics: textPart.italic || false,
@@ -64,8 +64,8 @@ export function createCoverLetterContent(content) {
               level: 0,
             },
             spacing: {
-              after: itemIndex < section.items.length - 1 ? theme.spacingTwips.medium : theme.spacingTwips.coverLetterParagraph, // 4pt between items, 12pt after list
-              line: theme.spacingTwips.oneAndHalfLine,   // 1.5 line spacing
+              after: itemIndex < section.items.length - 1 ? theme.spacing.twips.medium : theme.spacing.twips.coverLetterParagraph, // 4pt between items, 12pt after list
+              line: theme.spacing.twips.oneAndHalfLine,   // 1.5 line spacing
             },
             alignment: AlignmentType.LEFT,
           }),

@@ -71,7 +71,7 @@ function createResumeDocx(resumeData, options = {}) {
               alignment: AlignmentType.LEFT,
               style: {
                 run: {
-                  font: theme.fonts.primary,
+                  font: theme.typography.fonts.primary,
                   size: 16, // 8pt bullet (smaller than default 10pt text)
                   color: theme.colors.text,
                 },
@@ -89,14 +89,14 @@ function createResumeDocx(resumeData, options = {}) {
           basedOn: 'Normal',
           next: 'Normal',
           run: {
-            size: theme.fontSize.name * 2, // Convert to half-points
+            size: theme.typography.fontSize.name * 2, // Convert to half-points
             font: 'Arial', // Set Arial as the default font for all runs
             bold: true,
             color: theme.colors.headings,
           },
           paragraph: {
             spacing: {
-              after: theme.spacingTwips.afterHeader, // 12pt
+              after: theme.spacing.twips.afterHeader, // 12pt
             },
             indent: {
               left: 0, // No indentation
@@ -112,7 +112,7 @@ function createResumeDocx(resumeData, options = {}) {
     sections: [{
       properties: {
         page: {
-          margin: theme.margins.document,
+          margin: theme.layout.margins.document,
         },
       },
       children: children,
@@ -156,7 +156,7 @@ function createCoverLetterDocx(coverLetterData, options = {}) {
               alignment: AlignmentType.LEFT,
               style: {
                 run: {
-                  font: theme.fonts.primary,
+                  font: theme.typography.fonts.primary,
                   size: 16, // 8pt bullet (smaller than default 10pt text)
                   color: theme.colors.text,
                 },
@@ -174,14 +174,14 @@ function createCoverLetterDocx(coverLetterData, options = {}) {
           basedOn: 'Normal',
           next: 'Normal',
           run: {
-            size: theme.fontSize.name * 2, // Convert to half-points
+            size: theme.typography.fontSize.name * 2, // Convert to half-points
             font: 'Arial', // Set Arial as the default font for all runs
             bold: true,
             color: theme.colors.headings,
           },
           paragraph: {
             spacing: {
-              after: theme.spacingTwips.afterHeader, // 12pt
+              after: theme.spacing.twips.afterHeader, // 12pt
             },
             indent: {
               left: 0, // No indentation
@@ -197,7 +197,7 @@ function createCoverLetterDocx(coverLetterData, options = {}) {
     sections: [{
       properties: {
         page: {
-          margin: theme.margins.document,
+          margin: theme.layout.margins.document,
         },
       },
       children: children,
@@ -259,7 +259,7 @@ function createCombinedDocx(coverLetterData, resumeData, options = {}) {
               alignment: AlignmentType.LEFT,
               style: {
                 run: {
-                  font: theme.fonts.primary,
+                  font: theme.typography.fonts.primary,
                   size: 16, // 8pt bullet (smaller than default 10pt text)
                   color: theme.colors.text,
                 },
@@ -277,14 +277,14 @@ function createCombinedDocx(coverLetterData, resumeData, options = {}) {
           basedOn: 'Normal',
           next: 'Normal',
           run: {
-            size: theme.fontSize.name * 2, // Convert to half-points
+            size: theme.typography.fontSize.name * 2, // Convert to half-points
             font: 'Arial',
             bold: true,
             color: theme.colors.headings,
           },
           paragraph: {
             spacing: {
-              after: theme.spacingTwips.afterHeader, // 12pt
+              after: theme.spacing.twips.afterHeader, // 12pt
             },
             indent: {
               left: 0, // No indentation
@@ -302,7 +302,7 @@ function createCombinedDocx(coverLetterData, resumeData, options = {}) {
         // Cover letter section
         properties: {
           page: {
-            margin: theme.margins.document,
+            margin: theme.layout.margins.document,
           },
         },
         children: coverLetterChildren,
@@ -311,7 +311,7 @@ function createCombinedDocx(coverLetterData, resumeData, options = {}) {
         // Resume section (starts on new page)
         properties: {
           page: {
-            margin: theme.margins.document,
+            margin: theme.layout.margins.document,
           },
           type: SectionType.NEXT_PAGE, // Force new page
         },

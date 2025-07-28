@@ -28,15 +28,15 @@ export function createSkills(skills) {
         children: [
           new TextRun({
             text: skill.name,
-            size: theme.fontSize.body * 2, // Convert to half-points
-            font: theme.fonts.primary,
+            size: theme.typography.fontSize.body * 2, // Convert to half-points
+            font: theme.typography.fonts.primary,
             bold: true,
             color: theme.colors.text,
           }),
         ],
         spacing: {
-          after: theme.spacingTwips.afterJobTitle, // 3pt
-          line: theme.spacingTwips.resumeLine,
+          after: theme.spacing.twips.afterJobTitle, // 3pt
+          line: theme.spacing.twips.resumeLine,
         },
       }),
     );
@@ -46,13 +46,13 @@ export function createSkills(skills) {
       paragraphs.push(
         new Paragraph({
           children: createFormattedTextRuns(skill.keywords.join(', '), {
-            size: theme.fontSize.meta * 2, // Convert to half-points
-            font: theme.fonts.primary,
+            size: theme.typography.fontSize.meta * 2, // Convert to half-points
+            font: theme.typography.fonts.primary,
             color: theme.colors.dimText,
           }),
           spacing: {
-            after: theme.spacingTwips.xlarge, // 9pt
-            line: theme.spacingTwips.resumeLine,
+            after: theme.spacing.twips.xlarge, // 9pt
+            line: theme.spacing.twips.resumeLine,
           },
         }),
       );

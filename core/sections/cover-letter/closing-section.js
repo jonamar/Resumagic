@@ -19,14 +19,14 @@ export function createCoverLetterClosing(metadata) {
       children: [
         new TextRun({
           text: `${metadata.customClosing || 'Warmly'},`,
-          size: theme.fontSize.body * 2, // Convert to half-points
-          font: theme.fonts.primary,
+          size: theme.typography.fontSize.body * 2, // Convert to half-points
+          font: theme.typography.fonts.primary,
           color: theme.colors.text,
         }),
       ],
       spacing: {
         after: 0, // No extra paragraph spacing
-        line: theme.spacingTwips.oneAndHalfLine,   // 1.5 line spacing
+        line: theme.spacing.twips.oneAndHalfLine,   // 1.5 line spacing
       },
       alignment: AlignmentType.LEFT,
     }),
@@ -38,14 +38,14 @@ export function createCoverLetterClosing(metadata) {
       children: [
         new TextRun({
           text: 'Jon Amar',
-          size: theme.fontSize.body * 2, // Convert to half-points
-          font: theme.fonts.primary,
+          size: theme.typography.fontSize.body * 2, // Convert to half-points
+          font: theme.typography.fonts.primary,
           color: theme.colors.text,
         }),
       ],
       spacing: {
         after: 0, // No extra paragraph spacing
-        line: theme.spacingTwips.oneAndHalfLine,   // 1.5 line spacing
+        line: theme.spacing.twips.oneAndHalfLine,   // 1.5 line spacing
       },
       alignment: AlignmentType.LEFT,
     }),
@@ -57,14 +57,14 @@ export function createCoverLetterClosing(metadata) {
       children: [
         new TextRun({
           text: 'they/them',
-          size: theme.fontSize.body * 2, // Convert to half-points
-          font: theme.fonts.primary,
+          size: theme.typography.fontSize.body * 2, // Convert to half-points
+          font: theme.typography.fonts.primary,
           color: theme.colors.text,
         }),
       ],
       spacing: {
-        after: theme.spacingTwips.page, // 24pt extra space before next section
-        line: theme.spacingTwips.oneAndHalfLine,   // 1.5 line spacing
+        after: theme.spacing.twips.page, // 24pt extra space before next section
+        line: theme.spacing.twips.oneAndHalfLine,   // 1.5 line spacing
       },
       alignment: AlignmentType.LEFT,
     }),

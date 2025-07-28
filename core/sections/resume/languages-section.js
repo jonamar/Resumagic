@@ -30,16 +30,16 @@ export function createLanguages(languages) {
         children: [
           new TextRun({
             text: language.language,
-            size: theme.fontSize.body * 2, // Convert to half-points
-            font: theme.fonts.primary,
+            size: theme.typography.fontSize.body * 2, // Convert to half-points
+            font: theme.typography.fonts.primary,
             bold: true,
             color: theme.colors.text,
           }),
           ...(language.fluency ? [
             new TextRun({
               text: `: ${language.fluency}`,
-              size: theme.fontSize.body * 2, // Convert to half-points
-              font: theme.fonts.primary,
+              size: theme.typography.fontSize.body * 2, // Convert to half-points
+              font: theme.typography.fonts.primary,
               color: theme.colors.text,
             }),
           ] : []),

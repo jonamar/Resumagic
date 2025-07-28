@@ -21,7 +21,7 @@ export function createHeader(basics) {
       style: 'applicantName',
       alignment: AlignmentType.LEFT,
       spacing: {
-        after: theme.spacingTwips.afterHeader, // 12pt
+        after: theme.spacing.twips.afterHeader, // 12pt
       },
       thematicBreak: false,
     }),
@@ -65,13 +65,13 @@ export function createHeader(basics) {
       children: [
         new TextRun({
           text: contactParts.join(' • '),
-          size: theme.fontSize.meta * 2, // Convert to half-points
+          size: theme.typography.fontSize.meta * 2, // Convert to half-points
           color: theme.colors.dimText,
-          font: theme.fonts.primary,
+          font: theme.typography.fonts.primary,
         }),
       ],
       spacing: {
-        after: theme.spacingTwips.afterContact, // 5pt
+        after: theme.spacing.twips.afterContact, // 5pt
       },
     }),
   );
@@ -92,9 +92,9 @@ export function createHeader(basics) {
           children: [
             new TextRun({
               text: displayText,
-              size: theme.fontSize.meta * 2, // Convert to half-points
+              size: theme.typography.fontSize.meta * 2, // Convert to half-points
               color: theme.colors.dimText,
-              font: theme.fonts.primary,
+              font: theme.typography.fonts.primary,
               underline: {
                 type: UnderlineType.SINGLE,
                 color: theme.colors.dimText,
@@ -110,9 +110,9 @@ export function createHeader(basics) {
         profileChildren.push(
           new TextRun({
             text: ' • ',
-            size: theme.fontSize.meta * 2,
+            size: theme.typography.fontSize.meta * 2,
             color: theme.colors.dimText,
-            font: theme.fonts.primary,
+            font: theme.typography.fonts.primary,
           }),
         );
       }
@@ -122,7 +122,7 @@ export function createHeader(basics) {
       new Paragraph({
         children: profileChildren,
         spacing: {
-          after: theme.spacingTwips.afterHeader, // 12pt
+          after: theme.spacing.twips.afterHeader, // 12pt
         },
       }),
     );

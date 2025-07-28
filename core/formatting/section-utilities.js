@@ -64,7 +64,7 @@ export function createItemSection(items, config) {
       }
 
       // Determine spacing and keepNext logic
-      let spacing = headerConfig.spacing || theme.spacingTwips.afterJobTitle;
+      let spacing = headerConfig.spacing || theme.spacing.twips.afterJobTitle;
       let keepNext = headerConfig.keepNext !== false; // Default to true unless explicitly false
       
       // For the last header, determine keepNext based on additional content
@@ -86,15 +86,15 @@ export function createItemSection(items, config) {
           children: [
             new TextRun({
               text: headerText,
-              size: (headerConfig.fontSize || theme.fontSize.body) * 2, // Convert to half-points
-              font: theme.fonts.primary,
+              size: (headerConfig.fontSize || theme.typography.fontSize.body) * 2, // Convert to half-points
+              font: theme.typography.fonts.primary,
               bold: headerConfig.bold !== false, // Default to bold unless explicitly false
               color: headerConfig.color || theme.colors.text,
             }),
           ],
           spacing: {
             after: spacing,
-            line: theme.spacingTwips.resumeLine,
+            line: theme.spacing.twips.resumeLine,
           },
           keepNext: keepNext,
         }),
@@ -106,13 +106,13 @@ export function createItemSection(items, config) {
       paragraphs.push(
         new Paragraph({
           children: createFormattedTextRuns(item[config.descriptionField], {
-            size: theme.fontSize.body * 2, // Convert to half-points
-            font: theme.fonts.primary,
+            size: theme.typography.fontSize.body * 2, // Convert to half-points
+            font: theme.typography.fonts.primary,
             color: theme.colors.text,
           }),
           spacing: {
-            after: config.descriptionSpacing || theme.spacingTwips.large, // 6pt
-            line: theme.spacingTwips.resumeLine,
+            after: config.descriptionSpacing || theme.spacing.twips.large, // 6pt
+            line: theme.spacing.twips.resumeLine,
           },
           keepLines: true, // Keep description lines together
           keepNext: hasHighlights, // Keep with highlights if they exist
@@ -126,7 +126,7 @@ export function createItemSection(items, config) {
         const isLastHighlight = highlightIndex === item[config.highlightsField].length - 1;
         
         // Calculate spacing for highlights
-        let highlightSpacing = theme.spacingTwips.afterBullet;
+        let highlightSpacing = theme.spacing.twips.afterBullet;
         if (config.highlightSpacing && isLastHighlight) {
           if (typeof config.highlightSpacing === 'function') {
             highlightSpacing = config.highlightSpacing(isLastItem, itemIndex);
@@ -138,8 +138,8 @@ export function createItemSection(items, config) {
         paragraphs.push(
           new Paragraph({
             children: createFormattedTextRuns(highlight, {
-              size: theme.fontSize.body * 2, // Convert to half-points
-              font: theme.fonts.primary,
+              size: theme.typography.fontSize.body * 2, // Convert to half-points
+              font: theme.typography.fonts.primary,
               color: theme.colors.text,
             }),
             numbering: {
@@ -148,11 +148,11 @@ export function createItemSection(items, config) {
             },
             spacing: {
               after: highlightSpacing,
-              line: theme.spacingTwips.resumeLine,
+              line: theme.spacing.twips.resumeLine,
             },
             indent: {
-              left: theme.spacingTwips.bulletIndent, // 0.25 inch left indent for bullet
-              hanging: theme.spacingTwips.bulletHanging, // 0.25 inch hanging indent so text aligns properly
+              left: theme.spacing.twips.bulletIndent, // 0.25 inch left indent for bullet
+              hanging: theme.spacing.twips.bulletHanging, // 0.25 inch hanging indent so text aligns properly
             },
             keepLines: true, // Keep long bullet points together
             keepNext: !isLastHighlight, // Keep with next highlight (but not after the last one)
@@ -193,7 +193,7 @@ export function createSectionHeading(title, pageBreak = false) {
     children: [
       new TextRun({
         text: title.toUpperCase(),
-        size: theme.fontSize.sectionHeading * 2, // Convert to half-points
+        size: theme.typography.fontSize.sectionHeading * 2, // Convert to half-points
         font: 'Arial', // Set Arial as the default font for all runs
         color: theme.colors.headings,
         bold: true,
@@ -202,7 +202,7 @@ export function createSectionHeading(title, pageBreak = false) {
     heading: HeadingLevel.HEADING_2,
     spacing: {
       before: 400, // 20pt
-      after: theme.spacingTwips.large,   // 6pt
+      after: theme.spacing.twips.large,   // 6pt
     },
     keepNext: true, // Prevent section headings from being orphaned on previous page
     pageBreakBefore: pageBreak, // Add page break if requested

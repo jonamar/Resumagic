@@ -58,14 +58,14 @@ export function createCoverLetterFooter(basics, isComboMode = false) {
       children: [
         new TextRun({
           text: contactParts.join(' • '),
-          size: theme.fontSize.meta * 2, // Convert to half-points
+          size: theme.typography.fontSize.meta * 2, // Convert to half-points
           color: theme.colors.dimText,
-          font: theme.fonts.primary,
+          font: theme.typography.fonts.primary,
         }),
       ],
       spacing: {
-        before: theme.spacingTwips.beforeContact, // 12pt before contact info
-        after: theme.spacingTwips.afterContact,   // 5pt
+        before: theme.spacing.twips.beforeContact, // 12pt before contact info
+        after: theme.spacing.twips.afterContact,   // 5pt
       },
     }),
   );
@@ -79,9 +79,9 @@ export function createCoverLetterFooter(basics, isComboMode = false) {
       if (index > 0) {
         profileChildren.push(new TextRun({
           text: ' • ',
-          size: theme.fontSize.meta * 2, // Convert to half-points
+          size: theme.typography.fontSize.meta * 2, // Convert to half-points
           color: theme.colors.dimText,
-          font: theme.fonts.primary,
+          font: theme.typography.fonts.primary,
         }));
       }
       
@@ -91,9 +91,9 @@ export function createCoverLetterFooter(basics, isComboMode = false) {
           children: [
             new TextRun({
               text: profile.url.replace(/^https?:\/\//, ''), // Remove protocol for cleaner display
-              size: theme.fontSize.meta * 2, // Convert to half-points
+              size: theme.typography.fontSize.meta * 2, // Convert to half-points
               color: theme.colors.dimText,
-              font: theme.fonts.primary,
+              font: theme.typography.fonts.primary,
               underline: {
                 type: UnderlineType.SINGLE,
                 color: theme.colors.dimText,
@@ -109,7 +109,7 @@ export function createCoverLetterFooter(basics, isComboMode = false) {
       new Paragraph({
         children: profileChildren,
         spacing: {
-          after: theme.spacingTwips.afterContact, // 5pt
+          after: theme.spacing.twips.afterContact, // 5pt
         },
       }),
     );

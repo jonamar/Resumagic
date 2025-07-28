@@ -1,8 +1,8 @@
 import path from 'path';
 import fs from 'fs';
 import theme from '../theme.js';
-import ErrorHandler from '../utils/error-handler.ts';
-import { ERROR_TYPES } from '../utils/error-types.ts';
+import ErrorHandler from '../dist/utils/error-handler.js';
+import { ERROR_TYPES } from '../dist/utils/error-types.js';
 
 /**
  * Path Resolution Module

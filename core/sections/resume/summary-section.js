@@ -28,12 +28,12 @@ export function createSummary(basics) {
   paragraphs.push(
     new Paragraph({
       children: createFormattedTextRuns(basics.summary, {
-        size: theme.fontSize.body * 2, // Convert to half-points
-        font: theme.fonts.primary,
+        size: theme.typography.fontSize.body * 2, // Convert to half-points
+        font: theme.typography.fonts.primary,
         color: theme.colors.text,
       }),
       spacing: {
-        after: theme.spacingTwips.afterSummary, // 4pt
+        after: theme.spacing.twips.afterSummary, // 4pt
       },
     }),
   );

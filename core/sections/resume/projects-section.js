@@ -15,16 +15,16 @@ export function createProjects(projects) {
     sectionTitle: theme.ats.sectionTitles.projects,
     descriptionField: 'description',
     highlightsField: 'highlights',
-    descriptionSpacing: theme.spacingTwips.large, // 6pt
+    descriptionSpacing: theme.spacing.twips.large, // 6pt
     headerLines: [
       {
         // Project name
         field: 'name',
-        spacing: theme.spacingTwips.afterJobTitle, // 3pt
+        spacing: theme.spacing.twips.afterJobTitle, // 3pt
         keepNext: true,
       },
     ],
-    itemSpacing: theme.spacingTwips.afterProjectEntry, // 9pt after each project entry
+    itemSpacing: theme.spacing.twips.afterProjectEntry, // 9pt after each project entry
   };
 
   return createItemSection(projects, projectsConfig);
