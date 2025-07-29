@@ -12,6 +12,10 @@
     "test:integration": "NODE_OPTIONS=\"--experimental-vm-modules\" jest --config=jest.config.cjs __tests__/integration",
     "test:document-generation": "NODE_OPTIONS=\"--experimental-vm-modules\" jest --config=jest.config.cjs __tests__/integration/document-generation-contract.test.js",
     "test:keyword-analysis": "NODE_OPTIONS=\"--experimental-vm-modules\" jest --config=jest.config.cjs __tests__/integration/keyword-analysis-contract.test.js",
+    "vitest": "vitest",
+    "vitest:watch": "vitest --watch",
+    "vitest:coverage": "vitest run --coverage",
+    "vitest:ui": "vitest --ui",
     "update-document-generation-golden-masters": "node scripts/update-golden-masters.js document-generation",
     "test:ci": "jest --config=jest.config.cjs --coverage --watchAll=false --ci --testTimeout=10000",
     "test:all": "npm run test:ci && npm run test:python",
@@ -45,10 +49,12 @@
     "@typescript-eslint/eslint-plugin": "^8.38.0",
     "@typescript-eslint/parser": "^8.38.0",
     "@typescript-eslint/types": "^8.38.0",
+    "@vitest/coverage-v8": "^3.2.4",
     "eslint": "^9.32.0",
     "jest": "^29.7.0",
     "ts-jest": "^29.4.0",
     "ts-node": "^10.9.2",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
   }
 }
