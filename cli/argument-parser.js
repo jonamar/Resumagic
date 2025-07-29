@@ -39,7 +39,12 @@ function parseCliArguments(args) {
   }
   
   // Extract application name (first non-flag argument)
-  const applicationName = filteredArgs.find(arg => !arg.startsWith('--'));
+  let applicationName = filteredArgs.find(arg => !arg.startsWith('--'));
+  
+  // Handle full paths - extract just the folder name
+  if (applicationName && applicationName.includes('/')) {
+    applicationName = path.basename(applicationName.replace(/\/$/, '')); // Remove trailing slash and get basename
+  }
   
   // Parse flags
   const flags = {
@@ -52,6 +57,7 @@ function parseCliArguments(args) {
     all: args.includes(theme.cli.flags.all),
     fast: args.includes(theme.cli.flags.fast),
     newApp: newAppIndex !== -1,
+    test: args.includes(theme.cli.flags.test),
   };
   
   return {

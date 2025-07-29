@@ -25,13 +25,15 @@ function extractCompanyFromFolderName(folderName) {
  * Resolves all file paths for a given application
  * @param {string} applicationName - Name of the application folder
  * @param {string} baseDir - Base directory (typically __dirname)
+ * @param {boolean} isTest - Whether this is a test mode (use test directory)
  * @returns {Object} Object containing all resolved paths
  */
-function resolvePaths(applicationName, baseDir) {
+function resolvePaths(applicationName, baseDir, isTest = false) {
   const companyName = extractCompanyFromFolderName(applicationName);
   
-  // Set up application folder paths
-  const applicationFolderPath = path.resolve(baseDir, theme.fileNaming.dataDir, theme.fileNaming.applicationsDir, applicationName);
+  // Set up application folder paths - use test directory if in test mode
+  const applicationsDir = isTest ? theme.fileNaming.testDir : theme.fileNaming.applicationsDir;
+  const applicationFolderPath = path.resolve(baseDir, theme.fileNaming.dataDir, applicationsDir, applicationName);
   const inputsDir = path.join(applicationFolderPath, theme.fileNaming.inputsDir);
   const outputsDir = path.join(applicationFolderPath, theme.fileNaming.outputsDir);
   

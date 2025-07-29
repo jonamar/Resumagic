@@ -194,7 +194,7 @@ async function executeCommand(args) {
     // Resolve and validate paths
     // Need to go up one level from cli/ to app/, then resolvePaths handles ../data
     const appDir = path.dirname(__dirname);
-    const paths = resolvePaths(applicationName, appDir);
+    const paths = resolvePaths(applicationName, appDir, flags.test);
     const pathValidation = validatePaths(paths);
     if (!pathValidation.isValid) {
       console.error(`${theme.messages.emojis.error} ${pathValidation.error}`);

@@ -156,6 +156,7 @@ const cli = {
     all: '--all',
     fast: '--fast',
     newApp: '--new-app',
+    test: '--test',
   },
   
   defaults: {

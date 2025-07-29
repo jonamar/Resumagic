@@ -7,18 +7,27 @@ module.exports = {
   // Test environment
   testEnvironment: 'node',
   
-  // ESM Support
+  // ESM Support with TypeScript
   moduleNameMapper: {
     '^(\\.\\.?\\/.+)\\.js$': '$1'
   },
-  transform: {},
+  extensionsToTreatAsEsm: ['.ts'],
+  transform: {
+    '^.+\\.ts$': ['ts-jest', {
+      useESM: true
+    }]
+  },
   
-  // Test file patterns
+  // Test file patterns - include both JS and TS files
   testMatch: [
     '**/__tests__/**/*.test.js',
     '**/__tests__/**/*.spec.js',
+    '**/__tests__/**/*.test.ts',
+    '**/__tests__/**/*.spec.ts',
     '**/*.test.js',
-    '**/*.spec.js'
+    '**/*.spec.js',
+    '**/*.test.ts',
+    '**/*.spec.ts'
   ],
   
   // Transform ignore patterns for ESM/CJS compatibility
@@ -26,16 +35,25 @@ module.exports = {
     'node_modules/(?!(marked)/)'
   ],
   
-  // Coverage configuration
+  // Coverage configuration - include both JS and TS files
   collectCoverageFrom: [
     '**/*.js',
+    '**/*.ts',
     '*.js',
+    '*.ts',
     'utils/**/*.js',
+    'utils/**/*.ts',
     'services/**/*.js',
+    'services/**/*.ts',
+    'core/**/*.js',
+    'core/**/*.ts',
     '!node_modules/**',
     '!coverage/**',
+    '!dist/**',
     '!**/*.test.js',
+    '!**/*.test.ts',
     '!**/*.spec.js',
+    '!**/*.spec.ts',
     '!**/__tests__/**',
     '!jest.config.js',
     '!.eslintrc*.js',
