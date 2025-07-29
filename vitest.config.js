@@ -7,7 +7,7 @@ export default defineConfig({
       '**/__tests__/**/*.test.ts',
       '**/__tests__/**/*.test.js',
       '**/*.test.ts',
-      '**/*.test.js'
+      '**/*.test.js',
     ],
     coverage: {
       provider: 'v8',
@@ -16,7 +16,7 @@ export default defineConfig({
         'utils/**/*',
         'services/**/*',
         'core/**/*',
-        'cli/**/*'
+        'cli/**/*',
       ],
       exclude: [
         'node_modules/**',
@@ -30,14 +30,14 @@ export default defineConfig({
         'jest.config.cjs',
         'vitest.config.js',
         '.eslintrc*.js',
-        'utils/eslint-rules/**'
-      ]
+        'utils/eslint-rules/**',
+      ],
     },
     // Setup files
     setupFiles: ['./vitest.setup.js'],
     // Test timeout
     testTimeout: 10000,
     // Make globals available like Jest
-    globals: true
-  }
+    globals: true,
+  },
 });

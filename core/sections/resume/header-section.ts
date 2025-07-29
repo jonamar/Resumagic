@@ -98,7 +98,7 @@ export function createHeader(basics: Basics): Paragraph[] {
   if (basics.profiles && basics.profiles.length > 0) {
     const profileChildren: (TextRun | ExternalHyperlink)[] = [];
     
-    basics.profiles!.forEach((profile, index) => {
+    basics.profiles.forEach((profile, index) => {
       // Clean up the display text by removing protocol and www
       const displayText = profile.url
         .replace(/^https?:\/\//, '') // Remove http:// or https://

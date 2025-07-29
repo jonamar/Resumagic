@@ -1,5 +1,5 @@
 /**
- * Unit Tests for CLI Parser
+ * Unit Tests for CLI Parser - Vitest
  * Tests command line argument parsing and validation
  */
 

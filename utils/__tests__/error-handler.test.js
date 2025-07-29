@@ -1,8 +1,9 @@
 /**
- * Unit Tests for Error Handler
+ * Unit Tests for Error Handler - Vitest
  * Comprehensive test suite for error handling utilities
  */
 
+import { vi } from 'vitest';
 import ErrorHandler from '../error-handler.js';
 import { ERROR_TYPES, ERROR_SEVERITY, CONTEXT_TYPES } from '../error-types.js';
 
@@ -12,7 +13,7 @@ let consoleOutput = [];
 
 beforeEach(() => {
   consoleOutput = [];
-  console.error = jest.fn((...args) => {
+  console.error = vi.fn((...args) => {
     consoleOutput.push(args.join(' '));
   });
 });

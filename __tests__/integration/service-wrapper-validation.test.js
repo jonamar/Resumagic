@@ -1,9 +1,10 @@
 /**
- * Service Wrapper Interface Validation Suite
+ * Service Wrapper Interface Validation Suite - Vitest
  * Ensures wrappers produce identical results to current implementation
  * Part of Phase 2: Standardize Existing Service Infrastructure
  */
 
+import { vi } from 'vitest';
 import _fs from 'fs';
 import _path from 'path';
 import { getServiceWrapper, getServicesHealthStatus } from '../../services/wrappers/service-registry.js';
@@ -116,7 +117,7 @@ describe('Service Wrapper Interface Validation', () => {
     });
 
     test('should log service transitions when enabled', () => {
-      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
       
       const service = getServiceWrapper('keyword-analysis');
       service.logOperation('test-operation', { test: 'data' }, true);
