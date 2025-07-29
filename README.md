@@ -47,7 +47,7 @@ node services/hiring-evaluation/evaluation-runner.js company-role
 - **Python**: Intelligent analysis (keyword scoring, semantic clustering)
 - **Separation**: Each service uses optimal technology stack
 - **Local CI/CD**: Fast 6-second validation pipeline with git hook integration
-- **Testing**: 124 tests (96 JS + 28 Python) with comprehensive coverage
+- **Testing**: 167 tests with Vitest (~2x faster than Jest) + Python testing with comprehensive coverage
 
 ## Project Structure
 
@@ -256,7 +256,7 @@ company-role/
 ../scripts/ci/local-pipeline.sh
 
 # Individual test suites
-npm test                    # JavaScript tests (96 tests)
+npm test                    # JavaScript tests with Vitest (167 tests, ~2x faster)
 npm run test:python        # Python tests (28 tests)
 npm run lint               # ESLint validation
 

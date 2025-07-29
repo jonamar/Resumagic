@@ -1,6 +1,6 @@
 /**
  * ESLint Flat Configuration for ESM Codebase
- * Modern configuration supporting ES modules and Jest testing
+ * Modern configuration supporting ES modules and Vitest testing
  */
 
 import js from '@eslint/js';
@@ -26,7 +26,7 @@ export default [
         setInterval: 'readonly',
         clearTimeout: 'readonly',
         clearInterval: 'readonly',
-        // Jest globals (for test files)
+        // Vitest globals (for test files)
         describe: 'readonly',
         test: 'readonly',
         it: 'readonly',
@@ -35,7 +35,7 @@ export default [
         afterEach: 'readonly',
         beforeAll: 'readonly',
         afterAll: 'readonly',
-        jest: 'readonly',
+        vi: 'readonly',
       },
     },
     
@@ -83,7 +83,7 @@ export default [
       'coverage/',
       'dist/',
       '*.config.js',
-      'jest.setup.js', // Setup file can have different patterns
+      'vitest.setup.js', // Setup file can have different patterns
       // Ignore legacy CommonJS files that need separate migration
       '.eslintrc.error-handling.js',
       'test-isolation.js', // Has require() calls

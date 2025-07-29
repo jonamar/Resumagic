@@ -1,6 +1,6 @@
 /**
  * Integration Tests for Application Isolation
- * Migrated from test-isolation.js to Jest framework
+ * Migrated from test-isolation.js to Vitest framework
  */
 
 import fs from 'fs';

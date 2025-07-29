@@ -232,7 +232,7 @@ export {
   AssertionUtils,
 };
 
-// Simple test to prevent Jest from complaining about no tests in this file
+// Simple test to prevent Vitest from complaining about no tests in this file
 if (typeof describe !== 'undefined') {
   describe('Test Utils', () => {
     test('should export all utility modules', () => {

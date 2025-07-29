@@ -3,7 +3,7 @@
 ## Overview
 Professional document generator using Node.js + Python microservices architecture.
 
-**Technologies**: Node.js, Python 3.8+, Jest, Ollama (optional)
+**Technologies**: Node.js, Python 3.8+, Vitest (modern testing), Ollama (optional)
 
 ## Repository Structure
 
@@ -42,7 +42,8 @@ node scripts/debug/application-health.js        # Check app health
 - Clean boundaries, centralized error handling
 
 **Testing**:
-- Jest framework with 85%+ coverage
+- Vitest framework (167 tests, ~2x faster than Jest) with 85%+ coverage
+- Native ESM support, no experimental flags needed
 - Dynamic application discovery (no hardcoded lists)
 - Health validation prevents false alarms
 - Golden masters in `/data/test/golden-master/`
