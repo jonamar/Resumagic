@@ -1,0 +1,49 @@
+/**
+ * Date and region formatting utilities for DOCX document generation
+ */
+
+/**
+ * Formats a date string into a consistent format
+ * @param dateStr - Date string in various formats
+ * @returns Formatted date as "Month YYYY" or original if parsing fails
+ */
+export function formatDate(dateStr: string): string {
+  if (!dateStr) {
+    return '';
+  }
+  
+  try {
+    // Handle different input formats
+    let parsedDate: Date;
+    
+    // Format: "Sep 2022", "Jan 2021", etc.
+    if (/^[A-Za-z]{3}\s\d{4}$/.test(dateStr)) {
+      parsedDate = new Date(dateStr + ' 01'); // Add day for parsing
+    } else if (/^\d{4}-\d{2}$/.test(dateStr)) {
+      // Format: "2007-01", "2015-11", etc.
+      parsedDate = new Date(dateStr + '-01'); // Add day for parsing
+    } else if (/^\d{4}$/.test(dateStr)) {
+      // Format: "2020", "2021", etc. (year only)
+      return dateStr; // Return as-is for year-only dates
+    } else {
+      // Standard ISO format: "2020-01-15", etc.
+      parsedDate = new Date(dateStr);
+    }
+    
+    // Check if date parsing was successful
+    if (isNaN(parsedDate.getTime())) {
+      console.warn(`⚠️  Date parsing warning: Could not parse date "${dateStr}". Using original value.`);
+      return dateStr;
+    }
+    
+    // Format as Month YYYY (e.g., March 2019)
+    const month: string = parsedDate.toLocaleString('en', { month: 'long' });
+    const year: number = parsedDate.getFullYear();
+    
+    return `${month} ${year}`;
+    
+  } catch (error: unknown) {
+    console.warn(`⚠️  Date parsing error: Failed to format date "${dateStr}". Error: ${(error as Error).message}. Using original value.`);
+    return dateStr;
+  }
+}
