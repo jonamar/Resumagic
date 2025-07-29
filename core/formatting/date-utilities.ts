@@ -47,3 +47,86 @@ export function formatDate(dateStr: string): string {
     return dateStr;
   }
 }
+
+/**
+ * Get standard abbreviation for region/province/state names
+ * @param region - Full region name
+ * @returns Abbreviated region code
+ */
+export function getRegionAbbreviation(region: string): string {
+  // Canadian provinces and territories
+  const canadianProvinces: Record<string, string> = {
+    'Alberta': 'AB',
+    'British Columbia': 'BC',
+    'Manitoba': 'MB',
+    'New Brunswick': 'NB',
+    'Newfoundland and Labrador': 'NL',
+    'Northwest Territories': 'NT',
+    'Nova Scotia': 'NS',
+    'Nunavut': 'NU',
+    'Ontario': 'ON',
+    'Prince Edward Island': 'PE',
+    'Quebec': 'QC',
+    'Québec': 'QC',
+    'Saskatchewan': 'SK',
+    'Yukon': 'YT',
+  };
+  
+  // US states (common ones)
+  const usStates: Record<string, string> = {
+    'California': 'CA',
+    'New York': 'NY',
+    'Texas': 'TX',
+    'Florida': 'FL',
+    'Illinois': 'IL',
+    'Pennsylvania': 'PA',
+    'Ohio': 'OH',
+    'Georgia': 'GA',
+    'North Carolina': 'NC',
+    'Michigan': 'MI',
+    'New Jersey': 'NJ',
+    'Virginia': 'VA',
+    'Washington': 'WA',
+    'Arizona': 'AZ',
+    'Massachusetts': 'MA',
+    'Indiana': 'IN',
+    'Tennessee': 'TN',
+    'Missouri': 'MO',
+    'Maryland': 'MD',
+    'Wisconsin': 'WI',
+    'Colorado': 'CO',
+    'Minnesota': 'MN',
+    'South Carolina': 'SC',
+    'Alabama': 'AL',
+    'Louisiana': 'LA',
+    'Kentucky': 'KY',
+    'Oregon': 'OR',
+    'Oklahoma': 'OK',
+    'Connecticut': 'CT',
+    'Utah': 'UT',
+    'Iowa': 'IA',
+    'Nevada': 'NV',
+    'Arkansas': 'AR',
+    'Mississippi': 'MS',
+    'Kansas': 'KS',
+    'New Mexico': 'NM',
+    'Nebraska': 'NE',
+    'West Virginia': 'WV',
+    'Idaho': 'ID',
+    'Hawaii': 'HI',
+    'New Hampshire': 'NH',
+    'Maine': 'ME',
+    'Montana': 'MT',
+    'Rhode Island': 'RI',
+    'Delaware': 'DE',
+    'South Dakota': 'SD',
+    'North Dakota': 'ND',
+    'Alaska': 'AK',
+    'District of Columbia': 'DC',
+    'Vermont': 'VT',
+    'Wyoming': 'WY',
+  };
+  
+  // Check Canadian provinces first, then US states
+  return canadianProvinces[region] || usStates[region] || region;
+}

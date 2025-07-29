@@ -8,7 +8,7 @@ import { createEducation } from '../sections/resume/education-section.js';
 import { createProjects } from '../sections/resume/projects-section.js';
 import { createSpeakingEngagements } from '../sections/resume/speaking-section.js';
 import { createLanguages } from '../sections/resume/languages-section.js';
-export function createResumeDocx(resumeData, options = {}) {
+export function createResumeDocx(resumeData, _options = {}) {
     const children = [
         ...createHeader(resumeData.basics),
         ...createSummary(resumeData.basics),
@@ -68,13 +68,9 @@ export function createResumeDocx(resumeData, options = {}) {
                         indent: {
                             left: 0,
                         },
-                        font: 'Arial',
                     },
                 },
             ],
-            defaultRunProperties: {
-                font: 'Arial',
-            },
         },
         sections: [{
                 properties: {

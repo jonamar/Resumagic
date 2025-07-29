@@ -30,7 +30,7 @@ export function createSpeakingEngagements(publications) {
                 },
             },
         ],
-        highlightSpacing: (isLastItem, itemIndex) => {
+        highlightSpacing: (isLastItem) => {
             return isLastItem ? theme.spacing.twips.large : theme.spacing.twips.afterSectionEntry;
         },
     };

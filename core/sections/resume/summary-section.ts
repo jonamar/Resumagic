@@ -7,13 +7,17 @@ import theme from '../../../theme.js';
 import { createFormattedTextRuns } from '../../formatting/text-formatting.js';
 import { createSectionHeading } from '../../formatting/section-utilities.js';
 
+interface Basics {
+  summary?: string;
+}
+
 /**
  * Creates the summary section for a resume
- * @param {Object} basics - Basic information containing summary
- * @returns {Array} Array of paragraphs for the summary section
+ * @param basics - Basic information containing summary
+ * @returns Array of paragraphs for the summary section
  */
-export function createSummary(basics) {
-  const paragraphs = [];
+export function createSummary(basics: Basics): Paragraph[] {
+  const paragraphs: Paragraph[] = [];
 
   if (!basics.summary) {
     return paragraphs;

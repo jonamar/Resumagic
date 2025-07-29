@@ -2,16 +2,25 @@
  * Resume speaking engagements section builder
  */
 
+import { Paragraph } from 'docx';
 import theme from '../../../theme.js';
 import { formatDate } from '../../formatting/date-utilities.js';
 import { createItemSection } from '../../formatting/section-utilities.js';
 
+interface Publication {
+  name: string;
+  publisher?: string;
+  releaseDate?: string;
+  summary?: string;
+  highlights?: string[];
+}
+
 /**
  * Creates the speaking engagements section using the generic createItemSection function
- * @param {Array} publications - Array of publication/speaking entries
- * @returns {Array} Array of paragraphs for the speaking engagements section
+ * @param publications - Array of publication/speaking entries
+ * @returns Array of paragraphs for the speaking engagements section
  */
-export function createSpeakingEngagements(publications) {
+export function createSpeakingEngagements(publications: Publication[]): Paragraph[] {
   const speakingConfig = {
     sectionTitle: theme.ats.sectionTitles.speakingEngagements,
     descriptionField: 'summary',
@@ -39,12 +48,12 @@ export function createSpeakingEngagements(publications) {
         bold: false,
         conditionalSpacing: {
           withContent: theme.spacing.twips.afterDate, // 4pt if more content
-          standalone: (isLastItem) => isLastItem ? theme.spacing.twips.large : theme.spacing.twips.afterSectionEntry, // 6pt if last entry, 12pt between entries
+          standalone: (isLastItem: boolean) => isLastItem ? theme.spacing.twips.large : theme.spacing.twips.afterSectionEntry, // 6pt if last entry, 12pt between entries
         },
       },
     ],
     // Complex highlight spacing for speaking engagements
-    highlightSpacing: (isLastItem, itemIndex) => {
+    highlightSpacing: (isLastItem: boolean) => {
       return isLastItem ? theme.spacing.twips.large : theme.spacing.twips.afterSectionEntry; // 6pt after last entry, 12pt between entries
     },
     // No itemSpacing - speaking engagements don't add extra space after each entry

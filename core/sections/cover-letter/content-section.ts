@@ -5,20 +5,32 @@
 import { Paragraph, TextRun, AlignmentType } from 'docx';
 import theme from '../../../theme.js';
 
+interface TextPart {
+  text: string;
+  bold?: boolean;
+  italic?: boolean;
+}
+
+interface ContentSection {
+  type: 'paragraph' | 'list';
+  text?: TextPart[];
+  items?: TextPart[][];
+}
+
 /**
  * Creates the main content section for cover letter
- * @param {Array} content - Array of content paragraphs and lists
- * @returns {Array} Array of paragraphs for the content section
+ * @param content - Array of content paragraphs and lists
+ * @returns Array of paragraphs for the content section
  */
-export function createCoverLetterContent(content) {
-  const paragraphs = [];
+export function createCoverLetterContent(content: ContentSection[]): Paragraph[] {
+  const paragraphs: Paragraph[] = [];
   
-  content.forEach((section, index) => {
+  content.forEach((section) => {
     if (section.type === 'paragraph') {
       // Handle paragraph content
-      const textRuns = [];
+      const textRuns: TextRun[] = [];
       
-      section.text.forEach(textPart => {
+      section.text?.forEach(textPart => {
         textRuns.push(new TextRun({
           text: textPart.text,
           size: theme.typography.fontSize.body * 2, // Convert to half-points
@@ -42,8 +54,8 @@ export function createCoverLetterContent(content) {
       
     } else if (section.type === 'list') {
       // Handle bullet list content
-      section.items.forEach((item, itemIndex) => {
-        const textRuns = [];
+      section.items?.forEach((item, itemIndex) => {
+        const textRuns: TextRun[] = [];
         
         item.forEach(textPart => {
           textRuns.push(new TextRun({
@@ -64,7 +76,7 @@ export function createCoverLetterContent(content) {
               level: 0,
             },
             spacing: {
-              after: itemIndex < section.items.length - 1 ? theme.spacing.twips.medium : theme.spacing.twips.coverLetterParagraph, // 4pt between items, 12pt after list
+              after: itemIndex < section.items!.length - 1 ? theme.spacing.twips.medium : theme.spacing.twips.coverLetterParagraph, // 4pt between items, 12pt after list
               line: theme.spacing.twips.oneAndHalfLine,   // 1.5 line spacing
             },
             alignment: AlignmentType.LEFT,

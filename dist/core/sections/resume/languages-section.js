@@ -5,9 +5,6 @@ export function createLanguages(languages) {
     const paragraphs = [];
     paragraphs.push(createSectionHeading(theme.ats.sectionTitles.languages));
     languages.forEach((language, index) => {
-        const languageText = language.fluency ?
-            `${language.language}: ${language.fluency}` :
-            language.language;
         paragraphs.push(new Paragraph({
             children: [
                 new TextRun({

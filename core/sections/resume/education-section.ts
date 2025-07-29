@@ -7,13 +7,22 @@ import theme from '../../../theme.js';
 import { formatDate } from '../../formatting/date-utilities.js';
 import { createSectionHeading } from '../../formatting/section-utilities.js';
 
+interface Education {
+  area: string;
+  studyType?: string;
+  institution: string;
+  startDate: string;
+  endDate?: string;
+  location?: string;
+}
+
 /**
  * Creates the education section for a resume
- * @param {Array} education - Array of education entries
- * @returns {Array} Array of paragraphs for the education section
+ * @param education - Array of education entries
+ * @returns Array of paragraphs for the education section
  */
-export function createEducation(education) {
-  const paragraphs = [];
+export function createEducation(education: Education[]): Paragraph[] {
+  const paragraphs: Paragraph[] = [];
 
   // Add section heading
   paragraphs.push(
@@ -68,7 +77,7 @@ export function createEducation(education) {
     );
 
     // Date and location
-    const dateParts = [];
+    const dateParts: string[] = [];
     dateParts.push(`${formatDate(edu.startDate)} - ${edu.endDate ? formatDate(edu.endDate) : 'Present'}`);
     if (edu.location) {
       dateParts.push(edu.location);

@@ -2,16 +2,27 @@
  * Resume experience section builder
  */
 
+import { Paragraph } from 'docx';
 import theme from '../../../theme.js';
 import { formatDate } from '../../formatting/date-utilities.js';
 import { createItemSection } from '../../formatting/section-utilities.js';
 
+interface WorkExperience {
+  position?: string;
+  name?: string;
+  startDate?: string;
+  endDate?: string;
+  location?: string;
+  summary?: string;
+  highlights?: string[];
+}
+
 /**
  * Creates the experience section using the generic createItemSection function
- * @param {Array} work - Array of work experiences
- * @returns {Array} Array of paragraphs for the experience section
+ * @param work - Array of work experiences
+ * @returns Array of paragraphs for the experience section
  */
-export function createExperience(work) {
+export function createExperience(work: WorkExperience[]): Paragraph[] {
   const experienceConfig = {
     sectionTitle: theme.ats.sectionTitles.experience,
     descriptionField: 'summary',
@@ -34,7 +45,7 @@ export function createExperience(work) {
         // Date and location
         fields: [
           { field: 'startDate', format: formatDate },
-          { field: 'endDate', format: (date) => date ? formatDate(date) : 'Present' },
+          { field: 'endDate', format: (date: string) => date ? formatDate(date) : 'Present' },
         ],
         includeLocation: true,
         separator: ' - ',

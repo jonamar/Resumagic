@@ -1,1 +1,1 @@
-{"version":3,"file":"summary-section.d.ts","sourceRoot":"","sources":["../../../../core/sections/resume/summary-section.js"],"names":[],"mappings":"AAcA,sCAHW,MAAM,SA8BhB"}
+{"version":3,"file":"summary-section.d.ts","sourceRoot":"","sources":["../../../../core/sections/resume/summary-section.ts"],"names":[],"mappings":"AAIA,OAAO,EAAE,SAAS,EAAE,MAAM,MAAM,CAAC;AAKjC,UAAU,MAAM;IACd,OAAO,CAAC,EAAE,MAAM,CAAC;CAClB;AAOD,wBAAgB,aAAa,CAAC,MAAM,EAAE,MAAM,GAAG,SAAS,EAAE,CA2BzD"}

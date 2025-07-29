@@ -6,13 +6,19 @@ import { Paragraph, TextRun, AlignmentType } from 'docx';
 import theme from '../../../theme.js';
 import { formatDate } from '../../formatting/date-utilities.js';
 
+interface CoverLetterMetadata {
+  date: string;
+  recipientName?: string;
+  companyName?: string;
+}
+
 /**
  * Creates the date section for a cover letter
- * @param {Object} metadata - Cover letter metadata containing date
- * @returns {Array} Array of paragraphs for the date section
+ * @param metadata - Cover letter metadata containing date
+ * @returns Array of paragraphs for the date section
  */
-export function createCoverLetterDate(metadata) {
-  const paragraphs = [];
+export function createCoverLetterDate(metadata: CoverLetterMetadata): Paragraph[] {
+  const paragraphs: Paragraph[] = [];
   
   // Format the date
   const formattedDate = formatDate(metadata.date);

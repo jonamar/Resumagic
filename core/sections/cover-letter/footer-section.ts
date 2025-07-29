@@ -1,34 +1,44 @@
 /**
- * Resume header section builder
+ * Cover letter footer section builder
  */
 
-import { Paragraph, TextRun, AlignmentType, ExternalHyperlink, UnderlineType } from 'docx';
+import { Paragraph, TextRun, ExternalHyperlink, UnderlineType } from 'docx';
 import theme from '../../../theme.js';
 import { getRegionAbbreviation } from '../../formatting/date-utilities.js';
 
-/**
- * Creates the header section for a resume
- * @param {Object} basics - Basic information containing name, location, contact details, and profiles
- * @returns {Array} Array of paragraphs for the header section
- */
-export function createHeader(basics) {
-  const paragraphs = [];
+interface Location {
+  city?: string;
+  region?: string;
+  country?: string;
+}
 
-  // Add name
-  paragraphs.push(
-    new Paragraph({
-      text: basics.name,
-      style: 'applicantName',
-      alignment: AlignmentType.LEFT,
-      spacing: {
-        after: theme.spacing.twips.afterHeader, // 12pt
-      },
-      thematicBreak: false,
-    }),
-  );
+interface Profile {
+  url: string;
+}
+
+interface Basics {
+  location?: Location;
+  phone?: string;
+  email?: string;
+  profiles?: Profile[];
+}
+
+/**
+ * Creates the footer section with contact information for cover letter
+ * @param basics - Basic contact information
+ * @param isComboMode - Whether this is part of a combined document
+ * @returns Array of paragraphs for the footer section
+ */
+export function createCoverLetterFooter(basics: Basics, isComboMode: boolean = false): Paragraph[] {
+  const paragraphs: Paragraph[] = [];
+  
+  // Skip contact info in combo mode since resume already has it
+  if (isComboMode) {
+    return paragraphs;
+  }
 
   // Create contact information with ATS-friendly format
-  const contactParts = [];
+  const contactParts: string[] = [];
   
   // Add address first with ATS-friendly label (city, province abbreviation, country)
   if (basics.location) {
@@ -71,27 +81,33 @@ export function createHeader(basics) {
         }),
       ],
       spacing: {
-        after: theme.spacing.twips.afterContact, // 5pt
+        before: theme.spacing.twips.beforeContact, // 12pt before contact info
+        after: theme.spacing.twips.afterContact,   // 5pt
       },
     }),
   );
 
   // Add profiles if any
   if (basics.profiles && basics.profiles.length > 0) {
-    const profileChildren = [];
+    const profileChildren: (TextRun | ExternalHyperlink)[] = [];
     
     basics.profiles.forEach((profile, index) => {
-      // Clean up the display text by removing protocol and www
-      const displayText = profile.url
-        .replace(/^https?:\/\//, '') // Remove http:// or https://
-        .replace(/^www\./, '');       // Remove www.
+      // Add bullet separator between profiles (not before first)
+      if (index > 0) {
+        profileChildren.push(new TextRun({
+          text: ' • ',
+          size: theme.typography.fontSize.meta * 2, // Convert to half-points
+          color: theme.colors.dimText,
+          font: theme.typography.fonts.primary,
+        }));
+      }
       
-      // Add the hyperlink
+      // Add profile as hyperlink
       profileChildren.push(
         new ExternalHyperlink({
           children: [
             new TextRun({
-              text: displayText,
+              text: profile.url.replace(/^https?:\/\//, ''), // Remove protocol for cleaner display
               size: theme.typography.fontSize.meta * 2, // Convert to half-points
               color: theme.colors.dimText,
               font: theme.typography.fonts.primary,
@@ -104,29 +120,17 @@ export function createHeader(basics) {
           link: profile.url,
         }),
       );
-      
-      // Add bullet separator if not the last item
-      if (index < basics.profiles.length - 1) {
-        profileChildren.push(
-          new TextRun({
-            text: ' • ',
-            size: theme.typography.fontSize.meta * 2,
-            color: theme.colors.dimText,
-            font: theme.typography.fonts.primary,
-          }),
-        );
-      }
     });
-    
+
     paragraphs.push(
       new Paragraph({
         children: profileChildren,
         spacing: {
-          after: theme.spacing.twips.afterHeader, // 12pt
+          after: theme.spacing.twips.afterContact, // 5pt
         },
       }),
     );
   }
-
+  
   return paragraphs;
 }

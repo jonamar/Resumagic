@@ -6,14 +6,47 @@ import { Paragraph, TextRun, HeadingLevel } from 'docx';
 import theme from '../../theme.js';
 import { createFormattedTextRuns } from './text-formatting.js';
 
+// Type definitions for configuration objects
+interface FieldConfig {
+  field: string;
+  format?: (value: any) => string;
+}
+
+interface HeaderLineConfig {
+  fields?: FieldConfig[];
+  field?: string;
+  spacing?: number;
+  keepNext?: boolean;
+  fontSize?: number;
+  bold?: boolean;
+  color?: string;
+  separator?: string;
+  includeLocation?: boolean;
+  locationSeparator?: string;
+  conditionalSpacing?: {
+    withContent: number;
+    standalone: number | ((isLastItem: boolean, itemIndex: number) => number);
+  };
+}
+
+interface SectionConfig {
+  sectionTitle: string;
+  headerLines: HeaderLineConfig[];
+  descriptionField?: string;
+  highlightsField?: string;
+  descriptionSpacing?: number;
+  highlightSpacing?: number | ((isLastItem: boolean, itemIndex: number) => number);
+  itemSpacing?: number | ((isLastItem: boolean, itemIndex: number) => number);
+}
+
 /**
  * Generic function to create item sections (experience, education, etc.)
- * @param {Array} items - Array of items to process
- * @param {Object} config - Configuration object for section formatting
- * @returns {Array} Array of paragraphs for the section
+ * @param items - Array of items to process
+ * @param config - Configuration object for section formatting
+ * @returns Array of paragraphs for the section
  */
-export function createItemSection(items, config) {
-  const paragraphs = [];
+export function createItemSection(items: any[], config: SectionConfig): Paragraph[] {
+  const paragraphs: Paragraph[] = [];
 
   // Add section heading
   paragraphs.push(
@@ -37,7 +70,7 @@ export function createItemSection(items, config) {
       let headerText = '';
       if (headerConfig.fields) {
         // Combine multiple fields (e.g., startDate + endDate + location)
-        const parts = [];
+        const parts: string[] = [];
         headerConfig.fields.forEach(fieldConfig => {
           if (fieldConfig.field && item[fieldConfig.field]) {
             let value = item[fieldConfig.field];
@@ -105,7 +138,7 @@ export function createItemSection(items, config) {
     if (hasDescription) {
       paragraphs.push(
         new Paragraph({
-          children: createFormattedTextRuns(item[config.descriptionField], {
+          children: createFormattedTextRuns(item[config.descriptionField!], {
             size: theme.typography.fontSize.body * 2, // Convert to half-points
             font: theme.typography.fonts.primary,
             color: theme.colors.text,
@@ -122,8 +155,8 @@ export function createItemSection(items, config) {
 
     // Add highlights as bullet points if present
     if (hasHighlights) {
-      item[config.highlightsField].forEach((highlight, highlightIndex) => {
-        const isLastHighlight = highlightIndex === item[config.highlightsField].length - 1;
+      item[config.highlightsField!].forEach((highlight: string, highlightIndex: number) => {
+        const isLastHighlight = highlightIndex === item[config.highlightsField!].length - 1;
         
         // Calculate spacing for highlights
         let highlightSpacing = theme.spacing.twips.afterBullet;
@@ -184,11 +217,11 @@ export function createItemSection(items, config) {
 
 /**
  * Helper function to create section headings
- * @param {String} title - Section title
- * @param {boolean} pageBreak - Whether to add a page break before the section
- * @returns {Paragraph} Section heading paragraph
+ * @param title - Section title
+ * @param pageBreak - Whether to add a page break before the section
+ * @returns Section heading paragraph
  */
-export function createSectionHeading(title, pageBreak = false) {
+export function createSectionHeading(title: string, pageBreak: boolean = false): Paragraph {
   return new Paragraph({
     children: [
       new TextRun({

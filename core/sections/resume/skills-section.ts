@@ -7,13 +7,18 @@ import theme from '../../../theme.js';
 import { createFormattedTextRuns } from '../../formatting/text-formatting.js';
 import { createSectionHeading } from '../../formatting/section-utilities.js';
 
+interface Skill {
+  name: string;
+  keywords?: string[];
+}
+
 /**
  * Creates the skills section for a resume
- * @param {Array} skills - Array of skill categories
- * @returns {Array} Array of paragraphs for the skills section
+ * @param skills - Array of skill categories
+ * @returns Array of paragraphs for the skills section
  */
-export function createSkills(skills) {
-  const paragraphs = [];
+export function createSkills(skills: Skill[]): Paragraph[] {
+  const paragraphs: Paragraph[] = [];
 
   // Add section heading with page break
   paragraphs.push(

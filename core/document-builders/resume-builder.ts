@@ -1,13 +1,9 @@
 /**
- * Main combined document builder
+ * Main resume document builder
  */
 
-import { Document, LevelFormat, AlignmentType, SectionType } from 'docx';
+import { Document, LevelFormat, AlignmentType, Paragraph } from 'docx';
 import theme from '../../theme.js';
-import { createCoverLetterDate } from '../sections/cover-letter/date-section.js';
-import { createCoverLetterContent } from '../sections/cover-letter/content-section.js';
-import { createCoverLetterClosing } from '../sections/cover-letter/closing-section.js';
-import { createCoverLetterFooter } from '../sections/cover-letter/footer-section.js';
 import { createHeader } from '../sections/resume/header-section.js';
 import { createSummary } from '../sections/resume/summary-section.js';
 import { createExperience } from '../sections/resume/experience-section.js';
@@ -17,24 +13,29 @@ import { createProjects } from '../sections/resume/projects-section.js';
 import { createSpeakingEngagements } from '../sections/resume/speaking-section.js';
 import { createLanguages } from '../sections/resume/languages-section.js';
 
-/**
- * Creates a combined DOCX document with cover letter followed by resume
- * @param {Object} coverLetterData - Cover letter data with basics and coverLetter sections
- * @param {Object} resumeData - Resume data in JSON Resume format
- * @param {Object} options - Additional options
- * @returns {Document} DOCX document with both cover letter and resume
- */
-export function createCombinedDocx(coverLetterData, resumeData, options = {}) {
-  // Cover letter sections
-  const coverLetterChildren = [
-    ...createCoverLetterDate(coverLetterData.coverLetter.metadata),
-    ...createCoverLetterContent(coverLetterData.coverLetter.content),
-    ...createCoverLetterClosing(coverLetterData.coverLetter.metadata),
-    ...createCoverLetterFooter(coverLetterData.basics, true), // Pass true for combo mode
-  ];
+interface ResumeData {
+  basics: any;
+  work: any[];
+  skills: any[];
+  education: any[];
+  projects?: any[];
+  publications?: any[];
+  languages?: any[];
+}
 
-  // Resume sections
-  const resumeChildren = [
+interface ResumeOptions {
+  // Add any options properties here as needed
+}
+
+/**
+ * Creates a DOCX document from resume JSON data
+ * @param resumeData - Resume data in JSON Resume format
+ * @param options - Additional options for resume generation
+ * @returns DOCX document
+ */
+export function createResumeDocx(resumeData: ResumeData, _options: ResumeOptions = {}): Document {
+  // Document sections
+  const children: Paragraph[] = [
     ...createHeader(resumeData.basics),
     ...createSummary(resumeData.basics),
     ...createExperience(resumeData.work),
@@ -42,20 +43,22 @@ export function createCombinedDocx(coverLetterData, resumeData, options = {}) {
     ...createEducation(resumeData.education),
   ];
 
-  // Add optional resume sections
+  // Add projects section if present
   if (resumeData.projects && resumeData.projects.length > 0) {
-    resumeChildren.push(...createProjects(resumeData.projects));
+    children.push(...createProjects(resumeData.projects));
   }
 
+  // Add speaking engagements section if present
   if (resumeData.publications && resumeData.publications.length > 0) {
-    resumeChildren.push(...createSpeakingEngagements(resumeData.publications));
+    children.push(...createSpeakingEngagements(resumeData.publications));
   }
 
+  // Add languages section if present
   if (resumeData.languages && resumeData.languages.length > 0) {
-    resumeChildren.push(...createLanguages(resumeData.languages));
+    children.push(...createLanguages(resumeData.languages));
   }
 
-  // Create the document with two sections
+  // Create the document with styles and the theme's margin settings
   const doc = new Document({
     numbering: {
       config: [
@@ -88,7 +91,7 @@ export function createCombinedDocx(coverLetterData, resumeData, options = {}) {
           next: 'Normal',
           run: {
             size: theme.typography.fontSize.name * 2, // Convert to half-points
-            font: 'Arial',
+            font: 'Arial', // Set Arial as the default font for all runs
             bold: true,
             color: theme.colors.headings,
           },
@@ -99,35 +102,18 @@ export function createCombinedDocx(coverLetterData, resumeData, options = {}) {
             indent: {
               left: 0, // No indentation
             },
-            font: 'Arial',
           },
         },
       ],
-      defaultRunProperties: {
-        font: 'Arial',
-      },
     },
-    sections: [
-      {
-        // Cover letter section
-        properties: {
-          page: {
-            margin: theme.layout.margins.document,
-          },
+    sections: [{
+      properties: {
+        page: {
+          margin: theme.layout.margins.document,
         },
-        children: coverLetterChildren,
       },
-      {
-        // Resume section (starts on new page)
-        properties: {
-          page: {
-            margin: theme.layout.margins.document,
-          },
-          type: SectionType.NEXT_PAGE, // Force new page
-        },
-        children: resumeChildren,
-      },
-    ],
+      children: children,
+    }],
   });
 
   return doc;

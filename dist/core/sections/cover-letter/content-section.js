@@ -2,10 +2,10 @@ import { Paragraph, TextRun, AlignmentType } from 'docx';
 import theme from '../../../theme.js';
 export function createCoverLetterContent(content) {
     const paragraphs = [];
-    content.forEach((section, index) => {
+    content.forEach((section) => {
         if (section.type === 'paragraph') {
             const textRuns = [];
-            section.text.forEach(textPart => {
+            section.text?.forEach(textPart => {
                 textRuns.push(new TextRun({
                     text: textPart.text,
                     size: theme.typography.fontSize.body * 2,
@@ -25,7 +25,7 @@ export function createCoverLetterContent(content) {
             }));
         }
         else if (section.type === 'list') {
-            section.items.forEach((item, itemIndex) => {
+            section.items?.forEach((item, itemIndex) => {
                 const textRuns = [];
                 item.forEach(textPart => {
                     textRuns.push(new TextRun({

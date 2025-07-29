@@ -4,7 +4,7 @@ import { createCoverLetterDate } from '../sections/cover-letter/date-section.js'
 import { createCoverLetterContent } from '../sections/cover-letter/content-section.js';
 import { createCoverLetterClosing } from '../sections/cover-letter/closing-section.js';
 import { createCoverLetterFooter } from '../sections/cover-letter/footer-section.js';
-export function createCoverLetterDocx(coverLetterData, options = {}) {
+export function createCoverLetterDocx(coverLetterData, _options = {}) {
     const children = [
         ...createCoverLetterDate(coverLetterData.coverLetter.metadata),
         ...createCoverLetterContent(coverLetterData.coverLetter.content),
@@ -54,13 +54,9 @@ export function createCoverLetterDocx(coverLetterData, options = {}) {
                         indent: {
                             left: 0,
                         },
-                        font: 'Arial',
                     },
                 },
             ],
-            defaultRunProperties: {
-                font: 'Arial',
-            },
         },
         sections: [{
                 properties: {

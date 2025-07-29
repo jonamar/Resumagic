@@ -5,13 +5,17 @@
 import { Paragraph, TextRun, AlignmentType } from 'docx';
 import theme from '../../../theme.js';
 
+interface CoverLetterMetadata {
+  customClosing?: string;
+}
+
 /**
  * Creates the closing section for cover letter
- * @param {Object} metadata - Cover letter metadata
- * @returns {Array} Array of paragraphs for the closing section
+ * @param metadata - Cover letter metadata
+ * @returns Array of paragraphs for the closing section
  */
-export function createCoverLetterClosing(metadata) {
-  const paragraphs = [];
+export function createCoverLetterClosing(metadata: CoverLetterMetadata): Paragraph[] {
+  const paragraphs: Paragraph[] = [];
   
   // Add the closing (e.g., "Warmly,")
   paragraphs.push(

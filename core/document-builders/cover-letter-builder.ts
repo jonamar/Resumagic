@@ -2,22 +2,34 @@
  * Main cover letter document builder
  */
 
-import { Document, LevelFormat, AlignmentType } from 'docx';
+import { Document, LevelFormat, AlignmentType, Paragraph } from 'docx';
 import theme from '../../theme.js';
 import { createCoverLetterDate } from '../sections/cover-letter/date-section.js';
 import { createCoverLetterContent } from '../sections/cover-letter/content-section.js';
 import { createCoverLetterClosing } from '../sections/cover-letter/closing-section.js';
 import { createCoverLetterFooter } from '../sections/cover-letter/footer-section.js';
 
+interface CoverLetterData {
+  basics: any;
+  coverLetter: {
+    metadata: any;
+    content: any[];
+  };
+}
+
+interface CoverLetterOptions {
+  // Add any options properties here as needed
+}
+
 /**
  * Creates a DOCX cover letter document from transformed markdown data
- * @param {Object} coverLetterData - Cover letter data with basics and coverLetter sections
- * @param {Object} options - Additional options for cover letter generation
- * @returns {Document} DOCX document
+ * @param coverLetterData - Cover letter data with basics and coverLetter sections
+ * @param options - Additional options for cover letter generation
+ * @returns DOCX document
  */
-export function createCoverLetterDocx(coverLetterData, options = {}) {
+export function createCoverLetterDocx(coverLetterData: CoverLetterData, _options: CoverLetterOptions = {}): Document {
   // Document sections (no header for cover letter)
-  const children = [
+  const children: Paragraph[] = [
     ...createCoverLetterDate(coverLetterData.coverLetter.metadata),
     ...createCoverLetterContent(coverLetterData.coverLetter.content),
     ...createCoverLetterClosing(coverLetterData.coverLetter.metadata),
@@ -68,13 +80,9 @@ export function createCoverLetterDocx(coverLetterData, options = {}) {
             indent: {
               left: 0, // No indentation
             },
-            font: 'Arial', // Explicitly set font at paragraph level too
           },
         },
       ],
-      defaultRunProperties: {
-        font: 'Arial', // Set Arial as the default font for all runs
-      },
     },
     sections: [{
       properties: {

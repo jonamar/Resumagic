@@ -1,1 +1,1 @@
-{"version":3,"file":"closing-section.d.ts","sourceRoot":"","sources":["../../../../core/sections/cover-letter/closing-section.js"],"names":[],"mappings":"AAYA,mDAHW,MAAM,SAgEhB"}
+{"version":3,"file":"closing-section.d.ts","sourceRoot":"","sources":["../../../../core/sections/cover-letter/closing-section.ts"],"names":[],"mappings":"AAIA,OAAO,EAAE,SAAS,EAA0B,MAAM,MAAM,CAAC;AAGzD,UAAU,mBAAmB;IAC3B,aAAa,CAAC,EAAE,MAAM,CAAC;CACxB;AAOD,wBAAgB,wBAAwB,CAAC,QAAQ,EAAE,mBAAmB,GAAG,SAAS,EAAE,CA6DnF"}

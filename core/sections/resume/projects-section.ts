@@ -2,15 +2,22 @@
  * Resume projects section builder
  */
 
+import { Paragraph } from 'docx';
 import theme from '../../../theme.js';
 import { createItemSection } from '../../formatting/section-utilities.js';
 
+interface Project {
+  name: string;
+  description?: string;
+  highlights?: string[];
+}
+
 /**
  * Creates the projects section using the generic createItemSection function
- * @param {Array} projects - Array of project entries
- * @returns {Array} Array of paragraphs for the projects section
+ * @param projects - Array of project entries
+ * @returns Array of paragraphs for the projects section
  */
-export function createProjects(projects) {
+export function createProjects(projects: Project[]): Paragraph[] {
   const projectsConfig = {
     sectionTitle: theme.ats.sectionTitles.projects,
     descriptionField: 'description',

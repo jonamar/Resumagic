@@ -6,13 +6,18 @@ import { Paragraph, TextRun } from 'docx';
 import theme from '../../../theme.js';
 import { createSectionHeading } from '../../formatting/section-utilities.js';
 
+interface Language {
+  language: string;
+  fluency?: string;
+}
+
 /**
  * Creates the Languages section
- * @param {Array} languages - Array of language objects from resume data
- * @returns {Array} Array of paragraphs for the languages section
+ * @param languages - Array of language objects from resume data
+ * @returns Array of paragraphs for the languages section
  */
-export function createLanguages(languages) {
-  const paragraphs = [];
+export function createLanguages(languages: Language[]): Paragraph[] {
+  const paragraphs: Paragraph[] = [];
 
   // Add section heading
   paragraphs.push(
@@ -21,9 +26,6 @@ export function createLanguages(languages) {
 
   // Create a simple list of languages with fluency levels
   languages.forEach((language, index) => {
-    const languageText = language.fluency ? 
-      `${language.language}: ${language.fluency}` : 
-      language.language;
     
     paragraphs.push(
       new Paragraph({
