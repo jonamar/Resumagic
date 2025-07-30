@@ -3,7 +3,7 @@
  */
 
 import { Paragraph, TextRun, AlignmentType } from 'docx';
-import theme from '../../../theme.js';
+import theme from '../../../theme';
 import { formatDate } from '../../formatting/date-utilities.js';
 
 interface CoverLetterMetadata {

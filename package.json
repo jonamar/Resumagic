@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Professional resume and cover letter generator with intelligent keyword analysis",
   "type": "module",
-  "main": "generate-resume.js",
+  "main": "generate-resume.ts",
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest --watch",

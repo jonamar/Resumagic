@@ -4,7 +4,7 @@
  */
 
 import { ERROR_TYPES, ERROR_SEVERITY, CONTEXT_TYPES, ErrorType, ErrorSeverity, ContextType } from './error-types.js';
-import theme from '../theme.js';
+import theme from '../theme';
 
 /**
  * Configuration for error handling behavior

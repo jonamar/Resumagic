@@ -7,7 +7,7 @@ import fs from 'fs';
 import path from 'path';
 import { execSync } from 'child_process';
 import { fileURLToPath } from 'url';
-import theme from '../../theme.js';
+import theme from '../../theme';
 import { 
   discoverApplications, 
   getTestableApplications, 

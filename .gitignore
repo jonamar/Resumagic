@@ -82,3 +82,6 @@ __pycache__/
 coverage/
 *.lcov
 eslint-results.json
+
+# TypeScript compilation output
+dist/

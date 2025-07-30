@@ -3,7 +3,7 @@
  */
 
 import { Document, LevelFormat, AlignmentType, SectionType, Paragraph } from 'docx';
-import theme from '../../theme.js';
+import theme from '../../theme';
 import { createCoverLetterDate } from '../sections/cover-letter/date-section.js';
 import { createCoverLetterContent } from '../sections/cover-letter/content-section.js';
 import { createCoverLetterClosing } from '../sections/cover-letter/closing-section.js';

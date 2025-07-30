@@ -9,11 +9,11 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 // Import the document orchestrator (same as CLI uses)
-import { orchestrateGeneration } from '../../core/document-orchestration.js';
+import { orchestrateGeneration } from '../../core/document-orchestration';
 
 // Import CLI utilities for proper data formatting
-import { resolvePaths, loadResumeData } from '../../core/path-resolution.js';
-import { determineGenerationPlan } from '../../core/generation-planning.js';
+import { resolvePaths, loadResumeData } from '../../core/path-resolution';
+import { determineGenerationPlan } from '../../core/generation-planning';
 
 // Import DOCX content extraction utilities
 import { extractDocxContent, generateContentHash, validateDocxContentHash, extractMultipleContentHashes } from '../../utils/docx-content-extractor.js';

@@ -8,9 +8,9 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { orchestrateGeneration } from '../core/document-orchestration.js';
-import { resolvePaths, loadResumeData } from '../core/path-resolution.js';
-import { determineGenerationPlan } from '../core/generation-planning.js';
+import { orchestrateGeneration } from '../core/document-orchestration';
+import { resolvePaths, loadResumeData } from '../core/path-resolution';
+import { determineGenerationPlan } from '../core/generation-planning';
 import { extractDocxContent, generateContentHash } from '../utils/docx-content-extractor.js';
 
 const __filename = fileURLToPath(import.meta.url);

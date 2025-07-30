@@ -3,7 +3,7 @@
  */
 
 import { Paragraph, TextRun, HeadingLevel } from 'docx';
-import theme from '../../theme.js';
+import theme from '../../theme';
 import { createFormattedTextRuns } from './text-formatting.js';
 
 // Type definitions for configuration objects

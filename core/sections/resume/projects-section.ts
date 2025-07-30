@@ -3,7 +3,7 @@
  */
 
 import { Paragraph } from 'docx';
-import theme from '../../../theme.js';
+import theme from '../../../theme';
 import { createItemSection } from '../../formatting/section-utilities.js';
 
 interface Project {
