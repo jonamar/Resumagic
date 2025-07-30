@@ -5,7 +5,8 @@ import { determineGenerationPlan, validateGenerationPlan } from '../core/generat
 import { resolvePaths, validatePaths, hasMarkdownFile, loadResumeData, displayApplicationNotFoundError } from '../core/path-resolution';
 import { orchestrateGeneration } from '../core/document-orchestration';
 import { createNewApplication } from '../core/new-application';
-import { getServiceWrapper } from '../services/wrappers/service-registry';
+import { analyzeKeywords } from '../services/keyword-analysis';
+import { evaluateCandidate } from '../services/hiring-evaluation';
 import theme from '../theme';
 
 // ESM equivalent of __dirname
@@ -17,18 +18,7 @@ const __dirname = path.dirname(__filename);
  * Main entry point for CLI command execution
  */
 
-interface KeywordAnalysisInput {
-  applicationName: string;
-  keywordsFile: string;
-  jobPostingFile: string;
-  resumeFile?: string;
-}
-
-interface ServiceResult {
-  success: boolean;
-  data?: unknown;
-  error?: { message: string };
-}
+import { KeywordAnalysisInput } from '../types/services';
 
 /**
  * Runs keyword analysis for the specified application
@@ -37,16 +27,13 @@ async function runKeywordAnalysis(applicationName: string): Promise<void> {
   console.log(`${theme.messages.emojis.processing} Starting keyword analysis...`);
   
   try {
-    // Use standardized keyword analysis service wrapper
-    const keywordService = getServiceWrapper('keyword-analysis');
-    
     // Construct paths to required files
     const applicationPath = path.join(__dirname, '../data/applications', applicationName);
     const keywordsFile = path.join(applicationPath, 'inputs', 'keywords.json');
     const jobPostingFile = path.join(applicationPath, 'inputs', 'job-posting.md');
     const resumeFile = path.join(applicationPath, 'inputs', 'resume.json');
     
-    // Prepare input for service wrapper
+    // Prepare input for direct service function
     const input: KeywordAnalysisInput = {
       applicationName,
       keywordsFile,
@@ -59,25 +46,26 @@ async function runKeywordAnalysis(applicationName: string): Promise<void> {
       input.resumeFile = resumeFile;
     }
     
-    console.log(`${theme.messages.emojis.processing} Running keyword analysis via service wrapper...`);
+    console.log(`${theme.messages.emojis.processing} Running keyword analysis...`);
     
-    // Execute analysis using service wrapper
-    const result = await keywordService.analyze(input) as ServiceResult;
-    
-    if (!result.success) {
-      throw new Error(result.error?.message || 'Keyword analysis failed');
-    }
+    // Execute analysis using direct function
+    const result = await analyzeKeywords(
+      applicationName,
+      keywordsFile, 
+      jobPostingFile,
+      input.resumeFile
+    );
     
     console.log(`${theme.messages.emojis.success} Keyword analysis completed successfully!`);
     console.log(`${theme.messages.emojis.folder} Analysis results saved to working directory`);
     
-    return result.data;
+    return result;
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     console.error(`${theme.messages.emojis.error} Keyword analysis failed: ${errorMessage}`);
     
-    // Enhanced error handling through service wrapper
-    if (errorMessage.includes('FILE_NOT_FOUND')) {
+    // Enhanced error handling
+    if (errorMessage.includes('Keywords file not found') || errorMessage.includes('Job posting file not found')) {
       console.error(`${theme.messages.emojis.warning} Missing required input files. Ensure keywords.json and job-posting.md exist in inputs/ directory.`);
     } else if (errorMessage.includes('python')) {
       console.error(`${theme.messages.emojis.warning} Python not found or missing dependencies. Run: pip install -r services/keyword-analysis/requirements.txt`);
@@ -95,45 +83,30 @@ async function runHiringEvaluation(applicationName: string, resumeData: unknown,
   console.log(`${theme.messages.emojis.processing} Starting hiring ${mode}...`);
   
   try {
-    // Use standardized hiring evaluation service wrapper
-    const hiringService = getServiceWrapper('hiring-evaluation');
-    
     // Extract candidate name from resume data
     const candidateName = resumeData.basics?.name || resumeData.personalInfo?.name || 'Candidate';
     
     console.log(`${theme.messages.emojis.processing} Evaluating candidate: ${candidateName} (${mode})`);
     
-    // Prepare input for service wrapper
-    const input = {
-      applicationName,
-      resumeData,
-      fastMode,
-    };
+    console.log(`${theme.messages.emojis.processing} Running hiring evaluation...`);
     
-    console.log(`${theme.messages.emojis.processing} Running hiring evaluation via service wrapper...`);
-    
-    // Execute evaluation using service wrapper
-    const result = await hiringService.evaluate(input);
-    
-    if (!result.success) {
-      throw new Error(result.error?.message || 'Hiring evaluation failed');
-    }
+    // Execute evaluation using direct function
+    const result = await evaluateCandidate(applicationName, resumeData, fastMode);
     
     // Display evaluation results
-    const evaluation = result.data;
     console.log(`${theme.messages.emojis.success} Hiring evaluation completed successfully!`);
     console.log(`${theme.messages.emojis.document} Evaluation Summary:`);
-    console.log(`   Fit Score: ${evaluation.fitScore}/100`);
-    console.log(`   Matched Keywords: ${evaluation.matchedKeywords?.length || 0}`);
-    console.log(`   Missing Keywords: ${evaluation.missingKeywords?.length || 0}`);
-    console.log(`   Key Strengths: ${evaluation.keyStrengths?.join(', ') || 'None identified'}`);
+    console.log(`   Fit Score: ${result.fitScore || result.overallScore}/100`);
+    console.log(`   Matched Keywords: ${result.matchedKeywords?.length || 0}`);
+    console.log(`   Missing Keywords: ${result.missingKeywords?.length || 0}`);
+    console.log(`   Key Strengths: ${result.keyStrengths?.join(', ') || 'None identified'}`);
     console.log(`${theme.messages.emojis.folder} Full evaluation saved to working directory`);
     
-    return result.data;
+    return result;
   } catch (error) {
     console.error(`${theme.messages.emojis.error} Hiring evaluation failed: ${error.message}`);
     
-    // Enhanced error handling through service wrapper
+    // Enhanced error handling
     if (error.message.includes('python')) {
       console.error(`${theme.messages.emojis.warning} Python not found or missing dependencies. Run: pip install -r services/hiring-evaluation/requirements.txt`);
     }

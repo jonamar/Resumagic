@@ -1,7 +1,8 @@
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { executeCommand } from './cli/command-handler';
-import { getServiceWrapper } from './services/wrappers/service-registry';
+import { analyzeKeywords } from './services/keyword-analysis';
+import { evaluateCandidate } from './services/hiring-evaluation';
 import theme from './theme';
 
 // ESM equivalent of __dirname
@@ -22,16 +23,13 @@ async function runKeywordAnalysis(applicationName) {
   console.log(`${theme.messages.emojis.processing} Starting keyword analysis...`);
   
   try {
-    // Use standardized keyword analysis service wrapper
-    const keywordService = getServiceWrapper('keyword-analysis');
-    
     // Construct paths to required files
     const applicationPath = path.join(__dirname, '../data/applications', applicationName);
     const keywordsFile = path.join(applicationPath, 'inputs', 'keywords.json');
     const jobPostingFile = path.join(applicationPath, 'inputs', 'job-posting.md');
     const resumeFile = path.join(applicationPath, 'inputs', 'resume.json');
     
-    // Prepare input for service wrapper
+    // Prepare input for direct service function
     const input = {
       applicationName,
       keywordsFile,
@@ -44,24 +42,25 @@ async function runKeywordAnalysis(applicationName) {
       input.resumeFile = resumeFile;
     }
     
-    console.log(`${theme.messages.emojis.processing} Running keyword analysis via service wrapper...`);
+    console.log(`${theme.messages.emojis.processing} Running keyword analysis...`);
     
-    // Execute analysis using service wrapper
-    const result = await keywordService.analyze(input);
-    
-    if (!result.success) {
-      throw new Error(result.error?.message || 'Keyword analysis failed');
-    }
+    // Execute analysis using direct function
+    const result = await analyzeKeywords(
+      applicationName,
+      keywordsFile,
+      jobPostingFile,
+      input.resumeFile
+    );
     
     console.log(`${theme.messages.emojis.success} Keyword analysis completed successfully!`);
     console.log(`${theme.messages.emojis.folder} Analysis results saved to working directory`);
     
-    return result.data;
+    return result;
   } catch (error) {
     console.error(`${theme.messages.emojis.error} Keyword analysis failed: ${error.message}`);
     
-    // Enhanced error handling through service wrapper
-    if (error.message.includes('FILE_NOT_FOUND')) {
+    // Enhanced error handling
+    if (error.message.includes('Keywords file not found') || error.message.includes('Job posting file not found')) {
       console.error(`${theme.messages.emojis.warning} Missing required input files. Ensure keywords.json and job-posting.md exist in inputs/ directory.`);
     } else if (error.message.includes('python')) {
       console.error(`${theme.messages.emojis.warning} Python not found or missing dependencies. Run: pip install -r services/keyword-analysis/requirements.txt`);
@@ -83,36 +82,22 @@ async function runHiringEvaluation(applicationName, resumeData, fastMode = false
   console.log(`${theme.messages.emojis.processing} Starting hiring ${mode}...`);
   
   try {
-    // Use standardized hiring evaluation service wrapper
-    const hiringService = getServiceWrapper('hiring-evaluation');
-    
     // Extract candidate name from resume data
     const candidateName = resumeData.basics?.name || resumeData.personalInfo?.name || 'Candidate';
     
     console.log(`${theme.messages.emojis.processing} Evaluating candidate: ${candidateName} (${mode})`);
     
-    // Prepare input for service wrapper
-    const input = {
-      applicationName,
-      resumeData,
-      fastMode,
-    };
-    
-    // Execute evaluation using service wrapper
-    const result = await hiringService.evaluate(input);
-    
-    if (!result.success) {
-      throw new Error(result.error?.message || 'Hiring evaluation failed');
-    }
+    // Execute evaluation using direct function
+    const result = await evaluateCandidate(applicationName, resumeData, fastMode);
     
     console.log(`${theme.messages.emojis.success} Hiring ${mode} completed successfully!`);
     console.log(`${theme.messages.emojis.folder} Evaluation results saved to working directory`);
     
-    return result.data;
+    return result;
   } catch (error) {
     console.error(`${theme.messages.emojis.error} Hiring evaluation failed: ${error.message}`);
     
-    // Enhanced error handling through service wrapper
+    // Enhanced error handling
     if (error.message.includes('localhost:11434') || error.message.includes('connection refused')) {
       console.error(`${theme.messages.emojis.warning} Make sure Ollama is running: ollama serve`);
       console.error(`${theme.messages.emojis.warning} And dolphin3:latest model is available: ollama pull dolphin3:latest`);
