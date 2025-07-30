@@ -17,12 +17,23 @@ const __dirname = path.dirname(__filename);
  * Main entry point for CLI command execution
  */
 
+interface KeywordAnalysisInput {
+  applicationName: string;
+  keywordsFile: string;
+  jobPostingFile: string;
+  resumeFile?: string;
+}
+
+interface ServiceResult {
+  success: boolean;
+  data?: unknown;
+  error?: { message: string };
+}
+
 /**
  * Runs keyword analysis for the specified application
- * @param {string} applicationName - Name of the application
- * @returns {Promise<void>}
  */
-async function runKeywordAnalysis(applicationName) {
+async function runKeywordAnalysis(applicationName: string): Promise<void> {
   console.log(`${theme.messages.emojis.processing} Starting keyword analysis...`);
   
   try {
@@ -36,7 +47,7 @@ async function runKeywordAnalysis(applicationName) {
     const resumeFile = path.join(applicationPath, 'inputs', 'resume.json');
     
     // Prepare input for service wrapper
-    const input = {
+    const input: KeywordAnalysisInput = {
       applicationName,
       keywordsFile,
       jobPostingFile,
@@ -51,7 +62,7 @@ async function runKeywordAnalysis(applicationName) {
     console.log(`${theme.messages.emojis.processing} Running keyword analysis via service wrapper...`);
     
     // Execute analysis using service wrapper
-    const result = await keywordService.analyze(input);
+    const result = await keywordService.analyze(input) as ServiceResult;
     
     if (!result.success) {
       throw new Error(result.error?.message || 'Keyword analysis failed');
@@ -62,12 +73,13 @@ async function runKeywordAnalysis(applicationName) {
     
     return result.data;
   } catch (error) {
-    console.error(`${theme.messages.emojis.error} Keyword analysis failed: ${error.message}`);
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error(`${theme.messages.emojis.error} Keyword analysis failed: ${errorMessage}`);
     
     // Enhanced error handling through service wrapper
-    if (error.message.includes('FILE_NOT_FOUND')) {
+    if (errorMessage.includes('FILE_NOT_FOUND')) {
       console.error(`${theme.messages.emojis.warning} Missing required input files. Ensure keywords.json and job-posting.md exist in inputs/ directory.`);
-    } else if (error.message.includes('python')) {
+    } else if (errorMessage.includes('python')) {
       console.error(`${theme.messages.emojis.warning} Python not found or missing dependencies. Run: pip install -r services/keyword-analysis/requirements.txt`);
     }
     
@@ -77,12 +89,8 @@ async function runKeywordAnalysis(applicationName) {
 
 /**
  * Runs hiring evaluation for the specified application
- * @param {string} applicationName - Name of the application
- * @param {Object} resumeData - Resume data for candidate name extraction
- * @param {boolean} fastMode - Use faster model for quick evaluation
- * @returns {Promise<void>}
  */
-async function runHiringEvaluation(applicationName, resumeData, fastMode = false) {
+async function runHiringEvaluation(applicationName: string, resumeData: unknown, fastMode = false): Promise<void> {
   const mode = fastMode ? 'fast evaluation' : 'detailed evaluation';
   console.log(`${theme.messages.emojis.processing} Starting hiring ${mode}...`);
   
@@ -139,7 +147,7 @@ async function runHiringEvaluation(applicationName, resumeData, fastMode = false
  * @param {Array} args - Command line arguments
  * @returns {Promise<void>}
  */
-async function executeCommand(args) {
+async function executeCommand(args: string[]): Promise<void> {
   try {
     // Parse command line arguments
     const cliConfig = parseCliArguments(args);

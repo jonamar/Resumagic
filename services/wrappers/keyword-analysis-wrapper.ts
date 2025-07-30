@@ -10,10 +10,18 @@ const execAsync = promisify(exec);
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { BaseServiceWrapper } from './base-service-wrapper.js';
+import { BaseServiceWrapper, ServiceResponse } from './base-service-wrapper';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+interface KeywordAnalysisInput {
+  applicationName: string;
+  keywordsFile: string;
+  jobPostingFile: string;
+  resumeFile?: string;
+  topCount?: number;
+}
 
 class KeywordAnalysisWrapper extends BaseServiceWrapper {
   constructor() {
@@ -22,15 +30,8 @@ class KeywordAnalysisWrapper extends BaseServiceWrapper {
 
   /**
    * Analyze keywords for a job application
-   * @param {Object} input - Analysis input
-   * @param {string} input.applicationName - Name of the application
-   * @param {string} input.keywordsFile - Path to keywords.json file
-   * @param {string} input.jobPostingFile - Path to job-posting.md file
-   * @param {string} [input.resumeFile] - Optional path to resume.json file
-   * @param {number} [input.topCount] - Number of top keywords to return
-   * @returns {Promise<ServiceResponse>}
    */
-  async analyze(input) {
+  async analyze(input: KeywordAnalysisInput): Promise<ServiceResponse> {
     const startTime = Date.now();
     
     this.logOperation('analyze', {
@@ -88,9 +89,8 @@ class KeywordAnalysisWrapper extends BaseServiceWrapper {
 
   /**
    * Execute Python keyword analysis service
-   * @private
    */
-  async executeAnalysis(input, startTime) {
+  private async executeAnalysis(input: KeywordAnalysisInput, startTime: number): Promise<ServiceResponse> {
     // Construct the command with proper arguments
     let command = `python services/keyword-analysis/kw_rank_modular.py "${input.keywordsFile}" "${input.jobPostingFile}"`;
     
@@ -142,10 +142,8 @@ class KeywordAnalysisWrapper extends BaseServiceWrapper {
 
   /**
    * Get analysis recommendations based on keywords
-   * @param {Object} input - Recommendation input
-   * @returns {Promise<ServiceResponse>}
    */
-  async getRecommendations(input) {
+  async getRecommendations(input: KeywordAnalysisInput): Promise<ServiceResponse> {
     const startTime = Date.now();
     
     try {

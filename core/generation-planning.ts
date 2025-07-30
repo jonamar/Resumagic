@@ -14,13 +14,35 @@ const _errorHandler = new ErrorHandler({
  * Handles document generation planning logic based on CLI flags and file availability
  */
 
+interface CLIFlags {
+  all?: boolean;
+  evaluate?: boolean;
+  coverLetter?: boolean;
+  both?: boolean;
+  combined?: boolean;
+  auto?: boolean;
+}
+
+interface GenerationPlan {
+  generateResume: boolean;
+  generateCoverLetter: boolean;
+  generateCombinedDoc: boolean;
+  runHiringEvaluation: boolean;
+  behaviorDescription: string;
+}
+
+interface ValidationResult {
+  isValid: boolean;
+  error?: string;
+  errorType?: string;
+  details?: string[];
+  data?: unknown;
+}
+
 /**
  * Determines what document types to generate based on flags and file availability
- * @param {Object} flags - CLI flags object
- * @param {boolean} hasMarkdownFile - Whether a cover letter markdown file exists
- * @returns {Object} Generation plan with boolean flags for each document type
  */
-function determineGenerationPlan(flags, hasMarkdownFile) {
+function determineGenerationPlan(flags: CLIFlags, hasMarkdownFile: boolean): GenerationPlan {
   let generateResume = false;
   let generateCoverLetter = false;
   let generateCombinedDoc = false;
@@ -93,12 +115,8 @@ function determineGenerationPlan(flags, hasMarkdownFile) {
 
 /**
  * Validates that the generation plan is feasible given available files
- * @param {Object} plan - Generation plan from determineGenerationPlan
- * @param {boolean} hasMarkdownFile - Whether a cover letter markdown file exists
- * @param {string} markdownFilePath - Path to the markdown file for error messages
- * @returns {Object} Validation result with isValid boolean and error details
  */
-function validateGenerationPlan(plan, hasMarkdownFile, markdownFilePath) {
+function validateGenerationPlan(plan: GenerationPlan, hasMarkdownFile: boolean, markdownFilePath: string): ValidationResult {
   const { generateCoverLetter, generateCombinedDoc } = plan;
   
   // Check if cover letter generation is requested but no markdown file exists

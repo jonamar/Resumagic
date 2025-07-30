@@ -9,11 +9,47 @@ import HiringEvaluationWrapper from './hiring-evaluation-wrapper';
 import DocumentGenerationWrapper from './document-generation-wrapper';
 import ValeLintingWrapper from './vale-linting-wrapper';
 import { getFeatureFlags } from '../../utils/feature-flags';
+import { BaseServiceWrapper } from './base-service-wrapper';
+
+type ServiceConstructor = new () => BaseServiceWrapper;
+
+interface ServiceRegistry {
+  [key: string]: ServiceConstructor;
+}
+
+interface BatchOperation {
+  service: string;
+  method: string;
+  input: unknown;
+}
+
+interface BatchResult {
+  operation_index: number;
+  success: boolean;
+  result?: unknown;
+  error?: {
+    message: string;
+    operation: BatchOperation;
+  };
+}
+
+interface HealthStatusService {
+  status: string;
+  implementation: string;
+  details: unknown;
+}
+
+interface HealthStatus {
+  timestamp: string;
+  overall_status: string;
+  services: { [key: string]: HealthStatusService };
+  feature_flags: unknown;
+}
 
 /**
  * Registry of all available service wrappers
  */
-const SERVICE_REGISTRY = {
+const SERVICE_REGISTRY: ServiceRegistry = {
   'keyword-analysis': KeywordAnalysisWrapper,
   'hiring-evaluation': HiringEvaluationWrapper,
   'document-generation': DocumentGenerationWrapper,
@@ -23,15 +59,12 @@ const SERVICE_REGISTRY = {
 /**
  * Singleton instances of service wrappers
  */
-const serviceInstances = new Map();
+const serviceInstances = new Map<string, BaseServiceWrapper>();
 
 /**
  * Get a service wrapper instance
- * @param {string} serviceName - Name of the service
- * @returns {BaseServiceWrapper} - Service wrapper instance
- * @throws {Error} - If service is not found
  */
-function getServiceWrapper(serviceName) {
+function getServiceWrapper(serviceName: string): BaseServiceWrapper {
   if (!SERVICE_REGISTRY[serviceName]) {
     throw new Error(`Service '${serviceName}' not found. Available services: ${Object.keys(SERVICE_REGISTRY).join(', ')}`);
   }
@@ -47,26 +80,22 @@ function getServiceWrapper(serviceName) {
 
 /**
  * Get all available service names
- * @returns {Array<string>} - Array of service names
  */
-function getAvailableServices() {
+function getAvailableServices(): string[] {
   return Object.keys(SERVICE_REGISTRY);
 }
 
 /**
  * Check if a service is available
- * @param {string} serviceName - Name of the service
- * @returns {boolean} - Whether the service is available
  */
-function isServiceAvailable(serviceName) {
+function isServiceAvailable(serviceName: string): boolean {
   return serviceName in SERVICE_REGISTRY;
 }
 
 /**
  * Get service health status for all services
- * @returns {Promise<Object>} - Health status for all services
  */
-async function getServicesHealthStatus() {
+async function getServicesHealthStatus(): Promise<HealthStatus> {
   const healthStatus = {
     timestamp: new Date().toISOString(),
     overall_status: 'unknown',
@@ -83,8 +112,8 @@ async function getServicesHealthStatus() {
       
       // Check if service has validateCapabilities method
       let status = 'unknown';
-      if (typeof service.validateCapabilities === 'function') {
-        const result = await service.validateCapabilities();
+      if ('validateCapabilities' in service && typeof (service as any).validateCapabilities === 'function') {
+        const result = await (service as any).validateCapabilities();
         status = result.success ? 'healthy' : 'unhealthy';
         healthStatus.services[serviceName] = {
           status,
@@ -131,13 +160,8 @@ async function getServicesHealthStatus() {
 
 /**
  * Batch execute operations across multiple services
- * @param {Array} operations - Array of operation objects
- * @param {string} operations[].service - Service name
- * @param {string} operations[].method - Method name
- * @param {Object} operations[].input - Input data
- * @returns {Promise<Array>} - Array of results
  */
-async function batchExecute(operations) {
+async function batchExecute(operations: BatchOperation[]): Promise<BatchResult[]> {
   if (!Array.isArray(operations)) {
     throw new Error('Operations must be an array');
   }
@@ -152,11 +176,11 @@ async function batchExecute(operations) {
 
       const service = getServiceWrapper(serviceName);
       
-      if (typeof service[method] !== 'function') {
+      if (typeof (service as any)[method] !== 'function') {
         throw new Error(`Method '${method}' not found on service '${serviceName}'`);
       }
 
-      const result = await service[method](input);
+      const result = await (service as any)[method](input);
       return {
         operation_index: index,
         success: true,
@@ -181,15 +205,14 @@ async function batchExecute(operations) {
 /**
  * Clear all service instances (useful for testing)
  */
-function clearServiceInstances() {
+function clearServiceInstances(): void {
   serviceInstances.clear();
 }
 
 /**
  * Get service configuration summary
- * @returns {Object} - Configuration summary
  */
-function getServiceConfiguration() {
+function getServiceConfiguration(): object {
   return {
     available_services: getAvailableServices(),
     total_services: getAvailableServices().length,

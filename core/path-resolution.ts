@@ -10,12 +10,55 @@ import { ERROR_TYPES } from '../utils/error-types';
  * Includes support for canonical source and test directories
  */
 
+interface ResolvedPaths {
+  companyName: string;
+  applicationFolderPath: string;
+  inputsDir: string;
+  outputsDir: string;
+  resumeDataPath: string;
+  markdownFilePath: string;
+  resumeDocxPath: string;
+  coverLetterDocxPath: string;
+  combinedDocxPath: string;
+}
+
+interface ValidationResult {
+  isValid: boolean;
+  error?: string;
+  errorType?: string;
+  details?: string[];
+  data?: unknown;
+}
+
+interface LoadResult {
+  isValid: boolean;
+  data?: unknown;
+  error?: string;
+  errorType?: string;
+}
+
+interface CanonicalPaths {
+  canonicalDir: string;
+  inputsDir: string;
+  workingDir: string;
+  outputsDir: string;
+  resumeFile: string;
+  coverLetterFile: string;
+  jobPostingFile: string;
+}
+
+interface TestPaths {
+  testApplicationPath: string;
+  inputsDir: string;
+  outputsDir: string;
+  resumeFile: string;
+  coverLetterFile: string;
+}
+
 /**
  * Extracts company name from folder name (e.g., "relay-director-of-product" -> "Relay")
- * @param {string} folderName - The application folder name
- * @returns {string} - Formatted company name
  */
-function extractCompanyFromFolderName(folderName) {
+function extractCompanyFromFolderName(folderName: string): string {
   // Take the first part before the first hyphen and capitalize it
   const companyPart = folderName.split('-')[0];
   return companyPart.charAt(0).toUpperCase() + companyPart.slice(1);
@@ -23,12 +66,8 @@ function extractCompanyFromFolderName(folderName) {
 
 /**
  * Resolves all file paths for a given application
- * @param {string} applicationName - Name of the application folder
- * @param {string} baseDir - Base directory (typically __dirname)
- * @param {boolean} isTest - Whether this is a test mode (use test directory)
- * @returns {Object} Object containing all resolved paths
  */
-function resolvePaths(applicationName, baseDir, isTest = false) {
+function resolvePaths(applicationName: string, baseDir: string, isTest = false): ResolvedPaths {
   const companyName = extractCompanyFromFolderName(applicationName);
   
   // Set up application folder paths - use test directory if in test mode
@@ -61,10 +100,8 @@ function resolvePaths(applicationName, baseDir, isTest = false) {
 
 /**
  * Validates that required paths exist and creates output directory if needed
- * @param {Object} paths - Paths object from resolvePaths
- * @returns {Object} Validation result with isValid boolean and error details
  */
-function validatePaths(paths) {
+function validatePaths(paths: ResolvedPaths): ValidationResult {
   const { applicationFolderPath, resumeDataPath, outputsDir } = paths;
   
   // Verify the application folder exists
@@ -148,19 +185,15 @@ function validatePaths(paths) {
 
 /**
  * Checks if a markdown cover letter file exists
- * @param {string} markdownFilePath - Path to the markdown file
- * @returns {boolean} Whether the file exists
  */
-function hasMarkdownFile(markdownFilePath) {
+function hasMarkdownFile(markdownFilePath: string): boolean {
   return fs.existsSync(markdownFilePath);
 }
 
 /**
  * Loads and validates resume data from JSON file
- * @param {string} resumeDataPath - Path to the resume JSON file
- * @returns {Object} Result with loaded data or error information
  */
-function loadResumeData(resumeDataPath) {
+function loadResumeData(resumeDataPath: string): LoadResult {
   try {
     // Log the file being loaded for debugging
     console.log(`🔍 Loading resume data from: ${resumeDataPath}`);
@@ -184,10 +217,8 @@ function loadResumeData(resumeDataPath) {
 
 /**
  * Gets information about available applications for error messages
- * @param {string} baseDir - Base directory (typically __dirname)
- * @returns {Array} Array of available application names
  */
-function getAvailableApplications(baseDir) {
+function getAvailableApplications(baseDir: string): string[] {
   const applicationsDir = path.resolve(baseDir, theme.fileNaming.dataDir, theme.fileNaming.applicationsDir);
   
   if (!fs.existsSync(applicationsDir)) {
@@ -203,10 +234,8 @@ function getAvailableApplications(baseDir) {
 
 /**
  * Displays application not found error with helpful information
- * @param {string} applicationName - Requested application name
- * @param {string} baseDir - Base directory for finding available applications
  */
-function displayApplicationNotFoundError(applicationName, baseDir) {
+function displayApplicationNotFoundError(applicationName: string, baseDir: string): void {
   const applicationsDir = path.resolve(baseDir, theme.fileNaming.dataDir, theme.fileNaming.applicationsDir);
   const applicationFolderPath = path.join(applicationsDir, applicationName);
   
@@ -228,10 +257,8 @@ function displayApplicationNotFoundError(applicationName, baseDir) {
 
 /**
  * Resolves paths for canonical source directory
- * @param {string} baseDir - Base directory (typically app root)
- * @returns {Object} Object containing canonical directory paths
  */
-function resolveCanonicalPaths(baseDir) {
+function resolveCanonicalPaths(baseDir: string): CanonicalPaths {
   const canonicalDir = path.resolve(baseDir, theme.fileNaming.dataDir, theme.fileNaming.canonicalDir);
   const inputsDir = path.join(canonicalDir, theme.fileNaming.inputsDir);
   const workingDir = path.join(canonicalDir, theme.fileNaming.workingDir || 'working');
@@ -250,10 +277,8 @@ function resolveCanonicalPaths(baseDir) {
 
 /**
  * Resolves paths for test directory
- * @param {string} baseDir - Base directory (typically app root)
- * @returns {Object} Object containing test directory paths
  */
-function resolveTestPaths(baseDir) {
+function resolveTestPaths(baseDir: string): TestPaths {
   const testApplicationPath = path.resolve(baseDir, theme.fileNaming.dataDir, theme.fileNaming.testDir, theme.fileNaming.testApplicationName);
   const inputsDir = path.join(testApplicationPath, theme.fileNaming.inputsDir);
   const outputsDir = path.join(testApplicationPath, theme.fileNaming.outputsDir);

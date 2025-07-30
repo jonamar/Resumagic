@@ -16,15 +16,38 @@ const _errorHandler = new ErrorHandler({
  * Handles command line argument parsing, flag detection, and validation
  */
 
+interface NewAppConfig {
+  company: string;
+  jobTitle: string;
+}
+
+interface CLIFlags {
+  preview: boolean;
+  coverLetter: boolean;
+  both: boolean;
+  auto: boolean;
+  combined: boolean;
+  evaluate: boolean;
+  all: boolean;
+  fast: boolean;
+  newApp: boolean;
+  test: boolean;
+}
+
+interface CLIConfig {
+  applicationName: string | undefined;
+  flags: CLIFlags;
+  newAppConfig: NewAppConfig | null;
+  rawArgs: string[];
+}
+
 /**
  * Parses command line arguments and returns a structured configuration object
- * @param {Array} args - Command line arguments (typically process.argv.slice(2))
- * @returns {Object} Parsed CLI configuration
  */
-function parseCliArguments(args) {
+function parseCliArguments(args: string[]): CLIConfig {
   // Check for --new-app flag first (special case with arguments)
   const newAppIndex = args.indexOf(theme.cli.flags.newApp);
-  let newAppConfig = null;
+  let newAppConfig: NewAppConfig | null = null;
   const filteredArgs = [...args];
   
   if (newAppIndex !== -1) {
@@ -32,7 +55,10 @@ function parseCliArguments(args) {
     const company = args[newAppIndex + 1];
     const jobTitle = args[newAppIndex + 2];
     
-    newAppConfig = { company, jobTitle };
+    // Type-safe assignment - these could be undefined if args are missing
+    if (company && jobTitle) {
+      newAppConfig = { company, jobTitle };
+    }
     
     // Remove --new-app and its arguments from args for normal processing
     filteredArgs.splice(newAppIndex, 3);
@@ -70,10 +96,8 @@ function parseCliArguments(args) {
 
 /**
  * Validates CLI arguments and provides helpful error messages
- * @param {Object} config - Parsed CLI configuration
- * @returns {Object} Validation result with isValid boolean and error details
  */
-function validateCliArguments(config) {
+function validateCliArguments(config: CLIConfig) {
   const { applicationName, flags, newAppConfig } = config;
   
   // Handle --new-app flag validation
@@ -151,10 +175,8 @@ function validateCliArguments(config) {
 
 /**
  * Displays usage information and available applications
- * @param {string} applicationsDir - Path to applications directory
- * @param {string} applicationName - Requested application name for create command
  */
-function displayUsage(applicationsDir, applicationName) {
+function displayUsage(applicationsDir: string, applicationName: string | undefined): void {
   ErrorHandler.logAppError(
     'Missing application name in CLI arguments',
     ERROR_TYPES.VALIDATION_ERROR,

@@ -4,7 +4,30 @@
  * Part of Phase 2: Standardize Existing Service Infrastructure
  */
 
-import { BaseServiceWrapper } from './base-service-wrapper.js';
+import { BaseServiceWrapper, ServiceResponse } from './base-service-wrapper';
+
+interface HiringEvaluationInput {
+  applicationName: string;
+  resumeData: {
+    personalInfo?: {
+      name?: string;
+      email?: string;
+    };
+    basics?: {
+      name?: string;
+      email?: string;
+    };
+  };
+  fastMode?: boolean;
+  jobPostingFile?: string;
+}
+
+interface BatchEvaluationInput {
+  candidates: Array<{
+    applicationName?: string;
+    resumeData: HiringEvaluationInput['resumeData'];
+  }>;
+}
 
 class HiringEvaluationWrapper extends BaseServiceWrapper {
   constructor() {
@@ -13,14 +36,8 @@ class HiringEvaluationWrapper extends BaseServiceWrapper {
 
   /**
    * Evaluate hiring potential for a candidate
-   * @param {Object} input - Evaluation input
-   * @param {string} input.applicationName - Name of the application
-   * @param {Object} input.resumeData - Resume data for candidate
-   * @param {boolean} [input.fastMode] - Use faster model for quick evaluation
-   * @param {string} [input.jobPostingFile] - Optional job posting for context
-   * @returns {Promise<ServiceResponse>}
    */
-  async evaluate(input) {
+  async evaluate(input: HiringEvaluationInput): Promise<ServiceResponse> {
     const startTime = Date.now();
     
     this.logOperation('evaluate', {
@@ -67,12 +84,11 @@ class HiringEvaluationWrapper extends BaseServiceWrapper {
 
   /**
    * Execute hiring evaluation using direct EvaluationRunner API
-   * @private
    */
-  async executeEvaluation(input, startTime) {
+  private async executeEvaluation(input: HiringEvaluationInput, startTime: number): Promise<ServiceResponse> {
     try {
       // Dynamic import of the evaluation runner service
-      const { default: EvaluationRunner } = await import('../hiring-evaluation/evaluation-runner.js');
+      const { default: EvaluationRunner } = await import('../hiring-evaluation/evaluation-runner');
       
       // Initialize evaluation runner with application context
       const evaluationRunner = new EvaluationRunner(input.applicationName);
@@ -136,11 +152,8 @@ class HiringEvaluationWrapper extends BaseServiceWrapper {
 
   /**
    * Get evaluation summary for multiple candidates
-   * @param {Object} input - Batch evaluation input
-   * @param {Array} input.candidates - Array of candidate data objects
-   * @returns {Promise<ServiceResponse>}
    */
-  async batchEvaluate(input) {
+  async batchEvaluate(input: BatchEvaluationInput): Promise<ServiceResponse> {
     const startTime = Date.now();
     
     try {
