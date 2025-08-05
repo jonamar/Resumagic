@@ -195,9 +195,6 @@ function hasMarkdownFile(markdownFilePath: string): boolean {
  */
 function loadResumeData(resumeDataPath: string): LoadResult {
   try {
-    // Log the file being loaded for debugging
-    console.log(`🔍 Loading resume data from: ${resumeDataPath}`);
-    
     // Use fs.readFileSync to load JSON data
     const resumeDataRaw = fs.readFileSync(resumeDataPath, 'utf8');
     const resumeData = JSON.parse(resumeDataRaw);
