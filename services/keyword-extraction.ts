@@ -3,13 +3,35 @@
 import fs from 'fs';
 import http from 'http';
 
+// Keyword extraction interfaces based on actual data structures
+interface KeywordItem {
+  kw: string;
+  role: 'core' | 'industry_experience' | 'functional_skills' | 'culture';
+  source?: string;
+  originalYears?: string;
+  originalDescription?: string;
+}
+
+interface KeywordSet {
+  keywords: KeywordItem[];
+}
+
+interface ExperienceMatch {
+  years: string;
+  description: string;
+  confidence: number;
+}
+
 class KeywordExtractionService {
+  private ollamaUrl: string;
+  private modelName: string;
+
   constructor() {
     this.ollamaUrl = 'http://localhost:11434';
     this.modelName = 'dolphin3:latest';
   }
 
-  async extractKeywords(jobPostingPath, outputPath) {
+  async extractKeywords(jobPostingPath: string, outputPath: string): Promise<KeywordSet> {
     try {
       console.log('🔍 Loading job posting...');
       const jobPosting = fs.readFileSync(jobPostingPath, 'utf8');
@@ -46,7 +68,7 @@ class KeywordExtractionService {
     }
   }
 
-  validateExperienceRequirements(keywords, jobPosting) {
+  validateExperienceRequirements(keywords: KeywordSet, jobPosting: string): KeywordSet {
     console.log('  🔍 Extracting experience requirements from job posting...');
         
     // Extract all experience requirements directly from job posting
@@ -128,7 +150,7 @@ class KeywordExtractionService {
     }
   }
 
-  buildExtractionPrompt(jobPosting) {
+  buildExtractionPrompt(jobPosting: string): string {
     return `# Keyword Extraction Task
 
 You are an expert at analyzing job postings and extracting the most important keywords for resume optimization. Your task is to read this job posting carefully and identify all the critical requirements, skills, and qualifications.
@@ -177,7 +199,7 @@ ${jobPosting}
 Extract all important keywords from this job posting and categorize them appropriately. Focus on keywords that a candidate would need to include in their resume to match this role.`;
   }
 
-  callOllama(prompt) {
+  callOllama(prompt: string): Promise<string> {
     return new Promise((resolve, reject) => {
       const postData = JSON.stringify({
         model: this.modelName,
@@ -230,7 +252,7 @@ Extract all important keywords from this job posting and categorize them appropr
     });
   }
 
-  parseJSON(text) {
+  parseJSON(text: string): KeywordSet {
     try {
       // Remove <think> tags if present (some models use these)
       const cleanText = text.replace(/<think>[\s\S]*?<\/think>/g, '').trim();
