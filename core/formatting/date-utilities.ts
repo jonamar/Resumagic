@@ -32,7 +32,6 @@ export function formatDate(dateStr: string): string {
     
     // Check if date parsing was successful
     if (isNaN(parsedDate.getTime())) {
-      console.warn(`⚠️  Date parsing warning: Could not parse date "${dateStr}". Using original value.`);
       return dateStr;
     }
     
@@ -42,8 +41,7 @@ export function formatDate(dateStr: string): string {
     
     return `${month} ${year}`;
     
-  } catch (error: unknown) {
-    console.warn(`⚠️  Date parsing error: Failed to format date "${dateStr}". Error: ${(error as Error).message}. Using original value.`);
+  } catch {
     return dateStr;
   }
 }
