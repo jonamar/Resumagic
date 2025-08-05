@@ -8,6 +8,29 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+// Core evaluation data structures based on actual Ollama responses
+interface CriterionScore {
+  score: number;
+  reasoning: string;
+}
+
+interface PersonaEvaluation {
+  persona: string;
+  scores: Record<string, CriterionScore>;
+  overall_assessment: {
+    persona_score: number;
+    recommendation: string;
+  };
+}
+
+interface OllamaEvaluationResponse {
+  evaluation_timestamp: string;
+  model: string;
+  candidate: string;
+  evaluations: PersonaEvaluation[];
+}
+
+// Processed evaluation result
 interface EvaluationResult {
   summary?: {
     composite_score?: number;
@@ -15,11 +38,31 @@ interface EvaluationResult {
     key_recommendations?: string[];
   };
   composite_score?: number;
-  matched_keywords?: any[];
-  missing_keywords?: any[];
+  matched_keywords?: string[];
+  missing_keywords?: string[];
   key_strengths?: string[];
-  personas?: any[];
-  evaluations?: any[];
+  personas?: string[];
+  evaluations?: PersonaEvaluation[];
+}
+
+// Persona configuration from YAML files
+interface PersonaCriterion {
+  title: string;
+  description: string;
+  bullets: string[];
+}
+
+interface PersonaConfig {
+  persona: {
+    name: string;
+    background: string[];
+    evaluation_approach: string;
+  };
+  criteria: Record<string, PersonaCriterion>;
+  evaluation: {
+    focus: string;
+    json_fields: string[];
+  };
 }
 
 class EvaluationRunner {
@@ -62,7 +105,7 @@ class EvaluationRunner {
     console.log(`🚀 Fast mode ${enabled ? 'enabled' : 'disabled'}: using ${selectedModel} @ temperature ${temperature}`);
   }
 
-  loadFile(filePath) {
+  loadFile(filePath: string): string {
     try {
       const content = fs.readFileSync(filePath, 'utf8');
       return content;
@@ -72,7 +115,7 @@ class EvaluationRunner {
     }
   }
 
-  saveFile(filePath, content) {
+  saveFile(filePath: string, content: string): void {
     try {
       const dir = path.dirname(filePath);
       if (!fs.existsSync(dir)) {
@@ -86,7 +129,7 @@ class EvaluationRunner {
     }
   }
 
-  parseSimpleYaml(content) {
+  parseSimpleYaml(content: string): PersonaConfig {
     const data = { criteria: {} };
     const criteriaMatches = content.matchAll(/ {2}(\w+):\s*\n\s+title: "([^"]+)"/g);
     for (const match of criteriaMatches) {
@@ -95,7 +138,7 @@ class EvaluationRunner {
     return data;
   }
 
-  callOllama(prompt, model = this.modelName, persona = null) {
+  callOllama(prompt: string, model: string = this.modelName, persona: string | null = null): Promise<string> {
     // Map persona keys to proper names for evaluation processor
     const personaNameMap = {
       'hr': 'HR Manager',
@@ -221,13 +264,13 @@ class EvaluationRunner {
     return { jobPosting, resume };
   }
 
-  async loadPrompt(persona, provider = 'claude') {
+  async loadPrompt(persona: string, provider: string = 'claude'): Promise<string> {
     // Generate prompt from YAML configuration
     const { generatePrompt } = await import('./generate-prompt.js');
     return generatePrompt(persona);
   }
 
-  async preparePrompt(persona, provider = 'claude') {
+  async preparePrompt(persona: string, provider: string = 'claude'): Promise<string> {
     const { default: KeywordExtractor } = await import('./keyword-extractor.js');
     const extractor = new KeywordExtractor();
         
@@ -261,7 +304,7 @@ class EvaluationRunner {
     return prompt;
   }
 
-  parseJSON(text) {
+  parseJSON(text: string): PersonaEvaluation {
     try {
       // Remove <think> tags if present
       const cleanText = text.replace(/<think>[\s\S]*?<\/think>/g, '').trim();
@@ -299,7 +342,7 @@ class EvaluationRunner {
     }
   }
 
-  async evaluatePersona(persona, provider = 'ollama') {
+  async evaluatePersona(persona: string, provider: string = 'ollama'): Promise<PersonaEvaluation> {
     console.log(`Evaluating ${persona} persona with ${provider}...`);
         
     try {
@@ -342,7 +385,7 @@ class EvaluationRunner {
     }
   }
 
-  calculatePersonaScore(scores) {
+  calculatePersonaScore(scores: Record<string, CriterionScore>): number {
     if (!scores || typeof scores !== 'object') {
       console.error('Invalid scores object:', scores);
       throw new Error('Scores object is invalid');
@@ -357,7 +400,7 @@ class EvaluationRunner {
     return values.reduce((sum, score) => sum + score, 0) / values.length;
   }
 
-  calculateCompositeScore(evaluations) {
+  calculateCompositeScore(evaluations: Record<string, PersonaEvaluation>): number {
     let composite = 0;
     for (const persona of this.personas) {
       const personaScore = this.calculatePersonaScore(evaluations[persona].scores);
@@ -427,7 +470,7 @@ class EvaluationRunner {
   }
 
   // Main CLI interface
-  async run(candidateName) {
+  async run(candidateName: string): Promise<void> {
     try {
       const results = await this.runEvaluation(candidateName);
       console.log('\n🎉 Evaluation completed successfully!');

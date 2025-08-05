@@ -33,6 +33,28 @@ interface AssessmentLevel {
   recommendation: string;
 }
 
+interface QualitativeInsights {
+  strengths: Array<{
+    persona: string;
+    insight: string;
+    score: number;
+  }>;
+  concerns: Array<{
+    persona: string;
+    insight: string;
+    score: number;
+  }>;
+  specificExamples: string[];
+  consensusThemes: Array<{
+    theme: string;
+    evaluations: Array<{
+      persona: string;
+      criterion: string;
+      reasoning: string;
+    }>;
+  }>;
+}
+
 interface Insights {
   strongest: string;
   strongestScore: number;
@@ -40,7 +62,7 @@ interface Insights {
   weakestScore: number;
   variance: number;
   consensusLevel: string;
-  qualitative: any;
+  qualitative: QualitativeInsights;
 }
 
 class EvaluationProcessor {
@@ -91,7 +113,7 @@ class EvaluationProcessor {
      * @param {Array} evaluations - Raw evaluation objects
      * @returns {Array} Processed data with accurate calculations
      */
-  extractAndCalculateScores(evaluations) {
+  extractAndCalculateScores(evaluations: Evaluation[]): ProcessedPersonaData[] {
     return evaluations.map(evaluation => {
       const personaName = this.extractPersonaName(evaluation.persona);
       const scores = evaluation.scores;
@@ -122,7 +144,7 @@ class EvaluationProcessor {
      * @param {string} personaString - Full persona description
      * @returns {string} Clean persona name
      */
-  extractPersonaName(personaString) {
+  extractPersonaName(personaString: string): string {
     if (personaString.includes('HR Manager')) {
       return 'HR Manager';
     }
@@ -149,7 +171,7 @@ class EvaluationProcessor {
      * @param {Array} processedData - Processed evaluation data
      * @returns {number} Final weighted score
      */
-  calculateWeightedComposite(processedData) {
+  calculateWeightedComposite(processedData: ProcessedPersonaData[]): number {
     const weightedSum = processedData.reduce((sum, persona) => {
       return sum + (persona.calculatedAverage * persona.weight);
     }, 0);
@@ -162,7 +184,7 @@ class EvaluationProcessor {
      * @param {number} score - Final composite score
      * @returns {Object} Assessment details
      */
-  getAssessmentLevel(score) {
+  getAssessmentLevel(score: number): AssessmentLevel {
     if (score >= this.thresholds.exceptional) {
       return { level: 'Exceptional Candidate', emoji: '🌟', recommendation: 'Strong hire recommendation' };
     } else if (score >= this.thresholds.viable) {
@@ -182,7 +204,7 @@ class EvaluationProcessor {
      * @param {Array} evaluations - Original evaluation objects with reasoning
      * @returns {Object} Insights object
      */
-  generateInsights(processedData, evaluations) {
+  generateInsights(processedData: ProcessedPersonaData[], evaluations: Evaluation[]): Insights {
     const scores = processedData.map(p => p.calculatedAverage);
     const maxScore = Math.max(...scores);
     const minScore = Math.min(...scores);
@@ -222,7 +244,7 @@ class EvaluationProcessor {
      * @param {Array} processedData - Processed evaluation data for scoring context
      * @returns {Object} Organized qualitative insights
      */
-  extractQualitativeInsights(evaluations, processedData) {
+  extractQualitativeInsights(evaluations: Evaluation[], processedData: ProcessedPersonaData[]): QualitativeInsights {
     const strengths = [];
     const concerns = [];
     const specificExamples = [];
@@ -501,7 +523,7 @@ class EvaluationProcessor {
      * @param {Object} insights - Generated insights
      * @returns {string} Formatted Markdown
      */
-  generateMarkdownSummary(candidateName, finalScore, assessment, processedData, insights) {
+  generateMarkdownSummary(candidateName: string, finalScore: number, assessment: AssessmentLevel, processedData: ProcessedPersonaData[], insights: Insights): string {
     let markdown = `# Candidate Evaluation Summary: ${candidateName}\n\n`;
         
     // Overall Result
