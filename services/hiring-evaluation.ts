@@ -33,7 +33,7 @@ export async function evaluateCandidate(
 
   try {
     // Dynamic import of the evaluation runner service
-    const { default: EvaluationRunner } = await import('./hiring-evaluation/evaluation-runner');
+    const { default: EvaluationRunner } = await import('./hiring-evaluation/evaluation-runner.js');
     
     // Initialize evaluation runner with application context
     const evaluationRunner = new EvaluationRunner(input.applicationName);

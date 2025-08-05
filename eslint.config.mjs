@@ -21,7 +21,11 @@ export default [
       'services/keyword-analysis/venv/**',
       '**/__pycache__/**',
       '**/*.pyc',
-      '**/site-packages/**'
+      '**/site-packages/**',
+      'services/hiring-evaluation/comprehensive-optimization-results/**',
+      'services/hiring-evaluation/ollama-optimization-experiment/**',
+      'services/hiring-evaluation/model-test-results/**',
+      'services/hiring-evaluation/test-archive/**'
     ]
   },
   

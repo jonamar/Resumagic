@@ -1,11 +1,27 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
-function loadYaml(filePath) {
+interface PersonaData {
+  persona: {
+    name: string;
+    background: string[];
+    evaluation_approach: string;
+  };
+  criteria: Record<string, {
+    title: string;
+    description: string;
+    bullets: string[];
+  }>;
+  evaluation: {
+    focus: string;
+  };
+}
+
+function loadYaml(filePath: string): PersonaData {
   const content = fs.readFileSync(filePath, 'utf8');
-  const data = { persona: {}, criteria: {}, evaluation: {} };
+  const data: PersonaData = { persona: { name: '', background: [], evaluation_approach: '' }, criteria: {}, evaluation: { focus: '' } };
     
   // Extract persona name
   const nameMatch = content.match(/name: "([^"]+)"/);
@@ -14,7 +30,7 @@ function loadYaml(filePath) {
   // Extract background bullets
   const backgroundSection = content.match(/background:\s*\n((?:\s*- "[^"]+"\s*\n)+)/);
   data.persona.background = backgroundSection ? 
-    backgroundSection[1].match(/"([^"]+)"/g).map(m => m.slice(1, -1)) : [];
+    backgroundSection[1].match(/"([^"]+)"/g)?.map(m => m.slice(1, -1)) || [] : [];
     
   // Extract evaluation approach
   const approachMatch = content.match(/evaluation_approach: \|\s*\n([\s\S]*?)\n\ncriteria:/);
@@ -25,7 +41,7 @@ function loadYaml(filePath) {
   const criteriaMatches = content.matchAll(/ {2}(\w+):\s*\n\s+title: "([^"]+)"\s*\n\s+description: "([^"]+)"\s*\n\s+bullets:\s*\n((?:\s+- "[^"]+"\s*\n)+)/g);
   for (const match of criteriaMatches) {
     const key = match[1];
-    const bullets = match[4].match(/"([^"]+)"/g).map(m => m.slice(1, -1));
+    const bullets = match[4].match(/"([^"]+)"/g)?.map(m => m.slice(1, -1)) || [];
         
     data.criteria[key] = {
       title: match[2],
@@ -41,7 +57,7 @@ function loadYaml(filePath) {
   return data;
 }
 
-function generatePrompt(personaKey) {
+export function generatePrompt(personaKey: string): string {
   const yamlPath = path.join(__dirname, 'personas', `${personaKey}.yaml`);
   const persona = loadYaml(yamlPath);
     
@@ -84,10 +100,8 @@ Review the attached resume against the job posting and score using this rubric. 
   return prompt;
 }
 
-module.exports = { generatePrompt };
-
 // Only run file generation when called directly
-if (require.main === module) {
+if (import.meta.url === `file://${process.argv[1]}`) {
   // Generate all prompts
   const personas = ['hr', 'technical', 'design', 'finance', 'ceo', 'team'];
     
@@ -100,8 +114,5 @@ if (require.main === module) {
   personas.forEach(persona => {
     const prompt = generatePrompt(persona);
     fs.writeFileSync(path.join(outputDir, `${persona}-prompt.md`), prompt);
-    console.log(`✅ Generated ${persona}-prompt.md`);
   });
-
-  console.log('\n🎉 All prompts generated from YAML configuration');
 }

@@ -7,13 +7,45 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+interface Keyword {
+  kw: string;
+  [key: string]: any; // Allow additional properties
+}
+
+interface KeywordAnalysis {
+  knockout_requirements?: Keyword[];
+  skills_ranked?: Keyword[];
+  [key: string]: any; // Allow additional properties
+}
+
+interface PriorityKeywords {
+  all_priorities: Keyword[];
+  hr_keywords: Keyword[];
+  technical_keywords: Keyword[];
+  design_keywords: Keyword[];
+  finance_keywords: Keyword[];
+  ceo_keywords: Keyword[];
+  team_keywords: Keyword[];
+}
+
+interface DomainAssignments {
+  hr: Keyword[];
+  technical: Keyword[];
+  design: Keyword[];
+  finance: Keyword[];
+  ceo: Keyword[];
+  team: Keyword[];
+}
+
 class KeywordExtractor {
+  private baseDir: string;
+
   constructor() {
     this.baseDir = __dirname;
   }
 
-  extractPriorityKeywords(keywordAnalysisPath) {
-    const analysis = JSON.parse(fs.readFileSync(keywordAnalysisPath, 'utf8'));
+  extractPriorityKeywords(keywordAnalysisPath: string): PriorityKeywords {
+    const analysis: KeywordAnalysis = JSON.parse(fs.readFileSync(keywordAnalysisPath, 'utf8'));
         
     // Get all knockouts + top 5 skills (max 7 total)
     const knockouts = analysis.knockout_requirements || [];
@@ -33,7 +65,7 @@ class KeywordExtractor {
   }
 
   // Semantic domain keywords for similarity matching
-  getDomainKeywords() {
+  getDomainKeywords(): Record<string, string[]> {
     return {
       hr: [
         'experience', 'years of experience', 'leadership experience', 'team management',
@@ -84,7 +116,7 @@ class KeywordExtractor {
   // Encodes keywords into 384-dimensional embeddings
   // Performs cosine similarity instead of word overlap
   // Current implementation is a placeholder for easy integration
-  calculateSimilarity(keyword, domainKeywords) {
+  calculateSimilarity(keyword: string, domainKeywords: string[]): number {
     const keywordLower = keyword.toLowerCase();
     const keywordWords = keywordLower.split(/\s+/);
         
@@ -108,9 +140,9 @@ class KeywordExtractor {
   }
 
   // Assign keywords to domains based on semantic similarity
-  assignToDomains(keywords) {
+  assignToDomains(keywords: Keyword[]): DomainAssignments {
     const domainKeywords = this.getDomainKeywords();
-    const assignments = { hr: [], technical: [], design: [], finance: [], ceo: [], team: [] };
+    const assignments: DomainAssignments = { hr: [], technical: [], design: [], finance: [], ceo: [], team: [] };
         
     for (const keyword of keywords) {
       const similarities = {
@@ -126,45 +158,47 @@ class KeywordExtractor {
       const maxSimilarity = Math.max(...Object.values(similarities));
       if (maxSimilarity >= 0.25) {
         const bestDomain = Object.entries(similarities)
-          .find(([domain, score]) => score === maxSimilarity)[0];
-        assignments[bestDomain].push(keyword);
+          .find(([domain, score]) => score === maxSimilarity)?.[0] as keyof DomainAssignments;
+        if (bestDomain) {
+          assignments[bestDomain].push(keyword);
+        }
       }
     }
         
     return assignments;
   }
 
-  filterForHR(keywords) {
+  filterForHR(keywords: Keyword[]): Keyword[] {
     const assignments = this.assignToDomains(keywords);
     return assignments.hr;
   }
 
-  filterForTechnical(keywords) {
+  filterForTechnical(keywords: Keyword[]): Keyword[] {
     const assignments = this.assignToDomains(keywords);
     return assignments.technical;
   }
 
-  filterForDesign(keywords) {
+  filterForDesign(keywords: Keyword[]): Keyword[] {
     const assignments = this.assignToDomains(keywords);
     return assignments.design;
   }
     
-  filterForFinance(keywords) {
+  filterForFinance(keywords: Keyword[]): Keyword[] {
     const assignments = this.assignToDomains(keywords);
     return assignments.finance;
   }
     
-  filterForCEO(keywords) {
+  filterForCEO(keywords: Keyword[]): Keyword[] {
     const assignments = this.assignToDomains(keywords);
     return assignments.ceo;
   }
     
-  filterForTeam(keywords) {
+  filterForTeam(keywords: Keyword[]): Keyword[] {
     const assignments = this.assignToDomains(keywords);
     return assignments.team;
   }
 
-  generateContextPrompt(keywords) {
+  generateContextPrompt(keywords: Keyword[]): string {
     if (keywords.length === 0) {
       return '';
     }
@@ -192,15 +226,9 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const extractor = new KeywordExtractor();
   const keywordPath = path.join(__dirname, 'application-materials', 'keyword_analysis.json');
     
-  console.log('🔍 Extracting priority keywords...\n');
-    
   const result = extractor.extractPriorityKeywords(keywordPath);
     
-  console.log('📊 ALL PRIORITIES:', result.all_priorities.length, 'keywords');
-  result.all_priorities.forEach(kw => console.log(`  - "${kw.kw}"`));
-    
   // Debug similarity scores
-  console.log('\n🔍 Similarity Analysis:');
   const domainKeywords = extractor.getDomainKeywords();
     
   result.all_priorities.forEach(kw => {
@@ -212,16 +240,5 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       ceo: extractor.calculateSimilarity(kw.kw, domainKeywords.ceo),
       team: extractor.calculateSimilarity(kw.kw, domainKeywords.team),
     };
-    console.log(`"${kw.kw}": HR=${similarities.hr.toFixed(2)}, Tech=${similarities.technical.toFixed(2)}, Design=${similarities.design.toFixed(2)}, Finance=${similarities.finance.toFixed(2)}, CEO=${similarities.ceo.toFixed(2)}, Team=${similarities.team.toFixed(2)}`);
   });
-    
-  console.log('\n👥 HR KEYWORDS:', result.hr_keywords.map(k => k.kw));
-  console.log('⚙️  TECHNICAL KEYWORDS:', result.technical_keywords.map(k => k.kw));
-  console.log('🎨 DESIGN KEYWORDS:', result.design_keywords.map(k => k.kw));
-  console.log('💰 FINANCE KEYWORDS:', result.finance_keywords.map(k => k.kw));
-  console.log('🏢 CEO KEYWORDS:', result.ceo_keywords.map(k => k.kw));
-  console.log('👥 TEAM KEYWORDS:', result.team_keywords.map(k => k.kw));
-    
-  console.log('\n📝 Sample HR Context Prompt:');
-  console.log(extractor.generateContextPrompt(result.hr_keywords));
 }

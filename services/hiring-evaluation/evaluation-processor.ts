@@ -3,7 +3,50 @@
  * Processes 6-persona hiring evaluation results and generates accurate Markdown summaries
  */
 
+interface EvaluationCriterion {
+  score: number;
+  reasoning: string;
+}
+
+interface Evaluation {
+  persona: string;
+  scores: Record<string, EvaluationCriterion>;
+  overall_assessment?: {
+    persona_score?: number;
+    recommendation?: string;
+  };
+}
+
+interface ProcessedPersonaData {
+  persona: string;
+  criterionNames: string[];
+  criterionScores: number[];
+  calculatedAverage: number;
+  llmAverage: number | null;
+  weight: number;
+  recommendation: string;
+}
+
+interface AssessmentLevel {
+  level: string;
+  emoji: string;
+  recommendation: string;
+}
+
+interface Insights {
+  strongest: string;
+  strongestScore: number;
+  weakest: string;
+  weakestScore: number;
+  variance: number;
+  consensusLevel: string;
+  qualitative: any;
+}
+
 class EvaluationProcessor {
+  private weights: Record<string, number>;
+  private thresholds: Record<string, number>;
+
   constructor() {
     // Persona weights for composite scoring
     this.weights = {
@@ -30,7 +73,7 @@ class EvaluationProcessor {
      * @param {string} candidateName - Name of the candidate
      * @returns {string} Formatted Markdown summary
      */
-  processEvaluations(evaluations, candidateName = 'Candidate') {
+  processEvaluations(evaluations: Evaluation[], candidateName = 'Candidate'): string {
     if (!evaluations || evaluations.length !== 6) {
       throw new Error('Expected exactly 6 evaluation objects');
     }
@@ -539,7 +582,7 @@ class EvaluationProcessor {
 }
 
 // Example usage function
-function processEvaluationResults(evaluationsArray, candidateName) {
+function processEvaluationResults(evaluationsArray: Evaluation[], candidateName: string): string {
   const processor = new EvaluationProcessor();
   return processor.processEvaluations(evaluationsArray, candidateName);
 }
@@ -549,6 +592,6 @@ export { EvaluationProcessor, processEvaluationResults };
 // If running directly, provide usage example
 if (import.meta.url === `file://${process.argv[1]}`) {
   console.log('Evaluation Processor created successfully!');
-  console.log("Usage: import { processEvaluationResults } from './evaluation-processor.js';");
+  console.log("Usage: import { processEvaluationResults } from './evaluation-processor.ts';");
   console.log("const summary = processEvaluationResults(evaluationsArray, 'Candidate Name');");
 }

@@ -8,7 +8,30 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+interface EvaluationResult {
+  summary?: {
+    composite_score?: number;
+    overall_assessment?: string;
+    key_recommendations?: string[];
+  };
+  composite_score?: number;
+  matched_keywords?: any[];
+  missing_keywords?: any[];
+  key_strengths?: string[];
+  personas?: any[];
+  evaluations?: any[];
+}
+
 class EvaluationRunner {
+  private baseDir: string;
+  private applicationName: string;
+  private ollamaUrl: string;
+  private modelName: string;
+  private fastModelName: string;
+  private fastMode: boolean;
+  private modelTemperatures: Record<string, number>;
+  private personas: string[];
+  private weights: Record<string, number>;
   constructor(applicationName = 'elovate-director-product-management') {
     this.baseDir = __dirname;
     this.applicationName = applicationName;
@@ -32,7 +55,7 @@ class EvaluationRunner {
     };
   }
 
-  setFastMode(enabled) {
+  setFastMode(enabled: boolean): void {
     this.fastMode = enabled;
     const selectedModel = enabled ? this.fastModelName : this.modelName;
     const temperature = this.modelTemperatures[selectedModel] || 0.1;
@@ -343,7 +366,7 @@ class EvaluationRunner {
     return composite;
   }
 
-  async runEvaluation(candidateName = null) {
+  async runEvaluation(candidateName: string | null = null): Promise<EvaluationResult> {
     console.log('Starting candidate evaluation...');
         
     // Load application materials to get candidate name if not provided
