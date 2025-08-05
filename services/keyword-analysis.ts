@@ -26,7 +26,7 @@ export async function analyzeKeywords(
   applicationName: string,
   keywordsFile: string,
   jobPostingFile: string,
-  resumeFile?: string
+  resumeFile?: string,
 ): Promise<KeywordAnalysis> {
   const input = { applicationName, keywordsFile, jobPostingFile, resumeFile };
   // Validate input
@@ -92,8 +92,8 @@ export async function analyzeKeywords(
         missing_keywords: analysisData.missing_keywords,
         keyword_scores: analysisData.keyword_scores,
         recommendations: analysisData.recommendations,
-        ...analysisData
-      }
+        ...analysisData,
+      },
     };
     
   } catch (error) {
@@ -117,7 +117,7 @@ export async function getKeywordRecommendations(input: KeywordAnalysisInput): Pr
         'Include more relevant keywords from the job posting',
         'Focus on technical skills mentioned in the job description',
         'Align experience descriptions with job requirements',
-      ]
+      ],
     };
   }
   

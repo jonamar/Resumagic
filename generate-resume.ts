@@ -49,7 +49,7 @@ async function runKeywordAnalysis(applicationName) {
       applicationName,
       keywordsFile,
       jobPostingFile,
-      input.resumeFile
+      input.resumeFile,
     );
     
     console.log(`${theme.messages.emojis.success} Keyword analysis completed successfully!`);

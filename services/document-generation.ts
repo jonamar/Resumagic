@@ -20,41 +20,41 @@ export async function generateDocument(
   resumeData: any,
   outputPath: string,
   markdownFilePath?: string,
-  resumeDataPath?: string
+  resumeDataPath?: string,
 ): Promise<GenerationResult> {
   try {
     let filePath: string;
 
     switch (documentType) {
-      case 'resume':
-        filePath = await documentOrchestrator.generateResumeDocument(resumeData, outputPath);
-        break;
+    case 'resume':
+      filePath = await documentOrchestrator.generateResumeDocument(resumeData, outputPath);
+      break;
       
-      case 'cover-letter':
-        if (!markdownFilePath || !resumeDataPath) {
-          throw new Error('Cover letter generation requires markdownFilePath and resumeDataPath');
-        }
-        filePath = await documentOrchestrator.generateCoverLetterDocument(
-          markdownFilePath,
-          resumeDataPath,
-          outputPath
-        );
-        break;
+    case 'cover-letter':
+      if (!markdownFilePath || !resumeDataPath) {
+        throw new Error('Cover letter generation requires markdownFilePath and resumeDataPath');
+      }
+      filePath = await documentOrchestrator.generateCoverLetterDocument(
+        markdownFilePath,
+        resumeDataPath,
+        outputPath,
+      );
+      break;
       
-      case 'combined':
-        if (!markdownFilePath || !resumeDataPath) {
-          throw new Error('Combined document generation requires markdownFilePath and resumeDataPath');
-        }
-        filePath = await documentOrchestrator.generateCombinedDocument(
-          markdownFilePath,
-          resumeDataPath,
-          resumeData,
-          outputPath
-        );
-        break;
+    case 'combined':
+      if (!markdownFilePath || !resumeDataPath) {
+        throw new Error('Combined document generation requires markdownFilePath and resumeDataPath');
+      }
+      filePath = await documentOrchestrator.generateCombinedDocument(
+        markdownFilePath,
+        resumeDataPath,
+        resumeData,
+        outputPath,
+      );
+      break;
       
-      default:
-        throw new Error(`Unsupported document type: ${documentType}`);
+    default:
+      throw new Error(`Unsupported document type: ${documentType}`);
     }
 
     return {
@@ -87,7 +87,7 @@ export async function generateResume(resumeData: any, outputPath: string): Promi
 export async function generateCoverLetter(
   markdownFilePath: string,
   resumeDataPath: string,
-  outputPath: string
+  outputPath: string,
 ): Promise<GenerationResult> {
   // We need dummy resume data for the function signature, but it's not used for cover letters
   return generateDocument('cover-letter', {}, outputPath, markdownFilePath, resumeDataPath);
@@ -105,7 +105,7 @@ export async function generateCombined(
   markdownFilePath: string,
   resumeDataPath: string,
   resumeData: any,
-  outputPath: string
+  outputPath: string,
 ): Promise<GenerationResult> {
   return generateDocument('combined', resumeData, outputPath, markdownFilePath, resumeDataPath);
 }

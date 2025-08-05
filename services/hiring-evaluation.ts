@@ -15,7 +15,7 @@ import { HiringEvaluation, HiringEvaluationInput } from '../types/services';
 export async function evaluateCandidate(
   applicationName: string,
   resumeData: any,
-  fastMode = false
+  fastMode = false,
 ): Promise<HiringEvaluation> {
   const input = { applicationName, resumeData, fastMode };
   // Validate input
@@ -64,7 +64,7 @@ export async function evaluateCandidate(
       keyStrengths: evaluationResult.key_strengths || [],
       composite_score: evaluationResult.summary?.composite_score || evaluationResult.composite_score,
       persona_evaluations: evaluationResult.personas || evaluationResult.evaluations || [],
-      recommendations: evaluationResult.summary?.key_recommendations || []
+      recommendations: evaluationResult.summary?.key_recommendations || [],
     };
     
   } catch (error) {
@@ -82,7 +82,7 @@ export async function batchEvaluateCandidates(
   candidates: Array<{
     applicationName?: string;
     resumeData: HiringEvaluationInput['resumeData'];
-  }>
+  }>,
 ): Promise<{
   batch_summary: {
     total: number;

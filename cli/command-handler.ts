@@ -53,7 +53,7 @@ async function runKeywordAnalysis(applicationName: string): Promise<void> {
       applicationName,
       keywordsFile, 
       jobPostingFile,
-      input.resumeFile
+      input.resumeFile,
     );
     
     console.log(`${theme.messages.emojis.success} Keyword analysis completed successfully!`);
