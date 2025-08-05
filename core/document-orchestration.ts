@@ -44,7 +44,6 @@ async function removeCompatibilityMode(buffer) {
       
       // Update the settings file with the clean version
       zip.file('word/settings.xml', cleanSettings);
-      console.log('Enhanced compatibility mode removal: settings.xml optimized');
     }
     
     // Remove empty footnotes.xml, comments.xml, and endnotes.xml if they exist
@@ -52,7 +51,6 @@ async function removeCompatibilityMode(buffer) {
     ['word/footnotes.xml', 'word/comments.xml', 'word/endnotes.xml'].forEach(file => {
       if (zip.files[file]) {
         zip.remove(file);
-        console.log(`Removed unnecessary file: ${file}`);
       }
     });
     
