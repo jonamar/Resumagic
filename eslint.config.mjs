@@ -70,8 +70,39 @@ export default [
     },
   },
   
+  // CommonJS files configuration
   {
-    // Global configuration for all files
+    files: ['services/vale-linting/**/*.js'],
+    languageOptions: {
+      ecmaVersion: 2024,
+      sourceType: 'commonjs',
+      globals: {
+        // CommonJS globals
+        require: 'readonly',
+        module: 'writable',
+        exports: 'writable',
+        __dirname: 'readonly',
+        __filename: 'readonly',
+        // Node.js globals
+        console: 'readonly',
+        process: 'readonly',
+        Buffer: 'readonly',
+        global: 'readonly',
+        setTimeout: 'readonly',
+        setInterval: 'readonly',
+        clearTimeout: 'readonly',
+        clearInterval: 'readonly',
+      }
+    },
+    rules: {
+      'no-console': ['warn', { 
+        allow: ['error', 'warn', 'info'] // Allow semantic console usage
+      }],
+    }
+  },
+
+  {
+    // Global configuration for all other files
     languageOptions: {
       ecmaVersion: 2024,
       sourceType: 'module',
