@@ -1,6 +1,10 @@
-const fs = require('fs');
-const path = require('path');
-const { spawn } = require('child_process');
+import fs from 'fs';
+import path from 'path';
+import { spawn } from 'child_process';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 /**
  * Two-tier analysis system for resume content
@@ -15,7 +19,7 @@ class TwoTierAnalyzer {
   /**
      * Analyze resume with two-tier approach plus spelling
      */
-  async analyzeResume(jsonPath) {
+  async analyzeResume(jsonPath: string): Promise<AnalysisResults> {
     const startTime = Date.now();
     const jsonContent = fs.readFileSync(jsonPath, 'utf8');
     const resume = JSON.parse(jsonContent);
@@ -49,7 +53,7 @@ class TwoTierAnalyzer {
   /**
      * Extract resume content into logical sections
      */
-  extractSections(resume, jsonContent) {
+  extractSections(resume: any, jsonContent: string): ResumeSection[] {
     const sections = [];
         
     // Executive Summary
@@ -98,7 +102,7 @@ class TwoTierAnalyzer {
   /**
      * Tier 1: Critical writing issues within individual sections
      */
-  async analyzeTier1(sections) {
+  async analyzeTier1(sections: ResumeSection[]): Promise<TierIssue[]> {
     const criticalIssues = [];
         
     for (const section of sections) {
@@ -146,7 +150,7 @@ class TwoTierAnalyzer {
   /**
      * Spelling: Analyze each section for spelling errors
      */
-  async analyzeSpelling(sections) {
+  async analyzeSpelling(sections: ResumeSection[]): Promise<TierIssue[]> {
     const spellingIssues = [];
         
     for (const section of sections) {
@@ -180,7 +184,7 @@ class TwoTierAnalyzer {
   /**
      * Count word occurrences in text (case-insensitive)
      */
-  countWordsInText(text) {
+  countWordsInText(text: string): Record<string, number> {
     const words = {};
         
     // Extract words that Vale typically flags (common resume words)
@@ -205,7 +209,7 @@ class TwoTierAnalyzer {
   /**
      * Tier 2: Resume-wide density analysis
      */
-  async analyzeTier2(resume, jsonContent) {
+  async analyzeTier2(resume: any, jsonContent: string): Promise<DensityItem[]> {
     // Combine all resume text
     let fullResumeText = '';
         
@@ -241,7 +245,7 @@ class TwoTierAnalyzer {
   /**
      * Group Vale results by keyword density
      */
-  groupByDensity(valeResults, resume) {
+  groupByDensity(valeResults: ValeIssue[], resume: any): DensityItem[] {
     const keywordCounts = {};
         
     // Count keyword occurrences
@@ -264,7 +268,7 @@ class TwoTierAnalyzer {
   /**
      * Extract keyword from Vale message
      */
-  extractKeyword(message) {
+  extractKeyword(message: string): string {
     const overusedMatch = message.match(/Overused word detected: '([^']+)'/i);
     if (overusedMatch) {
       return overusedMatch[1];
@@ -291,14 +295,14 @@ class TwoTierAnalyzer {
   /**
      * Check if issue is a spelling error
      */
-  isSpellingError(message) {
+  isSpellingError(message: string): boolean {
     return message.includes('Did you really mean');
   }
     
   /**
      * Run Vale on content
      */
-  async runValeOnContent(content, sectionId) {
+  async runValeOnContent(content: string, sectionId: string): Promise<ValeIssue[]> {
     return new Promise((resolve, reject) => {
       const tempFile = path.join(this.tempDir, `temp-${sectionId}.md`);
       fs.writeFileSync(tempFile, content, 'utf8');
@@ -341,7 +345,7 @@ class TwoTierAnalyzer {
   /**
      * Find line number in JSON
      */
-  findLineInJSON(jsonContent, searchText) {
+  findLineInJSON(jsonContent: string, searchText: string): number {
     const lines = jsonContent.split('\n');
     for (let i = 0; i < lines.length; i++) {
       if (lines[i].includes(searchText)) {
@@ -352,4 +356,54 @@ class TwoTierAnalyzer {
   }
 }
 
-module.exports = TwoTierAnalyzer;
+// Interfaces for two-tier analysis
+interface ResumeSection {
+  id: string;
+  title: string;
+  type: 'executive-summary' | 'job';
+  content: string;
+  jsonLine: number;
+  originalJob?: any;
+}
+
+interface TierIssue {
+  Message: string;
+  Line: number;
+  Span: [number, number];
+  sectionId: string;
+  sectionTitle: string;
+  sectionType: string;
+  jsonLine: number;
+  tier: number | string;
+  priority: string;
+  reason: string;
+}
+
+interface DensityItem {
+  keyword: string;
+  count: number;
+}
+
+interface ValeIssue {
+  Check: string;
+  Description: string;
+  Line: number;
+  Link: string;
+  Message: string;
+  Severity: string;
+  Span: [number, number];
+  Match: string;
+}
+
+interface AnalysisResults {
+  tier1: TierIssue[];
+  spelling: TierIssue[];
+  tier2: DensityItem[];
+  stats: {
+    duration: number;
+    sectionsAnalyzed: number;
+    totalIssues: number;
+  };
+}
+
+export default TwoTierAnalyzer;

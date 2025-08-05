@@ -1,5 +1,5 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
 /**
  * Extract text content from resume JSON for Vale processing
@@ -12,10 +12,8 @@ class ResumeTextExtractor {
 
   /**
      * Extract text content from resume JSON
-     * @param {string} jsonPath - Path to resume.json file
-     * @returns {Object} { content: string, lineMap: Map }
      */
-  extractText(jsonPath) {
+  extractText(jsonPath: string): ExtractionResult {
     const startTime = Date.now();
         
     try {
@@ -141,11 +139,8 @@ class ResumeTextExtractor {
     
   /**
      * Find approximate line number of text in JSON file
-     * @param {string} jsonContent - Full JSON content
-     * @param {string} searchText - Text to find
-     * @returns {number} Approximate line number
      */
-  findLineInJSON(jsonContent, searchText) {
+  findLineInJSON(jsonContent: string, searchText: string): number {
     const lines = jsonContent.split('\n');
         
     // Find line containing this text (approximate)
@@ -159,4 +154,22 @@ class ResumeTextExtractor {
   }
 }
 
-module.exports = ResumeTextExtractor;
+// Interfaces for Vale text extraction
+interface LineMapEntry {
+  jsonLine: number;
+  section: string;
+  company: string;
+  highlightIndex?: number;
+}
+
+interface ExtractionResult {
+  content: string;
+  lineMap: Map<number, LineMapEntry>;
+  stats: {
+    duration: number;
+    linesExtracted: number;
+    sectionsFound: number;
+  };
+}
+
+export default ResumeTextExtractor;

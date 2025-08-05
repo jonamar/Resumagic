@@ -1,5 +1,5 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
 /**
  * Generate clean markdown reports from Vale output
@@ -11,13 +11,8 @@ class ValeReporter {
 
   /**
      * Generate a clean markdown report from Vale JSON output
-     * @param {Array} valeResults - Vale results array
-     * @param {Map} lineMap - Line mapping from extractor
-     * @param {string} applicationName - Name of the application
-     * @param {Object} stats - Processing statistics
-     * @returns {string} Formatted markdown report
      */
-  generateReport(valeResults, lineMap, applicationName, stats = {}) {
+  generateReport(valeResults: ValeIssue[], lineMap: Map<number, LineMapEntry>, applicationName: string, stats: ProcessingStats = {}): string {
     const timestamp = new Date().toLocaleString();
     const issueCount = valeResults.length;
     const fileType = stats.fileType || 'unknown';
@@ -78,7 +73,7 @@ class ValeReporter {
   /**
      * Group Vale issues hierarchically: type → keyword → section → instances
      */
-  groupIssuesHierarchically(valeResults, lineMap) {
+  groupIssuesHierarchically(valeResults: ValeIssue[], lineMap: Map<number, LineMapEntry>): IssueGrouping {
     const grouped = {};
         
     valeResults.forEach(issue => {
@@ -117,7 +112,7 @@ class ValeReporter {
   /**
      * Extract the specific keyword from error message
      */
-  extractKeyword(message) {
+  extractKeyword(message: string): string {
     // For overused words: "Overused word detected: 'product' - consider varying vocabulary"
     const overusedMatch = message.match(/Overused word detected: '([^']+)'/i);
     if (overusedMatch) {
@@ -148,7 +143,7 @@ class ValeReporter {
   /**
      * Categorize error message by type
      */
-  categorizeError(message) {
+  categorizeError(message: string): string {
     if (message.includes('Overused word detected')) {
       return 'Overused Words';
     } else if (message.includes('weasel word')) {
@@ -167,7 +162,7 @@ class ValeReporter {
   /**
      * Clean up Vale message text
      */
-  cleanMessage(message) {
+  cleanMessage(message: string): string {
     // Remove technical rule names in parentheses
     return message.replace(/\s*\([^)]+\)\s*$/, '').trim();
   }
@@ -175,7 +170,7 @@ class ValeReporter {
   /**
      * Format application name for display
      */
-  formatApplicationName(name) {
+  formatApplicationName(name: string): string {
     return name.split('-').map(word => 
       word.charAt(0).toUpperCase() + word.slice(1),
     ).join(' ');
@@ -184,7 +179,7 @@ class ValeReporter {
   /**
      * Format section name for display
      */
-  formatSectionName(section, instance) {
+  formatSectionName(section: string, instance: InstanceData): string {
     switch (section) {
     case 'executive-summary': return 'Executive Summary';
     case 'summary': 
@@ -199,7 +194,7 @@ class ValeReporter {
   /**
      * Format file type for display
      */
-  formatFileType(fileType) {
+  formatFileType(fileType: string): string {
     switch (fileType) {
     case 'resume': return 'Resume';
     case 'cover-letter': return 'Cover Letter';
@@ -209,11 +204,8 @@ class ValeReporter {
     
   /**
      * Write report to working directory
-     * @param {string} reportContent - Generated report content
-     * @param {string} applicationPath - Path to application directory
-     * @returns {string} Path to generated report file
      */
-  writeReport(reportContent, applicationPath) {
+  writeReport(reportContent: string, applicationPath: string): string {
     const workingDir = path.join(applicationPath, 'working');
         
     // Ensure working directory exists
@@ -228,4 +220,47 @@ class ValeReporter {
   }
 }
 
-module.exports = ValeReporter;
+// Interfaces for Vale reporting
+interface ValeIssue {
+  Check: string;
+  Description: string;
+  Line: number;
+  Link: string;
+  Message: string;
+  Severity: string;
+  Span: [number, number];
+  Match: string;
+}
+
+interface LineMapEntry {
+  jsonLine: number;
+  section: string;
+  company: string;
+  highlightIndex?: number;
+}
+
+interface ProcessingStats {
+  fileType?: string;
+  extractionDuration?: number;
+  valeDuration?: number;
+  linesExtracted?: number;
+  sectionsFound?: number;
+  totalDuration?: number;
+}
+
+interface InstanceData {
+  jsonLine: number;
+  column: number;
+  company: string;
+}
+
+interface KeywordData {
+  totalCount: number;
+  sections: Record<string, InstanceData[]>;
+}
+
+interface IssueGrouping {
+  [errorType: string]: Record<string, KeywordData>;
+}
+
+export default ValeReporter;

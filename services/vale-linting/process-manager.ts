@@ -1,8 +1,12 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
-const path = require('path');
-const { spawn, exec } = require('child_process');
+import fs from 'fs';
+import path from 'path';
+import { spawn, exec } from 'child_process';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 /**
  * Process manager for Vale watcher
@@ -17,7 +21,7 @@ class ValeProcessManager {
   /**
      * Start the Vale watcher
      */
-  async start() {
+  async start(): Promise<void> {
     console.log('🚀 Starting Vale watcher...');
         
     // Check if already running
@@ -35,7 +39,7 @@ class ValeProcessManager {
     }
         
     // Spawn the watcher process
-    const watcherScript = path.join(__dirname, 'watcher-runner.js');
+    const watcherScript = path.join(__dirname, 'watcher-runner.ts');
     const child = spawn('node', [watcherScript, this.applicationsDir], {
       detached: true,
       stdio: ['ignore', 'pipe', 'pipe'],
@@ -78,7 +82,7 @@ class ValeProcessManager {
   /**
      * Stop the Vale watcher
      */
-  async stop() {
+  async stop(): Promise<void> {
     console.log('🛑 Stopping Vale watcher...');
         
     if (!await this.isRunning()) {
@@ -111,7 +115,7 @@ class ValeProcessManager {
   /**
      * Get watcher status
      */
-  async getStatus() {
+  async getStatus(): Promise<ProcessStatus> {
     if (!fs.existsSync(this.pidFile)) {
       return { running: false, message: 'Vale watcher not running' };
     }
@@ -149,7 +153,7 @@ class ValeProcessManager {
   /**
      * Check if watcher is running
      */
-  async isRunning() {
+  async isRunning(): Promise<boolean> {
     const status = await this.getStatus();
     return status.running;
   }
@@ -157,7 +161,7 @@ class ValeProcessManager {
   /**
      * Display formatted status
      */
-  async showStatus() {
+  async showStatus(): Promise<void> {
     const status = await this.getStatus();
         
     if (status.running) {
@@ -176,7 +180,7 @@ class ValeProcessManager {
 }
 
 // CLI handling
-async function main() {
+async function main(): Promise<void> {
   const manager = new ValeProcessManager();
   const command = process.argv[2];
     
@@ -199,12 +203,28 @@ async function main() {
   }
 }
 
+// Interfaces for Vale process management
+interface ProcessInfo {
+  pid: number;
+  startTime: number;
+  applicationsDir: string;
+}
+
+interface ProcessStatus {
+  running: boolean;
+  pid?: number;
+  uptime?: string;
+  startedAt?: string;
+  watchingDir?: string;
+  message?: string;
+}
+
 // Run if called directly
-if (require.main === module) {
-  main().catch(error => {
+if (import.meta.url === `file://${process.argv[1]}`) {
+  main().catch((error: Error) => {
     console.error(`❌ ${error.message}`);
     process.exit(1);
   });
 }
 
-module.exports = ValeProcessManager;
+export default ValeProcessManager;

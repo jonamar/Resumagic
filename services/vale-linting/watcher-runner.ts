@@ -5,9 +5,9 @@
  * This is the actual process that gets spawned by process-manager
  */
 
-const ValeWatcher = require('./watcher');
+import ValeWatcher from './watcher.js';
 
-async function main() {
+async function main(): Promise<void> {
   const applicationsDir = process.argv[2];
     
   if (!applicationsDir) {
@@ -20,7 +20,7 @@ async function main() {
   try {
     watcher.start(applicationsDir);
   } catch (error) {
-    console.error(`❌ Failed to start watcher: ${error.message}`);
+    console.error(`❌ Failed to start watcher: ${(error as Error).message}`);
     process.exit(1);
   }
 }

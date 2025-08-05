@@ -1,11 +1,37 @@
-const fs = require('fs');
-const path = require('path');
-const { spawn } = require('child_process');
+import fs from 'fs';
+import path from 'path';
+import { spawn } from 'child_process';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Vale processing interfaces
+interface ValeIssue {
+  Check: string;
+  Description: string;
+  Line: number;
+  Link: string;
+  Message: string;
+  Severity: string;
+  Span: [number, number];
+  Match: string;
+}
+
+interface ProcessedValeResult extends ValeIssue {
+  sectionId: string;
+  company: string;
+  sectionType: string;
+  jsonLine: number;
+  originalContent: string;
+}
 
 /**
  * Process each section through Vale individually for reliable results
  */
 class SectionProcessor {
+  private tempDir: string;
+
   constructor() {
     this.tempDir = __dirname;
   }
@@ -13,7 +39,7 @@ class SectionProcessor {
   /**
      * Process all sections through Vale
      */
-  async processAllSections(sections) {
+  async processAllSections(sections: any[]): Promise<ProcessedValeResult[]> {
     const results = [];
         
     for (const section of sections) {
@@ -42,7 +68,7 @@ class SectionProcessor {
   /**
      * Process a single section through Vale
      */
-  async processSingleSection(section) {
+  async processSingleSection(section: ResumeSection): Promise<ValeIssue[]> {
     return new Promise((resolve, reject) => {
       // Write section content to temp file
       const tempFile = path.join(this.tempDir, `temp-${section.id}.md`);
@@ -94,4 +120,4 @@ class SectionProcessor {
   }
 }
 
-module.exports = SectionProcessor;
+export default SectionProcessor;

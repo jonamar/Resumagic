@@ -1,9 +1,29 @@
-const fs = require('fs');
+import fs from 'fs';
+
+// Vale section extraction interfaces
+interface ResumeSection {
+  id: string;
+  company: string;
+  sectionType: 'executive-summary' | 'job-summary' | 'job-highlight';
+  content: string;
+  jsonLine: number;
+}
+
+interface SectionExtractionResult {
+  sections: ResumeSection[];
+  stats: {
+    duration: number;
+    sectionsExtracted: number;
+    companiesFound: number;
+  };
+}
 
 /**
  * Extract resume content by section for more reliable Vale processing
  */
 class SectionExtractor {
+  private sections: ResumeSection[];
+
   constructor() {
     this.sections = [];
   }
@@ -11,7 +31,7 @@ class SectionExtractor {
   /**
      * Extract resume content organized by section with source tracking
      */
-  extractSections(jsonPath) {
+  extractSections(jsonPath: string): SectionExtractionResult {
     const startTime = Date.now();
     const jsonContent = fs.readFileSync(jsonPath, 'utf8');
     const resume = JSON.parse(jsonContent);
@@ -77,7 +97,7 @@ class SectionExtractor {
   /**
      * Find approximate line number of text in JSON file
      */
-  findLineInJSON(jsonContent, searchText) {
+  findLineInJSON(jsonContent: string, searchText: string): number {
     const lines = jsonContent.split('\n');
         
     for (let i = 0; i < lines.length; i++) {
@@ -90,4 +110,4 @@ class SectionExtractor {
   }
 }
 
-module.exports = SectionExtractor;
+export default SectionExtractor;

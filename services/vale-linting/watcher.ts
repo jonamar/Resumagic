@@ -1,9 +1,9 @@
-const fs = require('fs');
-const path = require('path');
-const { spawn } = require('child_process');
-const chokidar = require('chokidar');
-const TwoTierAnalyzer = require('./two-tier-analyzer');
-const TwoTierReporter = require('./two-tier-reporter');
+import fs from 'fs';
+import path from 'path';
+import { spawn } from 'child_process';
+import chokidar from 'chokidar';
+import TwoTierAnalyzer from './two-tier-analyzer.js';
+import TwoTierReporter from './two-tier-reporter.js';
 
 /**
  * Vale file watcher with performance monitoring
@@ -31,9 +31,8 @@ class ValeWatcher {
     
   /**
      * Start watching for resume.json changes
-     * @param {string} applicationsDir - Path to applications directory
      */
-  start(applicationsDir) {
+  start(applicationsDir: string): void {
     const startTime = Date.now();
         
     console.log('🔍 Starting Vale watcher...');
@@ -73,7 +72,7 @@ class ValeWatcher {
   /**
      * Handle file change event
      */
-  async handleFileChange(filePath) {
+  async handleFileChange(filePath: string): Promise<void> {
     const startTime = Date.now();
     const applicationName = this.extractApplicationName(filePath);
     const fileType = this.extractFileType(filePath);
@@ -124,7 +123,7 @@ class ValeWatcher {
   /**
      * Run Vale on extracted content
      */
-  async runVale(content) {
+  async runVale(content: string): Promise<any[]> {
     return new Promise((resolve, reject) => {
       // Write content to temp file
       const tempFile = path.join(__dirname, 'temp-content.md');
@@ -179,7 +178,7 @@ class ValeWatcher {
   /**
      * Extract application name from file path
      */
-  extractApplicationName(filePath) {
+  extractApplicationName(filePath: string): string {
     const parts = filePath.split(path.sep);
     const applicationsIndex = parts.findIndex(part => part === 'applications');
         
@@ -193,7 +192,7 @@ class ValeWatcher {
   /**
      * Extract file type from file path
      */
-  extractFileType(filePath) {
+  extractFileType(filePath: string): string {
     if (filePath.endsWith('resume.json')) {
       return 'resume';
     } else if (filePath.endsWith('cover-letter.md')) {
@@ -205,7 +204,7 @@ class ValeWatcher {
   /**
      * Update processing statistics
      */
-  updateStats(applicationName, processingTime) {
+  updateStats(applicationName: string, processingTime: number): void {
     this.stats.filesProcessed++;
     this.stats.totalProcessingTime += processingTime;
     this.stats.lastProcessedFile = applicationName;
@@ -215,7 +214,7 @@ class ValeWatcher {
   /**
      * Check memory usage and warn if high
      */
-  checkMemoryUsage() {
+  checkMemoryUsage(): void {
     const usage = process.memoryUsage();
     const heapUsedMB = Math.round(usage.heapUsed / 1024 / 1024);
         
@@ -227,7 +226,7 @@ class ValeWatcher {
   /**
      * Get current status
      */
-  getStatus() {
+  getStatus(): WatcherStatus {
     const uptime = Date.now() - this.stats.startTime;
     const avgProcessingTime = this.stats.filesProcessed > 0 
       ? Math.round(this.stats.totalProcessingTime / this.stats.filesProcessed)
@@ -247,7 +246,7 @@ class ValeWatcher {
   /**
      * Stop the watcher
      */
-  async stop() {
+  async stop(): Promise<void> {
     if (!this.isRunning) {
       console.log('⚠️  Watcher not running');
       return;
@@ -273,7 +272,7 @@ class ValeWatcher {
   /**
      * Setup graceful shutdown handler
      */
-  setupShutdownHandler() {
+  setupShutdownHandler(): void {
     // Only setup interactive mode if stdin is a TTY (not detached)
     if (process.stdin.isTTY) {
       try {
@@ -299,4 +298,22 @@ class ValeWatcher {
   }
 }
 
-module.exports = ValeWatcher;
+// Interfaces for Vale watcher
+interface WatcherStats {
+  startTime: number;
+  filesProcessed: number;
+  totalProcessingTime: number;
+  lastProcessedFile: string | null;
+  memoryUsage: NodeJS.MemoryUsage;
+}
+
+interface WatcherStatus {
+  running: boolean;
+  uptime: string;
+  filesProcessed: number;
+  avgProcessingTime: string;
+  memoryUsage: string;
+  lastProcessedFile: string | null;
+}
+
+export default ValeWatcher;

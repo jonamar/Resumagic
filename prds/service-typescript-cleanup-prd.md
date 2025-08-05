@@ -115,19 +115,20 @@ interface ResumeData {
 // Target: generateDocument(documentType, resumeData: ResumeData, outputPath, ...)
 ```
 
-### Phase 3: Vale Service ESM + TypeScript Conversion (2 hours)
+### Phase 3: Vale Service ESM + TypeScript Conversion (2 hours) - PROCEEDING
 
 **3.1 CommonJS → ESM Conversion**
-Convert all 9 files:
-- Replace `require()` with `import`
-- Replace `module.exports` with `export`
-- Update file extensions to `.ts`
-- Keep existing file structure (no artificial splitting)
+Convert all 9 files systematically:
+- Replace `require()` with `import` statements
+- Replace `module.exports` with `export` statements  
+- Update file extensions from `.js` to `.ts`
+- Keep existing file structure (355-line files are fine, no artificial splitting)
+- Update cross-file references to use `.js` extensions (ESM requirement)
 
 **3.2 Basic TypeScript Interfaces**
-Add minimal typing for main classes:
+Add minimal typing for main classes based on actual usage:
 ```typescript
-// two-tier-analyzer.ts
+// two-tier-analyzer.ts (355 lines - keep as single file)
 interface AnalysisSection {
   id: string;
   content: string;
@@ -135,17 +136,65 @@ interface AnalysisSection {
   lineEnd: number;
 }
 
+interface ValeResult {
+  message: string;
+  severity: string;
+  line: number;
+  column: number;
+  rule: string;
+}
+
 interface AnalysisResult {
   tier1: ValeResult[];
   tier2: ValeResult[];
   spelling: ValeResult[];
+  wordCount: number;
+  processingTime: number;
 }
 
-// Other files: basic method signatures only
+// extractor.ts
+interface ExtractionResult {
+  content: string;
+  lineMap: Map<number, number>;
+  processingTime: number;
+}
+
+// watcher.ts
+interface WatcherConfig {
+  applicationsDir: string;
+  debounceMs: number;
+  maxRetries: number;
+}
 ```
 
-**3.3 ESLint Configuration Update**
-Remove CommonJS special case rules since all files will be ESM.
+**3.3 Method Signature Updates**
+Add parameter types to main methods (similar to keyword-extraction work):
+```typescript
+// Example method signature improvements
+class TwoTierAnalyzer {
+  async analyzeResume(jsonPath: string): Promise<AnalysisResult>
+  extractSections(resume: any, jsonContent: string): AnalysisSection[]
+  async runValeOnContent(content: string, sectionId: string): Promise<ValeResult[]>
+}
+
+class ResumeTextExtractor {
+  extractText(jsonPath: string): ExtractionResult
+  findLineInJSON(jsonContent: string, searchText: string): number
+}
+```
+
+**3.4 ESLint Configuration Update**
+Remove CommonJS special case rules since all files will be ESM:
+```javascript
+// Remove this section from eslint.config.mjs:
+{
+  files: ['services/vale-linting/**/*.js'],
+  languageOptions: {
+    sourceType: 'commonjs',
+    // ... CommonJS globals
+  }
+}
+```
 
 ## Success Criteria
 

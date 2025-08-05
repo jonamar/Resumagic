@@ -1,5 +1,5 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
 /**
  * Generate two-tier analysis reports
@@ -12,7 +12,7 @@ class TwoTierReporter {
   /**
      * Generate comprehensive two-tier report with spelling
      */
-  generateReport(analysisResults, applicationName, stats = {}) {
+  generateReport(analysisResults: AnalysisResults, applicationName: string, stats: ReportStats = {}): string {
     const timestamp = new Date().toLocaleString();
     const { tier1, spelling, tier2 } = analysisResults;
         
@@ -96,7 +96,7 @@ class TwoTierReporter {
      * Group Tier 1 issues by keyword and section
      * Only include sections that have 2+ instances of the same keyword
      */
-  groupTier1Issues(tier1Issues) {
+  groupTier1Issues(tier1Issues: TierIssue[]): GroupedIssues {
     const grouped = {};
         
     tier1Issues.forEach(issue => {
@@ -144,7 +144,7 @@ class TwoTierReporter {
   /**
      * Group spelling issues by misspelled word
      */
-  groupSpellingIssues(spellingIssues) {
+  groupSpellingIssues(spellingIssues: TierIssue[]): GroupedIssues {
     const grouped = {};
         
     spellingIssues.forEach(issue => {
@@ -171,7 +171,7 @@ class TwoTierReporter {
   /**
      * Extract keyword from Vale message
      */
-  extractKeyword(message) {
+  extractKeyword(message: string): string {
     const overusedMatch = message.match(/Overused word detected: '([^']+)'/i);
     if (overusedMatch) {
       return overusedMatch[1];
@@ -193,7 +193,7 @@ class TwoTierReporter {
   /**
      * Get synonym suggestions for common resume words
      */
-  getSynonyms(keyword) {
+  getSynonyms(keyword: string): string {
     const synonymMap = {
       'led': 'managed, directed, oversaw, guided, spearheaded',
       'managed': 'led, directed, oversaw, supervised, coordinated',
@@ -210,7 +210,7 @@ class TwoTierReporter {
   /**
      * Format application name
      */
-  formatApplicationName(name) {
+  formatApplicationName(name: string): string {
     return name.split('-').map(word => 
       word.charAt(0).toUpperCase() + word.slice(1),
     ).join(' ');
@@ -219,7 +219,7 @@ class TwoTierReporter {
   /**
      * Write report to file
      */
-  writeReport(reportContent, applicationDir) {
+  writeReport(reportContent: string, applicationDir: string): string {
     const workingDir = path.join(applicationDir, 'working');
         
     if (!fs.existsSync(workingDir)) {
@@ -233,4 +233,37 @@ class TwoTierReporter {
   }
 }
 
-module.exports = TwoTierReporter;
+// Interfaces for two-tier reporting
+interface TierIssue {
+  Message: string;
+  Line: number;
+  Span: [number, number];
+  sectionTitle: string;
+}
+
+interface DensityItem {
+  keyword: string;
+  count: number;
+}
+
+interface AnalysisResults {
+  tier1: TierIssue[];
+  spelling: TierIssue[];
+  tier2: DensityItem[];
+}
+
+interface ReportStats {
+  duration?: number;
+  sectionsAnalyzed?: number;
+}
+
+interface GroupedIssueData {
+  totalCount: number;
+  sections: Record<string, TierIssue[]>;
+}
+
+interface GroupedIssues {
+  [keyword: string]: GroupedIssueData;
+}
+
+export default TwoTierReporter;
