@@ -9,6 +9,13 @@ import TwoTierReporter from './two-tier-reporter.js';
  * Vale file watcher with performance monitoring
  */
 class ValeWatcher {
+  private watcher: chokidar.FSWatcher | null;
+  private isRunning: boolean;
+  private stats: WatcherStats;
+  private analyzer: TwoTierAnalyzer;
+  private reporter: TwoTierReporter;
+  private memoryCheckInterval: NodeJS.Timeout;
+
   constructor() {
     this.watcher = null;
     this.isRunning = false;
@@ -55,8 +62,8 @@ class ValeWatcher {
     });
         
     this.watcher
-      .on('change', (filePath) => this.handleFileChange(filePath))
-      .on('error', (error) => console.error(`❌ Watcher error: ${error}`))
+      .on('change', (filePath: string) => this.handleFileChange(filePath))
+      .on('error', (error: Error) => console.error(`❌ Watcher error: ${error}`))
       .on('ready', () => {
         const duration = Date.now() - startTime;
         console.log(`✅ Watcher started in ${duration}ms`);
@@ -99,7 +106,6 @@ class ValeWatcher {
         });
                 
         const reportPath = this.reporter.writeReport(reportContent, applicationDir);
-        const reportDuration = Date.now() - reportStart;
                 
         // Update stats
         this.updateStats(applicationName, totalDuration);
@@ -116,7 +122,7 @@ class ValeWatcher {
       }
             
     } catch (error) {
-      console.error(`❌ Error processing ${applicationName}: ${error.message}`);
+      console.error(`❌ Error processing ${applicationName}: ${(error as Error).message}`);
     }
   }
     
@@ -146,7 +152,7 @@ class ValeWatcher {
         stderr += data.toString();
       });
             
-      valeProcess.on('close', (code) => {
+      valeProcess.on('close', (_code: number | null) => {
         // Clean up temp file
         try {
           fs.unlinkSync(tempFile);
@@ -160,16 +166,16 @@ class ValeWatcher {
             const results = JSON.parse(stdout);
             // Get the first (and only) key from results since we only process one file
             const firstKey = Object.keys(results)[0];
-            resolve(results[firstKey] || []);
+            resolve(firstKey ? results[firstKey] || [] : []);
           } else {
             resolve([]);
           }
         } catch (error) {
-          reject(new Error(`Vale parsing error: ${error.message}`));
+          reject(new Error(`Vale parsing error: ${(error as Error).message}`));
         }
       });
             
-      valeProcess.on('error', (error) => {
+      valeProcess.on('error', (error: Error) => {
         reject(new Error(`Vale execution error: ${error.message}`));
       });
     });

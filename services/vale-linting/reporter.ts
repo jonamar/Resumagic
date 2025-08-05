@@ -5,6 +5,8 @@ import path from 'path';
  * Generate clean markdown reports from Vale output
  */
 class ValeReporter {
+  private startTime: number;
+
   constructor() {
     this.startTime = Date.now();
   }
@@ -74,10 +76,10 @@ class ValeReporter {
      * Group Vale issues hierarchically: type → keyword → section → instances
      */
   groupIssuesHierarchically(valeResults: ValeIssue[], lineMap: Map<number, LineMapEntry>): IssueGrouping {
-    const grouped = {};
+    const grouped: IssueGrouping = {};
         
     valeResults.forEach(issue => {
-      const lineInfo = lineMap.get(issue.Line) || {};
+      const lineInfo = lineMap.get(issue.Line) || {} as Partial<LineMapEntry>;
       const jsonLine = lineInfo.jsonLine || issue.Line;
       const errorType = this.categorizeError(issue.Message);
       const keyword = this.extractKeyword(issue.Message);

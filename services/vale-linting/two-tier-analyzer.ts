@@ -12,6 +12,8 @@ const __dirname = path.dirname(__filename);
  * Tier 2: Resume-wide density optimization
  */
 class TwoTierAnalyzer {
+  private tempDir: string;
+
   constructor() {
     this.tempDir = __dirname;
   }

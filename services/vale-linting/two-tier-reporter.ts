@@ -5,6 +5,8 @@ import path from 'path';
  * Generate two-tier analysis reports
  */
 class TwoTierReporter {
+  private startTime: number;
+
   constructor() {
     this.startTime = Date.now();
   }
@@ -194,7 +196,7 @@ class TwoTierReporter {
      * Get synonym suggestions for common resume words
      */
   getSynonyms(keyword: string): string {
-    const synonymMap = {
+    const synonymMap: Record<string, string> = {
       'led': 'managed, directed, oversaw, guided, spearheaded',
       'managed': 'led, directed, oversaw, supervised, coordinated',
       'product': 'platform, solution, offering, technology, system',
