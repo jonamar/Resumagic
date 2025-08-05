@@ -6,6 +6,67 @@
 import * as documentOrchestrator from '../core/document-orchestration';
 import { GenerationResult } from '../types/services';
 
+// Resume data interface based on JSON Resume schema (actual data structure)
+interface ResumeData {
+  basics: {
+    name: string;
+    label: string;
+    image?: string;
+    email: string;
+    phone: string;
+    url?: string;
+    summary: string;
+    work_modes?: string;
+    location: {
+      address?: string;
+      city: string;
+      region: string;
+      country: string;
+      countryCode?: string;
+      postalCode: string;
+    };
+    profiles: Array<{
+      network: string;
+      username: string;
+      url: string;
+    }>;
+  };
+  work: Array<{
+    name: string;
+    position: string;
+    url?: string;
+    location: string;
+    startDate: string;
+    endDate?: string;
+    summary: string;
+    highlights: string[];
+  }>;
+  // Additional optional sections
+  education?: Array<{
+    institution: string;
+    area: string;
+    studyType: string;
+    startDate: string;
+    endDate?: string;
+    score?: string;
+    courses?: string[];
+  }>;
+  skills?: Array<{
+    name: string;
+    level: string;
+    keywords: string[];
+  }>;
+  projects?: Array<{
+    name: string;
+    description: string;
+    highlights: string[];
+    keywords: string[];
+    startDate: string;
+    endDate?: string;
+    url?: string;
+  }>;
+}
+
 /**
  * Generate documents based on type and options
  * @param documentType - Type of document to generate
@@ -17,7 +78,7 @@ import { GenerationResult } from '../types/services';
  */
 export async function generateDocument(
   documentType: 'resume' | 'cover-letter' | 'combined',
-  resumeData: any,
+  resumeData: ResumeData,
   outputPath: string,
   markdownFilePath?: string,
   resumeDataPath?: string,
@@ -73,7 +134,7 @@ export async function generateDocument(
  * @param outputPath - Path where to save the document
  * @returns Promise resolving to generation result
  */
-export async function generateResume(resumeData: any, outputPath: string): Promise<GenerationResult> {
+export async function generateResume(resumeData: ResumeData, outputPath: string): Promise<GenerationResult> {
   return generateDocument('resume', resumeData, outputPath);
 }
 
@@ -90,7 +151,8 @@ export async function generateCoverLetter(
   outputPath: string,
 ): Promise<GenerationResult> {
   // We need dummy resume data for the function signature, but it's not used for cover letters
-  return generateDocument('cover-letter', {}, outputPath, markdownFilePath, resumeDataPath);
+  const dummyResumeData = {} as ResumeData;
+  return generateDocument('cover-letter', dummyResumeData, outputPath, markdownFilePath, resumeDataPath);
 }
 
 /**
@@ -104,7 +166,7 @@ export async function generateCoverLetter(
 export async function generateCombined(
   markdownFilePath: string,
   resumeDataPath: string,
-  resumeData: any,
+  resumeData: ResumeData,
   outputPath: string,
 ): Promise<GenerationResult> {
   return generateDocument('combined', resumeData, outputPath, markdownFilePath, resumeDataPath);
