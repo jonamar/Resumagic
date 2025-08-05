@@ -16,8 +16,7 @@ class TwoTierReporter {
     const timestamp = new Date().toLocaleString();
     const { tier1, spelling, tier2 } = analysisResults;
         
-    // Debug logging
-    console.log(`🔍 Reporter received: tier1=${tier1.length}, spelling=${spelling ? spelling.length : 'undefined'}, tier2=${tier2.length}`);
+    // Analysis validation
         
     let report = `# Vale Analysis - ${this.formatApplicationName(applicationName)}\n\n`;
     report += '**File Type:** Resume\n';
