@@ -5,15 +5,15 @@
 
 ## Executive Summary
 
-Systematically evaluate the new `qwen3:0.6b` model against the current production baseline `phi3:mini` to determine if it offers better speed/quality tradeoffs for hiring evaluations in production-realistic conditions.
+Systematically evaluate the new `qwen3:0.6b` model against the current production speed baseline `phi3:mini` to determine if it offers better speed/quality tradeoffs for hiring evaluations in production-realistic conditions.
 
-**Key Metrics**: Speed comparison (target: <139s baseline), quality maintenance (score appropriateness), memory efficiency under optimized Ollama settings.
+**Key Metrics**: Speed comparison (target: <140s baseline), quality maintenance (score appropriateness), memory efficiency under conservative Ollama settings.
 
 ## Problem Statement
 
 ### Current State
-- **Production Model**: `phi3:mini` with aggressive parallel Ollama configuration
-- **Current Performance**: ~139s per 6-persona evaluation (baseline from comprehensive optimization)
+- **Production Models**: `dolphin3:latest` (quality-optimized, ~170s) and `phi3:mini` (speed-optimized, ~140s)
+- **Current Speed Baseline**: `phi3:mini` with conservative parallel Ollama configuration (~140s per 6-persona evaluation)
 - **Pain Point**: Need to continuously evaluate new lightweight models for potential speed/quality improvements
 
 ### Opportunity
@@ -26,8 +26,8 @@ Systematically evaluate the new `qwen3:0.6b` model against the current productio
 
 ### Design Principles
 
-1. **Production Fidelity**: Test using actual production Ollama settings (`aggressive_parallel`)
-2. **Comparative Analysis**: Direct comparison against established `phi3:mini` baseline
+1. **Production Fidelity**: Test using actual production Ollama settings (`conservative_parallel`)
+2. **Comparative Analysis**: Direct comparison against established `phi3:mini` speed baseline
 3. **Quality Gates**: Maintain evaluation accuracy and feedback depth standards
 4. **Statistical Validity**: Multiple test runs across representative candidate profiles
 
@@ -45,8 +45,8 @@ Systematically evaluate the new `qwen3:0.6b` model against the current productio
   - **Dr. Sarah Chen** (Strong - 12yr exp, target score 7-9)
 - Use production Ollama configuration:
   ```bash
-  OLLAMA_NUM_PARALLEL=8
-  OLLAMA_NUM_THREADS=10
+  OLLAMA_NUM_PARALLEL=4
+  OLLAMA_NUM_THREADS=6
   OLLAMA_MAX_LOADED_MODELS=1
   ```
 - Execute 6-persona parallel evaluations matching production flow
@@ -60,9 +60,9 @@ Systematically evaluate the new `qwen3:0.6b` model against the current productio
 ## Success Metrics
 
 ### Speed Performance
-- **Target**: Beat current `phi3:mini` baseline of ~139s
-- **Acceptable**: Within 10% of baseline (125-153s range)
-- **Excellent**: >20% improvement (<111s)
+- **Target**: Beat current `phi3:mini` baseline of ~140s
+- **Acceptable**: Within 10% of baseline (126-154s range)
+- **Excellent**: >20% improvement (<112s)
 
 ### Quality Maintenance
 - **Score Appropriateness**: Candidates receive expected score ranges
@@ -85,9 +85,9 @@ Systematically evaluate the new `qwen3:0.6b` model against the current productio
 
 ### Environment Setup
 ```bash
-# Production-like Ollama configuration
-export OLLAMA_NUM_PARALLEL=8
-export OLLAMA_NUM_THREADS=10
+# Production Ollama configuration (conservative parallel settings)
+export OLLAMA_NUM_PARALLEL=4
+export OLLAMA_NUM_THREADS=6
 export OLLAMA_MAX_LOADED_MODELS=1
 ollama serve
 ```
