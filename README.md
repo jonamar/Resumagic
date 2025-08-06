@@ -152,11 +152,33 @@ Each application must follow this 3-tier folder structure:
 ## Prerequisites
 
 - **Node.js** (for document generation)
+- **TypeScript** (for compilation): `npm install -g typescript`
 - **Python 3.8+** (for keyword analysis)
 - **Ollama** (for hiring evaluation service)
   - Install: `curl -fsSL https://ollama.ai/install.sh | sh`
   - Models: `ollama pull dolphin3:latest` (quality) + `ollama pull phi3:mini` (speed)
 - **Virtual environment recommended**
+
+## TypeScript Migration Status
+
+This project has been migrated from JavaScript to TypeScript for better type safety and development experience. You can:
+
+**Option 1: Build and run (recommended for production):**
+```bash
+# Build TypeScript to JavaScript
+npx tsc
+
+# Run compiled JavaScript
+node dist/generate-resume.js [options]
+```
+
+**Option 2: Direct TypeScript execution (development):**
+```bash
+# Run TypeScript directly with ts-node
+npx ts-node generate-resume.ts [options]
+```
+
+All documentation examples use the JavaScript commands (`node generate-resume.js`) but you can substitute with TypeScript equivalents.
 
 ## Core Features
 
