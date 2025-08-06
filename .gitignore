@@ -94,3 +94,8 @@ build/
 **/direct-ollama-results-*.json
 **/qwen-vs-phi3-results/
 **/*_weak.txt
+
+# Experimental scripts and tests
+**/ollama-optimization-experiment/*test*.ts
+**/ollama-optimization-experiment/*test*.sh
+**/ollama-optimization-experiment/*ollama*.sh
