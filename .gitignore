@@ -99,3 +99,4 @@ build/
 **/ollama-optimization-experiment/*test*.ts
 **/ollama-optimization-experiment/*test*.sh
 **/ollama-optimization-experiment/*ollama*.sh
+**/ollama-optimization-experiment/run-*.sh
