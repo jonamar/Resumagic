@@ -85,3 +85,4 @@ eslint-results.json
 
 # TypeScript compilation output
 dist/
+build/

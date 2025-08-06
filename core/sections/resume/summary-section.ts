@@ -3,7 +3,7 @@
  */
 
 import { Paragraph } from 'docx';
-import theme from '../../../theme';
+import theme from '../../../theme.js';
 import { createFormattedTextRuns } from '../../formatting/text-formatting.js';
 import { createSectionHeading } from '../../formatting/section-utilities.js';
 

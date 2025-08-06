@@ -1,9 +1,9 @@
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { executeCommand } from './cli/command-handler';
-import { analyzeKeywords } from './services/keyword-analysis';
-import { evaluateCandidate } from './services/hiring-evaluation';
-import theme from './theme';
+import { executeCommand } from './cli/command-handler.js';
+import { analyzeKeywords } from './services/keyword-analysis.js';
+import { evaluateCandidate } from './services/hiring-evaluation.js';
+import theme from './theme.js';
 
 // ESM equivalent of __dirname
 const __filename = fileURLToPath(import.meta.url);

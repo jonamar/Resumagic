@@ -1,6 +1,6 @@
-import theme from '../theme';
-import ErrorHandler from '../utils/error-handler';
-import { ERROR_TYPES } from '../utils/error-types';
+import theme from '../theme.js';
+import ErrorHandler from '../utils/error-handler.js';
+import { ERROR_TYPES } from '../utils/error-types.js';
 
 // Initialize error handler for generation planning operations
 const _errorHandler = new ErrorHandler({

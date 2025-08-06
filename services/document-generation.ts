@@ -3,7 +3,7 @@
  * Provides typed, direct functions for document generation without wrapper abstraction
  */
 
-import * as documentOrchestrator from '../core/document-orchestration';
+import * as documentOrchestrator from '../core/document-orchestration.js';
 import { GenerationResult } from '../types/services';
 
 // Resume data interface based on JSON Resume schema (actual data structure)

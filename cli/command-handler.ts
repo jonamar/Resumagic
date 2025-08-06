@@ -1,13 +1,13 @@
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { parseCliArguments, validateCliArguments, displayUsage } from './argument-parser';
-import { determineGenerationPlan, validateGenerationPlan } from '../core/generation-planning';
-import { resolvePaths, validatePaths, hasMarkdownFile, loadResumeData, displayApplicationNotFoundError } from '../core/path-resolution';
-import { orchestrateGeneration } from '../core/document-orchestration';
-import { createNewApplication } from '../core/new-application';
-import { analyzeKeywords } from '../services/keyword-analysis';
-import { evaluateCandidate } from '../services/hiring-evaluation';
-import theme from '../theme';
+import { parseCliArguments, validateCliArguments, displayUsage } from './argument-parser.js';
+import { determineGenerationPlan, validateGenerationPlan } from '../core/generation-planning.js';
+import { resolvePaths, validatePaths, hasMarkdownFile, loadResumeData, displayApplicationNotFoundError } from '../core/path-resolution.js';
+import { orchestrateGeneration } from '../core/document-orchestration.js';
+import { createNewApplication } from '../core/new-application.js';
+import { analyzeKeywords } from '../services/keyword-analysis.js';
+import { evaluateCandidate } from '../services/hiring-evaluation.js';
+import theme from '../theme.js';
 
 // ESM equivalent of __dirname
 const __filename = fileURLToPath(import.meta.url);

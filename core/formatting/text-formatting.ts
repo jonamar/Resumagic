@@ -3,7 +3,7 @@
  */
 
 import { TextRun } from 'docx';
-import { parseTextWithFormatting } from '../markdown-processing';
+import { parseTextWithFormatting } from '../markdown-processing.js';
 
 /**
  * Creates formatted TextRun elements from text with markdown-style formatting

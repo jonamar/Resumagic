@@ -3,8 +3,8 @@ import { execSync } from 'child_process';
 import { Packer } from 'docx';
 import JSZip from 'jszip';
 import { createResumeDocx, createCoverLetterDocx, createCombinedDocx } from './document-templates';
-import { parseMarkdownCoverLetter } from './markdown-processing';
-import theme from '../theme';
+import { parseMarkdownCoverLetter } from './markdown-processing.js';
+import theme from '../theme.js';
 
 /**
  * Document Orchestration Module
