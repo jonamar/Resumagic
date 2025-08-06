@@ -5,7 +5,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 // Import the existing evaluation runner
-import { EvaluationRunner } from '../evaluation-runner.js';
+import EvaluationRunner from '../evaluation-runner.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -65,17 +65,17 @@ class ModelComparisonTester {
       // Create evaluation runner for this candidate
       const evaluator = new EvaluationRunner(candidateFile);
       
-      // Override the model for this test
-      evaluator.modelName = modelName;
-      evaluator.fastModelName = modelName;
+      // Override the model by directly setting private properties (testing hack)
+      (evaluator as any).modelName = modelName;
+      (evaluator as any).fastModelName = modelName;
       
       // Run the evaluation
       const results = await evaluator.runEvaluation(candidateName);
       
       const duration = (Date.now() - startTime) / 1000;
       
-      // Extract scores
-      const scores = this.extractScores(results.rawResults);
+      // Extract scores from the evaluation results
+      const scores = this.extractScores(results);
       
       console.log(`✅ ${modelName} completed in ${duration.toFixed(1)}s - Avg Score: ${scores.average}`);
       
@@ -90,7 +90,7 @@ class ModelComparisonTester {
       
     } catch (error) {
       const duration = (Date.now() - startTime) / 1000;
-      console.log(`❌ ${modelName} failed after ${duration.toFixed(1)}s: ${error.message}`);
+      console.log(`❌ ${modelName} failed after ${duration.toFixed(1)}s: ${(error as Error).message}`);
       
       return {
         model: modelName,
@@ -99,27 +99,27 @@ class ModelComparisonTester {
         average_score: 0,
         score_variance: 0,
         success: false,
-        error: error.message
+        error: (error as Error).message
       };
     }
   }
 
-  private extractScores(rawResults: any) {
-    if (!rawResults?.evaluations) {
+  private extractScores(results: any) {
+    if (!results?.evaluations) {
       return { average: 0, variance: 0 };
     }
 
-    const scores = rawResults.evaluations
-      .map(eval => eval.overall_assessment?.persona_score)
-      .filter(score => typeof score === 'number');
+    const scores = results.evaluations
+      .map((evaluation: any) => evaluation.overall_assessment?.persona_score)
+      .filter((score: any) => typeof score === 'number');
 
     if (scores.length === 0) {
       return { average: 0, variance: 0 };
     }
 
-    const average = scores.reduce((sum, score) => sum + score, 0) / scores.length;
+    const average = scores.reduce((sum: number, score: number) => sum + score, 0) / scores.length;
     const variance = Math.sqrt(
-      scores.reduce((sum, score) => sum + Math.pow(score - average, 2), 0) / scores.length
+      scores.reduce((sum: number, score: number) => sum + Math.pow(score - average, 2), 0) / scores.length
     );
 
     return { 
@@ -213,7 +213,7 @@ class ModelComparisonTester {
     
     if (baselineStats && testModelStats.length > 0) {
       let winner = baselineStats.model;
-      let reasoning = [];
+      let reasoning: string[] = [];
       
       testModelStats.forEach(testStats => {
         if (testStats.avgTime !== 'FAILED' && baselineStats.avgTime !== 'FAILED') {
@@ -270,7 +270,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
         process.exit(1);
       });
   } catch (error) {
-    console.error('❌ Failed to initialize tester:', error.message);
+    console.error('❌ Failed to initialize tester:', (error as Error).message);
     process.exit(1);
   }
 }
