@@ -1,9 +1,10 @@
 # Resumagic - Resume & Cover Letter Generator
 
 ## Overview
-Professional document generator using Node.js + Python microservices architecture.
+Professional document generator using TypeScript/Node.js + Python microservices architecture.
 
-**Technologies**: Node.js, Python 3.8+, Vitest (modern testing), Ollama (optional)
+**Technologies**: TypeScript, Node.js, Python 3.8+, Vitest (modern testing), Ollama (optional)
+**Build System**: TypeScript compiler with ESNext modules, compiled to dist/ directory
 
 ## Repository Structure
 
@@ -22,12 +23,20 @@ Professional document generator using Node.js + Python microservices architectur
 ## Key Commands
 
 ```bash
-# Document generation
-node generate-resume.js company-role
-node generate-resume.js company-role --all       # Full workflow
+# TypeScript Build Process
+npx tsc                                          # Compile TypeScript to dist/
+
+# Document generation (compiled)
+node dist/generate-resume.js company-role
+node dist/generate-resume.js company-role --all       # Full workflow
+
+# Document generation (direct TypeScript - development)
+npx ts-node generate-resume.ts company-role
+npx ts-node generate-resume.ts company-role --all
 
 # New application setup (recommended)
-node generate-resume.js --new-app "Company" "Job Title"
+node dist/generate-resume.js --new-app "Company" "Job Title"
+# OR: npx ts-node generate-resume.ts --new-app "Company" "Job Title"
 
 # Development
 npm test                                         # Run all tests
@@ -37,9 +46,10 @@ node scripts/debug/application-health.js        # Check app health
 ## Architecture & Development
 
 **Service Design**: 
-- Node.js: Document generation, CLI, orchestration
+- TypeScript/Node.js: Document generation, CLI, orchestration
 - Python: Keyword analysis, TF-IDF scoring
 - Clean boundaries, centralized error handling
+- ESM modules with .js extensions in TypeScript imports
 
 **Testing**:
 - Vitest framework (167 tests, ~2x faster than Jest) with 85%+ coverage
