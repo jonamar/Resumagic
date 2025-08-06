@@ -2,7 +2,7 @@ import fs from 'fs';
 import { execSync } from 'child_process';
 import { Packer } from 'docx';
 import JSZip from 'jszip';
-import { createResumeDocx, createCoverLetterDocx, createCombinedDocx } from './document-templates';
+import { createResumeDocx, createCoverLetterDocx, createCombinedDocx } from './document-templates.js';
 import { parseMarkdownCoverLetter } from './markdown-processing.js';
 import theme from '../theme.js';
 
