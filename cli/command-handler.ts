@@ -146,7 +146,7 @@ async function executeCommand(args: string[]): Promise<void> {
     
     // Handle new application creation
     if (flags.newApp) {
-      const appDir = path.dirname(__dirname);
+      const appDir = path.dirname(path.dirname(__dirname));
       const result = createNewApplication(newAppConfig.company, newAppConfig.jobTitle, appDir);
       
       if (!result.isValid) {
@@ -173,8 +173,8 @@ async function executeCommand(args: string[]): Promise<void> {
     }
     
     // Resolve and validate paths
-    // Need to go up one level from cli/ to app/, then resolvePaths handles ../data
-    const appDir = path.dirname(__dirname);
+    // Need to go up two levels from dist/cli/ to app/, then resolvePaths handles ../data
+    const appDir = path.dirname(path.dirname(__dirname));
     const paths = resolvePaths(applicationName, appDir, flags.test);
     const pathValidation = validatePaths(paths);
     if (!pathValidation.isValid) {
