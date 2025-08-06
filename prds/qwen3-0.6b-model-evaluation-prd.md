@@ -1,68 +1,68 @@
 # qwen3:0.6b Model Evaluation PRD: Speed vs Quality Analysis
 
-**Status**: Draft | **Priority**: Medium | **Effort**: 1-2 days | **Owner**: AI Assistant  
-**Dependencies**: Existing hiring evaluation testing framework
+**Status**: Updated Draft | **Priority**: Medium | **Effort**: 1-2 days | **Owner**: AI Assistant  
+**Dependencies**: Minor test framework fixes, existing hiring evaluation infrastructure
 
 ## Executive Summary
 
-Systematically evaluate the new `qwen3:0.6b` model against the current production speed baseline `phi3:mini` to determine if it offers better speed/quality tradeoffs for hiring evaluations in production-realistic conditions.
+Systematically evaluate the `qwen3:0.6b` model against the current speed baseline `phi3:mini` (140s) to determine if it offers better speed performance while maintaining quality for hiring evaluations.
 
 **Key Metrics**: Speed comparison (target: <140s baseline), quality maintenance (score appropriateness), memory efficiency under conservative Ollama settings.
+
+## Current Infrastructure Status
+
+**Testing Framework**: Minor compatibility issues need fixing
+- Import path needs update from `./evaluation-runner` to `./evaluation-runner.ts` 
+- Test candidate references need updating from folder names to JSON file structure
+- Otherwise fully functional framework ready for model testing
+
+**Model Configuration**: `qwen3:0.6b` needs to be added to active test suite
+- Currently in archived test files but missing from active `speed_3_4b` category
+- Simple addition to existing model list required
 
 ## Problem Statement
 
 ### Current State
-- **Production Models**: `dolphin3:latest` (quality-optimized, ~170s) and `phi3:mini` (speed-optimized, ~140s)
-- **Current Speed Baseline**: `phi3:mini` with conservative parallel Ollama configuration (~140s per 6-persona evaluation)
-- **Pain Point**: Need to continuously evaluate new lightweight models for potential speed/quality improvements
+- **Production Models**: `dolphin3:latest` (quality-optimized, ~170s, 9.0-10.0/10) and `phi3:mini` (speed-optimized, ~140s, 7.0-8.0/10) 
+- **Current Speed Target**: `phi3:mini` at 140s - the model we want to beat with qwen3:0.6b
+- **Test Framework Status**: Minor compatibility issues preventing execution (TS import path, file vs folder references)
+- **Pain Point**: Need to evaluate new ultra-lightweight models for potential speed improvements over current 140s baseline
 
 ### Opportunity
 - **qwen3:0.6b** represents a new ultra-lightweight model that may offer:
-  - Faster inference than current `phi3:mini` baseline
-  - Maintained or improved output quality
-  - Better memory efficiency
+  - Faster inference than current `phi3:mini` speed baseline (target: <140s)
+  - Maintained quality compared to current production models
+  - Better memory efficiency due to smaller model size
 
 ## Solution: Production-Realistic Model Evaluation
 
 ### Design Principles
 
 1. **Production Fidelity**: Test using actual production Ollama settings (`conservative_parallel`)
-2. **Comparative Analysis**: Direct comparison against established `phi3:mini` speed baseline
+2. **Comparative Analysis**: Direct comparison against `phi3:mini` speed baseline (140s target to beat)
 3. **Quality Gates**: Maintain evaluation accuracy and feedback depth standards
 4. **Statistical Validity**: Multiple test runs across representative candidate profiles
 
 ### Implementation Approach
 
-#### Phase 1: Framework Integration
-- Add `qwen3:0.6b` to existing `model-performance-test.js` framework
-- Ensure compatibility with current test infrastructure
-- Verify model availability in Ollama
+#### Phase 1: Standardized Test Framework
+- **Script**: `model-comparison-test.ts` - reusable test runner for any model comparison
+- **Config**: `qwen-vs-phi3.config.json` - specific test configuration with static record
+- Separates logic from configuration for standardization and comparability
+- Easy to create new configs for future model tests
 
-#### Phase 2: Benchmark Execution
-- Run comprehensive tests using 3 standard test candidates:
-  - **Alex Johnson** (Weak - 1-2yr exp, target score 3-6)
-  - **Morgan Davis** (Average - 4-5yr exp, target score 5-7)  
-  - **Dr. Sarah Chen** (Strong - 12yr exp, target score 7-9)
-- Use production Ollama configuration:
-  ```bash
-  OLLAMA_NUM_PARALLEL=4
-  OLLAMA_NUM_THREADS=6
-  OLLAMA_MAX_LOADED_MODELS=1
-  ```
-- Execute 6-persona parallel evaluations matching production flow
-
-#### Phase 3: Analysis & Documentation
-- Compare speed metrics (total evaluation time)
-- Analyze quality metrics (score appropriateness, feedback depth)
-- Update benchmark documentation with findings
-- Provide deployment recommendation
+#### Phase 2: Execute & Analyze  
+- Run: `npx ts-node model-comparison-test.ts qwen-vs-phi3.config.json`
+- Automated comparison using config-specified models and candidates  
+- Generate markdown report with speed/quality analysis and clear winner recommendation
+- Results include config snapshot for full reproducibility
 
 ## Success Metrics
 
 ### Speed Performance
-- **Target**: Beat current `phi3:mini` baseline of ~140s
-- **Acceptable**: Within 10% of baseline (126-154s range)
-- **Excellent**: >20% improvement (<112s)
+- **Target**: Beat current `phi3:mini` speed baseline of 140s
+- **Acceptable**: Within 10% of baseline (126-154s range)  
+- **Excellent**: >15% improvement (<119s)
 
 ### Quality Maintenance
 - **Score Appropriateness**: Candidates receive expected score ranges
@@ -78,9 +78,11 @@ Systematically evaluate the new `qwen3:0.6b` model against the current productio
 ## Implementation Details
 
 ### Testing Framework
-- **Base Script**: `model-performance-test.js`
-- **Test Execution**: Automated benchmark runs
-- **Results Storage**: JSON logs with full evaluation archives
+- **Base Script**: `ollama-optimization-experiment/model-performance-test.js`
+- **Test Candidates**: JSON files in `app/test-resumes/` (`weak-candidate.json`, `average-candidate.json`, `strong-candidate.json`)
+- **Evaluation Runner**: TypeScript `evaluation-runner.ts` (requires import compatibility fixes)
+- **Test Execution**: Automated benchmark runs (currently broken due to TS/JS import issues)
+- **Results Storage**: JSON logs in `model-test-results/` with full evaluation archives
 - **Documentation**: Update `benchmark-results.md`
 
 ### Environment Setup
@@ -93,17 +95,19 @@ ollama serve
 ```
 
 ### Expected Deliverables
-1. **Updated Test Framework**: `qwen3:0.6b` added to model test list
-2. **Benchmark Results**: Complete performance data vs `phi3:mini`
-3. **Analysis Report**: Speed/quality comparison with deployment recommendation
-4. **Documentation**: Updated benchmark results and methodology notes
+1. **Standardized Test Framework**: `model-comparison-test.ts` - reusable script for any model comparison
+2. **Test Configuration**: `qwen-vs-phi3.config.json` - static record of test parameters and thresholds
+3. **Benchmark Results**: JSON results with full config snapshot and raw data for reproducibility
+4. **Analysis Report**: Markdown report with speed/quality comparison and clear deployment recommendation  
+5. **Template for Future Tests**: Easy to create new `.config.json` files for different model comparisons
 
 ## Risk Mitigation
 
 ### Technical Risks
-- **Model Unavailability**: Verify `qwen3:0.6b` is available in Ollama before testing
+- **Framework Compatibility**: Fix TypeScript/JavaScript import issues preventing test execution (high priority)
+- **Model Unavailability**: Verify `qwen3:0.6b` is available in Ollama before testing  
 - **Quality Degradation**: Implement quality gates to catch evaluation accuracy issues
-- **Test Framework Compatibility**: Validate integration with existing test infrastructure
+- **File Path Dependencies**: Update hardcoded test candidate folder references to use actual JSON file structure
 
 ### Timeline Risks
 - **Ollama Performance Variability**: Run multiple test iterations for statistical validity
@@ -112,8 +116,10 @@ ollama serve
 ## Validation Plan
 
 ### Pre-Implementation
-- [ ] Verify `qwen3:0.6b` model availability
-- [ ] Confirm test framework functionality
+- [ ] Fix test framework TypeScript import compatibility issues
+- [ ] Update test candidate file path references (folders → JSON files)
+- [ ] Verify `qwen3:0.6b` model availability in Ollama
+- [ ] Confirm test framework functionality after repairs
 - [ ] Validate production Ollama configuration
 
 ### Post-Implementation

@@ -23,7 +23,7 @@ import { KeywordAnalysisInput } from '../types/services';
 /**
  * Runs keyword analysis for the specified application
  */
-async function runKeywordAnalysis(applicationName: string): Promise<void> {
+async function runKeywordAnalysis(applicationName: string): Promise<any> {
   console.log(`${theme.messages.emojis.processing} Starting keyword analysis...`);
   
   try {
@@ -78,13 +78,13 @@ async function runKeywordAnalysis(applicationName: string): Promise<void> {
 /**
  * Runs hiring evaluation for the specified application
  */
-async function runHiringEvaluation(applicationName: string, resumeData: unknown, fastMode = false): Promise<void> {
+async function runHiringEvaluation(applicationName: string, resumeData: unknown, fastMode = false): Promise<any> {
   const mode = fastMode ? 'fast evaluation' : 'detailed evaluation';
   console.log(`${theme.messages.emojis.processing} Starting hiring ${mode}...`);
   
   try {
     // Extract candidate name from resume data
-    const candidateName = resumeData.basics?.name || resumeData.personalInfo?.name || 'Candidate';
+    const candidateName = (resumeData as any)?.basics?.name || (resumeData as any)?.personalInfo?.name || 'Candidate';
     
     console.log(`${theme.messages.emojis.processing} Evaluating candidate: ${candidateName} (${mode})`);
     
@@ -104,10 +104,10 @@ async function runHiringEvaluation(applicationName: string, resumeData: unknown,
     
     return result;
   } catch (error) {
-    console.error(`${theme.messages.emojis.error} Hiring evaluation failed: ${error.message}`);
+    console.error(`${theme.messages.emojis.error} Hiring evaluation failed: ${(error as Error).message}`);
     
     // Enhanced error handling
-    if (error.message.includes('python')) {
+    if ((error as Error).message.includes('python')) {
       console.error(`${theme.messages.emojis.warning} Python not found or missing dependencies. Run: pip install -r services/hiring-evaluation/requirements.txt`);
     }
     

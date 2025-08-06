@@ -26,13 +26,14 @@ const TEST_MODELS = {
     'gemma3:4b',
     'phi3:mini', 
     'qwen3:4b',
+    'qwen3:0.6b',
   ],
 };
 
 const TEST_CANDIDATES = [
-  { name: 'Alex Johnson', folder: 'test-weak-candidate', expected: 'weak' },
-  { name: 'Morgan Davis', folder: 'test-average-candidate', expected: 'average' },
-  { name: 'Dr. Sarah Chen', folder: 'test-strong-candidate', expected: 'strong' },
+  { name: 'Alex Johnson', file: 'weak-candidate', expected: 'weak' },
+  { name: 'Morgan Davis', file: 'average-candidate', expected: 'average' },
+  { name: 'Dr. Sarah Chen', file: 'strong-candidate', expected: 'strong' },
 ];
 
 class ModelPerformanceTester {
@@ -73,12 +74,12 @@ class ModelPerformanceTester {
     console.log(`\\n🧪 Testing ${modelName} with ${candidateInfo.name} (${candidateInfo.expected})...`);
     
     const startTime = Date.now();
-    const testId = `${modelName.replace(/[^a-zA-Z0-9]/g, '_')}_${candidateInfo.folder}_${Date.now()}`;
+    const testId = `${modelName.replace(/[^a-zA-Z0-9]/g, '_')}_${candidateInfo.file}_${Date.now()}`;
     
     try {
       // Modify evaluation runner to use specific model
-      const EvaluationRunner = require('./evaluation-runner');
-      const evaluator = new EvaluationRunner(candidateInfo.folder);
+      const EvaluationRunner = require('../evaluation-runner.ts');
+      const evaluator = new EvaluationRunner(candidateInfo.file);
       
       // Override model for this test
       evaluator.modelName = modelName;
