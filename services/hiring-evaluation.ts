@@ -16,6 +16,8 @@ export async function evaluateCandidate(
   applicationName: string,
   resumeData: any,
   fastMode = false,
+  evalModel?: string | null,
+  evalParallel?: number | null,
 ): Promise<HiringEvaluation> {
   const input = { applicationName, resumeData, fastMode };
   // Validate input
@@ -41,6 +43,22 @@ export async function evaluateCandidate(
     // Configure fast mode if requested
     if (input.fastMode) {
       evaluationRunner.setFastMode(true);
+    }
+    
+    // Configure model if specified
+    if (evalModel) {
+      console.log(`🔧 Setting evaluation model to: ${evalModel}`);
+      // Set the model on the evaluation runner
+      // We'll need to check if this method exists
+      if (typeof evaluationRunner.setModel === 'function') {
+        evaluationRunner.setModel(evalModel);
+      }
+    }
+    
+    // Configure parallel setting if specified
+    if (evalParallel) {
+      console.log(`⚙️ Setting OLLAMA_NUM_PARALLEL to: ${evalParallel}`);
+      process.env.OLLAMA_NUM_PARALLEL = evalParallel.toString();
     }
     
     // Extract candidate name from resume data

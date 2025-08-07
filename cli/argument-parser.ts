@@ -32,6 +32,8 @@ interface CLIFlags {
   fast: boolean;
   newApp: boolean;
   test: boolean;
+  evalModel: string | null;
+  evalParallel: number | null;
 }
 
 interface CLIConfig {
@@ -64,6 +66,25 @@ function parseCliArguments(args: string[]): CLIConfig {
     filteredArgs.splice(newAppIndex, 3);
   }
   
+  // Parse evaluation flags with parameters
+  let evalModel: string | null = null;
+  let evalParallel: number | null = null;
+  
+  const evalModelIndex = args.indexOf(theme.cli.flags.evalModel);
+  if (evalModelIndex !== -1 && args[evalModelIndex + 1] !== undefined) {
+    evalModel = args[evalModelIndex + 1];
+    filteredArgs.splice(filteredArgs.indexOf(theme.cli.flags.evalModel), 2);
+  }
+  
+  const evalParallelIndex = args.indexOf(theme.cli.flags.evalParallel);
+  if (evalParallelIndex !== -1 && args[evalParallelIndex + 1] !== undefined) {
+    const parallelValue = parseInt(args[evalParallelIndex + 1]);
+    if (!isNaN(parallelValue)) {
+      evalParallel = parallelValue;
+    }
+    filteredArgs.splice(filteredArgs.indexOf(theme.cli.flags.evalParallel), 2);
+  }
+  
   // Extract application name (first non-flag argument)
   let applicationName = filteredArgs.find(arg => !arg.startsWith('--'));
   
@@ -84,6 +105,8 @@ function parseCliArguments(args: string[]): CLIConfig {
     fast: args.includes(theme.cli.flags.fast),
     newApp: newAppIndex !== -1,
     test: args.includes(theme.cli.flags.test),
+    evalModel,
+    evalParallel,
   };
   
   return {

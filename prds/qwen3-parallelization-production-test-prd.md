@@ -14,18 +14,17 @@ Previous tests used oversimplified prompts and artificial timeouts. Need to test
 
 ## Implementation Plan
 
-### 1. Extend evaluation-runner.ts CLI
-Add parameters without breaking existing functionality:
+### 1. Extend Main CLI with Evaluation Flags
+Add evaluation-specific flags to the main CLI system:
 ```bash
-npx ts-node evaluation-runner.ts [application-name] [candidate-name] --model=MODEL --parallel=N
+node generate-resume.js [application-name] --evaluate --eval-model qwen3:0.6b --eval-parallel 8
 ```
 
-**Implementation Strategy**: Work with compiled files approach
-- Keep existing `.js` dynamic imports (leverage existing `dist/` compiled files)
-- Add CLI parameter parsing and KPI tracking to source
-- Run `tsc` build process to compile changes
-- Test against compiled JavaScript files in `dist/` directory
-- **Rationale**: Existing system already works with compiled files, minimal risk approach
+**Implementation Strategy**: Work within existing CLI architecture
+- Add `--eval-model` and `--eval-parallel` flags to `cli/argument-parser.ts`
+- Extend `services/hiring-evaluation.ts` to accept model and parallel configuration
+- Pass parameters through service wrapper to evaluation-runner implementation
+- **Rationale**: Respects existing architecture (CLI → Service Interface → Implementation)
 
 ### 2. Add KPI Tracking
 Minimal logging addition to capture:

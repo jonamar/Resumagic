@@ -105,6 +105,11 @@ class EvaluationRunner {
     console.log(`🚀 Fast mode ${enabled ? 'enabled' : 'disabled'}: using ${selectedModel} @ temperature ${temperature}`);
   }
 
+  setModel(model: string): void {
+    this.modelName = model;
+    console.log(`🔧 Model set to: ${model}`);
+  }
+
   loadFile(filePath: string): string {
     try {
       const content = fs.readFileSync(filePath, 'utf8');

@@ -78,7 +78,7 @@ async function runKeywordAnalysis(applicationName: string): Promise<any> {
 /**
  * Runs hiring evaluation for the specified application
  */
-async function runHiringEvaluation(applicationName: string, resumeData: unknown, fastMode = false): Promise<any> {
+async function runHiringEvaluation(applicationName: string, resumeData: unknown, fastMode = false, evalModel?: string | null, evalParallel?: number | null): Promise<any> {
   const mode = fastMode ? 'fast evaluation' : 'detailed evaluation';
   console.log(`${theme.messages.emojis.processing} Starting hiring ${mode}...`);
   
@@ -91,7 +91,7 @@ async function runHiringEvaluation(applicationName: string, resumeData: unknown,
     console.log(`${theme.messages.emojis.processing} Running hiring evaluation...`);
     
     // Execute evaluation using direct function
-    const result = await evaluateCandidate(applicationName, resumeData, fastMode);
+    const result = await evaluateCandidate(applicationName, resumeData, fastMode, evalModel, evalParallel);
     
     // Display evaluation results
     console.log(`${theme.messages.emojis.success} Hiring evaluation completed successfully!`);
@@ -231,7 +231,7 @@ async function executeCommand(args: string[]): Promise<void> {
       if (flags.all) {
         await runKeywordAnalysis(applicationName);
       }
-      await runHiringEvaluation(applicationName, resumeData, flags.fast);
+      await runHiringEvaluation(applicationName, resumeData, flags.fast, flags.evalModel, flags.evalParallel);
     }
     
     // Exit successfully

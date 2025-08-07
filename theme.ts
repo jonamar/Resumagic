@@ -157,6 +157,8 @@ const cli = {
     fast: '--fast',
     newApp: '--new-app',
     test: '--test',
+    evalModel: '--eval-model',
+    evalParallel: '--eval-parallel',
   },
   
   defaults: {
