@@ -1,0 +1,13 @@
+[
+  {
+    "wall_clock_time_seconds": 0.267193000,
+    "model": "phi3:mini",
+    "parallel_setting": 4,
+    "application": "elovate-director-product-management",
+    "candidate": "weak-candidate",
+    "success": false,
+    "error": "Evaluation failed",
+    "run": 1,
+    "timestamp": "2025-08-06T22:57:59.3NZ"
+  }
+]
