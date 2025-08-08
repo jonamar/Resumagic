@@ -25,6 +25,9 @@ node generate-resume.js company-role --evaluate       # Documents + hiring evalu
 node generate-resume.js company-role --evaluate --fast # Documents + hiring evaluation (speed mode)
 node generate-resume.js company-role --all            # Complete workflow
 
+# 5a. Advanced evaluation configuration (NEW!)
+node generate-resume.js company-role --evaluate --eval-model qwen3:0.6b --eval-parallel 8
+
 # 6. Individual services
 python services/keyword-analysis/kw_rank_modular.py company-role
 node services/hiring-evaluation/evaluation-runner.js company-role

@@ -1,0 +1,157 @@
+{
+  "evaluation_timestamp": "2025-08-07T19:27:50.602Z",
+  "model": "phi3:mini",
+  "candidate": "Test Candidate",
+  "evaluations": [
+    {
+      "scores": {
+        "experience_match": {
+          "score": 6,
+          "reasoning": "The resume indicates that Test Candidate has over five years of experience in a product management capacity which aligns with the job requirement. However, there is no clear evidence or detailed description provided about their Agile methodologies and Scrum frameworks expertise as required for this "
+        },
+        "cultural_fit": {
+          "score": 5,
+          "reasoning": "While Test Candidate has experience leading cross-functional teams which indicates potential leadership skills, there is no specific mention of team building or mentoring experiences. The summary also lacks details on how they have demonstrated cultural fit in previous roles."
+        },
+        "qualification_alignment": {
+          "score": 4,
+          "reasoning": "The candidate has a Bachelor's degree and some experience with product roadmap development, but there is no mention of the required certifications or training. Additionally, their educational background does not align well with our focus on business-oriented qualifications."
+        },
+        "communication_skills": {
+          "score": 7,
+          "reasoning": "The candidate has demonstrated experience in leading teams and working across functions which suggests some level of communication skills but lacks specific evidence such as stakeholder management capabilities or presentation experiences. Their summary does not provide insight into their written, or"
+        }
+      },
+      "overall_assessment": {
+        "persona_score": 7,
+        "recommendation": "The candidate shows potential with experience in product development and team leadership but falls short on the specific Agile methodologies expertise required for this role. They would benefit from a"
+      },
+      "persona": "HR Manager"
+    },
+    {
+      "scores": {
+        "technical_depth": {
+          "score": 8,
+          "reasoning": "The resume indicates a strong technical background with experience leading full-stack development and managing product roadmaps; however, there is no explicit mention of AI/ML or cloud platforms expertise. The candidate's understanding of modern technologies seems solid given their work in Node.js, "
+        },
+        "architecture_thinking": {
+          "score": 3,
+          "reasoning": "The resume lacks clear evidence of experience with system architecture and scalability challenges beyond general product management responsibilities."
+        },
+        "problem_solving": {
+          "score": 5,
+          "reasoning": "While the candidate has managed projects, there's no mention of complex technical problem-solving or innovation. Their approach to data analysis seems limited without details on their methodology and tools used."
+        },
+        "technical_leadership": {
+          "score": 4,
+          "reasoning": "The experience as a Product Manager suggests some leadership skills but lacks specific examples related to leading engineering teams, mentoring, or technical product strategy development."
+        }
+      },
+      "overall_assessment": {
+        "persona_score": 7.5,
+        "recommendation": "This candidate has relevant experience and a solid foundation in Agile methodologies but would benefit from further demonstrating their ability to lead complex technical initiatives, understand system"
+      },
+      "persona": "Director of Engineering"
+    },
+    {
+      "scores": {
+        "usercentered_thinking": {
+          "score": 2,
+          "reasoning": "The attached resume does not provide any evidence of user research or data-driven decision making which is critical for a product manager role. The candidate's focus seems to be more on development rather than understanding the end users and their needs."
+        },
+        "design_collaboration": {
+          "score": 3,
+          "reasoning": "While there are some mentions of working with engineering teams in previous roles, no specific experience is mentioned regarding collaborating directly with designers or integrating design thinking into product strategy. This candidate appears to lack a strong understanding and respect for the crept"
+        },
+        "product_craft": {
+          "score": 4,
+          "reasoning": "The resume indicates some attention to user interface details but lacks evidence of high-quality delivery or focus on design systems consistency."
+        },
+        "crossfunctional_leadership": {
+          "score": 5,
+          "reasoning": "There is a mention of working closely with engineering teams and defining KPIs. However, there's no clear indication that the candidate has experience balancing these constraints or resolving conflicts across disciplines."
+        }
+      },
+      "overall_assessment": {
+        "persona_score": 10,
+        "recommendation": "The resume does not align with your needs for a Senior Product Manager role. The candidate lacks the necessary experience in user-centered thinking and design collaboration."
+      },
+      "persona": "Director of Design"
+    },
+    {
+      "scores": {
+        "business_impact_roi": {
+          "score": 3,
+          "reasoning": "The resume lacks any mention of measurable business results or ROI measurement and financial impact from initiatives that the candidate has led. There is no evidence provided about understanding unit economics or SaaS metrics."
+        },
+        "financial_acumen": {
+          "score": 2,
+          "reasoning": "The resume does not provide any insight into their experience with P&L impact and budget management nor financial planning and forecasting. There is no mention of knowledge in the specific SaaS business models or metrics."
+        },
+        "resource_management": {
+          "score": 3,
+          "reasoning": "The resume does not provide any evidence regarding their experience with resource allocation decisions or operational efficiency improvements they have made to optimize processes. There is no mention of budget ownership experiences that are crucial for a Finance Director role."
+        },
+        "growth_strategy": {
+          "score": 3,
+          "reasoning": "The resume does not provide any evidence about the candidate's experience with revenue growth strategies or market expansion. There is no mention of their approach to scaling and prioritizing initiatives based on business value."
+        }
+      },
+      "overall_assessment": {
+        "persona_score": 10,
+        "recommendation": "The candidate does not meet the core requirements for a Finance Director role at Elovate. They lack experience in financial planning and understanding of SaaS metrics which are crucial to drive profic"
+      },
+      "persona": "Finance Director"
+    },
+    {
+      "scores": {
+        "strategic_vision_execution": {
+          "score": 3,
+          "reasoning": "While your experience as a product manager shows some understanding of strategic planning and roadmap development, there is no clear evidence that you've demonstrated the ability to think at an executive level or execute complex initiatives. Your focus seems more on day-to-day operations rather than"
+        },
+        "leadership_culture_fit": {
+          "score": 4,
+          "reasoning": "Your experience in managing product roadmaps and working with cross-functional teams shows potential for leadership. However, there's no indication of how you approach people development or inspire your team to align with our company values."
+        },
+        "market_customer_focus": {
+          "score": 5,
+          "reasoning": "Your experience in product management and user-experience optimization is valuable. However, there's no mention of customer understanding or market research beyond your own projects which may not directly translate to our specific needs."
+        },
+        "organizational_impact": {
+          "score": 4,
+          "reasoning": "Your experience with cross-functional teams and KPIs tracking is commendable. However, there's no evidence of scaling or transformative leadership that would contribute to Elovate’s growth."
+        }
+      },
+      "overall_assessment": {
+        "persona_score": 12,
+        "recommendation": "Your technical background and experience in product management are impressive. To strengthen your candidacy for the Director role at Elovate, I recommend focusing more on strategic thinking from an M&"
+      },
+      "persona": "CEO"
+    },
+    {
+      "scores": {
+        "management_mentorship": {
+          "score": 2,
+          "reasoning": "The resume lacks evidence of people management and development experience that is crucial for a Senior Product Manager position focused on mentoring team members."
+        },
+        "communication_collaboration": {
+          "score": 3,
+          "reasoning": "While the candidate has worked in product roles before, there's no clear indication they have strong communication skills or collaborative abilities necessary to manage cross-functional teams effectively and resolve conflicts within a team."
+        },
+        "practical_leadership": {
+          "score": 4,
+          "reasoning": "The candidate has experience managing product roadmaps but lacks evidence of hands-on leadership style required for the role. Decision-making process is unclear from their resume and there's no mention about problem-solving support or guidance."
+        },
+        "professional_development": {
+          "score": 2,
+          "reasoning": "There’s little to no indication of investment in team member growth beyond technical skills. No evidence provided on career pathing or advancement support for the team members."
+        }
+      },
+      "overall_assessment": {
+        "persona_score": 2,
+        "recommendation": "The candidate does not meet the core requirements and lacks significant experience in mentorship, communication skills, leadership approachability or commitment to team growth. They would need to gain"
+      },
+      "persona": "Senior Product Manager"
+    }
+  ]
+}

@@ -86,6 +86,7 @@ class EvaluationRunner {
     this.modelTemperatures = {
       'dolphin3:latest': 0.7,   // Higher temp for better variance in quality model
       'phi3:mini': 0.3,          // Lower temp for more focused output in fast model
+      'qwen3:0.6b': 0.3,         // Same temp as phi3:mini for fair comparison
     };
     this.personas = ['hr', 'technical', 'design', 'finance', 'ceo', 'team'];
     this.weights = {
@@ -262,7 +263,7 @@ class EvaluationRunner {
   }
 
   async loadApplicationMaterials() {
-    const applicationPath = path.join(this.baseDir, '..', '..', '..', 'data', 'applications', this.applicationName);
+    const applicationPath = '/Users/jonamar/Documents/resumagic/data/applications/' + this.applicationName;
     const jobPosting = await this.loadFile(path.join(applicationPath, 'inputs', 'job-posting.md'));
     const resumeRaw = await this.loadFile(path.join(applicationPath, 'inputs', 'resume.json'));
     const resume = JSON.parse(resumeRaw);
@@ -283,7 +284,7 @@ class EvaluationRunner {
     const promptTemplate = await this.loadPrompt(persona, provider);
         
     // Extract keywords and generate persona-specific context
-    const keywordPath = path.join(this.baseDir, '..', '..', '..', 'data', 'applications', this.applicationName, 'working', 'keyword_analysis.json');
+    const keywordPath = '/Users/jonamar/Documents/resumagic/data/applications/' + this.applicationName + '/working/keyword_analysis.json';
     const keywords = extractor.extractPriorityKeywords(keywordPath);
         
     let personaContext = '';
@@ -454,7 +455,7 @@ class EvaluationRunner {
       evaluations: evaluations,
     };
         
-    const applicationPath = path.join(this.baseDir, '..', '..', '..', 'data', 'applications', this.applicationName);
+    const applicationPath = '/Users/jonamar/Documents/resumagic/data/applications/' + this.applicationName;
         
     await this.saveFile(
       path.join(applicationPath, 'working', 'evaluation-results.json'),
