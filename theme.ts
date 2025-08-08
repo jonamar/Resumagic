@@ -154,6 +154,7 @@ const cli = {
     auto: '--auto',
     combined: '--cover-letter-and-resume',
     evaluate: '--evaluate',
+    evaluateOnly: '--evaluate-only',
     all: '--all',
     fast: '--fast',
     newApp: '--new-app',

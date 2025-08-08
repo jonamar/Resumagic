@@ -223,11 +223,13 @@ async function executeCommand(args: string[]): Promise<void> {
       process.exit(1);
     }
     
-    // Execute document generation
-    await orchestrateGeneration(generationPlan, paths as any, resumeData, Boolean(flags.preview));
+    // Execute document generation unless evaluate-only is requested
+    if (!flags.evaluateOnly) {
+      await orchestrateGeneration(generationPlan, paths as any, resumeData, Boolean(flags.preview));
+    }
     
     // Execute additional services if requested
-    if (generationPlan.runHiringEvaluation) {
+    if (generationPlan.runHiringEvaluation || flags.evaluateOnly) {
       // For --all flag, run keyword analysis first, then hiring evaluation
       if (flags.all) {
         await runKeywordAnalysis(safeAppName);

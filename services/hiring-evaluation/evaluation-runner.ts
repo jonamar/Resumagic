@@ -73,6 +73,7 @@ class EvaluationRunner {
   private fastModelName: string;
   private fastMode: boolean;
   private modelTemperatures: Record<string, number>;
+  private overrideTemperature?: number;
   private personas: string[];
   private weights: Record<string, number>;
   constructor(applicationName = 'elovate-director-product-management') {
@@ -102,13 +103,18 @@ class EvaluationRunner {
   setFastMode(enabled: boolean): void {
     this.fastMode = enabled;
     const selectedModel = enabled ? this.fastModelName : this.modelName;
-    const temperature = this.modelTemperatures[selectedModel] || 0.1;
+    const temperature = this.overrideTemperature || this.modelTemperatures[selectedModel] || 0.1;
     console.log(`🚀 Fast mode ${enabled ? 'enabled' : 'disabled'}: using ${selectedModel} @ temperature ${temperature}`);
   }
 
   setModel(model: string): void {
     this.modelName = model;
     console.log(`🔧 Model set to: ${model}`);
+  }
+
+  setTemperature(temperature: number): void {
+    this.overrideTemperature = temperature;
+    console.log(`🌡️ Temperature override set to: ${temperature}`);
   }
 
   loadFile(filePath: string): string {
@@ -205,7 +211,7 @@ class EvaluationRunner {
     return new Promise((resolve, reject) => {
       const selectedModel = this.fastMode ? this.fastModelName : model;
       // Get optimized temperature for the selected model
-      const temperature = this.modelTemperatures[selectedModel] || 0.1;
+      const temperature = this.overrideTemperature || this.modelTemperatures[selectedModel] || 0.1;
             
       const postData = JSON.stringify({
         model: selectedModel,
@@ -247,10 +253,12 @@ class EvaluationRunner {
         });
       });
 
-      // Set a 5-minute timeout for complex evaluations
-      req.setTimeout(300000, () => {
+      // Set timeout: fast model OK at 5m; quality model (dolphin) can need up to 8m
+      const isFast = (this.fastMode || (this.modelName && this.modelName.includes('phi3')));
+      const timeoutMs = isFast ? 300000 : 480000; // 5m fast, 8m quality
+      req.setTimeout(timeoutMs, () => {
         req.destroy();
-        reject(new Error('Request timeout after 5 minutes'));
+        reject(new Error(`Request timeout after ${Math.round(timeoutMs/60000)} minutes`));
       });
 
       req.on('error', (error) => {

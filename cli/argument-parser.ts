@@ -23,6 +23,7 @@ interface CLIFlags {
   auto: boolean;
   combined: boolean;
   evaluate: boolean;
+    evaluateOnly: boolean;
   all: boolean;
   fast: boolean;
   newApp: boolean;
@@ -116,6 +117,7 @@ function parseCliArguments(args: string[]): CLIConfig {
     auto: args.includes(theme.cli.flags.auto),
     combined: args.includes(theme.cli.flags.combined),
     evaluate: args.includes(theme.cli.flags.evaluate),
+    evaluateOnly: args.includes(theme.cli.flags.evaluateOnly),
     all: args.includes(theme.cli.flags.all),
     fast: args.includes(theme.cli.flags.fast),
     newApp: newAppIndex !== -1,

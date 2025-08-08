@@ -18,6 +18,7 @@ export async function evaluateCandidate(
   fastMode = false,
   evalModel?: string | null,
   evalParallel?: number | null,
+  evalTemperature?: number | null,
 ): Promise<HiringEvaluation> {
   const input = { applicationName, resumeData, fastMode };
   // Validate input
@@ -45,6 +46,12 @@ export async function evaluateCandidate(
       evaluationRunner.setFastMode(true);
     }
     
+    // Default parallelism: fast mode → 4, quality mode (dolphin) → 1 (if not explicitly set)
+    if (process.env.OLLAMA_NUM_PARALLEL == null || process.env.OLLAMA_NUM_PARALLEL === '') {
+      process.env.OLLAMA_NUM_PARALLEL = input.fastMode ? '4' : '1';
+      console.log(`⚙️ Default OLLAMA_NUM_PARALLEL set to: ${process.env.OLLAMA_NUM_PARALLEL}`);
+    }
+    
     // Configure model if specified
     if (evalModel) {
       console.log(`🔧 Setting evaluation model to: ${evalModel}`);
@@ -59,6 +66,14 @@ export async function evaluateCandidate(
     if (evalParallel) {
       console.log(`⚙️ Setting OLLAMA_NUM_PARALLEL to: ${evalParallel}`);
       process.env.OLLAMA_NUM_PARALLEL = evalParallel.toString();
+    }
+    
+    // Configure temperature if specified
+    if (evalTemperature) {
+      console.log(`🌡️ Setting temperature override to: ${evalTemperature}`);
+      if (typeof evaluationRunner.setTemperature === 'function') {
+        evaluationRunner.setTemperature(evalTemperature);
+      }
     }
     
     // Extract candidate name from resume data
