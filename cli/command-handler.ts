@@ -25,8 +25,9 @@ async function runKeywordAnalysis(applicationName: string): Promise<any> {
   console.log(`${theme.messages.emojis.processing} Starting keyword analysis...`);
   
   try {
-    // Construct paths to required files
-    const applicationPath = path.join(__dirname, '../data/applications', applicationName);
+    // Construct paths to required files (resolve from app root, not dist/cli)
+    const appDir = path.dirname(path.dirname(__dirname));
+    const applicationPath = path.resolve(appDir, theme.fileNaming.dataDir, theme.fileNaming.applicationsDir, applicationName);
     const keywordsFile = path.join(applicationPath, 'inputs', 'keywords.json');
     const jobPostingFile = path.join(applicationPath, 'inputs', 'job-posting.md');
     const resumeFile = path.join(applicationPath, 'inputs', 'resume.json');

@@ -22,13 +22,31 @@ const __dirname = path.dirname(__filename);
  * @param resumeFile - Optional path to resume.json file
  * @returns Promise resolving to keyword analysis results
  */
+export async function analyzeKeywords(input: KeywordAnalysisInput): Promise<KeywordAnalysis>;
 export async function analyzeKeywords(
   applicationName: string,
   keywordsFile: string,
   jobPostingFile: string,
   resumeFile?: string,
+  topCount?: number,
+): Promise<KeywordAnalysis>;
+export async function analyzeKeywords(
+  arg1: KeywordAnalysisInput | string,
+  arg2?: string,
+  arg3?: string,
+  arg4?: string,
+  arg5?: number,
 ): Promise<KeywordAnalysis> {
-  const input = { applicationName, keywordsFile, jobPostingFile, resumeFile };
+  const input: KeywordAnalysisInput =
+    typeof arg1 === 'object'
+      ? (arg1 as KeywordAnalysisInput)
+      : {
+          applicationName: arg1,
+          keywordsFile: arg2 as string,
+          jobPostingFile: arg3 as string,
+          resumeFile: arg4,
+          topCount: arg5,
+        };
   // Validate input
   if (!input.applicationName || typeof input.applicationName !== 'string') {
     throw new Error('applicationName is required and must be a string');
@@ -49,8 +67,13 @@ export async function analyzeKeywords(
     throw new Error(`Job posting file not found: ${input.jobPostingFile}`);
   }
 
+  // Resolve app root (dist -> app) and build absolute path to python entry
+  // dist/services -> dist -> app
+  const appRoot = path.dirname(path.dirname(path.dirname(__dirname)));
+  const pyEntry = path.resolve(appRoot, 'services/keyword-analysis/kw_rank_modular.py');
+  
   // Construct the command with proper arguments
-  let command = `python services/keyword-analysis/kw_rank_modular.py "${input.keywordsFile}" "${input.jobPostingFile}"`;
+  let command = `python "${pyEntry}" "${input.keywordsFile}" "${input.jobPostingFile}"`;
   
   // Add resume file if it exists for sentence matching
   if (input.resumeFile && fs.existsSync(input.resumeFile)) {
@@ -58,13 +81,13 @@ export async function analyzeKeywords(
   }
 
   // Add top count if specified
-  if (input.topCount) {
+  if (typeof input.topCount === 'number' && !isNaN(input.topCount)) {
     command += ` --top ${input.topCount}`;
   }
 
   try {
     const { stderr } = await execAsync(command, {
-      cwd: path.resolve(__dirname, '..'),
+      cwd: appRoot,
       timeout: 120000, // 2 minutes - ML processing takes time
     });
 
@@ -96,8 +119,9 @@ export async function analyzeKeywords(
       },
     };
     
-  } catch (error) {
-    throw new Error(`Keyword analysis failed: ${error.message}`);
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    throw new Error(`Keyword analysis failed: ${message}`);
   }
 }
 
