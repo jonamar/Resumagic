@@ -171,7 +171,7 @@ def prepare_resume_content(resume_json):
 def encode_content_embeddings(valid_content):
     """Encode resume content using sentence transformer."""
     model = SentenceTransformer('all-MiniLM-L6-v2')
-    valid_texts = [content[i]['text'] for i, _ in valid_content]
+    valid_texts = [item['text'] for _, item in valid_content]
     return model.encode(valid_texts, normalize_embeddings=True), model
 
 
