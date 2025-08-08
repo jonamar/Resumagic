@@ -179,8 +179,9 @@ function openGeneratedFiles(filePaths: string[], autoPreview: boolean): void {
         execSync(`open "${file}"`);
       }
       console.log(`${theme.messages.emojis.success} ${theme.messages.success.filesOpened}`);
-    } catch (error) {
-      console.warn(`${theme.messages.emojis.warning} Could not open files: ${error.message}`);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      console.warn(`${theme.messages.emojis.warning} Could not open files: ${message}`);
     }
   }
 }

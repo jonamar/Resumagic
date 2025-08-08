@@ -1,12 +1,5 @@
-import path from 'path';
-import { fileURLToPath } from 'url';
 import { executeCommand } from './cli/command-handler.js';
 // Services are invoked from CLI modules; keep entry thin
-import theme from './theme.js';
-
-// ESM equivalent of __dirname
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 /**
  * Main Resume Generator Application

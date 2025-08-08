@@ -16,7 +16,7 @@ import { ERROR_TYPES } from '../utils/error-types.js';
  * @param {string} jobTitle - Job title
  * @returns {string} Formatted application name
  */
-function generateApplicationName(company, jobTitle) {
+function generateApplicationName(company: string, jobTitle: string): string {
   // Convert to lowercase and replace spaces/special chars with hyphens
   const cleanCompany = company.toLowerCase().replace(/[^a-z0-9]/g, '-');
   const cleanJobTitle = jobTitle.toLowerCase().replace(/[^a-z0-9]/g, '-');
@@ -35,7 +35,7 @@ function generateApplicationName(company, jobTitle) {
  * @param {string} baseDir - Base directory (typically app root)
  * @returns {Object} Result object with success status and application info
  */
-function createNewApplication(company, jobTitle, baseDir) {
+function createNewApplication(company: string, jobTitle: string, baseDir: string) {
   try {
     // Generate application name
     const applicationName = generateApplicationName(company, jobTitle);
@@ -118,13 +118,15 @@ function createNewApplication(company, jobTitle, baseDir) {
     
     return ErrorHandler.createResult(true, result);
     
-  } catch (error) {
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    const stack = error instanceof Error ? error.stack || '' : '';
     return ErrorHandler.createResult(
       false,
       null,
-      `Failed to create new application: ${error.message}`,
+      `Failed to create new application: ${message}`,
       ERROR_TYPES.INTERNAL_ERROR,
-      [error.stack],
+      stack ? [stack] : [],
     );
   }
 }

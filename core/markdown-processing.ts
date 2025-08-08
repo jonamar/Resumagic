@@ -20,7 +20,6 @@ function parseTextWithFormatting(text: string): Array<{ text: string; bold: bool
 
   const parts: Array<{ text: string; bold: boolean; italic: boolean }> = [];
   let remainingText: string = text;
-  const position = 0; // retained for potential future use
 
   // Process text iteratively to handle overlapping patterns correctly
   while (remainingText.length > 0) {
@@ -218,8 +217,9 @@ function parseMarkdownCoverLetter(markdownFilePath: string, resumeJsonPath: stri
     
     return coverLetterData;
     
-  } catch (error) {
-    throw new Error(`Failed to parse markdown cover letter: ${error.message}`);
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    throw new Error(`Failed to parse markdown cover letter: ${message}`);
   }
 }
 
@@ -260,8 +260,7 @@ function parseMarkdownContent(content: string) {
  */
 function parseInlineMarkdown(text: string) {
   // Simple regex patterns for bold and italic
-  const parts = [];
-  const _remainingText = text; // retained for potential future use
+  const parts: Array<{ text: string; bold: boolean; italic: boolean }> = [];
   
   // Find all bold (**text**) and italic (*text*) patterns
   const boldPattern = /\*\*(.+?)\*\*/g;
@@ -274,20 +273,20 @@ function parseInlineMarkdown(text: string) {
   while ((match = boldPattern.exec(text)) !== null) {
     // Add text before the match
     if (match.index > lastIndex) {
-      const beforeText = text.substring(lastIndex, match.index);
+      const beforeText: string = text.substring(lastIndex, match.index) ?? '';
       if (beforeText) {
         parts.push({ text: beforeText, bold: false, italic: false });
       }
     }
     
     // Add the bold text
-    parts.push({ text: match[1], bold: true, italic: false });
+    parts.push({ text: String(match[1] ?? ''), bold: true, italic: false });
     lastIndex = match.index + match[0].length;
   }
   
   // Add remaining text
   if (lastIndex < text.length) {
-    const remainingText = text.substring(lastIndex);
+    const remainingText: string = text.substring(lastIndex) ?? '';
     if (remainingText) {
       parts.push({ text: remainingText, bold: false, italic: false });
     }
@@ -299,20 +298,20 @@ function parseInlineMarkdown(text: string) {
     while ((match = italicPattern.exec(text)) !== null) {
       // Add text before the match
       if (match.index > lastIndex) {
-        const beforeText = text.substring(lastIndex, match.index);
+        const beforeText: string = text.substring(lastIndex, match.index) ?? '';
         if (beforeText) {
           parts.push({ text: beforeText, bold: false, italic: false });
         }
       }
       
       // Add the italic text
-      parts.push({ text: match[1], bold: false, italic: true });
+      parts.push({ text: String(match[1] ?? ''), bold: false, italic: true });
       lastIndex = match.index + match[0].length;
     }
     
     // Add remaining text
     if (lastIndex < text.length) {
-      const remainingText = text.substring(lastIndex);
+      const remainingText: string = text.substring(lastIndex) ?? '';
       if (remainingText) {
         parts.push({ text: remainingText, bold: false, italic: false });
       }
@@ -332,7 +331,7 @@ function parseInlineMarkdown(text: string) {
  * @param {string} jsonFilePath - Path to the JSON file
  * @returns {string|null} Path to the markdown file or null if not found
  */
-function findMarkdownFile(jsonFilePath) {
+function findMarkdownFile(jsonFilePath: string): string | null {
   const dir = path.dirname(jsonFilePath);
   const baseName = path.basename(jsonFilePath, '.json');
   const possibleNames = [

@@ -2,9 +2,6 @@ import theme from '../theme.js';
 import ErrorHandler from '../utils/error-handler.js';
 import { ERROR_TYPES } from '../utils/error-types.js';
 
-// Keep a reference to avoid unused variable while preserving structure for future config
-const _errorHandler = ErrorHandler;
-
 /**
  * Generation Planning Module
  * Handles document generation planning logic based on CLI flags and file availability

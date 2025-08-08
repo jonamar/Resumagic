@@ -156,10 +156,11 @@ function validatePaths(paths: ResolvedPaths): ValidationResult {
   if (!fs.existsSync(outputsDir)) {
     try {
       fs.mkdirSync(outputsDir, { recursive: true });
-    } catch (error) {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
       const context = ErrorHandler.buildFileContext(outputsDir, {
         operation: 'output directory creation',
-        error: error.message,
+        error: message,
         required: true,
       });
       
@@ -172,7 +173,7 @@ function validatePaths(paths: ResolvedPaths): ValidationResult {
       return ErrorHandler.createResult(
         false,
         null,
-        `Failed to create outputs directory: ${error.message}`,
+        `Failed to create outputs directory: ${message}`,
         ERROR_TYPES.FILE_SYSTEM_ERROR,
         [],
         'OUTPUT_DIR_CREATION_FAILED',
@@ -203,10 +204,11 @@ function loadResumeData(resumeDataPath: string): LoadResult {
       isValid: true,
       data: resumeData,
     };
-  } catch (error) {
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
     return {
       isValid: false,
-      error: `Error loading resume data: ${error.message}`,
+      error: `Error loading resume data: ${message}`,
       errorType: 'RESUME_DATA_INVALID',
     };
   }

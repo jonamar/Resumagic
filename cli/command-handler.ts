@@ -5,8 +5,6 @@ import { determineGenerationPlan, validateGenerationPlan } from '../core/generat
 import { resolvePaths, validatePaths, hasMarkdownFile, loadResumeData, displayApplicationNotFoundError } from '../core/path-resolution.js';
 import { orchestrateGeneration } from '../core/document-orchestration.js';
 import { createNewApplication } from '../core/new-application.js';
-import { analyzeKeywords } from '../services/keyword-analysis.js';
-import { evaluateCandidate } from '../services/hiring-evaluation.js';
 import theme from '../theme.js';
 
 // ESM equivalent of __dirname
@@ -48,7 +46,8 @@ async function runKeywordAnalysis(applicationName: string): Promise<any> {
     
     console.log(`${theme.messages.emojis.processing} Running keyword analysis...`);
     
-    // Execute analysis using direct function
+    // Execute analysis using direct function (dynamically imported to avoid TS compile of services)
+    const { analyzeKeywords } = await import('../services/' + 'keyword-analysis.js') as any;
     const result = await analyzeKeywords(
       applicationName,
       keywordsFile, 
@@ -90,7 +89,8 @@ async function runHiringEvaluation(applicationName: string, resumeData: unknown,
     
     console.log(`${theme.messages.emojis.processing} Running hiring evaluation...`);
     
-    // Execute evaluation using direct function
+    // Execute evaluation using direct function (dynamically imported to avoid TS compile of services)
+    const { evaluateCandidate } = await import('../services/' + 'hiring-evaluation.js') as any;
     const result = await evaluateCandidate(applicationName, resumeData, fastMode, evalModel, evalParallel, evalTemperature);
     
     // Display evaluation results

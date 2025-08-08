@@ -33,7 +33,12 @@
     "exactOptionalPropertyTypes": false
   },
   "include": [
-    "**/*.ts"
+    "cli/**/*.ts",
+    "core/**/*.ts",
+    "types/**/*.ts",
+    "utils/**/*.ts",
+    "theme.ts",
+    "generate-resume.ts"
   ],
   "exclude": [
     "node_modules",
