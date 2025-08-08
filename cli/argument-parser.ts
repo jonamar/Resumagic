@@ -4,8 +4,7 @@ import theme from '../theme.js';
 import ErrorHandler from '../utils/error-handler.js';
 import { ERROR_TYPES } from '../utils/error-types.js';
 
-// Keep a reference to avoid unused variable while preserving structure for future config
-const _errorHandler = ErrorHandler;
+// ErrorHandler is used via static methods; no instance needed
 
 /**
  * CLI Parser Module

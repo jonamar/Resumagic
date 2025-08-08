@@ -175,7 +175,8 @@ async function executeCommand(args: string[]): Promise<void> {
     // Resolve and validate paths
     // Need to go up two levels from dist/cli/ to app/, then resolvePaths handles ../data
     const appDir = path.dirname(path.dirname(__dirname));
-    const paths = resolvePaths(applicationName, appDir, flags.test);
+    const safeAppName = applicationName ?? '';
+    const paths = resolvePaths(safeAppName, appDir, Boolean(flags.test));
     const pathValidation = validatePaths(paths);
     if (!pathValidation.isValid) {
       console.error(`${theme.messages.emojis.error} ${pathValidation.error}`);
@@ -185,7 +186,7 @@ async function executeCommand(args: string[]): Promise<void> {
       
       // Display application not found error with helpful information
       if (pathValidation.errorType === 'APPLICATION_NOT_FOUND') {
-        displayApplicationNotFoundError(applicationName, __dirname);
+        displayApplicationNotFoundError(safeAppName, __dirname);
       }
       
       process.exit(1);
@@ -223,15 +224,15 @@ async function executeCommand(args: string[]): Promise<void> {
     }
     
     // Execute document generation
-    const _generatedFiles = await orchestrateGeneration(generationPlan, paths as any, resumeData, Boolean(flags.preview));
+    await orchestrateGeneration(generationPlan, paths as any, resumeData, Boolean(flags.preview));
     
     // Execute additional services if requested
     if (generationPlan.runHiringEvaluation) {
       // For --all flag, run keyword analysis first, then hiring evaluation
       if (flags.all) {
-        await runKeywordAnalysis(applicationName);
+        await runKeywordAnalysis(safeAppName);
       }
-      await runHiringEvaluation(applicationName, resumeData, flags.fast, flags.evalModel, flags.evalParallel, flags.evalTemperature);
+      await runHiringEvaluation(safeAppName, resumeData, flags.fast, flags.evalModel, flags.evalParallel, flags.evalTemperature);
     }
     
     // Exit successfully

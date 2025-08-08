@@ -20,7 +20,7 @@ function parseTextWithFormatting(text: string): Array<{ text: string; bold: bool
 
   const parts: Array<{ text: string; bold: boolean; italic: boolean }> = [];
   let remainingText: string = text;
-  const position = 0;
+  const position = 0; // retained for potential future use
 
   // Process text iteratively to handle overlapping patterns correctly
   while (remainingText.length > 0) {
@@ -261,7 +261,7 @@ function parseMarkdownContent(content: string) {
 function parseInlineMarkdown(text: string) {
   // Simple regex patterns for bold and italic
   const parts = [];
-  const _remainingText = text;
+  const _remainingText = text; // retained for potential future use
   
   // Find all bold (**text**) and italic (*text*) patterns
   const boldPattern = /\*\*(.+?)\*\*/g;

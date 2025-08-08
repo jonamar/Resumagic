@@ -60,8 +60,8 @@ interface TestPaths {
  */
 function extractCompanyFromFolderName(folderName: string): string {
   // Take the first part before the first hyphen and capitalize it
-  const companyPart = folderName.split('-')[0];
-  return companyPart.charAt(0).toUpperCase() + companyPart.slice(1);
+  const companyPart = folderName.split('-')[0] || '';
+  return companyPart ? companyPart.charAt(0).toUpperCase() + companyPart.slice(1) : '';
 }
 
 /**

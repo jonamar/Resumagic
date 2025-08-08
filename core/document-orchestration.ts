@@ -3,7 +3,6 @@ import { execSync } from 'child_process';
 import { Packer } from 'docx';
 import JSZip from 'jszip';
 import { createResumeDocx, createCoverLetterDocx, createCombinedDocx } from './document-templates.js';
-import type { Document } from 'docx';
 type ResumeData = Parameters<typeof createResumeDocx>[0];
 import { parseMarkdownCoverLetter } from './markdown-processing.js';
 import theme from '../theme.js';
@@ -35,9 +34,10 @@ async function removeCompatibilityMode(buffer: Buffer): Promise<Buffer> {
       settingsXml = settingsXml.replace(/\s+mc:Ignorable="[^"]*"/g, '');
       
       // Remove w14, w15, wp14 namespace declarations
+      // note: keep variable to satisfy strict no-unused
       let _settingsXml = settingsXml.replace(/\s+xmlns:w14="[^"]*"/g, '');
-      _settingsXml = settingsXml.replace(/\s+xmlns:w15="[^"]*"/g, '');
-      _settingsXml = settingsXml.replace(/\s+xmlns:wp14="[^"]*"/g, '');
+      _settingsXml = _settingsXml.replace(/\s+xmlns:w15="[^"]*"/g, '');
+      _settingsXml = _settingsXml.replace(/\s+xmlns:wp14="[^"]*"/g, '');
       
       // Create a much simpler settings.xml file
       const cleanSettings = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +

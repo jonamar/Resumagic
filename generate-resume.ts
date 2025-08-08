@@ -19,7 +19,7 @@ const __dirname = path.dirname(__filename);
  * @param {string} applicationName - Name of the application
  * @returns {Promise<void>}
  */
-async function runKeywordAnalysis(applicationName) {
+async function runKeywordAnalysis(applicationName: string): Promise<any> {
   console.log(`${theme.messages.emojis.processing} Starting keyword analysis...`);
   
   try {
@@ -77,7 +77,7 @@ async function runKeywordAnalysis(applicationName) {
  * @param {boolean} fastMode - Use faster model for quick evaluation
  * @returns {Promise<void>}
  */
-async function runHiringEvaluation(applicationName, resumeData, fastMode = false) {
+async function runHiringEvaluation(applicationName: string, resumeData: any, fastMode = false): Promise<any> {
   const mode = fastMode ? 'fast evaluation' : 'detailed evaluation';
   console.log(`${theme.messages.emojis.processing} Starting hiring ${mode}...`);
   
