@@ -151,5 +151,110 @@ if (generationPlan.runHiringEvaluation) {
 - Strictness: Keep `strict` in core; relax only via targeted excludes, not by downgrading global compiler options.
 - Commit discipline: Atomic, scoped commits on `app/` repo; allow `--no-verify` temporarily per policy.
 
+---
+
+## Implementation Spec (Agent-Facing)
+
+This section details the exact execution plan and edits required for the AI agent to implement.
+
+### 1) File-by-File Edits
+
+- `app/core/generation-planning.ts`
+  - In `determineGenerationPlan(flags, hasMarkdownFile)`, modify the `flags.evaluate` branch to be orthogonal:
+    - Set `runHiringEvaluation = true` only.
+    - Do NOT set any of: `generateResume`, `generateCoverLetter`, `generateCombinedDoc`.
+    - Set `behaviorDescription = 'Hiring evaluation only mode'`.
+  - No other logic changes.
+
+- `app/theme.ts`
+  - Update `messages.usage.flagDescriptions` for `--evaluate` to:
+    - `Run hiring evaluation only (compose with document flags or use --all for full pipeline)`.
+  - Ensure flags listing includes `--evaluate`, `--all`, and existing document flags.
+
+- `app/tsconfig.json`
+  - Add excludes for archives to stabilize core TS build:
+    - Add `**/test-archive/**` to `exclude` array.
+  - Do NOT change global strict settings.
+
+- `app/cli/command-handler.ts`
+  - No change to control flow: continue to call `orchestrateGeneration(...)` regardless of which doc flags are set. This keeps flow predictable; we accept a possible "0 files created" summary.
+
+### 2) Final CLI Semantics
+
+- Default (no flags):
+  - If `cover-letter.md` exists → generate resume, cover letter, and combined.
+  - Else → generate resume only.
+
+- `--evaluate`:
+  - Runs hiring evaluation only. No documents generated.
+
+- Document flags (individually or combined):
+  - `--resume` → resume only
+  - `--cover-letter` → cover letter only (requires markdown)
+  - `--combined` → combined doc only (requires markdown)
+  - `--both` → resume + cover letter
+  - `--auto` → resume + cover letter if markdown exists, else resume only
+
+- Compositions:
+  - Any doc flag(s) + `--evaluate` → generate requested docs, then run evaluation.
+
+- `--all`:
+  - Documents + keyword analysis + hiring evaluation (unchanged).
+
+- Evaluation advanced flags (unchanged behavior, for completeness):
+  - `--fast` (speed mode)
+  - `--eval-model <name>` (if runner supports `.setModel()`)
+  - `--eval-parallel <n>` (sets `OLLAMA_NUM_PARALLEL`)
+  - `--eval-temperature <t>` (if runner supports `.setTemperature()`)
+
+### 3) Acceptance Tests (Commands & Expected Results)
+
+Assume standard app: `relay-director-of-product`.
+
+- Build
+  - `npm run build`
+  - Expect: TypeScript compiles successfully for core scope; assets copied to `dist/`.
+
+- Default documents
+  - `node dist/generate-resume.js relay-director-of-product`
+  - Expect: Resume + cover letter + combined DOCX in `data/applications/<app>/outputs/`.
+
+- Evaluation-only
+  - `node dist/generate-resume.js relay-director-of-product --evaluate`
+  - Expect: No new DOCX files created; evaluation output saved to `data/applications/<app>/working/` (e.g., `evaluation-results.json` and summary markdown).
+
+- Composed (docs + evaluation)
+  - `node dist/generate-resume.js relay-director-of-product --resume --evaluate`
+  - Expect: Resume DOCX created; evaluation output saved to `working/`.
+
+- All-in-one
+  - `node dist/generate-resume.js relay-director-of-product --all`
+  - Expect: Documents + keyword analysis outputs + evaluation outputs.
+
+### 4) Rollback Instructions
+
+- Revert `app/core/generation-planning.ts` change in the `flags.evaluate` branch to prior logic that enabled document generation.
+- Revert `app/theme.ts` help text line for `--evaluate` to its prior description.
+- Remove `**/test-archive/**` from `tsconfig.json` `exclude` if added.
+
+### 5) Guardrails (from Refactoring Guide)
+
+- Subtract complexity; no new abstractions or layers.
+- Keep edits limited to the files above; avoid touching peripheral services.
+- Grep test must pass:
+  - Searching `--evaluate` and `evaluate` should take an agent to `generation-planning.ts` and `theme.ts` as the primary control points.
+- One-file rule: No net-new runtime code files; only this PRD is new documentation.
+- Avoid rabbit holes: Do not attempt repo-wide TS perfection. Focus on build/run viability for the core CLI path.
+
+### 6) Dev/CI Notes
+
+- Commits may use `--no-verify` temporarily, per policy.
+- Preferred dev loop: build once (`npm run build`), run compiled JS (`node dist/...`).
+
+### 7) Tickets & To-Dos
+
+- When kicking off implementation in a fresh chat, create structured to-dos using Cursor Agent planning and queueing per the docs, then execute sequentially.
+  - Reference: [Cursor Agent Planning – Agent to-dos](https://docs.cursor.com/en/agent/planning#agent-to-dos)
+
 
 
