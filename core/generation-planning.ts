@@ -58,20 +58,9 @@ function determineGenerationPlan(flags: CLIFlags, hasMarkdownFile: boolean): Gen
     behaviorDescription = hasMarkdownFile ? 
       'Complete workflow: documents + keyword analysis + hiring evaluation' : 
       'Complete workflow: resume + keyword analysis + hiring evaluation';
-  }
-  // Handle --evaluate flag (documents + hiring evaluation)
-  else if (flags.evaluate) {
-    if (hasMarkdownFile) {
-      generateResume = true;
-      generateCoverLetter = true;
-      generateCombinedDoc = true;
-    } else {
-      generateResume = true;
-    }
+  } else if (flags.evaluate) {
     runHiringEvaluation = true;
-    behaviorDescription = hasMarkdownFile ?
-      'Document generation + hiring evaluation' :
-      'Resume generation + hiring evaluation';
+    behaviorDescription = 'Hiring evaluation only mode';
   }
   // Existing document-only flags
   else if (flags.coverLetter) {

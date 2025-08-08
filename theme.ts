@@ -159,6 +159,7 @@ const cli = {
     test: '--test',
     evalModel: '--eval-model',
     evalParallel: '--eval-parallel',
+    evalTemperature: '--eval-temperature',
   },
   
   defaults: {
@@ -228,7 +229,7 @@ const messages = {
     command: 'Usage: node generate-resume.js <application-folder-name> [flags]',
     example: 'Example: node generate-resume.js relay-director-of-product',
     flags: 'Available flags: --resume --cover-letter --both --combined --auto --evaluate --all --preview',
-    flagDescriptions: '  --evaluate: Generate documents + run hiring evaluation\n  --all: Complete workflow (documents + keyword analysis + hiring evaluation)',
+    flagDescriptions: '  --evaluate: Run hiring evaluation only (compose with document flags or use --all for full pipeline)\n  --all: Complete workflow (documents + keyword analysis + hiring evaluation)',
     createApplication: 'To create a new application:',
     createCommand: 'cp -r data/applications/template data/applications/{name}',
     availableApplications: 'Available applications:',
