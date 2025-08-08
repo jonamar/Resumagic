@@ -13,19 +13,19 @@ import matter from 'gray-matter';
  * @param {string} text - Text with potential markdown formatting
  * @returns {Array} Array of {text, bold, italic} objects
  */
-function parseTextWithFormatting(text) {
+function parseTextWithFormatting(text: string): Array<{ text: string; bold: boolean; italic: boolean }> {
   if (!text || typeof text !== 'string') {
     return [{ text: text || '', bold: false, italic: false }];
   }
 
-  const parts = [];
-  let remainingText = text;
+  const parts: Array<{ text: string; bold: boolean; italic: boolean }> = [];
+  let remainingText: string = text;
   const position = 0;
 
   // Process text iteratively to handle overlapping patterns correctly
   while (remainingText.length > 0) {
     let foundMatch = false;
-    let earliestMatch = null;
+    let earliestMatch: any = null;
     let earliestIndex = remainingText.length;
 
     // Check all patterns and find the earliest match
@@ -53,7 +53,7 @@ function parseTextWithFormatting(text) {
 
     if (foundMatch) {
       // Add plain text before the match
-      if (earliestMatch.startIndex > 0) {
+      if (earliestMatch && earliestMatch.startIndex > 0) {
         parts.push({
           text: remainingText.substring(0, earliestMatch.startIndex),
           bold: false,
@@ -62,7 +62,7 @@ function parseTextWithFormatting(text) {
       }
 
       // Add the formatted text
-      if (earliestMatch.content) {
+      if (earliestMatch && earliestMatch.content) {
         parts.push({
           text: earliestMatch.content,
           bold: earliestMatch.bold,
@@ -71,7 +71,7 @@ function parseTextWithFormatting(text) {
       }
 
       // Continue with remaining text after the match
-      remainingText = remainingText.substring(earliestMatch.endIndex);
+      remainingText = remainingText.substring(earliestMatch ? earliestMatch.endIndex : remainingText.length);
     } else {
       // No more matches, add remaining text as plain
       if (remainingText) {
@@ -181,7 +181,7 @@ function runTests() {
  * @param {string} resumeJsonPath - Path to the resume JSON file for contact info
  * @returns {Object} Data structure compatible with existing pipeline
  */
-function parseMarkdownCoverLetter(markdownFilePath, resumeJsonPath) {
+function parseMarkdownCoverLetter(markdownFilePath: string, resumeJsonPath: string) {
   try {
     // Read the markdown file
     const markdownContent = fs.readFileSync(markdownFilePath, 'utf8');
@@ -228,7 +228,7 @@ function parseMarkdownCoverLetter(markdownFilePath, resumeJsonPath) {
  * @param {string} content - Raw markdown content
  * @returns {Array} Array of paragraph objects with text and formatting
  */
-function parseMarkdownContent(content) {
+function parseMarkdownContent(content: string) {
   // Split content into paragraphs (separated by double newlines)
   const paragraphs = content.trim().split(/\n\s*\n/);
   
@@ -258,7 +258,7 @@ function parseMarkdownContent(content) {
  * @param {string} text - Text with potential markdown formatting
  * @returns {Array} Array of text runs with formatting
  */
-function parseInlineMarkdown(text) {
+function parseInlineMarkdown(text: string) {
   // Simple regex patterns for bold and italic
   const parts = [];
   const _remainingText = text;

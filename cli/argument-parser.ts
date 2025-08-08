@@ -69,31 +69,40 @@ function parseCliArguments(args: string[]): CLIConfig {
   let evalTemperature: number | null = null;
   
   const evalModelIndex = args.indexOf(theme.cli.flags.evalModel);
-  if (evalModelIndex !== -1 && args[evalModelIndex + 1] !== undefined) {
-    evalModel = args[evalModelIndex + 1];
-    filteredArgs.splice(filteredArgs.indexOf(theme.cli.flags.evalModel), 2);
+  if (evalModelIndex !== -1) {
+    const value = args[evalModelIndex + 1];
+    if (typeof value === 'string' && !value.startsWith('--')) {
+      evalModel = String(value);
+      filteredArgs.splice(filteredArgs.indexOf(theme.cli.flags.evalModel), 2);
+    }
   }
   
   const evalParallelIndex = args.indexOf(theme.cli.flags.evalParallel);
-  if (evalParallelIndex !== -1 && args[evalParallelIndex + 1] !== undefined) {
-    const parallelValue = parseInt(args[evalParallelIndex + 1]);
-    if (!isNaN(parallelValue)) {
-      evalParallel = parallelValue;
+  if (evalParallelIndex !== -1) {
+    const value = args[evalParallelIndex + 1];
+    if (typeof value === 'string' && !value.startsWith('--')) {
+      const parallelValue = parseInt(value);
+      if (!isNaN(parallelValue)) {
+        evalParallel = parallelValue;
+      }
+      filteredArgs.splice(filteredArgs.indexOf(theme.cli.flags.evalParallel), 2);
     }
-    filteredArgs.splice(filteredArgs.indexOf(theme.cli.flags.evalParallel), 2);
   }
   
   const evalTemperatureIndex = args.indexOf(theme.cli.flags.evalTemperature);
-  if (evalTemperatureIndex !== -1 && args[evalTemperatureIndex + 1] !== undefined) {
-    const temperatureValue = parseFloat(args[evalTemperatureIndex + 1]);
-    if (!isNaN(temperatureValue)) {
-      evalTemperature = temperatureValue;
+  if (evalTemperatureIndex !== -1) {
+    const value = args[evalTemperatureIndex + 1];
+    if (typeof value === 'string' && !value.startsWith('--')) {
+      const temperatureValue = parseFloat(value);
+      if (!isNaN(temperatureValue)) {
+        evalTemperature = temperatureValue;
+      }
+      filteredArgs.splice(filteredArgs.indexOf(theme.cli.flags.evalTemperature), 2);
     }
-    filteredArgs.splice(filteredArgs.indexOf(theme.cli.flags.evalTemperature), 2);
   }
   
   // Extract application name (first non-flag argument)
-  let applicationName = filteredArgs.find(arg => !arg.startsWith('--'));
+  let applicationName = filteredArgs.find(arg => typeof arg === 'string' && !arg.startsWith('--')) as string | undefined;
   
   // Handle full paths - extract just the folder name
   if (applicationName && applicationName.includes('/')) {
@@ -101,7 +110,7 @@ function parseCliArguments(args: string[]): CLIConfig {
   }
   
   // Parse flags
-  const flags = {
+  const flags: CLIFlags = {
     preview: args.includes(theme.cli.flags.preview) || theme.cli.defaults.autoPreview,
     coverLetter: args.includes(theme.cli.flags.coverLetter),
     both: args.includes(theme.cli.flags.both),
@@ -178,12 +187,12 @@ function validateCliArguments(config: CLIConfig) {
     const context = ErrorHandler.buildValidationContext('applicationName', {
       provided: applicationName,
       expectedFormat: 'non-empty string',
-    });
+    } as any);
     
     ErrorHandler.logAppError(
       'Missing application name in CLI arguments',
       ERROR_TYPES.VALIDATION_ERROR,
-      context,
+      context as unknown as Error,
     );
     
     return ErrorHandler.createResult(
@@ -214,7 +223,7 @@ function displayUsage(applicationsDir: string, applicationName: string | undefin
     {
       provided: applicationName,
       expectedFormat: 'non-empty string',
-    },
+    } as any,
   );
   
   console.error(theme.messages.usage.command);

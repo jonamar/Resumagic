@@ -147,7 +147,7 @@ async function executeCommand(args: string[]): Promise<void> {
     // Handle new application creation
     if (flags.newApp) {
       const appDir = path.dirname(path.dirname(__dirname));
-      const result = createNewApplication(newAppConfig.company, newAppConfig.jobTitle, appDir);
+      const result = createNewApplication(newAppConfig!.company, newAppConfig!.jobTitle, appDir);
       
       if (!result.isValid) {
         console.error(`${theme.messages.emojis.error} ${result.error}`);
@@ -223,7 +223,7 @@ async function executeCommand(args: string[]): Promise<void> {
     }
     
     // Execute document generation
-    const _generatedFiles = await orchestrateGeneration(generationPlan, paths, resumeData, flags.preview);
+    const _generatedFiles = await orchestrateGeneration(generationPlan, paths as any, resumeData, Boolean(flags.preview));
     
     // Execute additional services if requested
     if (generationPlan.runHiringEvaluation) {

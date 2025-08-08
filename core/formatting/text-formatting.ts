@@ -11,7 +11,7 @@ import { parseTextWithFormatting } from '../markdown-processing.js';
  * @param {Object} baseStyle - Base styling to apply to all runs
  * @returns {Array} Array of TextRun elements
  */
-export function createFormattedTextRuns(text, baseStyle = {}) {
+export function createFormattedTextRuns(text: string, baseStyle: Record<string, any> = {}) {
   const parsedParts = parseTextWithFormatting(text);
   
   return parsedParts.map(part => new TextRun({

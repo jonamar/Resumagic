@@ -2,12 +2,8 @@ import theme from '../theme.js';
 import ErrorHandler from '../utils/error-handler.js';
 import { ERROR_TYPES } from '../utils/error-types.js';
 
-// Initialize error handler for generation planning operations
-const _errorHandler = new ErrorHandler({
-  component: 'generation-planning',
-  includeContext: true,
-  includeStackTrace: false,
-});
+// Keep a reference to avoid unused variable while preserving structure for future config
+const _errorHandler = ErrorHandler;
 
 /**
  * Generation Planning Module
@@ -131,7 +127,7 @@ function validateGenerationPlan(plan: GenerationPlan, hasMarkdownFile: boolean, 
     ErrorHandler.logAppError(
       'Cover letter generation requested but markdown file not found',
       ERROR_TYPES.FILE_NOT_FOUND,
-      context,
+      context as unknown as Error,
     );
     
     return ErrorHandler.createResult(

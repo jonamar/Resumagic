@@ -3,6 +3,8 @@ import { execSync } from 'child_process';
 import { Packer } from 'docx';
 import JSZip from 'jszip';
 import { createResumeDocx, createCoverLetterDocx, createCombinedDocx } from './document-templates.js';
+import type { Document } from 'docx';
+type ResumeData = Parameters<typeof createResumeDocx>[0];
 import { parseMarkdownCoverLetter } from './markdown-processing.js';
 import theme from '../theme.js';
 
@@ -17,7 +19,7 @@ import theme from '../theme.js';
  * @param {Buffer} buffer - The DOCX buffer from Packer
  * @returns {Promise<Buffer>} - Optimized DOCX buffer
  */
-async function removeCompatibilityMode(buffer) {
+async function removeCompatibilityMode(buffer: Buffer): Promise<Buffer> {
   try {
     // Load the docx file as a zip
     const zip = await JSZip.loadAsync(buffer);
@@ -69,13 +71,13 @@ async function removeCompatibilityMode(buffer) {
  * @param {string} outputPath - Path where to save the document
  * @returns {Promise<string>} - Path to the generated file
  */
-async function generateResumeDocument(resumeData, outputPath) {
+async function generateResumeDocument(resumeData: unknown, outputPath: string): Promise<string> {
   console.log(`\n${theme.messages.emojis.processing} ${theme.messages.processing.processingResume.replace('{path}', outputPath)}`);
   console.log(`${theme.messages.emojis.document} ${theme.messages.processing.willGenerateResume.replace('{path}', outputPath)}\n`);
   
   // Generate DOCX document using our template
   console.log(theme.messages.processing.generatingResume);
-  const resumeDoc = createResumeDocx(resumeData);
+  const resumeDoc = createResumeDocx(resumeData as ResumeData);
   
   // Use Packer to get the buffer
   console.log(theme.messages.processing.savingResume);
@@ -100,7 +102,7 @@ async function generateResumeDocument(resumeData, outputPath) {
  * @param {string} outputPath - Path where to save the document
  * @returns {Promise<string>} - Path to the generated file
  */
-async function generateCoverLetterDocument(markdownFilePath, resumeDataPath, outputPath) {
+async function generateCoverLetterDocument(markdownFilePath: string, resumeDataPath: string, outputPath: string): Promise<string> {
   console.log(`\n${theme.messages.emojis.processing} ${theme.messages.processing.processingCoverLetter.replace('{path}', markdownFilePath)}`);
   console.log(`${theme.messages.emojis.document} ${theme.messages.processing.willGenerateCoverLetter.replace('{path}', outputPath)}\n`);
   
@@ -136,7 +138,7 @@ async function generateCoverLetterDocument(markdownFilePath, resumeDataPath, out
  * @param {string} outputPath - Path where to save the document
  * @returns {Promise<string>} - Path to the generated file
  */
-async function generateCombinedDocument(markdownFilePath, resumeDataPath, resumeData, outputPath) {
+async function generateCombinedDocument(markdownFilePath: string, resumeDataPath: string, resumeData: unknown, outputPath: string): Promise<string> {
   console.log(`\n${theme.messages.emojis.processing} ${theme.messages.processing.processingCombined.replace('{resumePath}', resumeDataPath).replace('{coverPath}', markdownFilePath)}`);
   console.log(`${theme.messages.emojis.document} ${theme.messages.processing.willGenerateCombined.replace('{path}', outputPath)}\n`);
   
@@ -146,7 +148,7 @@ async function generateCombinedDocument(markdownFilePath, resumeDataPath, resume
   
   // Generate combined DOCX document
   console.log('Generating cover letter + resume DOCX document...');
-  const combinedDoc = createCombinedDocx(coverLetterData, resumeData);
+  const combinedDoc = createCombinedDocx(coverLetterData, resumeData as ResumeData);
   
   // Use Packer to get the buffer
   console.log('Saving cover letter + resume DOCX file...');
@@ -169,7 +171,7 @@ async function generateCombinedDocument(markdownFilePath, resumeDataPath, resume
  * @param {Array<string>} filePaths - Array of file paths to open
  * @param {boolean} autoPreview - Whether to auto-open files
  */
-function openGeneratedFiles(filePaths, autoPreview) {
+function openGeneratedFiles(filePaths: string[], autoPreview: boolean): void {
   if (autoPreview && process.platform === 'darwin' && filePaths.length > 0) {
     try {
       console.log('Opening generated files with system default app...');
@@ -187,7 +189,7 @@ function openGeneratedFiles(filePaths, autoPreview) {
  * Displays generation completion summary
  * @param {Array<string>} generatedFiles - Array of generated file paths
  */
-function displayCompletionSummary(generatedFiles) {
+function displayCompletionSummary(generatedFiles: string[]): void {
   console.log(`\n✨ Generation complete! Created ${generatedFiles.length} file(s):\n`);
   generatedFiles.forEach(file => console.log(`   ${theme.messages.emojis.processing} ${file}`));
   console.log('');
@@ -201,7 +203,12 @@ function displayCompletionSummary(generatedFiles) {
  * @param {boolean} autoPreview - Whether to auto-open generated files
  * @returns {Promise<Array<string>>} - Array of generated file paths
  */
-async function orchestrateGeneration(generationPlan, paths, resumeData, autoPreview) {
+async function orchestrateGeneration(
+  generationPlan: { generateResume: boolean; generateCoverLetter: boolean; generateCombinedDoc: boolean },
+  paths: { resumeDataPath: string; markdownFilePath: string; resumeDocxPath: string; coverLetterDocxPath: string; combinedDocxPath: string },
+  resumeData: unknown,
+  autoPreview: boolean,
+): Promise<string[]> {
   const { generateResume, generateCoverLetter, generateCombinedDoc } = generationPlan;
   const { resumeDataPath, markdownFilePath, resumeDocxPath, coverLetterDocxPath, combinedDocxPath } = paths;
   

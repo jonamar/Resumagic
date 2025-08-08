@@ -115,7 +115,7 @@ function validatePaths(paths: ResolvedPaths): ValidationResult {
     ErrorHandler.logAppError(
       'Application folder not found or not a directory',
       ERROR_TYPES.FILE_NOT_FOUND,
-      context,
+      context as unknown as Error,
     );
     
     return ErrorHandler.createResult(
@@ -139,7 +139,7 @@ function validatePaths(paths: ResolvedPaths): ValidationResult {
     ErrorHandler.logAppError(
       'Resume data file not found',
       ERROR_TYPES.FILE_NOT_FOUND,
-      context,
+      context as unknown as Error,
     );
     
     return ErrorHandler.createResult(
@@ -166,7 +166,7 @@ function validatePaths(paths: ResolvedPaths): ValidationResult {
       ErrorHandler.logAppError(
         'Failed to create outputs directory',
         ERROR_TYPES.FILE_SYSTEM_ERROR,
-        context,
+        context as unknown as Error,
       );
       
       return ErrorHandler.createResult(
