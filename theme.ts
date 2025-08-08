@@ -135,6 +135,7 @@ const fileNaming = {
   
   // New paths for clean structure
   canonicalDir: 'canonical',
+  workingDir: 'working',
   testDir: 'test',
   testApplicationName: 'test-application',
   

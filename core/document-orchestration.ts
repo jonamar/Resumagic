@@ -240,8 +240,9 @@ async function orchestrateGeneration(
     openGeneratedFiles(generatedFiles, autoPreview);
     
     return generatedFiles;
-  } catch (error) {
-    console.error('Error generating documents:', error);
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.error('Error generating documents:', message);
     throw error;
   }
 }

@@ -1,8 +1,7 @@
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { executeCommand } from './cli/command-handler.js';
-import { analyzeKeywords } from './services/keyword-analysis.js';
-import { evaluateCandidate } from './services/hiring-evaluation.js';
+// Services are invoked from CLI modules; keep entry thin
 import theme from './theme.js';
 
 // ESM equivalent of __dirname
@@ -19,7 +18,8 @@ const __dirname = path.dirname(__filename);
  * @param {string} applicationName - Name of the application
  * @returns {Promise<void>}
  */
-async function runKeywordAnalysis(applicationName: string): Promise<any> {
+// Removed: duplicate helpers now live in CLI; keep main entry thin
+/* async function runKeywordAnalysis(applicationName: string): Promise<any> {
   console.log(`${theme.messages.emojis.processing} Starting keyword analysis...`);
   
   try {
@@ -68,7 +68,7 @@ async function runKeywordAnalysis(applicationName: string): Promise<any> {
     
     throw error;
   }
-}
+} */
 
 /**
  * Runs hiring evaluation for the specified application
@@ -77,7 +77,7 @@ async function runKeywordAnalysis(applicationName: string): Promise<any> {
  * @param {boolean} fastMode - Use faster model for quick evaluation
  * @returns {Promise<void>}
  */
-async function runHiringEvaluation(applicationName: string, resumeData: any, fastMode = false): Promise<any> {
+/* async function runHiringEvaluation(applicationName: string, resumeData: any, fastMode = false): Promise<any> {
   const mode = fastMode ? 'fast evaluation' : 'detailed evaluation';
   console.log(`${theme.messages.emojis.processing} Starting hiring ${mode}...`);
   
@@ -108,7 +108,7 @@ async function runHiringEvaluation(applicationName: string, resumeData: any, fas
     
     throw error;
   }
-}
+} */
 
 // Main function
 (async () => {
