@@ -159,6 +159,7 @@ const cli = {
     test: '--test',
     evalModel: '--eval-model',
     evalParallel: '--eval-parallel',
+    evalTemperature: '--eval-temperature',
   },
   
   defaults: {
@@ -176,6 +177,7 @@ const cli = {
 const messages = {
   // Emojis
   emojis: {
+    start: '🚀',
     error: '❌',
     success: '✅',
     warning: '⚠️',

@@ -78,7 +78,7 @@ async function runKeywordAnalysis(applicationName: string): Promise<any> {
 /**
  * Runs hiring evaluation for the specified application
  */
-async function runHiringEvaluation(applicationName: string, resumeData: unknown, fastMode = false, evalModel?: string | null, evalParallel?: number | null): Promise<any> {
+async function runHiringEvaluation(applicationName: string, resumeData: unknown, fastMode = false, evalModel?: string | null, evalParallel?: number | null, evalTemperature?: number | null): Promise<any> {
   const mode = fastMode ? 'fast evaluation' : 'detailed evaluation';
   console.log(`${theme.messages.emojis.processing} Starting hiring ${mode}...`);
   
@@ -91,7 +91,7 @@ async function runHiringEvaluation(applicationName: string, resumeData: unknown,
     console.log(`${theme.messages.emojis.processing} Running hiring evaluation...`);
     
     // Execute evaluation using direct function
-    const result = await evaluateCandidate(applicationName, resumeData, fastMode, evalModel, evalParallel);
+    const result = await evaluateCandidate(applicationName, resumeData, fastMode, evalModel, evalParallel, evalTemperature);
     
     // Display evaluation results
     console.log(`${theme.messages.emojis.success} Hiring evaluation completed successfully!`);
@@ -127,7 +127,7 @@ async function executeCommand(args: string[]): Promise<void> {
     const { applicationName, flags, newAppConfig } = cliConfig;
     
     // Validate CLI arguments
-    const validation = validateCliArguments(cliConfig);
+    const validation = validateCliArguments(cliConfig) as unknown as { isValid: boolean; error?: string; details?: string[] };
     if (!validation.isValid) {
       console.error(`${theme.messages.emojis.error} ${validation.error}`);
       if (validation.details) {
@@ -142,7 +142,7 @@ async function executeCommand(args: string[]): Promise<void> {
       process.exit(1);
     }
     
-    console.log(`${theme.messages.emojis.start} ResumeMagic CLI starting...`);
+      console.log(`${theme.messages.emojis.start} ResumeMagic CLI starting...`);
     
     // Handle new application creation
     if (flags.newApp) {
@@ -231,7 +231,7 @@ async function executeCommand(args: string[]): Promise<void> {
       if (flags.all) {
         await runKeywordAnalysis(applicationName);
       }
-      await runHiringEvaluation(applicationName, resumeData, flags.fast, flags.evalModel, flags.evalParallel);
+      await runHiringEvaluation(applicationName, resumeData, flags.fast, flags.evalModel, flags.evalParallel, flags.evalTemperature);
     }
     
     // Exit successfully

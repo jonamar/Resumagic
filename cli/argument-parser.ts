@@ -4,12 +4,8 @@ import theme from '../theme.js';
 import ErrorHandler from '../utils/error-handler.js';
 import { ERROR_TYPES } from '../utils/error-types.js';
 
-// Initialize error handler for CLI operations
-const _errorHandler = new ErrorHandler({
-  component: 'cli-parser',
-  includeContext: true,
-  includeStackTrace: false,
-});
+// Keep a reference to avoid unused variable while preserving structure for future config
+const _errorHandler = ErrorHandler;
 
 /**
  * CLI Parser Module
@@ -34,6 +30,7 @@ interface CLIFlags {
   test: boolean;
   evalModel: string | null;
   evalParallel: number | null;
+  evalTemperature: number | null;
 }
 
 interface CLIConfig {
@@ -69,6 +66,7 @@ function parseCliArguments(args: string[]): CLIConfig {
   // Parse evaluation flags with parameters
   let evalModel: string | null = null;
   let evalParallel: number | null = null;
+  let evalTemperature: number | null = null;
   
   const evalModelIndex = args.indexOf(theme.cli.flags.evalModel);
   if (evalModelIndex !== -1 && args[evalModelIndex + 1] !== undefined) {
@@ -83,6 +81,15 @@ function parseCliArguments(args: string[]): CLIConfig {
       evalParallel = parallelValue;
     }
     filteredArgs.splice(filteredArgs.indexOf(theme.cli.flags.evalParallel), 2);
+  }
+  
+  const evalTemperatureIndex = args.indexOf(theme.cli.flags.evalTemperature);
+  if (evalTemperatureIndex !== -1 && args[evalTemperatureIndex + 1] !== undefined) {
+    const temperatureValue = parseFloat(args[evalTemperatureIndex + 1]);
+    if (!isNaN(temperatureValue)) {
+      evalTemperature = temperatureValue;
+    }
+    filteredArgs.splice(filteredArgs.indexOf(theme.cli.flags.evalTemperature), 2);
   }
   
   // Extract application name (first non-flag argument)
@@ -107,6 +114,7 @@ function parseCliArguments(args: string[]): CLIConfig {
     test: args.includes(theme.cli.flags.test),
     evalModel,
     evalParallel,
+    evalTemperature,
   };
   
   return {
