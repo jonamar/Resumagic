@@ -254,9 +254,13 @@ class EvaluationRunner {
         });
       });
 
-      // Set timeout: fast model OK at 5m; quality model (dolphin) can need up to 8m
+      // Set timeout: allow env override for data-driven measurement
       const isFast = (this.fastMode || (this.modelName && this.modelName.includes('phi3')));
-      const timeoutMs = isFast ? 300000 : 480000; // 5m fast, 8m quality
+      const defaultTimeoutMs = isFast ? 360000 : 480000; // 6m fast (based on measurement), 8m quality
+      const overrideTimeout = process.env.EVAL_TIMEOUT_MS ? Number(process.env.EVAL_TIMEOUT_MS) : undefined;
+      const timeoutMs = Number.isFinite(overrideTimeout as number) && (overrideTimeout as number) > 0
+        ? (overrideTimeout as number)
+        : defaultTimeoutMs;
       req.setTimeout(timeoutMs, () => {
         req.destroy();
         reject(new Error(`Request timeout after ${Math.round(timeoutMs/60000)} minutes`));
