@@ -76,6 +76,21 @@ async function runKeywordAnalysis(applicationName: string): Promise<any> {
 }
 
 /**
+ * Extract keywords only (no analysis), generating inputs/keywords.json from job-posting.md
+ */
+async function extractKeywordsOnly(applicationName: string): Promise<void> {
+  const appDir = path.dirname(path.dirname(__dirname));
+  const applicationPath = path.resolve(appDir, theme.fileNaming.dataDir, theme.fileNaming.applicationsDir, applicationName);
+  const keywordsFile = path.join(applicationPath, 'inputs', 'keywords.json');
+  const jobPostingFile = path.join(applicationPath, 'inputs', 'job-posting.md');
+  const extractorPath = path.resolve(appDir, 'dist/services/keyword-extraction.js');
+  const { exec } = await import('child_process');
+  const { promisify } = await import('util');
+  const execAsync = promisify(exec);
+  await execAsync(`node "${extractorPath}" "${jobPostingFile}" "${keywordsFile}"`, { cwd: appDir, timeout: 180000 });
+}
+
+/**
  * Runs hiring evaluation for the specified application
  */
 async function runHiringEvaluation(applicationName: string, resumeData: unknown, fastMode = false, evalModel?: string | null, evalParallel?: number | null, evalTemperature?: number | null): Promise<any> {
@@ -230,6 +245,12 @@ async function executeCommand(args: string[]): Promise<void> {
       process.exit(1);
     }
     
+    // Optional: extract keywords only
+    if (flags.extractKeywords) {
+      await extractKeywordsOnly(safeAppName);
+      process.exit(0);
+    }
+
     // Execute document generation unless evaluate-only is requested
     if (!flags.evaluateOnly) {
       await orchestrateGeneration(generationPlan, paths as any, resumeData, Boolean(flags.preview));

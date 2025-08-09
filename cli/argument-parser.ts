@@ -31,6 +31,7 @@ interface CLIFlags {
   evalModel: string | null;
   evalParallel: number | null;
   evalTemperature: number | null;
+    extractKeywords?: boolean;
 }
 
 interface CLIConfig {
@@ -125,6 +126,7 @@ function parseCliArguments(args: string[]): CLIConfig {
     evalModel,
     evalParallel,
     evalTemperature,
+    extractKeywords: args.includes(theme.cli.flags.extractKeywords),
   };
   
   return {

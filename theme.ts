@@ -162,6 +162,7 @@ const cli = {
     evalModel: '--eval-model',
     evalParallel: '--eval-parallel',
     evalTemperature: '--eval-temperature',
+    extractKeywords: '--extract-keywords',
   },
   
   defaults: {
