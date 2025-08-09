@@ -35,6 +35,9 @@
   "include": [
     "cli/**/*.ts",
     "core/**/*.ts",
+    "services/keyword-extraction.ts",
+    "services/hiring-evaluation.ts",
+    "services/hiring-evaluation/**/*.ts",
     "services/keyword-analysis.ts",
     "types/**/*.ts",
     "utils/**/*.ts",

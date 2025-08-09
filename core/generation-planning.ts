@@ -2,6 +2,8 @@ import theme from '../theme.js';
 import ErrorHandler from '../utils/error-handler.js';
 import { ERROR_TYPES } from '../utils/error-types.js';
 
+// ErrorHandler provides static utilities; no instance required
+
 /**
  * Generation Planning Module
  * Handles document generation planning logic based on CLI flags and file availability
@@ -109,22 +111,25 @@ function determineGenerationPlan(flags: CLIFlags, hasMarkdownFile: boolean): Gen
 /**
  * Validates that the generation plan is feasible given available files
  */
-function validateGenerationPlan(plan: GenerationPlan, hasMarkdownFile: boolean, markdownFilePath: string): ValidationResult {
+async function validateGenerationPlan(plan: GenerationPlan, hasMarkdownFile: boolean, markdownFilePath: string): Promise<ValidationResult> {
   const { generateCoverLetter, generateCombinedDoc } = plan;
   
   // Check if cover letter generation is requested but no markdown file exists
   if ((generateCoverLetter || generateCombinedDoc) && !hasMarkdownFile) {
-    const context = ErrorHandler.buildFileContext(markdownFilePath, {
+    const context = await ErrorHandler.buildFileContext(markdownFilePath, {
       operation: 'cover letter generation',
       required: true,
       generateCoverLetter,
       generateCombinedDoc,
     });
     
+    // Log with proper parameters: component, message, error, details, context
     ErrorHandler.logAppError(
+      'generation-planning',
       'Cover letter generation requested but markdown file not found',
-      ERROR_TYPES.FILE_NOT_FOUND,
-      context as unknown as Error,
+      null,
+      [],
+      context,
     );
     
     return ErrorHandler.createResult(

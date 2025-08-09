@@ -53,7 +53,7 @@ export async function evaluateCandidate(
     }
     
     // Configure model if specified
-    if (evalModel) {
+    if (typeof evalModel === 'string' && evalModel.trim() !== '') {
       console.log(`🔧 Setting evaluation model to: ${evalModel}`);
       // Set the model on the evaluation runner
       // We'll need to check if this method exists
@@ -63,13 +63,13 @@ export async function evaluateCandidate(
     }
     
     // Configure parallel setting if specified
-    if (evalParallel) {
+    if (typeof evalParallel === 'number' && Number.isFinite(evalParallel)) {
       console.log(`⚙️ Setting OLLAMA_NUM_PARALLEL to: ${evalParallel}`);
       process.env.OLLAMA_NUM_PARALLEL = evalParallel.toString();
     }
     
     // Configure temperature if specified
-    if (evalTemperature) {
+    if (typeof evalTemperature === 'number' && Number.isFinite(evalTemperature)) {
       console.log(`🌡️ Setting temperature override to: ${evalTemperature}`);
       if (typeof evaluationRunner.setTemperature === 'function') {
         evaluationRunner.setTemperature(evalTemperature);
@@ -96,13 +96,14 @@ export async function evaluateCandidate(
       missingKeywords: evaluationResult.missing_keywords || [],
       keyStrengths: evaluationResult.key_strengths || [],
       composite_score: evaluationResult.summary?.composite_score || evaluationResult.composite_score,
-      persona_evaluations: evaluationResult.personas || evaluationResult.evaluations || [],
+      persona_evaluations: (evaluationResult.evaluations || []) as any,
       recommendations: evaluationResult.summary?.key_recommendations || [],
     };
     
-  } catch (error) {
-    console.error(`Evaluation failed: ${error.message}`);
-    throw new Error(`Hiring evaluation failed: ${error.message}`);
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.error(`Evaluation failed: ${message}`);
+    throw new Error(`Hiring evaluation failed: ${message}`);
   }
 }
 
@@ -134,14 +135,15 @@ export async function batchEvaluateCandidates(
 
   const evaluationPromises = candidates.map(async candidate => {
     try {
-      const result = await evaluateCandidate({
-        applicationName: candidate.applicationName || 'batch-evaluation',
-        resumeData: candidate.resumeData,
-        fastMode: true, // Use fast mode for batch processing
-      });
+      const result = await evaluateCandidate(
+        candidate.applicationName || 'batch-evaluation',
+        candidate.resumeData,
+        true,
+      );
       return { success: true, data: result };
-    } catch (error) {
-      return { success: false, error: error.message };
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      return { success: false, error: message };
     }
   });
 

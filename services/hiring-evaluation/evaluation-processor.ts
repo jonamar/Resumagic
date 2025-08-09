@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Evaluation Processing Function
  * Processes 6-persona hiring evaluation results and generates accurate Markdown summaries

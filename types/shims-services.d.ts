@@ -9,3 +9,4 @@ declare module '../services/hiring-evaluation.js' {
   export const evaluateCandidate: any;
 }
 
+

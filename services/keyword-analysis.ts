@@ -61,17 +61,14 @@ export async function analyzeKeywords(
   // dist/services -> dist -> app
   const appRoot = path.dirname(path.dirname(__dirname));
   
-  // Ensure keywords file exists; if missing, attempt on-the-fly extraction from job posting
+  // Strict pipeline: require keywords.json, no runtime fallbacks
   if (!fs.existsSync(input.keywordsFile)) {
-    console.warn(`Keywords file not found: ${input.keywordsFile}. Attempting extraction from job posting...`);
-    const extractionCmd = `npx ts-node --transpile-only services/keyword-extraction.ts "${input.jobPostingFile}" "${input.keywordsFile}"`;
-    const { stderr: extractErr } = await execAsync(extractionCmd, { cwd: appRoot, timeout: 180000 });
-    if (extractErr) {
-      console.warn(extractErr);
-    }
-    if (!fs.existsSync(input.keywordsFile)) {
-      throw new Error('Keyword extraction failed to produce keywords.json');
-    }
+    const extractorPath = path.resolve(appRoot, 'dist/services/keyword-extraction.js');
+    throw new Error(
+      `Keywords file not found: ${input.keywordsFile}.\n` +
+      `Run the compiled extractor to generate it first:\n` +
+      `  node "${extractorPath}" "${input.jobPostingFile}" "${input.keywordsFile}"`,
+    );
   }
 
   if (!fs.existsSync(input.jobPostingFile)) {

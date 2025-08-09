@@ -221,11 +221,11 @@ async function executeCommand(args: string[]): Promise<void> {
     }
     
     // Validate generation plan
-    const planValidation = validateGenerationPlan(generationPlan, markdownFileExists, paths.markdownFilePath);
+    const planValidation = await validateGenerationPlan(generationPlan, markdownFileExists, paths.markdownFilePath);
     if (!planValidation.isValid) {
       console.error(`${theme.messages.emojis.error} ${planValidation.error}`);
       if (planValidation.details) {
-        planValidation.details.forEach(detail => console.error(`   ${detail}`));
+        planValidation.details.forEach((detail: string) => console.error(`   ${detail}`));
       }
       process.exit(1);
     }

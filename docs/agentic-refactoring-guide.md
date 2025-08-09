@@ -244,3 +244,13 @@ If any answer is "No" → Stop and find a simpler approach.
 ---
 
 **Remember:** The best code is boring, obvious, and predictable. Agents (and humans) love boring code.
+
+## Compile-Only, No-Fallbacks (Project-Wide Practice)
+
+To keep execution paths simple and predictable:
+
+- Always compile TypeScript to `dist/` and run compiled JavaScript. Do not use `ts-node` in runtime paths.
+- Do not add runtime fallback paths (e.g., conditionally invoking TypeScript directly) when a compiled path exists or can be added quickly.
+- Prefer a strict happy path that fails fast and loudly if a prerequisite is missing (e.g., required input files). Avoid alternate execution branches that hide errors.
+- If a missing capability is needed, implement the minimal compiled module and wire it in; do not add temporary hacks that you plan to remove later.
+- Treat multiple execution paths as a smell. One clear path (compile → run) is the default.
