@@ -35,7 +35,6 @@
   "include": [
     "cli/**/*.ts",
     "core/**/*.ts",
-    "services/hiring-evaluation/**/*.ts",
     "services/keyword-analysis.ts",
     "types/**/*.ts",
     "utils/**/*.ts",
@@ -49,7 +48,6 @@
     "**/*.test.ts",
     "**/__tests__/**",
     "**/test-archive/**",
-    "services/**",
     "scripts/**"
   ]
 }

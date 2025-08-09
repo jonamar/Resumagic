@@ -91,7 +91,13 @@ async function runHiringEvaluation(applicationName: string, resumeData: unknown,
     console.log(`${theme.messages.emojis.processing} Running hiring evaluation...`);
     
     // Execute evaluation using direct function (dynamically imported to avoid TS compile of services)
-    const { evaluateCandidate } = await import('../services/' + 'hiring-evaluation.js') as any;
+    // Resolve hiring evaluation at runtime; prefer app-root path when dist module not present
+    let evaluateCandidate: any;
+    try {
+      ({ evaluateCandidate } = await import('../services/' + 'hiring-evaluation.js'));
+    } catch {
+      ({ evaluateCandidate } = await import('../../services/' + 'hiring-evaluation.js'));
+    }
     const result = await evaluateCandidate(applicationName, resumeData, fastMode, evalModel, evalParallel, evalTemperature);
     
     // Display evaluation results

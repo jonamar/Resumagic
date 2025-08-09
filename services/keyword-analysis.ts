@@ -58,18 +58,27 @@ export async function analyzeKeywords(
     throw new Error('jobPostingFile is required and must be a string');
   }
 
-  // Check file existence
+  // dist/services -> dist -> app
+  const appRoot = path.dirname(path.dirname(__dirname));
+  
+  // Ensure keywords file exists; if missing, attempt on-the-fly extraction from job posting
   if (!fs.existsSync(input.keywordsFile)) {
-    throw new Error(`Keywords file not found: ${input.keywordsFile}`);
+    console.warn(`Keywords file not found: ${input.keywordsFile}. Attempting extraction from job posting...`);
+    const extractionCmd = `npx ts-node --transpile-only services/keyword-extraction.ts "${input.jobPostingFile}" "${input.keywordsFile}"`;
+    const { stderr: extractErr } = await execAsync(extractionCmd, { cwd: appRoot, timeout: 180000 });
+    if (extractErr) {
+      console.warn(extractErr);
+    }
+    if (!fs.existsSync(input.keywordsFile)) {
+      throw new Error('Keyword extraction failed to produce keywords.json');
+    }
   }
 
   if (!fs.existsSync(input.jobPostingFile)) {
     throw new Error(`Job posting file not found: ${input.jobPostingFile}`);
   }
 
-  // Resolve app root (dist -> app) and build absolute path to python entry
-  // dist/services -> dist -> app
-  const appRoot = path.dirname(path.dirname(path.dirname(__dirname)));
+  // Resolve python entry
   const pyEntry = path.resolve(appRoot, 'services/keyword-analysis/kw_rank_modular.py');
   
   // Construct the command with proper arguments
