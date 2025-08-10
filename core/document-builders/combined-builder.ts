@@ -35,9 +35,7 @@ interface ResumeData {
   languages?: any[];
 }
 
-interface CombinedOptions {
-  // Add any options properties here as needed
-}
+type CombinedOptions = Record<string, unknown>;
 
 /**
  * Creates a combined DOCX document with cover letter followed by resume

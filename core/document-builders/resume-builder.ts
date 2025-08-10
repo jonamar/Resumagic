@@ -23,9 +23,7 @@ interface ResumeData {
   languages?: any[];
 }
 
-interface ResumeOptions {
-  // Add any options properties here as needed
-}
+type ResumeOptions = Record<string, unknown>;
 
 /**
  * Creates a DOCX document from resume JSON data

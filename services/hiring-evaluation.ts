@@ -47,7 +47,7 @@ export async function evaluateCandidate(
     }
     
     // Default parallelism: fast mode → 4, quality mode (dolphin) → 1 (if not explicitly set)
-    if (process.env.OLLAMA_NUM_PARALLEL == null || process.env.OLLAMA_NUM_PARALLEL === '') {
+    if (process.env.OLLAMA_NUM_PARALLEL === undefined || process.env.OLLAMA_NUM_PARALLEL === '') {
       process.env.OLLAMA_NUM_PARALLEL = input.fastMode ? '4' : '1';
       console.log(`⚙️ Default OLLAMA_NUM_PARALLEL set to: ${process.env.OLLAMA_NUM_PARALLEL}`);
     }

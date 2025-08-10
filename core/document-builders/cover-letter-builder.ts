@@ -17,9 +17,7 @@ interface CoverLetterData {
   };
 }
 
-interface CoverLetterOptions {
-  // Add any options properties here as needed
-}
+type CoverLetterOptions = Record<string, unknown>;
 
 /**
  * Creates a DOCX cover letter document from transformed markdown data

@@ -39,7 +39,7 @@ export async function analyzeKeywords(
 ): Promise<KeywordAnalysis> {
   const input: KeywordAnalysisInput =
     typeof arg1 === 'object'
-      ? (arg1 as KeywordAnalysisInput)
+      ? arg1
       : {
           applicationName: arg1,
           keywordsFile: arg2 as string,
@@ -65,9 +65,9 @@ export async function analyzeKeywords(
   if (!fs.existsSync(input.keywordsFile)) {
     const extractorPath = path.resolve(appRoot, 'dist/services/keyword-extraction.js');
     throw new Error(
-      `Keywords file not found: ${input.keywordsFile}.\n` +
-      `Run the compiled extractor to generate it first:\n` +
-      `  node "${extractorPath}" "${input.jobPostingFile}" "${input.keywordsFile}"`,
+      'Keywords file not found: ' + input.keywordsFile + '\n' +
+      'Run the compiled extractor to generate it first:\n' +
+      '  node "' + extractorPath + '" "' + input.jobPostingFile + '" "' + input.keywordsFile + '"',
     );
   }
 

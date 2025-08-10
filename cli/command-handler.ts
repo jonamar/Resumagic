@@ -48,7 +48,7 @@ async function runKeywordAnalysis(applicationName: string): Promise<any> {
     console.log(`${theme.messages.emojis.processing} Running keyword analysis...`);
     
     // Execute analysis using direct function (dynamically imported to avoid TS compile of services)
-    const { analyzeKeywords } = await import('../services/' + 'keyword-analysis.js') as any;
+    const { analyzeKeywords } = await import('../services/' + 'keyword-analysis.js');
     const result = await analyzeKeywords(
       applicationName,
       keywordsFile, 

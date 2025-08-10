@@ -107,4 +107,7 @@ import { executeCommand } from './cli/command-handler.js';
 (async () => {
   // Execute the CLI command with the provided arguments
   await executeCommand(process.argv.slice(2));
-})();
+})().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});

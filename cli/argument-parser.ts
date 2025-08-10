@@ -103,7 +103,8 @@ function parseCliArguments(args: string[]): CLIConfig {
   }
   
   // Extract application name (first non-flag argument)
-  let applicationName = filteredArgs.find(arg => typeof arg === 'string' && !arg.startsWith('--')) as string | undefined;
+  const firstArg = filteredArgs.find(arg => typeof arg === 'string' && !arg.startsWith('--'));
+  let applicationName = typeof firstArg === 'string' ? firstArg : undefined;
   
   // Handle full paths - extract just the folder name
   if (applicationName && applicationName.includes('/')) {

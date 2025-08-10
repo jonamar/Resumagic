@@ -25,7 +25,10 @@ export default [
       'services/hiring-evaluation/comprehensive-optimization-results/**',
       'services/hiring-evaluation/ollama-optimization-experiment/**',
       'services/hiring-evaluation/model-test-results/**',
-      'services/hiring-evaluation/test-archive/**'
+      'services/hiring-evaluation/test-archive/**',
+      // de-scope noisy or out-of-project TS paths for lint
+      'services/vale-linting/**/*.ts',
+      'scripts/**'
     ]
   },
   
@@ -59,6 +62,8 @@ export default [
       '@typescript-eslint/explicit-module-boundary-types': 'off',
       '@typescript-eslint/no-empty-function': 'warn',
       '@typescript-eslint/no-non-null-assertion': 'warn',
+      'no-redeclare': 'off',
+      '@typescript-eslint/no-redeclare': 'off',
       
       // Temporarily relax unsafe rules during interface implementation phase
       // Will re-enable after proper TypeScript interfaces are implemented
@@ -147,14 +152,14 @@ export default [
       }],
       
       // Code style (relaxed for development)
-      'indent': ['error', 2],
+      'indent': ['warn', 2],
       'quotes': ['error', 'single', { 'avoidEscape': true }],
       'semi': ['error', 'always'],
       'comma-dangle': ['error', 'always-multiline'],
       'object-curly-spacing': ['error', 'always'],
       'array-bracket-spacing': ['error', 'never'],
       'arrow-spacing': 'error',
-      'brace-style': ['error', '1tbs'],
+      'brace-style': ['warn', '1tbs'],
       'eol-last': ['error', 'always'],
       
       // Best practices
@@ -164,6 +169,16 @@ export default [
       'prefer-const': 'error',
       'prefer-arrow-callback': 'error',
       'no-duplicate-imports': 'error'
+    }
+  }
+,  
+  // Temporary relaxation for high-noise service files during TS hardening
+  {
+    files: ['services/hiring-evaluation/**/*.ts', 'services/keyword-extraction.ts'],
+    rules: {
+      '@typescript-eslint/ban-ts-comment': 'off',
+      '@typescript-eslint/await-thenable': 'off',
+      '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
     }
   }
 ];

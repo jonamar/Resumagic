@@ -115,7 +115,7 @@ export async function generateDocument(
       break;
       
     default:
-      throw new Error(`Unsupported document type: ${documentType}`);
+      throw new Error('Unsupported document type: ' + String(documentType));
     }
 
     return {
@@ -123,8 +123,9 @@ export async function generateDocument(
       documentType,
     };
 
-  } catch (error) {
-    throw new Error(`Document generation failed: ${error.message}`);
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    throw new Error('Document generation failed: ' + message);
   }
 }
 

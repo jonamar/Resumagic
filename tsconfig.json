@@ -36,6 +36,7 @@
     "cli/**/*.ts",
     "core/**/*.ts",
     "services/keyword-extraction.ts",
+    "services/document-generation.ts",
     "services/hiring-evaluation.ts",
     "services/hiring-evaluation/**/*.ts",
     "services/keyword-analysis.ts",
