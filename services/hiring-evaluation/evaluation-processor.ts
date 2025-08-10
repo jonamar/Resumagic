@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * Evaluation Processing Function
  * Processes 6-persona hiring evaluation results and generates accurate Markdown summaries
@@ -36,24 +35,19 @@ interface AssessmentLevel {
 
 interface QualitativeInsights {
   strengths: Array<{
+    theme: string;
     persona: string;
     insight: string;
     score: number;
   }>;
   concerns: Array<{
+    theme: string;
     persona: string;
     insight: string;
     score: number;
   }>;
   specificExamples: string[];
-  consensusThemes: Array<{
-    theme: string;
-    evaluations: Array<{
-      persona: string;
-      criterion: string;
-      reasoning: string;
-    }>;
-  }>;
+  consensusThemes: ConsensusThemeItem[];
 }
 
 interface Insights {
@@ -64,6 +58,23 @@ interface Insights {
   variance: number;
   consensusLevel: string;
   qualitative: QualitativeInsights;
+}
+
+type SentimentLabel = 'positive' | 'negative' | 'neutral';
+
+interface InsightItem {
+  theme: string;
+  insight: string;
+  persona: string;
+  score: number;
+}
+
+interface ConsensusThemeItem {
+  theme: string;
+  level: string;
+  sentiment: string;
+  avgScore: number;
+  personaCount: number;
 }
 
 class EvaluationProcessor {
@@ -186,13 +197,17 @@ class EvaluationProcessor {
      * @returns {Object} Assessment details
      */
   getAssessmentLevel(score: number): AssessmentLevel {
-    if (score >= this.thresholds.exceptional) {
+    const exceptional = this.thresholds.exceptional ?? 0;
+    const viable = this.thresholds.viable ?? 0;
+    const belowViable = this.thresholds.belowViable ?? 0;
+    const weak = this.thresholds.weak ?? 0;
+    if (score >= exceptional) {
       return { level: 'Exceptional Candidate', emoji: '🌟', recommendation: 'Strong hire recommendation' };
-    } else if (score >= this.thresholds.viable) {
+    } else if (score >= viable) {
       return { level: 'Viable Candidate', emoji: '✅', recommendation: 'Competitive candidate' };
-    } else if (score >= this.thresholds.belowViable) {
+    } else if (score >= belowViable) {
       return { level: 'Below Viable', emoji: '⚠️', recommendation: 'Some strengths but significant gaps' };
-    } else if (score >= this.thresholds.weak) {
+    } else if (score >= weak) {
       return { level: 'Weak Candidate', emoji: '❌', recommendation: 'Not recommended' };
     } else {
       return { level: 'Poor Candidate', emoji: '🚫', recommendation: 'Strong rejection' };
@@ -212,8 +227,8 @@ class EvaluationProcessor {
     const variance = maxScore - minScore;
 
     // Find strongest and weakest personas
-    const strongest = processedData.find(p => p.calculatedAverage === maxScore);
-    const weakest = processedData.find(p => p.calculatedAverage === minScore);
+    const strongest = processedData.find(p => p.calculatedAverage === maxScore) ?? processedData[0]!;
+    const weakest = processedData.find(p => p.calculatedAverage === minScore) ?? processedData[0]!;
 
     // Determine consensus level
     let consensusLevel;
@@ -229,10 +244,10 @@ class EvaluationProcessor {
     const qualitativeInsights = this.extractQualitativeInsights(evaluations, processedData);
 
     return {
-      strongest: strongest.persona,
-      strongestScore: strongest.calculatedAverage,
-      weakest: weakest.persona,
-      weakestScore: weakest.calculatedAverage,
+      strongest: String(strongest.persona),
+      strongestScore: Number(strongest.calculatedAverage),
+      weakest: String(weakest.persona),
+      weakestScore: Number(weakest.calculatedAverage),
       variance: Math.round(variance * 100) / 100,
       consensusLevel,
       qualitative: qualitativeInsights,
@@ -246,13 +261,17 @@ class EvaluationProcessor {
      * @returns {Object} Organized qualitative insights
      */
   extractQualitativeInsights(evaluations: Evaluation[], processedData: ProcessedPersonaData[]): QualitativeInsights {
-    const strengths = [];
-    const concerns = [];
-    const specificExamples = [];
-    const themeMap = new Map();
+    const strengths: InsightItem[] = [];
+    const concerns: InsightItem[] = [];
+    const specificExamples: string[] = [];
+    const themeMap: Map<string, Array<{ persona: string; score: number; reasoning: string }>> = new Map();
 
     evaluations.forEach((evaluation, index) => {
-      const persona = processedData[index].persona;
+      const personaData = processedData[index];
+      if (!personaData) {
+        return;
+      }
+      const persona = personaData.persona;
       const scores = evaluation.scores;
 
       // Extract reasoning from each criterion
@@ -296,7 +315,7 @@ class EvaluationProcessor {
         if (!themeMap.has(theme)) {
           themeMap.set(theme, []);
         }
-        themeMap.get(theme).push({ persona, score, reasoning });
+        themeMap.get(theme)!.push({ persona, score, reasoning });
       });
     });
 
@@ -316,7 +335,7 @@ class EvaluationProcessor {
      * @param {string} reasoning - Reasoning text to analyze
      * @returns {string} 'positive', 'negative', or 'neutral'
      */
-  detectReasoningSentiment(reasoning) {
+  detectReasoningSentiment(reasoning: string): SentimentLabel {
     if (!reasoning) {
       return 'neutral';
     }
@@ -354,7 +373,7 @@ class EvaluationProcessor {
      * @param {string} type - 'positive' or 'negative'
      * @returns {string|null} Extracted insight
      */
-  extractKeyInsight(reasoning, type) {
+  extractKeyInsight(reasoning: string, type: Exclude<SentimentLabel, 'neutral'>): string | null {
     if (!reasoning || reasoning.length < 20) {
       return null;
     }
@@ -365,17 +384,17 @@ class EvaluationProcessor {
     if (type === 'positive') {
       // Look for positive indicators
       const positiveWords = ['strong', 'excellent', 'exceptional', 'proven', 'successful', 'effective', 'demonstrates', 'achieved'];
-      const positiveSentence = sentences.find(s => 
+    const positiveSentence = sentences.find(s => 
         positiveWords.some(word => s.toLowerCase().includes(word)),
       );
-      return positiveSentence ? positiveSentence.trim() : sentences[0]?.trim();
+      return positiveSentence ? positiveSentence.trim() : (sentences[0] ? sentences[0].trim() : null);
     } else {
       // Look for negative indicators
       const negativeWords = ['lacks', 'limited', 'missing', 'insufficient', 'concerns', 'gap', 'weak', 'no evidence'];
       const negativeSentence = sentences.find(s => 
         negativeWords.some(word => s.toLowerCase().includes(word)),
       );
-      return negativeSentence ? negativeSentence.trim() : sentences[0]?.trim();
+      return negativeSentence ? negativeSentence.trim() : (sentences[0] ? sentences[0].trim() : null);
     }
   }
 
@@ -384,8 +403,8 @@ class EvaluationProcessor {
      * @param {string} reasoning - Reasoning text
      * @returns {Array} Array of specific examples
      */
-  extractSpecificExamples(reasoning) {
-    const examples = [];
+  extractSpecificExamples(reasoning: string): string[] {
+    const examples: string[] = [];
         
     // Extract monetary values
     const moneyMatches = reasoning.match(/CAD?\s*\$[\d.,]+[MBK]?/gi);
@@ -419,8 +438,8 @@ class EvaluationProcessor {
      * @param {string} criterion - Criterion name
      * @returns {string} Theme category
      */
-  categorizeTheme(criterion) {
-    const themeMap = {
+  categorizeTheme(criterion: string): string {
+    const themeMap: Record<string, string> = {
       'experience_match': 'Experience',
       'cultural_fit': 'Culture',
       'qualification_alignment': 'Qualifications',
@@ -455,8 +474,8 @@ class EvaluationProcessor {
      * @param {Map} themeMap - Map of themes to evaluations
      * @returns {Array} Consensus analysis
      */
-  analyzeConsensusThemes(themeMap) {
-    const consensus = [];
+  analyzeConsensusThemes(themeMap: Map<string, Array<{ persona: string; score: number; reasoning: string }>>): ConsensusThemeItem[] {
+    const consensus: ConsensusThemeItem[] = [];
         
     themeMap.forEach((evaluations, theme) => {
       if (evaluations.length >= 3) { // Theme mentioned by 3+ personas
@@ -485,9 +504,9 @@ class EvaluationProcessor {
      * @param {Array} insights - Array of insights
      * @returns {Array} Top ranked unique insights
      */
-  dedupAndRankInsights(insights) {
+  dedupAndRankInsights(insights: InsightItem[]): InsightItem[] {
     // Remove very similar insights
-    const unique = [];
+    const unique: InsightItem[] = [];
     insights.forEach(insight => {
       const isDuplicate = unique.some(existing => 
         this.calculateSimilarity(insight.insight, existing.insight) > 0.7,
@@ -507,7 +526,7 @@ class EvaluationProcessor {
      * @param {string} text2 - Second text
      * @returns {number} Similarity score 0-1
      */
-  calculateSimilarity(text1, text2) {
+  calculateSimilarity(text1: string, text2: string): number {
     const words1 = new Set(text1.toLowerCase().split(/\W+/));
     const words2 = new Set(text2.toLowerCase().split(/\W+/));
     const intersection = new Set([...words1].filter(word => words2.has(word)));
