@@ -122,9 +122,10 @@ class EvaluationRunner {
     try {
       const content = fs.readFileSync(filePath, 'utf8');
       return content;
-    } catch (error) {
-      console.error(`Error loading file ${filePath}:`, error.message);
-      throw error;
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      console.error(`Error loading file ${filePath}:`, message);
+      throw new Error(message);
     }
   }
 
@@ -136,17 +137,18 @@ class EvaluationRunner {
       }
       fs.writeFileSync(filePath, content);
       console.log(`Saved: ${filePath}`);
-    } catch (error) {
-      console.error(`Error saving file ${filePath}:`, error.message);
-      throw error;
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      console.error(`Error saving file ${filePath}:`, message);
+      throw new Error(message);
     }
   }
 
   parseSimpleYaml(content: string): PersonaConfig {
-    const data = { criteria: {} };
+    const data: PersonaConfig = { persona: { name: '', background: [], evaluation_approach: '' }, criteria: {}, evaluation: { focus: '', json_fields: [] } };
     const criteriaMatches = content.matchAll(/ {2}(\w+):\s*\n\s+title: "([^"]+)"/g);
     for (const match of criteriaMatches) {
-      data.criteria[match[1]] = { title: match[2] };
+      data.criteria[match[1]] = { title: match[2], description: '', bullets: [] };
     }
     return data;
   }
@@ -162,7 +164,7 @@ class EvaluationRunner {
       'team': 'Senior Product Manager',
     };
 
-    const criteriaFields = {};
+    const criteriaFields: Record<string, unknown> = {};
     const personaDisplayName = persona || 'Unknown';
         
     if (persona) {
@@ -182,7 +184,7 @@ class EvaluationRunner {
             required: ['score', 'reasoning'],
           };
         }
-      } catch (error) {
+      } catch (error: unknown) {
         console.log('Could not load persona criteria, using generic schema');
       }
     }
@@ -266,8 +268,9 @@ class EvaluationRunner {
         reject(new Error(`Request timeout after ${Math.round(timeoutMs/60000)} minutes`));
       });
 
-      req.on('error', (error) => {
-        reject(new Error(`Ollama request failed: ${error.message}`));
+      req.on('error', (error: unknown) => {
+        const message = error instanceof Error ? error.message : String(error);
+        reject(new Error(`Ollama request failed: ${message}`));
       });
 
       req.write(postData);

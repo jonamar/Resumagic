@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-// @ts-nocheck
 
 import fs from 'fs';
 import path, { dirname } from 'path';
@@ -39,11 +38,6 @@ interface DomainAssignments {
 }
 
 class KeywordExtractor {
-  private baseDir: string;
-
-  constructor() {
-    this.baseDir = __dirname;
-  }
 
   extractPriorityKeywords(keywordAnalysisPath: string): PriorityKeywords {
     const analysis: KeywordAnalysis = JSON.parse(fs.readFileSync(keywordAnalysisPath, 'utf8'));
@@ -66,7 +60,7 @@ class KeywordExtractor {
   }
 
   // Semantic domain keywords for similarity matching
-  getDomainKeywords(): Record<string, string[]> {
+  getDomainKeywords(): Record<keyof DomainAssignments, string[]> {
     return {
       hr: [
         'experience', 'years of experience', 'leadership experience', 'team management',
@@ -146,7 +140,7 @@ class KeywordExtractor {
     const assignments: DomainAssignments = { hr: [], technical: [], design: [], finance: [], ceo: [], team: [] };
         
     for (const keyword of keywords) {
-      const similarities = {
+      const similarities: Record<keyof DomainAssignments, number> = {
         hr: this.calculateSimilarity(keyword.kw, domainKeywords.hr),
         technical: this.calculateSimilarity(keyword.kw, domainKeywords.technical),
         design: this.calculateSimilarity(keyword.kw, domainKeywords.design),
@@ -158,8 +152,8 @@ class KeywordExtractor {
       // Assign to domain with highest similarity (threshold 0.25)
       const maxSimilarity = Math.max(...Object.values(similarities));
       if (maxSimilarity >= 0.25) {
-        const bestDomain = Object.entries(similarities)
-          .find(([domain, score]) => score === maxSimilarity)?.[0] as keyof DomainAssignments;
+        const bestDomain = (Object.entries(similarities)
+          .find((entry) => entry[1] === maxSimilarity)?.[0] as keyof DomainAssignments | undefined);
         if (bestDomain) {
           assignments[bestDomain].push(keyword);
         }
@@ -241,5 +235,6 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       ceo: extractor.calculateSimilarity(kw.kw, domainKeywords.ceo),
       team: extractor.calculateSimilarity(kw.kw, domainKeywords.team),
     };
+    void similarities;
   });
 }

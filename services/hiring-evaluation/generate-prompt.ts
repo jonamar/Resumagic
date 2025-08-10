@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-// @ts-nocheck
 
 import fs from 'fs';
 import path, { dirname } from 'path';
@@ -30,34 +29,38 @@ function loadYaml(filePath: string): PersonaData {
     
   // Extract persona name
   const nameMatch = content.match(/name: "([^"]+)"/);
-  data.persona.name = nameMatch ? nameMatch[1] : '';
+  data.persona.name = nameMatch?.[1] ?? '';
     
   // Extract background bullets
   const backgroundSection = content.match(/background:\s*\n((?:\s*- "[^"]+"\s*\n)+)/);
-  data.persona.background = backgroundSection ? 
-    backgroundSection[1].match(/"([^"]+)"/g)?.map(m => m.slice(1, -1)) || [] : [];
+  data.persona.background = backgroundSection && backgroundSection[1]
+    ? (backgroundSection[1].match(/"([^"]+)"/g)?.map(m => m.slice(1, -1)) ?? [])
+    : [];
     
   // Extract evaluation approach
   const approachMatch = content.match(/evaluation_approach: \|\s*\n([\s\S]*?)\n\ncriteria:/);
-  data.persona.evaluation_approach = approachMatch ? 
-    approachMatch[1].replace(/^ {4}/gm, '').trim() : '';
+  data.persona.evaluation_approach = approachMatch && approachMatch[1]
+    ? approachMatch[1].replace(/^ {4}/gm, '').trim()
+    : '';
     
   // Extract criteria with a simpler approach
   const criteriaMatches = content.matchAll(/ {2}(\w+):\s*\n\s+title: "([^"]+)"\s*\n\s+description: "([^"]+)"\s*\n\s+bullets:\s*\n((?:\s+- "[^"]+"\s*\n)+)/g);
   for (const match of criteriaMatches) {
-    const key = match[1];
-    const bullets = match[4].match(/"([^"]+)"/g)?.map(m => m.slice(1, -1)) || [];
+    const key = match?.[1] ?? '';
+    if (!key) continue;
+    const rawBullets = match?.[4]?.match(/"([^"]+)"/g) ?? [];
+    const bullets = rawBullets.map(m => m.slice(1, -1));
         
     data.criteria[key] = {
-      title: match[2],
-      description: match[3],
+      title: match?.[2] ?? '',
+      description: match?.[3] ?? '',
       bullets: bullets,
     };
   }
     
   // Extract evaluation focus
   const focusMatch = content.match(/focus: "([^"]+)"/);
-  data.evaluation.focus = focusMatch ? focusMatch[1] : '';
+  data.evaluation.focus = focusMatch?.[1] ?? '';
     
   return data;
 }
@@ -90,7 +93,7 @@ Review the attached resume against the job posting and score using this rubric. 
     
   // Add criteria
   let i = 1;
-  for (const [key, criterion] of Object.entries(persona.criteria)) {
+  for (const [, criterion] of Object.entries(persona.criteria)) {
     prompt += `### ${i}. ${criterion.title} (1-10)\n\n${criterion.description}\n\n`;
     criterion.bullets.forEach(bullet => prompt += `- ${bullet}\n`);
     prompt += '\n';
