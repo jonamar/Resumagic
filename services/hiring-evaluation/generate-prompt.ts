@@ -95,7 +95,11 @@ Review the attached resume against the job posting and score using this rubric. 
   let i = 1;
   for (const [, criterion] of Object.entries(persona.criteria)) {
     prompt += `### ${i}. ${criterion.title} (1-10)\n\n${criterion.description}\n\n`;
-    criterion.bullets.forEach(bullet => prompt += `- ${bullet}\n`);
+    if (criterion.bullets && Array.isArray(criterion.bullets)) {
+      criterion.bullets.forEach(bullet => {
+        prompt += `- ${bullet}\n`;
+      });
+    }
     prompt += '\n';
     i++;
   }
