@@ -24,7 +24,8 @@
     "ci:validate": "../scripts/ci/validate-all.sh",
     "vale:start": "node services/vale-linting/process-manager.js start",
     "vale:stop": "node services/vale-linting/process-manager.js stop",
-    "vale:status": "node services/vale-linting/process-manager.js status"
+    "vale:status": "node services/vale-linting/process-manager.js status",
+    "keywords:run": "node dist/services/keyword-orchestrator.js"
   },
   "dependencies": {
     "docx": "^9.5.1",
