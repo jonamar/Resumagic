@@ -228,10 +228,15 @@ class EvaluationRunner {
         });
         res.on('end', () => {
           try {
-            const response = JSON.parse(data);
-            resolve(response.response);
+            const response = JSON.parse(data) as { response?: unknown };
+            if (response && typeof response.response === 'string') {
+              resolve(response.response);
+              return;
+            }
+            throw new Error('Missing or invalid response field');
           } catch (error) {
-            reject(new Error(`Failed to parse Ollama response: ${error instanceof Error ? error.message : String(error)}`));
+            const message = error instanceof Error ? error.message : String(error);
+            reject(new Error(`Failed to parse Ollama response: ${message}`));
           }
         });
       });
