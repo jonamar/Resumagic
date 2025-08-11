@@ -3,10 +3,10 @@
 
 import fs from 'fs';
 import path, { dirname } from 'path';
-import { getPersonaDisplayName, personaNameMap, type PersonaKey } from './persona.js';
+import { getPersonaDisplayName, type PersonaKey } from './persona.js';
 import type { DomainAssignments, KeywordLike } from './keyword-map.js';
 import { loadFile as loadTextFile, saveFile as writeTextFile } from './io.js';
-import { parseOllamaJson } from './json-utils.js';
+// parseOllamaJson is not used in the current runner; left available in module for future slices
 import http from 'http';
 import { fileURLToPath } from 'url';
 
@@ -351,11 +351,12 @@ class EvaluationRunner {
       }
             
       throw new Error('No valid JSON found in response');
-    } catch (error) {
-      console.error('Failed to parse JSON:', error.message);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      console.error('Failed to parse JSON:', message);
       console.error('Response text (first 200 chars):', text.substring(0, 200));
       console.error('Response text (last 200 chars):', text.substring(Math.max(0, text.length - 200)));
-      throw error;
+      throw new Error(message);
     }
   }
 
