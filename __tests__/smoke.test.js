@@ -7,8 +7,8 @@
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
-import { analyzeKeywords } from '../services/keyword-analysis';
-import { evaluateCandidate } from '../services/hiring-evaluation';
+import { analyzeKeywords } from '../dist/services/keyword-analysis.js';
+import { evaluateCandidate } from '../dist/services/hiring-evaluation.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
