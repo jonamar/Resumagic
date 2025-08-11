@@ -99,8 +99,8 @@ cd /path/to/resumagic/app
 # Document generation (reads from ../data/applications/{company-role}/)
 node generate-resume.js company-role [--resume|--cover-letter|--both|--combined]
 
-# Keyword analysis (reads from ../data/applications/{company-role}/)
-python services/keyword-analysis/kw_rank_modular.py company-role
+# Keyword analysis (single command)
+npm run keywords:run -- company-role
 
 # Hiring simulation (reads from ../data/applications/{company-role}/)
 node services/hiring-evaluation/evaluation-runner.js company-role
@@ -130,7 +130,7 @@ cp -r ../data/applications/template ../data/applications/new-company-role
 5. **ATS Optimization**: Remove compatibility mode, optimize for parsing systems
 
 ### **Keyword Analysis Pipeline**
-1. **Input Loading**: Load keywords and resume data from application folder
+1. **Extraction + Analysis**: Single command orchestrates extracting keywords from `job-posting.md` and running the Python analyzer
 2. **Categorization**: Separate knockouts ("MBA required") from skills ("product management")
 3. **Scoring**: Apply TF-IDF + section weights + role-specific boosts
 4. **Clustering**: Group similar keywords with semantic aliases
