@@ -1,11 +1,10 @@
 #!/usr/bin/env node
 // @ts-nocheck
-type PersonaKey = 'hr' | 'technical' | 'design' | 'finance' | 'ceo' | 'team';
-type PersonaNameMap = Record<PersonaKey, string>;
 
 import fs from 'fs';
 import path, { dirname } from 'path';
 import { getPersonaDisplayName, personaNameMap, type PersonaKey } from './persona.js';
+import type { DomainAssignments, KeywordLike } from './keyword-map.js';
 import { loadFile as loadTextFile, saveFile as writeTextFile } from './io.js';
 import { parseOllamaJson } from './json-utils.js';
 import http from 'http';
@@ -286,14 +285,14 @@ class EvaluationRunner {
         
     let personaContext = '';
     // Use a typed accessor to avoid string index issues
-    const keywordAssignments = {
-      hr: keywords.hr_keywords,
-      technical: keywords.technical_keywords,
-      design: keywords.design_keywords,
-      finance: keywords.finance_keywords,
-      ceo: keywords.ceo_keywords,
-      team: keywords.team_keywords,
-    } as const;
+    const keywordAssignments: DomainAssignments = {
+      hr: keywords.hr_keywords as KeywordLike[],
+      technical: keywords.technical_keywords as KeywordLike[],
+      design: keywords.design_keywords as KeywordLike[],
+      finance: keywords.finance_keywords as KeywordLike[],
+      ceo: keywords.ceo_keywords as KeywordLike[],
+      team: keywords.team_keywords as KeywordLike[],
+    };
 
     try {
       // validate persona against allowed keys
@@ -301,8 +300,8 @@ class EvaluationRunner {
       const p: PersonaKey | null = validPersonas.includes(persona) ? persona : null;
       if (p !== null) {
         const { getKeywordsForPersona } = await import('./keyword-map.js');
-        const personaKeywords = getKeywordsForPersona(keywordAssignments as any, p);
-        personaContext = extractor.generateContextPrompt(personaKeywords as any);
+        const personaKeywords: KeywordLike[] = getKeywordsForPersona(keywordAssignments, p);
+        personaContext = extractor.generateContextPrompt(personaKeywords);
       }
     } catch {
       // fall back silently if mapping fails
