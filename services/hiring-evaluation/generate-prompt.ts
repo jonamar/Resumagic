@@ -47,7 +47,9 @@ function loadYaml(filePath: string): PersonaData {
   const criteriaMatches = content.matchAll(/ {2}(\w+):\s*\n\s+title: "([^"]+)"\s*\n\s+description: "([^"]+)"\s*\n\s+bullets:\s*\n((?:\s+- "[^"]+"\s*\n)+)/g);
   for (const match of criteriaMatches) {
     const key = match?.[1] ?? '';
-    if (!key) continue;
+    if (!key) {
+      continue;
+    }
     const rawBullets = match?.[4]?.match(/"([^"]+)"/g) ?? [];
     const bullets = rawBullets.map(m => m.slice(1, -1));
         
@@ -95,9 +97,8 @@ Review the attached resume against the job posting and score using this rubric. 
   let i = 1;
   for (const [, criterion] of Object.entries(persona.criteria)) {
     prompt += `### ${i}. ${criterion.title} (1-10)\n\n${criterion.description}\n\n`;
-    // eslint-disable-next-line curly
     if (criterion.bullets && Array.isArray(criterion.bullets)) {
-      criterion.bullets.forEach(bullet => {
+      criterion.bullets.forEach((bullet) => {
         prompt += `- ${bullet}\n`;
       });
     }

@@ -1,8 +1,13 @@
 #!/usr/bin/env node
 // @ts-nocheck
+type PersonaKey = 'hr' | 'technical' | 'design' | 'finance' | 'ceo' | 'team';
+type PersonaNameMap = Record<PersonaKey, string>;
 
 import fs from 'fs';
 import path, { dirname } from 'path';
+import { getPersonaDisplayName, personaNameMap, type PersonaKey } from './persona.js';
+import { loadFile as loadTextFile, saveFile as writeTextFile } from './io.js';
+import { parseOllamaJson } from './json-utils.js';
 import http from 'http';
 import { fileURLToPath } from 'url';
 
@@ -75,7 +80,7 @@ class EvaluationRunner {
   private fastMode: boolean;
   private modelTemperatures: Record<string, number>;
   private overrideTemperature?: number;
-  private personas: string[];
+  private personas: PersonaKey[];
   private weights: Record<string, number>;
   constructor(applicationName = 'elovate-director-product-management') {
     this.baseDir = __dirname;
@@ -119,29 +124,12 @@ class EvaluationRunner {
   }
 
   loadFile(filePath: string): string {
-    try {
-      const content = fs.readFileSync(filePath, 'utf8');
-      return content;
-    } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : String(error);
-      console.error(`Error loading file ${filePath}:`, message);
-      throw new Error(message);
-    }
+    return loadTextFile(filePath);
   }
 
   saveFile(filePath: string, content: string): void {
-    try {
-      const dir = path.dirname(filePath);
-      if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir, { recursive: true });
-      }
-      fs.writeFileSync(filePath, content);
-      console.log(`Saved: ${filePath}`);
-    } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : String(error);
-      console.error(`Error saving file ${filePath}:`, message);
-      throw new Error(message);
-    }
+    writeTextFile(filePath, content);
+    console.log(`Saved: ${filePath}`);
   }
 
   parseSimpleYaml(content: string): PersonaConfig {
@@ -153,25 +141,18 @@ class EvaluationRunner {
     return data;
   }
 
-  callOllama(prompt: string, model: string = this.modelName, persona: string | null = null): Promise<string> {
+  callOllama(prompt: string, model: string = this.modelName, persona: PersonaKey | null = null): Promise<string> {
     // Map persona keys to proper names for evaluation processor
-    const personaNameMap = {
-      'hr': 'HR Manager',
-      'technical': 'Director of Engineering', 
-      'design': 'Director of Design',
-      'finance': 'Finance Director',
-      'ceo': 'CEO',
-      'team': 'Senior Product Manager',
-    };
+    // personaNameMap imported
 
     const criteriaFields: Record<string, unknown> = {};
-    const personaDisplayName = persona || 'Unknown';
+    const personaDisplayName = getPersonaDisplayName(persona);
         
     if (persona) {
       try {
         const yamlPath = path.join(__dirname, 'personas', `${persona}.yaml`);
         const personaData = this.parseSimpleYaml(fs.readFileSync(yamlPath, 'utf8'));
-        const _personaDisplayName = personaNameMap[persona] || persona;
+        const _personaDisplayName = getPersonaDisplayName(persona);
                 
         // Build specific field properties for this persona
         for (const fieldName of Object.keys(personaData.criteria)) {
@@ -251,7 +232,7 @@ class EvaluationRunner {
             const response = JSON.parse(data);
             resolve(response.response);
           } catch (error) {
-            reject(new Error(`Failed to parse Ollama response: ${error.message}`));
+            reject(new Error(`Failed to parse Ollama response: ${error instanceof Error ? error.message : String(error)}`));
           }
         });
       });
@@ -286,13 +267,13 @@ class EvaluationRunner {
     return { jobPosting, resume };
   }
 
-  async loadPrompt(persona: string, provider: string = 'claude'): Promise<string> {
+  async loadPrompt(persona: PersonaKey, provider: string = 'claude'): Promise<string> {
     // Generate prompt from YAML configuration
     const { generatePrompt } = await import('./generate-prompt.js');
     return generatePrompt(persona);
   }
 
-  async preparePrompt(persona: string, provider: string = 'claude'): Promise<string> {
+  async preparePrompt(persona: PersonaKey, provider: string = 'claude'): Promise<string> {
     const { default: KeywordExtractor } = await import('./keyword-extractor.js');
     const extractor = new KeywordExtractor();
         
@@ -304,17 +285,27 @@ class EvaluationRunner {
     const keywords = extractor.extractPriorityKeywords(keywordPath);
         
     let personaContext = '';
-    const keywordMap = {
-      'hr': keywords.hr_keywords,
-      'technical': keywords.technical_keywords,
-      'design': keywords.design_keywords,
-      'finance': keywords.finance_keywords,
-      'ceo': keywords.ceo_keywords,
-      'team': keywords.team_keywords,
-    };
-        
-    if (keywordMap[persona]) {
-      personaContext = extractor.generateContextPrompt(keywordMap[persona]);
+    // Use a typed accessor to avoid string index issues
+    const keywordAssignments = {
+      hr: keywords.hr_keywords,
+      technical: keywords.technical_keywords,
+      design: keywords.design_keywords,
+      finance: keywords.finance_keywords,
+      ceo: keywords.ceo_keywords,
+      team: keywords.team_keywords,
+    } as const;
+
+    try {
+      // validate persona against allowed keys
+      const validPersonas: readonly PersonaKey[] = ['hr','technical','design','finance','ceo','team'];
+      const p: PersonaKey | null = validPersonas.includes(persona) ? persona : null;
+      if (p !== null) {
+        const { getKeywordsForPersona } = await import('./keyword-map.js');
+        const personaKeywords = getKeywordsForPersona(keywordAssignments as any, p);
+        personaContext = extractor.generateContextPrompt(personaKeywords as any);
+      }
+    } catch {
+      // fall back silently if mapping fails
     }
         
     // Replace placeholders
@@ -364,7 +355,7 @@ class EvaluationRunner {
     }
   }
 
-  async evaluatePersona(persona: string, provider: string = 'ollama'): Promise<PersonaEvaluation> {
+  async evaluatePersona(persona: PersonaKey, provider: string = 'ollama'): Promise<PersonaEvaluation> {
     console.log(`Evaluating ${persona} persona with ${provider}...`);
         
     try {
@@ -386,16 +377,7 @@ class EvaluationRunner {
         const parsed = this.parseJSON(response);
                 
         // Inject the correct persona name (system knows this, don't ask LLM)
-        const personaNameMap = {
-          'hr': 'HR Manager',
-          'technical': 'Director of Engineering', 
-          'design': 'Director of Design',
-          'finance': 'Finance Director',
-          'ceo': 'CEO',
-          'team': 'Senior Product Manager',
-        };
-                
-        parsed.persona = personaNameMap[persona] || persona;
+        parsed.persona = getPersonaDisplayName(persona);
         console.log('Parsed result:', JSON.stringify(parsed, null, 2));
         return parsed;
       } else {
