@@ -28,6 +28,12 @@ async function runKeywordAnalysis(appName: string): Promise<void> {
   const analyzerPy = path.join(projectRoot, 'services', 'keyword-analysis', 'kw_rank_modular.py');
 
   console.info(`Keywords orchestrator: ${appName}`);
+  console.info('Paths:');
+  console.info(`  jobPosting:     ${jobPosting}`);
+  console.info(`  keywordsJson:   ${keywordsJson}`);
+  console.info(`  extractorJs:    ${extractorJs}`);
+  console.info(`  analyzerPy:     ${analyzerPy}`);
+
   console.info('Step 1/2: extracting keywords...');
   await exec(`node ${extractorJs} ${jobPosting} ${keywordsJson}`);
 
