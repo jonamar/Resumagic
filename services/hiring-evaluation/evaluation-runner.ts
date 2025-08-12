@@ -35,19 +35,10 @@ interface OllamaEvaluationResponse {
   evaluations: PersonaEvaluation[];
 }
 
-// Processed evaluation result
+// Processed evaluation result for the runner API
 interface EvaluationResult {
-  summary?: {
-    composite_score?: number;
-    overall_assessment?: string;
-    key_recommendations?: string[];
-  };
-  composite_score?: number;
-  matched_keywords?: string[];
-  missing_keywords?: string[];
-  key_strengths?: string[];
-  personas?: string[];
-  evaluations?: PersonaEvaluation[];
+  rawResults: OllamaEvaluationResponse;
+  summary: string; // Markdown summary produced by evaluation-processor
 }
 
 // Persona configuration from YAML files
@@ -145,13 +136,14 @@ class EvaluationRunner {
     // personaNameMap imported
 
     const criteriaFields: Record<string, unknown> = {};
-    const personaDisplayName = getPersonaDisplayName(persona);
+    // Resolve display name (not currently used by the JSON schema builder)
+    const _personaDisplayName = getPersonaDisplayName(persona);
         
     if (persona) {
       try {
         const yamlPath = path.join(__dirname, 'personas', `${persona}.yaml`);
         const personaData = this.parseSimpleYaml(fs.readFileSync(yamlPath, 'utf8'));
-        const _personaDisplayName = getPersonaDisplayName(persona);
+         // already resolved above if needed
                 
         // Build specific field properties for this persona
         for (const fieldName of Object.keys(personaData.criteria)) {
@@ -291,7 +283,9 @@ class EvaluationRunner {
       generateContextPrompt: (keywords: KeywordLike[]) => string;
     };
     const { default: KeywordExtractor } = await import('./keyword-extractor.js');
-    const extractor: KeywordExtractorInstance = new (KeywordExtractor as unknown as { new(): KeywordExtractorInstance })();
+    // Helper to construct typed instance without unnecessary assertions
+    const construct = <T>(Ctor: new () => T): T => new Ctor();
+    const extractor = construct<KeywordExtractorInstance>(KeywordExtractor as unknown as new () => KeywordExtractorInstance);
         
     const { jobPosting, resume } = await this.loadApplicationMaterials();
     const promptTemplate = await this.loadPrompt(persona, provider);
@@ -303,12 +297,12 @@ class EvaluationRunner {
     let personaContext = '';
     // Use a typed accessor to avoid string index issues
     const keywordAssignments: DomainAssignments = {
-      hr: keywords.hr_keywords as KeywordLike[],
-      technical: keywords.technical_keywords as KeywordLike[],
-      design: keywords.design_keywords as KeywordLike[],
-      finance: keywords.finance_keywords as KeywordLike[],
-      ceo: keywords.ceo_keywords as KeywordLike[],
-      team: keywords.team_keywords as KeywordLike[],
+      hr: keywords.hr_keywords,
+      technical: keywords.technical_keywords,
+      design: keywords.design_keywords,
+      finance: keywords.finance_keywords,
+      ceo: keywords.ceo_keywords,
+      team: keywords.team_keywords,
     };
 
     try {
@@ -463,14 +457,14 @@ class EvaluationRunner {
     const summary = processEvaluationResults(evaluations, candidateName);
         
     // Save raw results
-    const results = {
+    const results: OllamaEvaluationResponse = {
       evaluation_timestamp: new Date().toISOString(),
       model: this.modelName,
       candidate: candidateName,
       evaluations: evaluations,
     };
         
-    const applicationPath = '/Users/jonamar/Documents/resumagic/data/applications/' + this.applicationName;
+    const applicationPath: string = '/Users/jonamar/Documents/resumagic/data/applications/' + this.applicationName;
         
     await this.saveFile(
       path.join(applicationPath, 'working', 'evaluation-results.json'),

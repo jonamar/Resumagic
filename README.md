@@ -95,9 +95,9 @@ This project uses a two-repo structure to separate code from private data:
     │   │   │   ├── keyword-checklist.md
     │   │   │   └── top5.json
     │   │   └── outputs/
-    │   │       ├── Jon-Amar-Resume-Relay.docx
-    │   │       ├── Jon-Amar-Cover-Letter-Relay.docx
-    │   │       └── Jon-Amar-Cover-Letter-and-Resume-Relay.docx
+    │   │       ├── Resume-Relay.docx
+    │   │       ├── Cover-Letter-Relay.docx
+    │   │       └── Cover-Letter-and-Resume-Relay.docx
     │   │
     │   └── template/                # Template for new applications
     │       ├── inputs/
@@ -133,13 +133,13 @@ Each application must follow this 3-tier folder structure:
 │   ├── evaluation-results.json      # Hiring simulation raw data
 │   └── {candidate}-evaluation.md    # Hiring simulation summary
 └── outputs/               # Generated deliverables (auto-generated)
-    ├── Jon-Amar-Resume-{Company}.docx
-    ├── Jon-Amar-Cover-Letter-{Company}.docx
-    └── Jon-Amar-Combined-{Company}.docx
+    ├── Resume-{Company}.docx
+    ├── Cover-Letter-{Company}.docx
+    └── Cover-Letter-and-Resume-{Company}.docx
 ```
 
 **Benefits:**
-- **HR-Friendly**: Files named `Jon-Amar-Resume-Company.docx` for easy identification
+- **HR-Friendly**: Files named `Resume-Company.docx` for easy identification
 - **Organized**: Each application has its own folder with inputs and outputs
 - **Professional**: Clean file naming that looks professional to HR departments
 - **Scalable**: Easy to manage many applications without file name conflicts
@@ -259,9 +259,9 @@ company-role/
 │   ├── keyword-checklist.md     # Optimization checklist
 │   └── top5.json               # Top skills
 └── outputs/
-    ├── Jon-Amar-Resume-Company.docx
-    ├── Jon-Amar-Cover-Letter-Company.docx
-    └── Jon-Amar-Combined-Company.docx
+    ├── Resume-Company.docx
+    ├── Cover-Letter-Company.docx
+    └── Cover-Letter-and-Resume-Company.docx
 ```
 
 ## Troubleshooting

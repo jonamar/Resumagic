@@ -85,19 +85,29 @@ export async function evaluateCandidate(
     
     // Execute the evaluation using the service's native API
     const evaluationResult = await evaluationRunner.runEvaluation(candidateName);
-    
-    // Transform the result to match the expected interface
+    const raw = evaluationResult.rawResults;
+    const summaryMd = evaluationResult.summary;
+    const personaScores = Array.isArray(raw?.evaluations)
+      ? raw.evaluations
+          .map(e => (e?.overall_assessment?.persona_score ?? null))
+          .filter((v): v is number => typeof v === 'number')
+      : [];
+    const compositeAvg = personaScores.length > 0
+      ? personaScores.reduce((a, b) => a + b, 0) / personaScores.length
+      : 0;
+
+    // Transform to expected interface while we incrementally type internals
     return {
-      overallScore: evaluationResult.summary?.composite_score || evaluationResult.composite_score || 0,
-      summary: evaluationResult.summary?.overall_assessment || 'Evaluation completed successfully',
+      overallScore: compositeAvg,
+      summary: summaryMd || 'Evaluation completed successfully',
       applicationName: input.applicationName,
-      fitScore: evaluationResult.summary?.composite_score || evaluationResult.composite_score,
-      matchedKeywords: evaluationResult.matched_keywords || [],
-      missingKeywords: evaluationResult.missing_keywords || [],
-      keyStrengths: evaluationResult.key_strengths || [],
-      composite_score: evaluationResult.summary?.composite_score || evaluationResult.composite_score,
-      persona_evaluations: (evaluationResult.evaluations || []) as any,
-      recommendations: evaluationResult.summary?.key_recommendations || [],
+      fitScore: compositeAvg,
+      matchedKeywords: [],
+      missingKeywords: [],
+      keyStrengths: [],
+      composite_score: compositeAvg,
+      persona_evaluations: (raw?.evaluations || []) as any,
+      recommendations: [],
     };
     
   } catch (error: unknown) {

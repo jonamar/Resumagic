@@ -270,9 +270,9 @@ elovate-director-product-management/
 │   ├── consensus-report.json   # Consensus building results
 │   └── calibration-results.json # Calibration validation
 └── outputs/
-    ├── Jon-Amar-Resume-Elovate.docx
-    ├── Jon-Amar-Cover-Letter-Elovate.docx
-    └── Jon-Amar-Combined-Elovate.docx
+    ├── Resume-Elovate.docx
+    ├── Cover-Letter-Elovate.docx
+    └── Cover-Letter-and-Resume-Elovate.docx
 ```
 
 ### Review Output Format

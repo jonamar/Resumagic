@@ -59,9 +59,9 @@ Each job application in `/data/applications/` follows this **required 3-tier str
 │   ├── keyword-checklist.md   # Human-readable optimization guide
 │   └── top5.json             # Top skills summary
 └── outputs/                   # Final deliverables (auto-generated)
-    ├── Jon-Amar-Resume-{Company}.docx
-    ├── Jon-Amar-Cover-Letter-{Company}.docx
-    └── Jon-Amar-Combined-{Company}.docx
+    ├── Resume-{Company}.docx
+    ├── Cover-Letter-{Company}.docx
+    └── Cover-Letter-and-Resume-{Company}.docx
 ```
 
 ### **How Applications Connect to the System**

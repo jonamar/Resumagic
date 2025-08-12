@@ -123,9 +123,9 @@ const layout = {
 
 // File naming patterns and directory structure
 const fileNaming = {
-  resumePattern: 'Jon-Amar-Resume-{company}.docx',
-  coverLetterPattern: 'Jon-Amar-Cover-Letter-{company}.docx',
-  combinedPattern: 'Jon-Amar-Cover-Letter-and-Resume-{company}.docx',
+  resumePattern: 'Resume-{company}.docx',
+  coverLetterPattern: 'Cover-Letter-{company}.docx',
+  combinedPattern: 'Cover-Letter-and-Resume-{company}.docx',
   
   // Directory structure
   dataDir: '../data',
