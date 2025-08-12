@@ -1,23 +1,31 @@
 # Resumagic
 
+![License](https://img.shields.io/badge/license-MIT-green)
+![Language](https://img.shields.io/badge/TypeScript-5.x-blue)
+![Docs](https://img.shields.io/badge/docs-Architecture-blueviolet)
+![Tests](https://img.shields.io/badge/tests-JS_%26_Python-brightgreen)
+
 Professional resume and cover letter generator with intelligent keyword analysis for ATS optimization.
 
-## ⚡ Quick Start
+## ⚡ Quick Start (MVP)
 
 ```bash
 # 1. Install dependencies
 npm install
 pip install -r services/keyword-analysis/requirements.txt
 
-# 2. Create new application
+# 2. Scaffold private data repo (non-destructive)
+scripts/setup-data.sh
+
+# 3. Create new application folder (in your private data repo)
 cp -r ../data/applications/template ../data/applications/company-role
 
-# 3. Edit input files
+# 4. Edit input files
 # ../data/applications/company-role/inputs/resume.json
 # ../data/applications/company-role/inputs/cover-letter.md  
 # ../data/applications/company-role/inputs/keywords.json
 
-# 4. Generate documents
+# 5. Generate documents
 node generate-resume.js company-role
 
 # 5. Integrated workflows (NEW!)
