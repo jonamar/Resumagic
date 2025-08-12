@@ -15,6 +15,23 @@ Core tenets
 - Subtraction over abstraction (boring, legible code)
 - AI‑in‑the‑loop writing so human time goes to tone, narrative selection, and role‑fit nuance
 
+### Features and value
+1) ATS‑optimized resumes
+- What it is: A document pipeline and content strategy tuned to how modern ATS systems parse, index, and filter.
+- Why it matters: DOCX remains the most consistently legible for ATS. I researched product docs and recruiter workflows to avoid hidden deal‑breakers (fonts, tables, headers/footers, images, tracking).
+- Result: Cleaner parsing, more consistent pass‑through, and fewer format‑caused misses.
+
+2) Automated keyword extraction (so humans can be strategic)
+- What it is: TF‑IDF scoring, semantic grouping, and resume‑injection checks that produce an actionable checklist.
+- Why it matters: Let the system do repetitive scanning; spend human time on the story—what to emphasize, what to cut, how to align with the role.
+- Result: Faster iterations with leverage, not busywork.
+
+3) Simulated hiring review board
+- What it is: Six calibrated personas (HR, Technical, Design, Finance, CEO, Team) reviewing your actual materials for a specific job.
+- Why it matters: Hone based on realistic, multi‑angle feedback before it’s too late; reveal blind spots; get a credible gut‑check.
+- How it runs: Fast mode for quick passes; quality mode with a beefier local model for the last 10% of insight. Calibrated via baselines and prompt/model tuning for constructive, non‑noisy variance.
+- My lens: I’ve sat on 42 real hiring review boards (often as the hiring manager). The personas were crafted to mirror real dynamics—seniority, org perspective, and temperament.
+
 ### The hiring review board (why this matters)
 The core idea is simple and powerful: simulate how real decision‑makers would read your resume for a specific role—before you apply. I built six distinct personas (HR, Technical, Design, Finance, CEO, Team), each crafted to represent seniority, org position, and temperament. The goal wasn’t “AI magic”; it was pragmatic calibration for useful, constructive feedback.
 
