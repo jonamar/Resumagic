@@ -45,5 +45,13 @@
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3",
     "vitest": "^3.2.4"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jonamar/Resumagic.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jonamar/Resumagic/issues"
+  },
+  "homepage": "https://github.com/jonamar/Resumagic#readme"
 }
