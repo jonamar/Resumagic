@@ -79,8 +79,8 @@ class EvaluationRunner {
   private fastMode: boolean;
   private modelTemperatures: Record<string, number>;
   private overrideTemperature?: number;
-  private personas: PersonaKey[];
-  private weights: Record<string, number>;
+  private personas: readonly PersonaKey[];
+  private weights: Readonly<Record<PersonaKey, number>>;
   constructor(applicationName = 'elovate-director-product-management') {
     this.baseDir = __dirname;
     this.applicationName = applicationName;
@@ -94,7 +94,7 @@ class EvaluationRunner {
       'phi3:mini': 0.3,          // Lower temp for more focused output in fast model
       'qwen3:0.6b': 0.3,         // Same temp as phi3:mini for fair comparison
     };
-    this.personas = ['hr', 'technical', 'design', 'finance', 'ceo', 'team'];
+    this.personas = ['hr', 'technical', 'design', 'finance', 'ceo', 'team'] as const;
     this.weights = {
       hr: 0.20,
       technical: 0.15,
@@ -102,7 +102,7 @@ class EvaluationRunner {
       finance: 0.20,
       ceo: 0.20,
       team: 0.10,
-    };
+    } as const;
   }
 
   setFastMode(enabled: boolean): void {
@@ -273,13 +273,25 @@ class EvaluationRunner {
 
   async loadPrompt(persona: PersonaKey, provider: string = 'claude'): Promise<string> {
     // Generate prompt from YAML configuration
-    const { generatePrompt } = await import('./generate-prompt.js');
+    const { generatePrompt }: { generatePrompt: (persona: PersonaKey) => string } = await import('./generate-prompt.js');
     return generatePrompt(persona);
   }
 
   async preparePrompt(persona: PersonaKey, provider: string = 'claude'): Promise<string> {
+    type KeywordBuckets = {
+      hr_keywords: KeywordLike[];
+      technical_keywords: KeywordLike[];
+      design_keywords: KeywordLike[];
+      finance_keywords: KeywordLike[];
+      ceo_keywords: KeywordLike[];
+      team_keywords: KeywordLike[];
+    };
+    type KeywordExtractorInstance = {
+      extractPriorityKeywords: (keywordJsonPath: string) => KeywordBuckets;
+      generateContextPrompt: (keywords: KeywordLike[]) => string;
+    };
     const { default: KeywordExtractor } = await import('./keyword-extractor.js');
-    const extractor = new KeywordExtractor();
+    const extractor: KeywordExtractorInstance = new (KeywordExtractor as unknown as { new(): KeywordExtractorInstance })();
         
     const { jobPosting, resume } = await this.loadApplicationMaterials();
     const promptTemplate = await this.loadPrompt(persona, provider);
@@ -409,7 +421,7 @@ class EvaluationRunner {
     return values.reduce((sum, score) => sum + score, 0) / values.length;
   }
 
-  calculateCompositeScore(evaluations: Record<string, PersonaEvaluation>): number {
+  calculateCompositeScore(evaluations: Record<PersonaKey, PersonaEvaluation>): number {
     let composite = 0;
     for (const persona of this.personas) {
       const personaScore = this.calculatePersonaScore(evaluations[persona].scores);
