@@ -1,14 +1,27 @@
 ## Resumagic: turning a black‑box job hunt into a private, deterministic pipeline
 
-Active development. This is the big‑picture story; deep dives live in PRDs and docs.
+Active development. This is the big‑picture story.
 
-I approached the job hunt like a product problem. Using market research, testing, and a data‑driven mindset, I turned an opaque process into an efficient pipeline where AI accelerates the mechanics—and I, as a product leader, own narrative and judgment. The result is local‑first, fast, and predictable: a workflow designed to increase pre‑submit confidence and ATS pass‑through without sending sensitive data to third parties.
+One‑liner
+- An exec‑level, privacy‑first workflow that simulates a hiring review board, optimizes for ATS, and lets AI handle mechanics while I own narrative and judgment.
+
+Audience
+- Early adopters: executive job candidates in tech who want a faster, more confident, private process.
+- Path to broader use: CLI today → UI tomorrow; expanded personas for evaluations; richer dictionaries for keyword matching.
 
 Core tenets
 - Local‑first privacy
 - Speed and deterministic baselines
 - Subtraction over abstraction (boring, legible code)
 - AI‑in‑the‑loop writing so human time goes to tone, narrative selection, and role‑fit nuance
+
+### The hiring review board (why this matters)
+The core idea is simple and powerful: simulate how real decision‑makers would read your resume for a specific role—before you apply. I built six distinct personas (HR, Technical, Design, Finance, CEO, Team), each crafted to represent seniority, org position, and temperament. The goal wasn’t “AI magic”; it was pragmatic calibration for useful, constructive feedback.
+
+How I made it reliable
+- Baselines: Started with three “stock” personas to ensure a healthy spread of feedback. Then established a high‑quality external baseline (bleeding‑edge AI) for comparison.
+- Tuning: Iteratively refined prompts and local model configs until scores landed within ~10% of the baseline, then adjusted temperature to produce realistic variance across reviews (not identical takes, not chaos).
+- Outcomes: A balanced mix of strengths/risks surfaced quickly, making pre‑submit improvements obvious and actionable.
 
 ### Architecture at a glance
 Resumagic is intentionally simple and pragmatic. TypeScript orchestrates the pipeline and document generation; Python powers keyword analysis. There’s a single runtime path—compile → run from `dist/`—which keeps failures obvious and the system legible to both humans and AI. The polyglot split uses the right language for the right job (Python for IR/NLP; TS for CLI/orchestration and local LLM work), but the developer experience stays unified through clear, typed boundaries.
@@ -34,10 +47,18 @@ What worked: PRDs kept scope tight; a ~10s local pipeline made iteration cheap; 
 ### Impact snapshot
 Faster iteration (seconds, not minutes), deterministic outputs, and private evaluations increased confidence before applying. The keyword checklist and hiring board combined to produce clearer, better‑positioned applications—without sending data to third parties.
 
+### Where this is going
+- Short term: keep the CLI fast and reliable; finish Vale reports as part of the workflow.
+- Medium term: UI on top of the proven pipeline; persona libraries by industry/seniority; expanded keyword dictionaries and semantics.
+- Always: privacy‑first, local‑friendly, deterministic core.
+
 ### Other jobs to be done
 “Translate this role into my story” (narrative selection), “Pre‑mortem the resume against the posting” (risk surfacing), and “Generate recruiter‑friendly deltas” (change logs that explain improvements).
 
 ### Author’s lens
 I operate as an executive‑level product leader and builder, and an emerging visionary in AI‑human collaboration. Here, AI accelerates the mechanical work so humans can own judgment, narrative, and taste. The system makes that split obvious—and fast.
+
+Tech footnote (for the curious)
+- Python for IR/NLP and deterministic outputs; TypeScript for orchestration and local LLM integration. A single compile→run path reduces failure modes and speeds iteration. The tech is a means to a product end: better decisions, faster, in private.
 
 
