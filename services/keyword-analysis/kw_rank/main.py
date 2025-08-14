@@ -13,6 +13,7 @@ from .core.scoring import rank_keywords
 from .core.categorization import enforce_knockout_maximum
 from .core.clustering import cluster_aliases, trim_by_median
 from .core.injection import find_injection_points
+import re
 
 config = get_config()
 
@@ -77,6 +78,31 @@ def categorize_and_enforce_limits(results):
     print(f"🎯 Final categorization: {len(knockouts)} knockout requirements, {len(skills)} skills")
     
     return results
+
+
+def apply_degree_guardrail(results):
+    """Demote degree-related knockouts that are not present in the job posting (tfidf=0).
+
+    Rationale: Degree requirements must be explicitly present in the job posting.
+    Any seeded degree keyword with tfidf==0 should not be treated as a knockout.
+    """
+    degree_pattern = re.compile(r"\b(degree|bachelor|master|mba|phd|computer\s+science)\b", re.IGNORECASE)
+    updated = []
+    for item in results:
+        if (
+            item.get('category') == 'knockout'
+            and float(item.get('tfidf', 0)) == 0.0
+            and degree_pattern.search(item.get('kw', '')) is not None
+        ):
+            # Demote to skill
+            demoted = item.copy()
+            demoted['category'] = 'skill'
+            demoted['knockout_type'] = None
+            demoted['knockout_confidence'] = 0
+            updated.append(demoted)
+        else:
+            updated.append(item)
+    return updated
 
 
 def process_clustering_and_trimming(results, args):
@@ -213,6 +239,9 @@ def main():
     
     # Categorize and enforce limits
     results = categorize_and_enforce_limits(results)
+
+    # Guardrail: demote degree knockouts not present in posting (tfidf==0)
+    results = apply_degree_guardrail(results)
     
     # Process clustering and trimming
     canonical_keywords, knockout_keywords, trimmed_skills = process_clustering_and_trimming(results, args)

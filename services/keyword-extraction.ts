@@ -44,15 +44,16 @@ class KeywordExtractionService {
             
       console.log('🔧 Validating and fixing experience requirements...');
       const validatedKeywords = this.validateExperienceRequirements(keywords, jobPosting);
+      const cleanedKeywords = this.stripDegreesNotInPosting(validatedKeywords, jobPosting);
             
       console.log('💾 Saving keywords...');
-      fs.writeFileSync(outputPath, JSON.stringify(validatedKeywords, null, 2));
+      fs.writeFileSync(outputPath, JSON.stringify(cleanedKeywords, null, 2));
             
       console.log(`✅ Keywords extracted and saved to: ${outputPath}`);
-      console.log(`📊 Extracted ${validatedKeywords.keywords.length} keywords`);
+      console.log(`📊 Extracted ${cleanedKeywords.keywords.length} keywords`);
             
       // Summary
-      const categories = validatedKeywords.keywords.reduce<Record<KeywordItem['role'], number>>((acc, kw) => {
+      const categories = cleanedKeywords.keywords.reduce<Record<KeywordItem['role'], number>>((acc, kw) => {
         const current = acc[kw.role] ?? 0;
         acc[kw.role] = current + 1;
         return acc;
@@ -154,6 +155,25 @@ class KeywordExtractionService {
     }
   }
 
+  // New: strict validator to strip degree requirements not present in posting
+  stripDegreesNotInPosting(keywords: KeywordSet, jobPosting: string): KeywordSet {
+    const degreeRegex = /(degree|bachelor|master|mba|phd|computer\s+science)/i;
+    const postingHasDegree = degreeRegex.test(jobPosting);
+    if (postingHasDegree) {
+      return keywords;
+    }
+    const filtered = {
+      keywords: keywords.keywords.filter(k => {
+        const isDegree = degreeRegex.test(k.kw);
+        return !isDegree;
+      }),
+    };
+    if (filtered.keywords.length !== keywords.keywords.length) {
+      console.log('  ✅ Removed degree keywords not present in posting');
+    }
+    return filtered;
+  }
+
   buildExtractionPrompt(jobPosting: string): string {
     return `# Keyword Extraction Task
 
@@ -174,7 +194,8 @@ You are an expert at analyzing job postings and extracting the most important ke
 
 ## Guidelines:
 - Keep numeric qualifiers with their context: "5+ years experience" not just "experience"
-- Preserve complete requirement phrases: "Bachelor's degree in Computer Science" not separate words
+- Preserve complete requirement phrases when they appear in the posting
+- Do NOT invent or include degree requirements unless the posting explicitly mentions them (e.g., "Bachelor's degree", "Master's", "MBA", "PhD", or specific field like "Computer Science").
 - Include travel requirements with specifics: "extensive travel up to 50%"
 - Capture both required and preferred qualifications
 - Focus on concrete, actionable keywords that would appear on a resume
@@ -185,7 +206,6 @@ You must respond with EXACTLY this JSON structure. Do not include any other text
 {
   "keywords": [
     {"kw": "5+ years product management experience", "role": "core"},
-    {"kw": "Bachelor's degree in Computer Science", "role": "core"},
     {"kw": "extensive travel up to 50%", "role": "core"},
     {"kw": "Agile methodologies", "role": "functional_skills"},
     {"kw": "product strategy", "role": "functional_skills"},
