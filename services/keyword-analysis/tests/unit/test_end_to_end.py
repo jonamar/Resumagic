@@ -51,7 +51,8 @@ def test_degree_guardrail_demotes_unmentioned_degree(tmp_path):
             pass
 
     # Read outputs
-    working_dir = tmp_path / "working"
+    # Outputs are written to tmp_root/working per service convention
+    working_dir = tmp_path.parent / "working"
     analysis_path = working_dir / "keyword_analysis.json"
     assert analysis_path.exists(), "keyword_analysis.json not created"
 
@@ -65,5 +66,7 @@ def test_degree_guardrail_demotes_unmentioned_degree(tmp_path):
     assert all("computer science" not in txt for txt in knockout_texts), (
         f"Degree leaked into knockouts: {knockout_texts}"
     )
+
+
 
 
