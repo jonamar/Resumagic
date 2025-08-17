@@ -4,6 +4,7 @@
 
 import { Paragraph, TextRun, AlignmentType } from 'docx';
 import theme from '../../../theme.js';
+import { createInlineRunsWithLinks } from '../../formatting/text-formatting.js';
 
 interface TextPart {
   text: string;
@@ -27,18 +28,21 @@ export function createCoverLetterContent(content: ContentSection[]): Paragraph[]
   
   content.forEach((section) => {
     if (section.type === 'paragraph') {
-      // Handle paragraph content
+      // Handle paragraph content (supports [text](url) links and bold/italic)
       const textRuns: TextRun[] = [];
       
       section.text?.forEach(textPart => {
-        textRuns.push(new TextRun({
-          text: textPart.text,
-          size: theme.typography.fontSize.body * 2, // Convert to half-points
-          font: theme.typography.fonts.primary,
-          color: theme.colors.text,
-          bold: textPart.bold || false,
-          italics: textPart.italic || false,
-        }));
+        const runs = createInlineRunsWithLinks(
+          textPart.text,
+          {
+            size: theme.typography.fontSize.body * 2, // Convert to half-points
+            font: theme.typography.fonts.primary,
+            color: theme.colors.text,
+          },
+          textPart.bold || false,
+          textPart.italic || false,
+        );
+        runs.forEach(r => textRuns.push(r as TextRun));
       });
       
       paragraphs.push(
@@ -58,14 +62,17 @@ export function createCoverLetterContent(content: ContentSection[]): Paragraph[]
         const textRuns: TextRun[] = [];
         
         item.forEach(textPart => {
-          textRuns.push(new TextRun({
-            text: textPart.text,
-            size: theme.typography.fontSize.body * 2, // Convert to half-points
-            font: theme.typography.fonts.primary,
-            color: theme.colors.text,
-            bold: textPart.bold || false,
-            italics: textPart.italic || false,
-          }));
+          const runs = createInlineRunsWithLinks(
+            textPart.text,
+            {
+              size: theme.typography.fontSize.body * 2, // Convert to half-points
+              font: theme.typography.fonts.primary,
+              color: theme.colors.text,
+            },
+            textPart.bold || false,
+            textPart.italic || false,
+          );
+          runs.forEach(r => textRuns.push(r as TextRun));
         });
         
         paragraphs.push(
