@@ -154,18 +154,6 @@ def categorize_keyword(keyword, score, tfidf_score, role_weight):
     if is_soft_skill(kw_lower):
         return {'category': 'skill'}
     
-    # NEW: Explicit degree detection – if the job post contains the degree (tfidf>0), treat as knockout
-    # This avoids false negatives and ensures legitimate degree requirements are prioritized.
-    has_degree_mention = bool(re.search(r'(degree|bachelor|bachelors|master|masters|mba|phd|computer\s+science)', kw_lower))
-    if has_degree_mention and float(tfidf_score) > 0.0:
-        knockout_type = 'preferred' if is_preferred_requirement(kw_lower) else 'required'
-        return {
-            'category': 'knockout',
-            'knockout_type': knockout_type,
-            'confidence': 0.9,
-            'detection_method': 'degree_explicit'
-        }
-
     # ENHANCED: Years-based knockout detection
     years_result = detect_years_knockout(keyword)
     if years_result['is_knockout']:
