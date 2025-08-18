@@ -133,12 +133,14 @@ export function createCoverLetterFooter(basics: Basics, isComboMode: boolean = f
   }
   
   // Append footer note if present (italic body copy, left-aligned)
-  if (footerNote && footerNote.trim().length > 0) {
+  // Skip entirely in combo mode per requirement
+  if (!isComboMode && footerNote && footerNote.trim().length > 0) {
+    const noteText = footerNote.trim().startsWith('Note:') ? footerNote.trim() : `Note: ${footerNote.trim()}`;
     paragraphs.push(
       new Paragraph({
         children: [
           new TextRun({
-            text: footerNote,
+            text: noteText,
             size: theme.typography.fontSize.body * 2,
             font: theme.typography.fonts.primary,
             color: theme.colors.text,
@@ -146,6 +148,7 @@ export function createCoverLetterFooter(basics: Basics, isComboMode: boolean = f
           }),
         ],
         spacing: {
+          before: theme.spacing.twips.medium, // extra space between contact info and the note
           after: theme.spacing.twips.page,
         },
         alignment: AlignmentType.LEFT,
