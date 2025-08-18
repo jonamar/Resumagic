@@ -47,26 +47,25 @@ export function createCoverLetterClosing(metadata: CoverLetterMetadata): Paragra
     }),
   );
   
-  // Add the name if provided
-  if (candidateName && candidateName.trim().length > 0) {
-    paragraphs.push(
-      new Paragraph({
-        children: [
-          new TextRun({
-            text: candidateName,
-            size: theme.typography.fontSize.body * 2, // Convert to half-points
-            font: theme.typography.fonts.primary,
-            color: theme.colors.text,
-          }),
-        ],
-        spacing: {
-          after: 0, // No extra paragraph spacing
-          line: theme.spacing.twips.oneAndHalfLine,   // 1.5 line spacing
-        },
-        alignment: AlignmentType.LEFT,
-      }),
-    );
-  }
+  // Add the name if provided, otherwise default to "Jon Amar"
+  const nameToRender = (candidateName && candidateName.trim().length > 0) ? candidateName : 'Jon Amar';
+  paragraphs.push(
+    new Paragraph({
+      children: [
+        new TextRun({
+          text: nameToRender,
+          size: theme.typography.fontSize.body * 2, // Convert to half-points
+          font: theme.typography.fonts.primary,
+          color: theme.colors.text,
+        }),
+      ],
+      spacing: {
+        after: 0, // No extra paragraph spacing
+        line: theme.spacing.twips.oneAndHalfLine,   // 1.5 line spacing
+      },
+      alignment: AlignmentType.LEFT,
+    }),
+  );
   
   // Add the pronouns if provided
   if (resolvedPronouns && resolvedPronouns.trim().length > 0) {

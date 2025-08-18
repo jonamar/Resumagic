@@ -4,7 +4,6 @@
 
 import { Document, LevelFormat, AlignmentType, SectionType, Paragraph } from 'docx';
 import theme from '../../theme.js';
-import { createCoverLetterDate } from '../sections/cover-letter/date-section.js';
 import { createCoverLetterContent } from '../sections/cover-letter/content-section.js';
 import { createCoverLetterClosing } from '../sections/cover-letter/closing-section.js';
 import { createCoverLetterFooter } from '../sections/cover-letter/footer-section.js';
@@ -47,7 +46,7 @@ type CombinedOptions = Record<string, unknown>;
 export function createCombinedDocx(coverLetterData: CoverLetterData, resumeData: ResumeData, _options: CombinedOptions = {}): Document {
   // Cover letter sections
   const coverLetterChildren: Paragraph[] = [
-    ...createCoverLetterDate(coverLetterData.coverLetter.metadata),
+    // Date intentionally omitted per cover letter simplification
     ...createCoverLetterContent(coverLetterData.coverLetter.content),
     ...createCoverLetterClosing(coverLetterData.coverLetter.metadata),
     ...createCoverLetterFooter(coverLetterData.basics, true), // Pass true for combo mode

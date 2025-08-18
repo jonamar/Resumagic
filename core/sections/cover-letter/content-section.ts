@@ -52,7 +52,7 @@ export function createCoverLetterContent(content: ContentSection[]): Paragraph[]
             after: theme.spacing.twips.coverLetterParagraph, // 12pt between paragraphs
             line: theme.spacing.twips.oneAndHalfLine,   // 1.5 line spacing (240 = 1.0, 360 = 1.5)
           },
-          alignment: AlignmentType.JUSTIFIED,
+          alignment: AlignmentType.LEFT,
         }),
       );
       

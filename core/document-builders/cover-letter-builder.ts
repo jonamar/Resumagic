@@ -4,7 +4,6 @@
 
 import { Document, LevelFormat, AlignmentType, Paragraph } from 'docx';
 import theme from '../../theme.js';
-import { createCoverLetterDate } from '../sections/cover-letter/date-section.js';
 import { createCoverLetterContent } from '../sections/cover-letter/content-section.js';
 import { createCoverLetterClosing } from '../sections/cover-letter/closing-section.js';
 import { createCoverLetterFooter } from '../sections/cover-letter/footer-section.js';
@@ -28,7 +27,7 @@ type CoverLetterOptions = Record<string, unknown>;
 export function createCoverLetterDocx(coverLetterData: CoverLetterData, _options: CoverLetterOptions = {}): Document {
   // Document sections (no header for cover letter)
   const children: Paragraph[] = [
-    ...createCoverLetterDate(coverLetterData.coverLetter.metadata),
+    // Date intentionally omitted per cover letter simplification
     ...createCoverLetterContent(coverLetterData.coverLetter.content),
     ...createCoverLetterClosing(coverLetterData.coverLetter.metadata),
     ...createCoverLetterFooter(coverLetterData.basics),
