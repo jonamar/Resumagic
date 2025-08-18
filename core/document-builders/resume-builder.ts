@@ -71,9 +71,11 @@ export function createResumeDocx(resumeData: ResumeData, _options: ResumeOptions
           }),
         ],
         spacing: {
-          after: theme.spacing.twips.page,
+          before: theme.spacing.twips.medium,
+          after: theme.spacing.twips.medium,
         },
         alignment: AlignmentType.LEFT,
+        keepLines: true,
       }),
     );
   }

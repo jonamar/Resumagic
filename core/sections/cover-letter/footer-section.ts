@@ -148,8 +148,8 @@ export function createCoverLetterFooter(basics: Basics, isComboMode: boolean = f
           }),
         ],
         spacing: {
-          before: theme.spacing.twips.medium, // extra space between contact info and the note
-          after: theme.spacing.twips.page,
+          before: theme.spacing.twips.large, // ensure clear separation from contact info
+          after: theme.spacing.twips.large,
         },
         alignment: AlignmentType.LEFT,
       }),
