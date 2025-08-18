@@ -2,7 +2,7 @@
  * Main combined document builder
  */
 
-import { Document, LevelFormat, AlignmentType, SectionType, Paragraph } from 'docx';
+import { Document, LevelFormat, AlignmentType, SectionType, Paragraph, TextRun } from 'docx';
 import theme from '../../theme.js';
 import { createCoverLetterContent } from '../sections/cover-letter/content-section.js';
 import { createCoverLetterClosing } from '../sections/cover-letter/closing-section.js';
@@ -72,6 +72,30 @@ export function createCombinedDocx(coverLetterData: CoverLetterData, resumeData:
 
   if (resumeData.languages && resumeData.languages.length > 0) {
     resumeChildren.push(...createLanguages(resumeData.languages));
+  }
+
+  // Append footer note at the end of the resume section for combined docs
+  const metaFooterNote: string | undefined = (resumeData as any).meta && (resumeData as any).meta.footerNote;
+  if (metaFooterNote && metaFooterNote.trim().length > 0) {
+    resumeChildren.push(
+      new Paragraph({
+        children: [
+          new TextRun({
+            text: metaFooterNote,
+            size: theme.typography.fontSize.body * 2,
+            font: theme.typography.fonts.primary,
+            color: theme.colors.text,
+            italics: true,
+          }),
+        ],
+        spacing: {
+          before: theme.spacing.twips.medium,
+          after: theme.spacing.twips.medium,
+        },
+        alignment: AlignmentType.LEFT,
+        keepLines: true,
+      }),
+    );
   }
 
   // Create the document with two sections

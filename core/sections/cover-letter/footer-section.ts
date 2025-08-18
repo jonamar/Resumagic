@@ -136,6 +136,8 @@ export function createCoverLetterFooter(basics: Basics, isComboMode: boolean = f
   // Skip entirely in combo mode per requirement
   if (!isComboMode && footerNote && footerNote.trim().length > 0) {
     const noteText = footerNote.trim().startsWith('Note:') ? footerNote.trim() : `Note: ${footerNote.trim()}`;
+    // Insert a blank spacer line to guarantee a visible gap above the note
+    paragraphs.push(new Paragraph({ text: '', spacing: { after: theme.spacing.twips.medium } }));
     paragraphs.push(
       new Paragraph({
         children: [
@@ -148,7 +150,7 @@ export function createCoverLetterFooter(basics: Basics, isComboMode: boolean = f
           }),
         ],
         spacing: {
-          before: theme.spacing.twips.large, // ensure clear separation from contact info
+          before: theme.spacing.twips.minimal,
           after: theme.spacing.twips.large,
         },
         alignment: AlignmentType.LEFT,
