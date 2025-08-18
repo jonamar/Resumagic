@@ -49,7 +49,7 @@ export function createCombinedDocx(coverLetterData: CoverLetterData, resumeData:
     // Date intentionally omitted per cover letter simplification
     ...createCoverLetterContent(coverLetterData.coverLetter.content),
     ...createCoverLetterClosing(coverLetterData.coverLetter.metadata),
-    ...createCoverLetterFooter(coverLetterData.basics, true), // Pass true for combo mode
+    ...createCoverLetterFooter(coverLetterData.basics, true, coverLetterData.coverLetter.metadata.footerNote), // Pass true for combo mode
   ];
 
   // Resume sections

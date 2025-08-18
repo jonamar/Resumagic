@@ -30,7 +30,7 @@ export function createCoverLetterDocx(coverLetterData: CoverLetterData, _options
     // Date intentionally omitted per cover letter simplification
     ...createCoverLetterContent(coverLetterData.coverLetter.content),
     ...createCoverLetterClosing(coverLetterData.coverLetter.metadata),
-    ...createCoverLetterFooter(coverLetterData.basics),
+    ...createCoverLetterFooter(coverLetterData.basics, false, coverLetterData.coverLetter.metadata.footerNote),
   ];
 
   // Create the document with identical styling to resume

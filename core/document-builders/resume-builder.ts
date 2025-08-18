@@ -2,7 +2,7 @@
  * Main resume document builder
  */
 
-import { Document, LevelFormat, AlignmentType, Paragraph } from 'docx';
+import { Document, LevelFormat, AlignmentType, Paragraph, TextRun } from 'docx';
 import theme from '../../theme.js';
 import { createHeader } from '../sections/resume/header-section.js';
 import { createSummary } from '../sections/resume/summary-section.js';
@@ -54,6 +54,28 @@ export function createResumeDocx(resumeData: ResumeData, _options: ResumeOptions
   // Add languages section if present
   if (resumeData.languages && resumeData.languages.length > 0) {
     children.push(...createLanguages(resumeData.languages));
+  }
+
+  // Append footer note from meta if present (italic, left-aligned)
+  const metaFooterNote: string | undefined = (resumeData as any).meta && (resumeData as any).meta.footerNote;
+  if (metaFooterNote && metaFooterNote.trim().length > 0) {
+    children.push(
+      new Paragraph({
+        children: [
+          new TextRun({
+            text: metaFooterNote,
+            size: theme.typography.fontSize.body * 2,
+            font: theme.typography.fonts.primary,
+            color: theme.colors.text,
+            italics: true,
+          }),
+        ],
+        spacing: {
+          after: theme.spacing.twips.page,
+        },
+        alignment: AlignmentType.LEFT,
+      }),
+    );
   }
 
   // Create the document with styles and the theme's margin settings

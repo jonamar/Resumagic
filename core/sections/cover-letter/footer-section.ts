@@ -2,7 +2,7 @@
  * Cover letter footer section builder
  */
 
-import { Paragraph, TextRun, ExternalHyperlink, UnderlineType } from 'docx';
+import { Paragraph, TextRun, ExternalHyperlink, UnderlineType, AlignmentType } from 'docx';
 import theme from '../../../theme.js';
 import { getRegionAbbreviation } from '../../formatting/date-utilities.js';
 
@@ -29,7 +29,7 @@ interface Basics {
  * @param isComboMode - Whether this is part of a combined document
  * @returns Array of paragraphs for the footer section
  */
-export function createCoverLetterFooter(basics: Basics, isComboMode: boolean = false): Paragraph[] {
+export function createCoverLetterFooter(basics: Basics, isComboMode: boolean = false, footerNote?: string): Paragraph[] {
   const paragraphs: Paragraph[] = [];
   
   // Skip contact info in combo mode since resume already has it
@@ -128,6 +128,27 @@ export function createCoverLetterFooter(basics: Basics, isComboMode: boolean = f
         spacing: {
           after: theme.spacing.twips.afterContact, // 5pt
         },
+      }),
+    );
+  }
+  
+  // Append footer note if present (italic body copy, left-aligned)
+  if (footerNote && footerNote.trim().length > 0) {
+    paragraphs.push(
+      new Paragraph({
+        children: [
+          new TextRun({
+            text: footerNote,
+            size: theme.typography.fontSize.body * 2,
+            font: theme.typography.fonts.primary,
+            color: theme.colors.text,
+            italics: true,
+          }),
+        ],
+        spacing: {
+          after: theme.spacing.twips.page,
+        },
+        alignment: AlignmentType.LEFT,
       }),
     );
   }

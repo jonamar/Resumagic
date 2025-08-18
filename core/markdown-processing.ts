@@ -211,6 +211,7 @@ function parseMarkdownCoverLetter(markdownFilePath: string, resumeJsonPath: stri
         metadata: {
           date: frontMatter.date || new Date().toISOString().split('T')[0],
           customClosing: frontMatter.customClosing || 'Sincerely',
+          footerNote: (resumeData.meta && resumeData.meta.footerNote) ? resumeData.meta.footerNote : undefined,
         },
       },
     };
