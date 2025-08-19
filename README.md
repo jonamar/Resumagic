@@ -86,10 +86,16 @@ This project uses a two-repo structure to separate code from private data:
 │   │       ├── evaluation-runner.js # Main evaluation engine (dolphin3@0.7/phi3@0.3)
 │   │       ├── evaluation-processor.js # Results processing and markdown generation
 │   │       └── model-test-results/  # Comprehensive optimization study (42-153% improvement)
-│   ├── generate-resume.js           # Resume/cover letter generation
-│   ├── docx-template.js             # DOCX generation templates
-│   ├── markdown-to-data.js          # Markdown parser and transformer
-│   └── ... (other core files)
+│   ├── generate-resume.js           # CLI entry (compiled from TypeScript)
+│   ├── services/
+│   │   └── document-generation/     # All document generation logic (moved from core/)
+│   │       ├── document-builders/   # Resume/Cover letter/Combined builders
+│   │       ├── sections/            # Resume and cover letter section builders
+│   │       ├── formatting/          # Shared formatting utilities
+│   │       ├── generation-planning.ts
+│   │       ├── path-resolution.ts
+│   │       ├── markdown-processing.ts
+│   │       └── document-orchestration.ts
 │
 └── data/                            # Private data repository
     ├── applications/                # Application-specific folders

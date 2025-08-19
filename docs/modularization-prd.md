@@ -20,12 +20,12 @@ This monolithic structure makes it:
 
 ### Proposed Module Structure
 
-#### 1. Core Document Builders (`core/document-builders/`)
+#### 1. Document Builders (`services/document-generation/document-builders/`)
 - `resume-builder.ts` - `createResumeDocx()` function
 - `cover-letter-builder.ts` - `createCoverLetterDocx()` function  
 - `combined-builder.ts` - `createCombinedDocx()` function
 
-#### 2. Resume Section Builders (`core/sections/resume/`)
+#### 2. Resume Section Builders (`services/document-generation/sections/resume/`)
 - `header-section.ts` - `createHeader()` function
 - `summary-section.ts` - `createSummary()` function
 - `experience-section.ts` - `createExperience()` function
@@ -35,19 +35,21 @@ This monolithic structure makes it:
 - `speaking-section.ts` - `createSpeakingEngagements()` function
 - `languages-section.ts` - `createLanguages()` function
 
-#### 3. Cover Letter Section Builders (`core/sections/cover-letter/`)
+#### 3. Cover Letter Section Builders (`services/document-generation/sections/cover-letter/`)
 - `date-section.ts` - `createCoverLetterDate()` function
 - `content-section.ts` - `createCoverLetterContent()` function
 - `closing-section.ts` - `createCoverLetterClosing()` function
 - `footer-section.ts` - `createCoverLetterFooter()` function
 
-#### 4. Shared Utilities (`core/formatting/`)
+#### 4. Shared Utilities (`services/document-generation/formatting/`)
 - `text-formatting.ts` - `createFormattedTextRuns()` function
 - `date-utilities.ts` - `formatDate()`, `getRegionAbbreviation()` functions
 - `section-utilities.ts` - `createItemSection()`, `createSectionHeading()` functions
 
-#### 5. Main Entry Point
-- `core/document-templates.ts` - Re-exports all builders for backward compatibility
+#### 5. Orchestration & Planning
+- `services/document-generation/document-orchestration.ts` - Generation orchestration
+- `services/document-generation/generation-planning.ts` - Plan generation behavior
+- `services/document-generation/path-resolution.ts` - Resolve/validate app paths
 
 ## Implementation Strategy
 

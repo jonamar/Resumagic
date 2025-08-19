@@ -46,12 +46,11 @@ node scripts/debug/application-health.js        # Check app health
 ## Architecture & Development
 
 **Service Design**: 
-- TypeScript/Node.js: Document generation, CLI, orchestration
+- TypeScript/Node.js: Document generation, CLI, orchestration (under `services/document-generation/`)
 - Python: Keyword analysis, TF-IDF scoring
 - Clean boundaries, centralized error handling
 - ESM modules with .js extensions in TypeScript imports
 
-**Testing**:
 - Vitest framework (167 tests, ~2x faster than Jest) with 85%+ coverage
 - Native ESM support, no experimental flags needed
 - Dynamic application discovery (no hardcoded lists)

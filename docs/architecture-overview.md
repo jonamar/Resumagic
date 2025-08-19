@@ -7,15 +7,18 @@ Resumagic uses a **dual-repository design** for security and modularity:
 ```
 /resumagic/
 ├── app/                    # Code repository (this repo)
-│   ├── generate-resume.js     # Main Node.js entry point
-│   ├── cli-parser.js          # Command-line processing
-│   ├── path-resolver.js       # File system operations
-│   ├── document-orchestrator.js # Generation coordination
-│   ├── docx-template.js       # DOCX creation & formatting
-│   ├── markdown-to-data.js    # Markdown parsing
+│   ├── generate-resume.js     # Main Node.js entry point (compiled)
 │   ├── theme.js               # Styling configuration
 │   ├── docs/                  # Documentation
 │   └── services/
+│       ├── document-generation/ # All document generation logic
+│       │   ├── document-builders/
+│       │   ├── sections/
+│       │   ├── formatting/
+│       │   ├── generation-planning.ts
+│       │   ├── path-resolution.ts
+│       │   ├── markdown-processing.ts
+│       │   └── document-orchestration.ts
 │       ├── keyword-analysis/  # Python microservice
 │       │   ├── kw_rank_modular.py  # Entry point
 │       │   ├── kw_rank/           # Core analysis package

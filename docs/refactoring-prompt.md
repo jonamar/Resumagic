@@ -63,7 +63,7 @@ Focus on the biggest wins first - changes that will most improve agent productiv
 
 ```
 # After completing a new feature:
-"I just added hiring evaluation functionality. Please run the refactoring analysis prompt on the services/ and core/ directories."
+"I just added hiring evaluation functionality. Please run the refactoring analysis prompt on the services/ directory (document-generation, hiring-evaluation, keyword-analysis)."
 
 # When code feels janky:
 "The codebase is getting hard to navigate. Please run the refactoring analysis prompt and focus on the top 3 simplification opportunities."
