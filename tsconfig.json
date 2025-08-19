@@ -34,7 +34,7 @@
   },
   "include": [
     "cli/**/*.ts",
-    "core/**/*.ts",
+    "services/document-generation/**/*.ts",
     "services/keyword-extraction.ts",
     "services/keyword-orchestrator.ts",
     "services/document-generation.ts",

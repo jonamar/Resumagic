@@ -5,7 +5,7 @@ import JSZip from 'jszip';
 import { createResumeDocx, createCoverLetterDocx, createCombinedDocx } from './document-templates.js';
 type ResumeData = Parameters<typeof createResumeDocx>[0];
 import { parseMarkdownCoverLetter } from './markdown-processing.js';
-import theme from '../theme.js';
+import theme from '../../theme.js';
 
 /**
  * Document Orchestration Module

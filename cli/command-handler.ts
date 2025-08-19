@@ -1,10 +1,10 @@
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { parseCliArguments, validateCliArguments, displayUsage } from './argument-parser.js';
-import { determineGenerationPlan, validateGenerationPlan } from '../core/generation-planning.js';
-import { resolvePaths, validatePaths, hasMarkdownFile, loadResumeData, displayApplicationNotFoundError } from '../core/path-resolution.js';
-import { orchestrateGeneration } from '../core/document-orchestration.js';
-import { createNewApplication } from '../core/new-application.js';
+import { determineGenerationPlan, validateGenerationPlan } from '../services/document-generation/generation-planning.js';
+import { resolvePaths, validatePaths, hasMarkdownFile, loadResumeData, displayApplicationNotFoundError } from '../services/document-generation/path-resolution.js';
+import { orchestrateGeneration } from '../services/document-generation/document-orchestration.js';
+import { createNewApplication } from '../services/document-generation/new-application.js';
 import theme from '../theme.js';
 
 // ESM equivalent of __dirname

@@ -3,7 +3,7 @@
  */
 
 import { Document, LevelFormat, AlignmentType, Paragraph, TextRun } from 'docx';
-import theme from '../../theme.js';
+import theme from '../../../theme.js';
 import { createHeader } from '../sections/resume/header-section.js';
 import { createSummary } from '../sections/resume/summary-section.js';
 import { createExperience } from '../sections/resume/experience-section.js';

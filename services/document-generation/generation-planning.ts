@@ -1,6 +1,6 @@
-import theme from '../theme.js';
-import ErrorHandler from '../utils/error-handler.js';
-import { ERROR_TYPES } from '../utils/error-types.js';
+import theme from '../../theme.js';
+import ErrorHandler from '../../utils/error-handler.js';
+import { ERROR_TYPES } from '../../utils/error-types.js';
 
 // ErrorHandler provides static utilities; no instance required
 

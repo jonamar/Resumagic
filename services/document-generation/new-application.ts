@@ -1,9 +1,9 @@
 import path from 'path';
 import fs from 'fs';
-import theme from '../theme.js';
+import theme from '../../theme.js';
 import { resolveCanonicalPaths } from './path-resolution.js';
-import ErrorHandler from '../utils/error-handler.js';
-import { ERROR_TYPES } from '../utils/error-types.js';
+import ErrorHandler from '../../utils/error-handler.js';
+import { ERROR_TYPES } from '../../utils/error-types.js';
 
 /**
  * New Application Creation Module

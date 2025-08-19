@@ -3,7 +3,7 @@
  */
 
 import { Paragraph, TextRun, ExternalHyperlink, UnderlineType, AlignmentType } from 'docx';
-import theme from '../../../theme.js';
+import theme from '../../../../theme.js';
 import { getRegionAbbreviation } from '../../formatting/date-utilities.js';
 
 interface Location {
