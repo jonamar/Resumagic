@@ -1,0 +1,35 @@
+[
+  {
+    "wall_clock_time_seconds": 0.508095000,
+    "model": "phi3:mini",
+    "parallel_setting": 4,
+    "application": "elovate-director-product-management",
+    "candidate": "weak-candidate",
+    "success": false,
+    "error": "Evaluation failed",
+    "run": 1,
+    "timestamp": "2025-08-06T22:58:16.3NZ"
+  },
+  {
+    "wall_clock_time_seconds": 0.264146000,
+    "model": "phi3:mini",
+    "parallel_setting": 4,
+    "application": "elovate-director-product-management",
+    "candidate": "average-candidate",
+    "success": false,
+    "error": "Evaluation failed",
+    "run": 1,
+    "timestamp": "2025-08-06T22:58:19.3NZ"
+  },
+  {
+    "wall_clock_time_seconds": 0.261204000,
+    "model": "phi3:mini",
+    "parallel_setting": 4,
+    "application": "elovate-director-product-management",
+    "candidate": "strong-candidate",
+    "success": false,
+    "error": "Evaluation failed",
+    "run": 1,
+    "timestamp": "2025-08-06T22:58:21.3NZ"
+  }
+]

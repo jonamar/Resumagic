@@ -34,7 +34,7 @@ async function testMonitoring() {
       new Error('socket hang up'),
       new Error('Request timeout after 5 minutes'),
       new Error('ECONNREFUSED'),
-      new Error('Some other error')
+      new Error('Some other error'),
     ];
     
     testErrors.forEach(error => {
@@ -45,7 +45,7 @@ async function testMonitoring() {
     console.log('\n5. Testing failure diagnosis...');
     const diagnosis = await tester.diagnoseFailure(
       new Error('socket hang up'), 
-      { test_id: 'test_123', configuration: 'baseline_default' }
+      { test_id: 'test_123', configuration: 'baseline_default' },
     );
     console.log(`   🔍 Error type: ${diagnosis.error_type}`);
     console.log(`   💡 Likely cause: ${diagnosis.likely_cause}`);

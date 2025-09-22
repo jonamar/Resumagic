@@ -1,0 +1,79 @@
+[
+  {
+    "wall_clock_time_seconds": 0,
+    "model": "phi3:mini",
+    "parallel_setting": 4,
+    "application": "elovate-director-product-management",
+    "candidate": "weak-candidate",
+    "success": false,
+    "error": "Test execution failed",
+    "timestamp": "2025-08-07T03:50:07.3NZ",
+    "run": 1
+  },
+  {
+    "wall_clock_time_seconds": 0,
+    "model": "phi3:mini",
+    "parallel_setting": 4,
+    "application": "elovate-director-product-management",
+    "candidate": "weak-candidate",
+    "success": false,
+    "error": "Test execution failed",
+    "timestamp": "2025-08-07T03:50:10.3NZ",
+    "run": 2
+  },
+  {
+    "wall_clock_time_seconds": 0,
+    "model": "phi3:mini",
+    "parallel_setting": 4,
+    "application": "elovate-director-product-management",
+    "candidate": "weak-candidate",
+    "success": false,
+    "error": "Test execution failed",
+    "timestamp": "2025-08-07T03:50:12.3NZ",
+    "run": 3
+  },
+  {
+    "wall_clock_time_seconds": 0,
+    "model": "phi3:mini",
+    "parallel_setting": 4,
+    "application": "elovate-director-product-management",
+    "candidate": "average-candidate",
+    "success": false,
+    "error": "Test execution failed",
+    "timestamp": "2025-08-07T03:50:14.3NZ",
+    "run": 1
+  },
+  {
+    "wall_clock_time_seconds": 0,
+    "model": "phi3:mini",
+    "parallel_setting": 4,
+    "application": "elovate-director-product-management",
+    "candidate": "average-candidate",
+    "success": false,
+    "error": "Test execution failed",
+    "timestamp": "2025-08-07T03:50:17.3NZ",
+    "run": 2
+  },
+  {
+    "wall_clock_time_seconds": 0,
+    "model": "phi3:mini",
+    "parallel_setting": 4,
+    "application": "elovate-director-product-management",
+    "candidate": "average-candidate",
+    "success": false,
+    "error": "Test execution failed",
+    "timestamp": "2025-08-07T03:50:19.3NZ",
+    "run": 3
+  },
+  {
+    "wall_clock_time_seconds": 0,
+    "model": "phi3:mini",
+    "parallel_setting": 4,
+    "application": "elovate-director-product-management",
+    "candidate": "strong-candidate",
+    "success": false,
+    "error": "Test execution failed",
+    "timestamp": "2025-08-07T03:50:21.3NZ",
+    "run": 1
+  }
+]

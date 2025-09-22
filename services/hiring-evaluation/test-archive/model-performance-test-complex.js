@@ -1,13 +1,8 @@
 #!/usr/bin/env node
 
-import fs from 'fs';
-import path from 'path';
-import { execSync } from 'child_process';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const fs = require('fs');
+const path = require('path');
+const { execSync } = require('child_process');
 
 /**
  * Model Performance Testing Framework
@@ -23,22 +18,22 @@ const TEST_MODELS = {
   // 8B candidates to beat dolphin on quality
   quality_8b: [
     'deepseek-r1:8b',
-    'qwen3:8b'
+    'qwen3:8b',
   ],
   
-  // 3-4B candidates for speed (and ultra-light models)
+  // 3-4B candidates for speed
   speed_3_4b: [
     'gemma3:4b',
     'phi3:mini', 
     'qwen3:4b',
-    'qwen3:0.6b'  // Ultra-lightweight model for speed testing
-  ]
+    'qwen3:0.6b',
+  ],
 };
 
 const TEST_CANDIDATES = [
-  { name: 'Alex Johnson', folder: 'test-weak-candidate', expected: 'weak' },
-  { name: 'Morgan Davis', folder: 'test-average-candidate', expected: 'average' },
-  { name: 'Dr. Sarah Chen', folder: 'test-strong-candidate', expected: 'strong' }
+  { name: 'Alex Johnson', file: 'weak-candidate', expected: 'weak' },
+  { name: 'Morgan Davis', file: 'average-candidate', expected: 'average' },
+  { name: 'Dr. Sarah Chen', file: 'strong-candidate', expected: 'strong' },
 ];
 
 class ModelPerformanceTester {
@@ -52,7 +47,7 @@ class ModelPerformanceTester {
       system_info: this.getSystemInfo(),
       baseline_model: TEST_MODELS.baseline,
       test_models: TEST_MODELS,
-      results: {}
+      results: {},
     };
   }
   
@@ -79,12 +74,12 @@ class ModelPerformanceTester {
     console.log(`\\n🧪 Testing ${modelName} with ${candidateInfo.name} (${candidateInfo.expected})...`);
     
     const startTime = Date.now();
-    const testId = `${modelName.replace(/[^a-zA-Z0-9]/g, '_')}_${candidateInfo.folder}_${Date.now()}`;
+    const testId = `${modelName.replace(/[^a-zA-Z0-9]/g, '_')}_${candidateInfo.file}_${Date.now()}`;
     
     try {
       // Modify evaluation runner to use specific model
-      const EvaluationRunner = require('./evaluation-runner');
-      const evaluator = new EvaluationRunner(candidateInfo.folder);
+      const EvaluationRunner = require('../evaluation-runner.ts');
+      const evaluator = new EvaluationRunner(candidateInfo.file);
       
       // Override model for this test
       evaluator.modelName = modelName;
@@ -108,7 +103,7 @@ class ModelPerformanceTester {
         quality_assessment: qualityMetrics,
         test_id: testId,
         raw_results_file: `${testId}_raw.json`,
-        summary_file: `${testId}_summary.md`
+        summary_file: `${testId}_summary.md`,
       };
       
       // Archive full results
@@ -131,13 +126,15 @@ class ModelPerformanceTester {
         success: false,
         error: error.message,
         timeout: duration >= 179,
-        test_id: testId
+        test_id: testId,
       };
     }
   }
   
   extractScores(rawResults) {
-    if (!rawResults.evaluations) return null;
+    if (!rawResults.evaluations) {
+      return null;
+    }
     
     const scores = {};
     let totalScore = 0;
@@ -157,8 +154,8 @@ class ModelPerformanceTester {
       distribution: this.categorizeScores(Object.values(scores)),
       score_range: count > 0 ? {
         min: Math.min(...Object.values(scores)),
-        max: Math.max(...Object.values(scores))
-      } : null
+        max: Math.max(...Object.values(scores)),
+      } : null,
     };
   }
   
@@ -166,18 +163,26 @@ class ModelPerformanceTester {
     const categories = { reject: 0, weak: 0, solid: 0, strong: 0, exceptional: 0 };
     
     scores.forEach(score => {
-      if (score <= 3) categories.reject++;
-      else if (score <= 5) categories.weak++;
-      else if (score <= 7) categories.solid++;
-      else if (score <= 9) categories.strong++;
-      else categories.exceptional++;
+      if (score <= 3) {
+        categories.reject++;
+      } else if (score <= 5) {
+        categories.weak++;
+      } else if (score <= 7) {
+        categories.solid++;
+      } else if (score <= 9) {
+        categories.strong++;
+      } else {
+        categories.exceptional++;
+      }
     });
     
     return categories;
   }
   
   assessQuality(rawResults, expectedLevel) {
-    if (!rawResults.evaluations) return { quality_score: 0, issues: ['No evaluations found'] };
+    if (!rawResults.evaluations) {
+      return { quality_score: 0, issues: ['No evaluations found'] };
+    }
     
     const issues = [];
     let qualityScore = 10;
@@ -188,7 +193,7 @@ class ModelPerformanceTester {
     const expectedScoreRanges = {
       weak: [3, 6],      // Weak candidates should score 3-6
       average: [5, 7],   // Average candidates should score 5-7  
-      strong: [7, 9]     // Strong candidates should score 7-9
+      strong: [7, 9],     // Strong candidates should score 7-9
     };
     
     const [minExpected, maxExpected] = expectedScoreRanges[expectedLevel] || [1, 10];
@@ -233,7 +238,7 @@ class ModelPerformanceTester {
       score_appropriateness: avgScore >= minExpected && avgScore <= maxExpected,
       variance: variance,
       detailed_feedback_count: feedbackQuality,
-      issues: issues
+      issues: issues,
     };
   }
   
@@ -264,7 +269,7 @@ class ModelPerformanceTester {
     const allModels = [
       TEST_MODELS.baseline,
       ...TEST_MODELS.quality_8b,
-      ...TEST_MODELS.speed_3_4b
+      ...TEST_MODELS.speed_3_4b,
     ];
     
     for (const modelName of allModels) {
@@ -287,7 +292,7 @@ class ModelPerformanceTester {
         successful_tests: modelResults.filter(r => r.success).length,
         average_duration: this.calculateAverageDuration(modelResults),
         average_quality: this.calculateAverageQuality(modelResults),
-        results: modelResults
+        results: modelResults,
       };
       
       // Save intermediate results
@@ -303,21 +308,31 @@ class ModelPerformanceTester {
   }
   
   getModelCategory(modelName) {
-    if (modelName === TEST_MODELS.baseline) return 'baseline';
-    if (TEST_MODELS.quality_8b.includes(modelName)) return 'quality_8b';
-    if (TEST_MODELS.speed_3_4b.includes(modelName)) return 'speed_3_4b';
+    if (modelName === TEST_MODELS.baseline) {
+      return 'baseline';
+    }
+    if (TEST_MODELS.quality_8b.includes(modelName)) {
+      return 'quality_8b';
+    }
+    if (TEST_MODELS.speed_3_4b.includes(modelName)) {
+      return 'speed_3_4b';
+    }
     return 'unknown';
   }
   
   calculateAverageDuration(results) {
     const successful = results.filter(r => r.success);
-    if (successful.length === 0) return null;
+    if (successful.length === 0) {
+      return null;
+    }
     return (successful.reduce((sum, r) => sum + r.duration_seconds, 0) / successful.length).toFixed(2);
   }
   
   calculateAverageQuality(results) {
     const withQuality = results.filter(r => r.success && r.quality_assessment);
-    if (withQuality.length === 0) return null;
+    if (withQuality.length === 0) {
+      return null;
+    }
     return (withQuality.reduce((sum, r) => sum + r.quality_assessment.quality_score, 0) / withQuality.length).toFixed(2);
   }
   
@@ -336,26 +351,26 @@ class ModelPerformanceTester {
   buildReportContent() {
     const results = this.testResults.results;
     
-    let content = `# Model Performance Benchmark Results\\n\\n`;
+    let content = '# Model Performance Benchmark Results\\n\\n';
     content += `**Test Date**: ${this.testResults.timestamp}\\n`;
     content += `**Baseline Model**: ${this.testResults.baseline_model}\\n\\n`;
     
     // Speed comparison
-    content += `## ⚡ Speed Results\\n\\n`;
+    content += '## ⚡ Speed Results\\n\\n';
     Object.entries(results).forEach(([model, data]) => {
       const avgTime = data.average_duration || 'FAILED';
       content += `- **${model}**: ${avgTime}s (${data.model_category})\\n`;
     });
     
     // Quality comparison
-    content += `\\n## 🎯 Quality Results\\n\\n`;
+    content += '\\n## 🎯 Quality Results\\n\\n';
     Object.entries(results).forEach(([model, data]) => {
       const avgQuality = data.average_quality || 'N/A';
       content += `- **${model}**: ${avgQuality}/10 (${data.model_category})\\n`;
     });
     
     // Winner selection
-    content += `\\n## 🏆 Recommended Models\\n\\n`;
+    content += '\\n## 🏆 Recommended Models\\n\\n';
     content += this.selectWinners();
     
     return content;
@@ -395,7 +410,7 @@ class ModelPerformanceTester {
 }
 
 // CLI interface
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (require.main === module) {
   const tester = new ModelPerformanceTester();
   
   tester.runFullBenchmark()
@@ -406,4 +421,4 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     });
 }
 
-export default ModelPerformanceTester;
+module.exports = ModelPerformanceTester;

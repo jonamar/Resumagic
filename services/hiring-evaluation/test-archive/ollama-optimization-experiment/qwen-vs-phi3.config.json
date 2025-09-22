@@ -1,0 +1,18 @@
+{
+  "testName": "qwen-vs-phi3",
+  "description": "Compare qwen3:0.6b ultra-lightweight model against phi3:mini speed baseline",
+  "models": ["phi3:mini", "qwen3:0.6b"],
+  "baselineModel": "phi3:mini",
+  "candidates": [
+    { "file": "weak-candidate", "name": "Alex Johnson" },
+    { "file": "average-candidate", "name": "Morgan Davis" },
+    { "file": "strong-candidate", "name": "Dr. Sarah Chen" }
+  ],
+  "thresholds": {
+    "speedImprovement": 10,
+    "qualityTolerance": -0.5
+  },
+  "settings": {
+    "pauseBetweenTests": 1000
+  }
+}

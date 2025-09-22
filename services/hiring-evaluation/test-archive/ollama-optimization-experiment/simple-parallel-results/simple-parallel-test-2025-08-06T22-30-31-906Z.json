@@ -1,0 +1,78 @@
+{
+  "timestamp": "2025-08-06T22:30:31.906Z",
+  "hypothesis": "qwen3:0.6b smaller memory footprint enables better OLLAMA_NUM_PARALLEL scaling",
+  "test_design": "Simple 6-concurrent-request test mimicking persona workload",
+  "configs": [
+    {
+      "name": "phi3_baseline",
+      "model": "phi3:mini",
+      "ollama_num_parallel": 4,
+      "description": "phi3:mini baseline (current recommended)"
+    },
+    {
+      "name": "qwen_same",
+      "model": "qwen3:0.6b",
+      "ollama_num_parallel": 4,
+      "description": "qwen3:0.6b same parallelism (control)"
+    },
+    {
+      "name": "qwen_higher",
+      "model": "qwen3:0.6b",
+      "ollama_num_parallel": 8,
+      "description": "qwen3:0.6b higher parallelism"
+    },
+    {
+      "name": "qwen_aggressive",
+      "model": "qwen3:0.6b",
+      "ollama_num_parallel": 12,
+      "description": "qwen3:0.6b aggressive parallelism"
+    }
+  ],
+  "results": [
+    {
+      "config": {
+        "name": "phi3_baseline",
+        "model": "phi3:mini",
+        "ollama_num_parallel": 4,
+        "description": "phi3:mini baseline (current recommended)"
+      },
+      "duration_seconds": 60.017,
+      "success": false,
+      "error": "Request timeout after 60 seconds",
+      "requests_completed": 2
+    },
+    {
+      "config": {
+        "name": "qwen_same",
+        "model": "qwen3:0.6b",
+        "ollama_num_parallel": 4,
+        "description": "qwen3:0.6b same parallelism (control)"
+      },
+      "duration_seconds": 44.661,
+      "success": true,
+      "requests_completed": 6
+    },
+    {
+      "config": {
+        "name": "qwen_higher",
+        "model": "qwen3:0.6b",
+        "ollama_num_parallel": 8,
+        "description": "qwen3:0.6b higher parallelism"
+      },
+      "duration_seconds": 39.481,
+      "success": true,
+      "requests_completed": 6
+    },
+    {
+      "config": {
+        "name": "qwen_aggressive",
+        "model": "qwen3:0.6b",
+        "ollama_num_parallel": 12,
+        "description": "qwen3:0.6b aggressive parallelism"
+      },
+      "duration_seconds": 44.485,
+      "success": true,
+      "requests_completed": 6
+    }
+  ]
+}

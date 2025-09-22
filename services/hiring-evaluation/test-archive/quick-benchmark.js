@@ -17,14 +17,14 @@ class QuickBenchmark extends ModelPerformanceTester {
       'dolphin3:latest',  // Current baseline
       'phi3:mini',        // Fastest small model
       'gemma3:4b',        // Google's optimized 4B
-      'qwen3:8b'          // Top 8B candidate
+      'qwen3:8b',          // Top 8B candidate
     ];
     
     // Test with weak candidate for fastest feedback
     const testCandidate = { 
       name: 'Alex Johnson', 
       folder: 'test-weak-candidate', 
-      expected: 'weak' 
+      expected: 'weak', 
     };
     
     console.log(`Testing ${testModels.length} models with ${testCandidate.name}\\n`);
@@ -47,7 +47,7 @@ class QuickBenchmark extends ModelPerformanceTester {
       // Store result
       this.testResults.results[modelName] = {
         model_category: this.getModelCategory(modelName),
-        quick_test_result: result
+        quick_test_result: result,
       };
     }
     
@@ -120,8 +120,12 @@ class QuickBenchmark extends ModelPerformanceTester {
   }
   
   getModelCategory(modelName) {
-    if (modelName === 'dolphin3:latest') return 'baseline';
-    if (modelName === 'qwen3:8b') return 'quality_8b';
+    if (modelName === 'dolphin3:latest') {
+      return 'baseline';
+    }
+    if (modelName === 'qwen3:8b') {
+      return 'quality_8b';
+    }
     return 'speed_3_4b';
   }
 }
