@@ -9,10 +9,10 @@ This document defines the extended JSON Resume schema that includes cover letter
 ```json
 {
   "basics": {
-    "name": "Jon Amar",
-    "label": "Senior Product Leader",
-    "email": "jonamar@gmail.com",
-    "phone": "438-519-0921",
+    "name": "Candidate Name",
+    "label": "Role or Title",
+    "email": "candidate@example.com",
+    "phone": "(555) 555-5555",
     "location": {
       "city": "Montréal",
       "region": "Québec",

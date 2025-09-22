@@ -1,10 +1,11 @@
 /**
- * Unit Tests for CLI Parser
+ * Unit Tests for CLI Parser - Vitest
  * Tests command line argument parsing and validation
  */
 
-import { parseCliArguments, validateCliArguments, determineGenerationPlan, validateGenerationPlan } from '../../cli-parser.js';
-import { MockDataUtils, ConsoleUtils } from '../helpers/test-utils.js';
+import { parseCliArguments, validateCliArguments } from '../../cli/argument-parser.js';
+import { determineGenerationPlan, validateGenerationPlan } from '../../services/document-generation/generation-planning';
+import { MockDataUtils as _MockDataUtils, ConsoleUtils as _ConsoleUtils } from '../helpers/test-utils.js';
 
 describe('CLI Parser', () => {
   describe('parseCliArguments', () => {
@@ -88,7 +89,7 @@ describe('CLI Parser', () => {
     test('should validate valid configuration', () => {
       const config = {
         applicationName: 'valid-app-name',
-        flags: { preview: true }
+        flags: { preview: true },
       };
       
       const result = validateCliArguments(config);
@@ -105,7 +106,7 @@ describe('CLI Parser', () => {
     test('should reject empty application name', () => {
       const config = {
         applicationName: '',
-        flags: { preview: true }
+        flags: { preview: true },
       };
       
       const result = validateCliArguments(config);
@@ -115,7 +116,7 @@ describe('CLI Parser', () => {
     test('should reject null application name', () => {
       const config = {
         applicationName: null,
-        flags: { preview: true }
+        flags: { preview: true },
       };
       
       const result = validateCliArguments(config);
@@ -231,7 +232,7 @@ describe('CLI Parser', () => {
       const plan = {
         generateResume: true,
         generateCoverLetter: false,
-        generateCombinedDoc: false
+        generateCombinedDoc: false,
       };
       const markdownExists = false;
       const markdownPath = '/path/to/cover-letter.md';
@@ -254,7 +255,7 @@ describe('CLI Parser', () => {
       const plan = {
         generateResume: true,
         generateCoverLetter: true,
-        generateCombinedDoc: true
+        generateCombinedDoc: true,
       };
       const markdownExists = true;
       const markdownPath = '/path/to/cover-letter.md';
@@ -280,7 +281,7 @@ describe('CLI Parser', () => {
     test('should handle malformed flags gracefully', () => {
       const config = {
         applicationName: 'test-app',
-        flags: null
+        flags: null,
       };
       
       // Should not throw, should handle gracefully

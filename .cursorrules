@@ -1,141 +1,87 @@
-# Resumagic Project Rules
+# Resumagic - Resume & Cover Letter Generator
 
 ## Overview
-Professional resume and cover letter generator with intelligent keyword analysis and hiring simulation.
+Professional document generator using TypeScript/Node.js + Python microservices architecture.
 
-## Key Technologies
-- Node.js (document generation, DOCX creation)
-- Python 3.8+ (keyword analysis, TF-IDF scoring)
-- Ollama (hiring evaluation service)
-- Jest (testing framework)
+**Technologies**: TypeScript, Node.js, Python 3.8+, Vitest (modern testing), Ollama (optional)
+**Build System**: TypeScript compiler with ESNext modules, compiled to dist/ directory
 
-## Project Structure
+## Repository Structure
 
-### Repository Layout
-- `/app/` - Main codebase (this directory)
-- `/data/applications/` - Private application data (separate git repo)
+**CRITICAL**: Two separate git repositories for privacy:
+- `/app/` - Application code (this directory) 
+- `/data/` - Private data (canonical, test, applications)
 
-### Application Folder Structure (3-tier)
+**Application Structure** (3-tier):
 ```
 {company-role}/
-├── inputs/                    # Source materials
-│   ├── resume.json           # Structured resume data
-│   ├── cover-letter.md       # Markdown cover letter
-│   └── keywords.json         # Keywords for analysis
-├── working/                  # Process utilities & intermediate files
-│   ├── keyword_analysis.json
-│   ├── evaluation-results.json
-│   └── {candidate}-evaluation.md
-└── outputs/                  # Final deliverables
-    ├── Jon-Amar-Resume-{Company}.docx
-    └── Jon-Amar-Cover-Letter-{Company}.docx
+├── inputs/     # resume.json, cover-letter.md, keywords.json
+├── working/    # analysis, evaluations, intermediate files  
+└── outputs/    # final DOCX documents
 ```
 
-## CLI Integration Features
+## Key Commands
 
-### Core Commands
 ```bash
-# Basic document generation
-node generate-resume.js company-role
+# TypeScript Build Process
+npx tsc                                          # Compile TypeScript to dist/
 
-# Integrated workflows (NEW!)
-node generate-resume.js company-role --evaluate  # Documents + hiring evaluation (dolphin3@0.7)
-node generate-resume.js company-role --all       # Complete workflow
+# Document generation (compiled)
+node dist/generate-resume.js company-role
+node dist/generate-resume.js company-role --all       # Full workflow
 
-# Individual services
-python services/keyword-analysis/kw_rank_modular.py company-role
-node services/hiring-evaluation/evaluation-runner.js company-role
+# Document generation (direct TypeScript - development)
+npx ts-node generate-resume.ts company-role
+npx ts-node generate-resume.ts company-role --all
+
+# New application setup (recommended)
+node dist/generate-resume.js --new-app "Company" "Job Title"
+# OR: npx ts-node generate-resume.ts --new-app "Company" "Job Title"
+
+# Development
+npm test                                         # Run all tests
+node scripts/debug/application-health.js        # Check app health
 ```
 
-### CLI Flag Integration
-- `--evaluate`: Generate documents + run hiring evaluation
-- `--all`: Complete workflow (documents + keyword analysis + hiring evaluation)
-- Maintains backward compatibility with existing flags
-- Service orchestration handled in `generate-resume.js`
+## Architecture & Development
 
-## Architecture Guidelines
+**Service Design**: 
+- TypeScript/Node.js: Document generation, CLI, orchestration (under `services/document-generation/`)
+- Python: Keyword analysis, TF-IDF scoring
+- Clean boundaries, centralized error handling
+- ESM modules with .js extensions in TypeScript imports
 
-### Microservice Design
-- **Node.js Services**: Document generation, CLI parsing, hiring evaluation
-- **Python Services**: Keyword analysis, TF-IDF scoring, semantic clustering
-- **Clean Boundaries**: Each service uses optimal technology stack
-- **Error Handling**: Centralized error handling with specific service error types
+- Vitest framework (167 tests, ~2x faster than Jest) with 85%+ coverage
+- Native ESM support, no experimental flags needed
+- Dynamic application discovery (no hardcoded lists)
+- Health validation prevents false alarms
+- Golden masters in `/data/test/golden-master/`
 
-### Code Organization
-- `cli-parser.js`: Command-line argument parsing and generation plan determination
-- `generate-resume.js`: Main orchestrator for all services
-- `services/hiring-evaluation/`: Ollama-based hiring simulation
-- `services/keyword-analysis/`: Python-based keyword analysis
+## Development Guidelines
 
-### Testing Strategy
-- **Unit Tests**: Individual component testing with Jest
-- **Integration Tests**: End-to-end workflow testing
-- **Coverage**: 85%+ test coverage requirement
-- **Real Data Testing**: Use applications in `/data/applications/` for testing
-
-## Development Best Practices
-
-### File Operations
+**Code Quality**:
 - Always read files before editing
-- Use targeted edits, not wholesale rewrites
-- Preserve existing content and patterns
+- Use centralized ErrorHandler class  
 - Follow established naming conventions
+- Maintain 85%+ test coverage
 
-### Error Handling
-- Use centralized ErrorHandler class
-- Provide actionable error messages
-- Check for common issues (Ollama connection, Python dependencies)
-- Fail fast with informative messages
-
-### Service Integration
-- Services output to `working/` directory (not `outputs/`)
-- Use async/await patterns for service orchestration
-- Handle service dependencies gracefully
-- Provide clear progress feedback to users
+**Service Integration**:
+- Services use `working/` directory for output
+- Use async/await patterns
+- Handle dependencies gracefully
+- Provide clear progress feedback
 
 ## Dependencies
 
-### Required
-- Node.js with npm packages: docx, gray-matter, jszip, marked
-- Python 3.8+ with requirements in `services/keyword-analysis/requirements.txt`
-
-### Optional
-- Ollama with `dolphin3:latest` model (for hiring evaluation)
-- Installation: `curl -fsSL https://ollama.ai/install.sh | sh && ollama pull dolphin3:latest`
-
-## Common Tasks
-
-### Testing
-```bash
-# Run all tests
-npm test
-
-# Test keyword analysis
-cd services/keyword-analysis && python run_tests.py --coverage
-
-# Test with real application
-node generate-resume.js relay-director-of-product --evaluate
-```
-
-### Creating New Applications
-```bash
-cp -r ../data/applications/template ../data/applications/new-company-role
-# Edit inputs/resume.json, inputs/cover-letter.md, inputs/keywords.json
-```
-
-### Service Development
-- Hiring evaluation: Modify `services/hiring-evaluation/` for persona-based evaluation
-- Keyword analysis: Modify `services/keyword-analysis/kw_rank/` for analysis logic
-- Document generation: Modify `docx-template.js` for DOCX formatting
+**Required**: Node.js, Python 3.8+, npm packages (docx, gray-matter, marked)
+**Optional**: Ollama with dolphin3:latest (hiring evaluation)
 
 ## Git Workflow
-- Code changes: Commit from `/app/` directory
-- Data changes: Commit from `/data/applications/` directory  
-- Never create git repo in root `/resumagic/` directory
-- Use descriptive commit messages with `feat:` prefix for new features
+- Code changes: Commit from `/app/`
+- Data changes: Commit from `/data/`  
+- Never create git repo in root directory
 
-## Documentation
-- Architecture: `docs/architecture-overview.md`
-- API Reference: `services/keyword-analysis/API.md`
-- Setup: `services/keyword-analysis/SETUP.md`
-- Cover Letter Schema: `docs/cover-letter-schema.md`
+## Key Documentation
+- `docs/application-registry.md` - Application health system
+- `docs/architecture-overview.md` - System architecture
+- `services/keyword-analysis/API.md` - Python service API

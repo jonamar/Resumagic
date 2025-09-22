@@ -3,7 +3,7 @@
  * Tests path resolution and validation functionality
  */
 
-import { resolvePaths, validatePaths, hasMarkdownFile, loadResumeData } from '../../path-resolver.js';
+import { resolvePaths, validatePaths, hasMarkdownFile, loadResumeData } from '../../services/document-generation/path-resolution';
 import { TestFileUtils, MockDataUtils } from '../helpers/test-utils.js';
 import fs from 'fs';
 import path, { dirname } from 'path';
@@ -87,7 +87,7 @@ describe('Path Resolver', () => {
       const paths = {
         applicationFolderPath: appDir,
         resumeDataPath: resumePath,
-        outputsDir: outputsDir
+        outputsDir: outputsDir,
       };
       
       const result = validatePaths(paths);
@@ -98,7 +98,7 @@ describe('Path Resolver', () => {
       const paths = {
         applicationFolderPath: '/nonexistent/path',
         resumeDataPath: '/nonexistent/resume.json',
-        outputsDir: '/nonexistent/outputs'
+        outputsDir: '/nonexistent/outputs',
       };
       
       const result = validatePaths(paths);
@@ -113,7 +113,7 @@ describe('Path Resolver', () => {
       const paths = {
         applicationFolderPath: tempAppDir,
         resumeDataPath: path.join(tempAppDir, 'resume.json'),
-        outputsDir: path.join(tempAppDir, 'outputs')
+        outputsDir: path.join(tempAppDir, 'outputs'),
       };
       
       const result = validatePaths(paths);
@@ -132,7 +132,7 @@ describe('Path Resolver', () => {
       const paths = {
         applicationFolderPath: tempAppDir,
         resumeDataPath: resumePath,
-        outputsDir: outputsDir
+        outputsDir: outputsDir,
       };
       
       const result = validatePaths(paths);
@@ -246,7 +246,7 @@ describe('Path Resolver', () => {
       const paths = {
         applicationFolderPath: '/root/restricted', // Typically restricted on Unix systems
         resumeDataPath: '/root/restricted/resume.json',
-        outputFolderPath: '/root/restricted/outputs'
+        outputFolderPath: '/root/restricted/outputs',
       };
       
       const result = validatePaths(paths);

@@ -1,6 +1,6 @@
 /**
  * ESLint Flat Configuration for ESM Codebase
- * Modern configuration supporting ES modules and Jest testing
+ * Modern configuration supporting ES modules and Vitest testing
  */
 
 import js from '@eslint/js';
@@ -26,7 +26,7 @@ export default [
         setInterval: 'readonly',
         clearTimeout: 'readonly',
         clearInterval: 'readonly',
-        // Jest globals (for test files)
+        // Vitest globals (for test files)
         describe: 'readonly',
         test: 'readonly',
         it: 'readonly',
@@ -35,8 +35,8 @@ export default [
         afterEach: 'readonly',
         beforeAll: 'readonly',
         afterAll: 'readonly',
-        jest: 'readonly'
-      }
+        vi: 'readonly',
+      },
     },
     
     // Files to lint
@@ -47,7 +47,7 @@ export default [
       // Error prevention (relaxed for development)
       'no-unused-vars': ['warn', { 
         argsIgnorePattern: '^_',
-        varsIgnorePattern: '^_' 
+        varsIgnorePattern: '^_', 
       }],
       'no-undef': 'error',
       'no-console': 'off', // Allow console for CLI app
@@ -63,8 +63,8 @@ export default [
       
       // Async/await best practices (relaxed for development)
       'require-await': 'warn',
-      'no-return-await': 'warn'
-    }
+      'no-return-await': 'warn',
+    },
   },
   
   {
@@ -72,8 +72,8 @@ export default [
     files: ['**/*.test.js', '**/__tests__/**/*.js'],
     rules: {
       // Relax some rules for tests
-      'no-unused-expressions': 'off'
-    }
+      'no-unused-expressions': 'off',
+    },
   },
   
   {
@@ -83,7 +83,7 @@ export default [
       'coverage/',
       'dist/',
       '*.config.js',
-      'jest.setup.js', // Setup file can have different patterns
+      'vitest.setup.js', // Setup file can have different patterns
       // Ignore legacy CommonJS files that need separate migration
       '.eslintrc.error-handling.js',
       'test-isolation.js', // Has require() calls
@@ -100,7 +100,7 @@ export default [
       // Vale linting has its own node_modules
       'services/vale-linting/',
       // Python virtual environment
-      'venv/'
-    ]
-  }
+      'venv/',
+    ],
+  },
 ];

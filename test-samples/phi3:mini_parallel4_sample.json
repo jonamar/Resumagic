@@ -1,0 +1,157 @@
+{
+  "evaluation_timestamp": "2025-08-07T19:22:25.568Z",
+  "model": "phi3:mini",
+  "candidate": "Test Candidate",
+  "evaluations": [
+    {
+      "scores": {
+        "experience_match": {
+          "score": 5,
+          "reasoning": "The Test Candidate has over five years of experience in full-stack development and a brief stint as a Product Manager, which aligns with the job's requirement for at least five years of PM experience. However, there is no explicit mention of Agile methodologies or Scrum frameworks expertise within '"
+        },
+        "cultural_fit": {
+          "score": 4,
+          "reasoning": "The candidate has demonstrated leadership and collaboration in their previous role as a Product Manager but lacks specific evidence for cultural fit, such as team-building experiences. Communication style is not detailed on the resume."
+        },
+        "qualification_alignment": {
+          "score": 6,
+          "reasoning": "The candidate holds an undergraduate degree in Business Administration and has experience with product roadmap development but lacks a Master's or MBA, which are nice-to-haves for this Director role. No certifications related to Agile methodologies or Scrum frameworks have been mentioned."
+        },
+        "communication_skills": {
+          "score": 5,
+          "reasoning": "The resume does not provide evidence of presentation and speaking experience, which are crucial in a director-level position for stakeholder management. However, there is no information suggesting poor communication skills as the candidate has led development teams."
+        }
+      },
+      "overall_assessment": {
+        "persona_score": 7,
+        "recommendation": "The Test Candidate shows potential but needs to strengthen their Agile and Scrum expertise, enhance cultural fit through demonstrated experiences in team-building, improve communication skills with a\n"
+      },
+      "persona": "HR Manager"
+    },
+    {
+      "scores": {
+        "technical_depth": {
+          "score": 5,
+          "reasoning": "The resume lacks specific technical skills and experience directly related to AI/ML or cloud platforms which are essential for the Director of Engineering role at Elovate, especially considering their focus on modern tech stacks. The candidate's background in full-stack development using Node.js and"
+        },
+        "architecture_thinking": {
+          "score": 3,
+          "reasoning": "While they have experience with product roadmap development and working closely with engineering teams, there is no mention of their involvement or understanding of system architecture design decisions, scalability concerns, or distributed systems which are critical for the role. The candidate's res"
+        },
+        "problem_solving": {
+          "score": 4,
+          "reasoning": "Their experience as a Product Manager does suggest they have tackled complex challenges and worked with cross-functional teams; however, there is no evidence of innovative problem solving or data-driven decision making which are key aspects for the Director role. The candidate's ability to handle"
+        },
+        "technical_leadership": {
+          "score": 4,
+          "reasoning": "Their experience as a Product Manager suggests some leadership skills, but there is no mention of leading technical teams or initiatives specifically nor any evidence of mentoring and coaching in the engineering space. While they have worked with cross-functional"
+        }
+      },
+      "overall_assessment": {
+        "persona_score": 4,
+        "recommendation": "This candidate falls into an average category based on their resume, scoring a total of 16 out of possible 40 points. They have some relevant experience and skills but lack the depth in technical AI/M"
+      },
+      "persona": "Director of Engineering"
+    },
+    {
+      "scores": {
+        "usercentered_thinking": {
+          "score": 3,
+          "reasoning": "The resume provided does not provide any evidence of user research or data-driven decision making which are crucial for understanding the customer journey and advocating for users in product decisions. The candidate's focus seems to be more on engineering aspects rather than design thinking."
+        },
+        "design_collaboration": {
+          "score": 4,
+          "reasoning": "The resume mentions experience working closely with engineers but lacks information about collaboration within the broader team and understanding of various design processes. Their role as a Product Manager does suggest some level of cross-functional work."
+        },
+        "product_craft": {
+          "score": 5,
+          "reasoning": "The candidate has experience in leading development projects which indicates an attention to product quality but lacks specific mention of user interface and experience details. Their focus seems more on the technical side rather than craftsmanship."
+        },
+        "crossfunctional_leadership": {
+          "score": 6,
+          "reasoning": "The candidate's role as a Product Manager suggests some level of cross-team collaboration but does not provide enough information about their experience with balancing design and business constraints or conflict resolution in such contexts. Their technical background might be beneficial for this."
+        }
+      },
+      "overall_assessment": {
+        "persona_score": 4,
+        "recommendation": "This candidate appears to have some experience relevant to the role but lacks a strong focus on design and user-centered thinking. They may benefit from additional training or mentorship in these key,"
+      },
+      "persona": "Director of Design"
+    },
+    {
+      "scores": {
+        "business_impact_roi": {
+          "score": 2,
+          "reasoning": "The candidate's resume does not provide evidence of measurable business results or ROI measurement and financial impact. There is no mention of understanding unit economics or SaaS metrics which are critical for a product manager in the finance-driven environment at Elovate."
+        },
+        "financial_acumen": {
+          "score": 3,
+          "reasoning": "The candidate has experience as a Product Manager but lacks detailed financial planning and forecasting skills. Their background does not include an MBA or related advanced degree which is preferred for this role."
+        },
+        "resource_management": {
+          "score": 4,
+          "reasoning": "While the resume indicates some experience with team scaling and resource allocation decisions, it lacks specifics on budget ownership and cost management. The candidate's technical background in software development is not directly relevant to financial acumen."
+        },
+        "growth_strategy": {
+          "score": 5,
+          "reasoning": "The resume mentions experience with product roadmap development but does not provide evidence of revenue growth strategies or market expansion efforts. There's no mention of pricing strategy and monetization approach."
+        }
+      },
+      "overall_assessment": {
+        "persona_score": 3,
+        "recommendation": "The candidate does not meet the core requirements for this role. They lack experience in finance-driven product management and do not demonstrate a strong understanding of ROI measurement or financial"
+      },
+      "persona": "Finance Director"
+    },
+    {
+      "scores": {
+        "strategic_vision_execution": {
+          "score": 4,
+          "reasoning": "The resume demonstrates some experience with product management and Agile methodologies but lacks evidence of strategic vision development or long-term thinking. The candidate has managed roadmaps before but does not provide clear examples of executing complex initiatives that align closely with the"
+        },
+        "leadership_culture_fit": {
+          "score": 5,
+          "reasoning": "While there is no direct evidence in the resume about leadership style or cultural contribution, it's assumed they have some experience leading teams based on their past role as a Product Manager. However, without specific details regarding how well this aligns with Elovate’s culture and values, we'"
+        },
+        "market_customer_focus": {
+          "score": 6,
+          "reasoning": "The candidate has experience in product development but does not specifically mention working within the GovTech sector or demonstrating a customer-centric approach. Their market understanding is average as they have worked on cloud applications rather than government technology solutions."
+        },
+        "organizational_impact": {
+          "score": 5,
+          "reasoning": "The candidate has experience with cross-functional teams and tracking KPIs but does not provide evidence of scaling or transformative impact within organizations. Their technical background is strong for a product role."
+        }
+      },
+      "overall_assessment": {
+        "persona_score": 5,
+        "recommendation": "The candidate has relevant experience in software development and some understanding of Agile methodologies but lacks strategic vision alignment. They would benefit from discussing their approach to a"
+      },
+      "persona": "CEO"
+    },
+    {
+      "scores": {
+        "management_mentorship": {
+          "score": 6,
+          "reasoning": "The resume indicates some experience with managing roadmaps and working closely with engineering teams but lacks evidence of direct people management, mentorship experiences, or career development support. It's unclear if the candidate has created psychological safety or empowered team members."
+        },
+        "communication_collaboration": {
+          "score": 3,
+          "reasoning": "The resume does not provide specific insights into communication style and conflict resolution skills but mentions working closely with engineering teams, which suggests some level of collaboration. The absence of information on feedback delivery methods or transparency practices is a concern."
+        },
+        "practical_leadership": {
+          "score": 4,
+          "reasoning": "The resume shows experience leading development initiatives and collaborating across functions but lacks details about the candidate's leadership style, decision-making process, problem-solving support, or workload management. It does not provide evidence of a hands-on approach to day-to-day product"
+        },
+        "professional_development": {
+          "score": 2,
+          "reasoning": "The resume lacks information on the candidate's commitment to team member growth and learning beyond their own career advancement. It does not mention knowledge sharing or skill development opportunities provided for others."
+        }
+      },
+      "overall_assessment": {
+        "persona_score": 7,
+        "recommendation": "This candidate has a strong technical background and experience in product management but lacks clear evidence of the required people-focused skills. They would benefit from additional experiences or,"
+      },
+      "persona": "Senior Product Manager"
+    }
+  ]
+}

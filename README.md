@@ -1,29 +1,40 @@
 # Resumagic
 
+![License](https://img.shields.io/badge/license-MIT-green)
+![Language](https://img.shields.io/badge/TypeScript-5.x-blue)
+![Docs](https://img.shields.io/badge/docs-Architecture-blueviolet)
+![Tests](https://img.shields.io/badge/tests-JS_%26_Python-brightgreen)
+
 Professional resume and cover letter generator with intelligent keyword analysis for ATS optimization.
 
-## ⚡ Quick Start
+## ⚡ Quick Start (MVP)
 
 ```bash
 # 1. Install dependencies
 npm install
 pip install -r services/keyword-analysis/requirements.txt
 
-# 2. Create new application
+# 2. Scaffold private data repo (non-destructive)
+scripts/setup-data.sh
+
+# 3. Create new application folder (in your private data repo)
 cp -r ../data/applications/template ../data/applications/company-role
 
-# 3. Edit input files
+# 4. Edit input files
 # ../data/applications/company-role/inputs/resume.json
 # ../data/applications/company-role/inputs/cover-letter.md  
 # ../data/applications/company-role/inputs/keywords.json
 
-# 4. Generate documents
+# 5. Generate documents
 node generate-resume.js company-role
 
 # 5. Integrated workflows (NEW!)
 node generate-resume.js company-role --evaluate       # Documents + hiring evaluation (quality mode)
 node generate-resume.js company-role --evaluate --fast # Documents + hiring evaluation (speed mode)
 node generate-resume.js company-role --all            # Complete workflow
+
+# 5a. Advanced evaluation configuration (NEW!)
+node generate-resume.js company-role --evaluate --eval-model qwen3:0.6b --eval-parallel 8
 
 # 6. Individual services
 python services/keyword-analysis/kw_rank_modular.py company-role
@@ -47,7 +58,7 @@ node services/hiring-evaluation/evaluation-runner.js company-role
 - **Python**: Intelligent analysis (keyword scoring, semantic clustering)
 - **Separation**: Each service uses optimal technology stack
 - **Local CI/CD**: Fast 6-second validation pipeline with git hook integration
-- **Testing**: 124 tests (96 JS + 28 Python) with comprehensive coverage
+- **Testing**: 167 tests with Vitest (~2x faster than Jest) + Python testing with comprehensive coverage
 
 ## Project Structure
 
@@ -75,10 +86,16 @@ This project uses a two-repo structure to separate code from private data:
 │   │       ├── evaluation-runner.js # Main evaluation engine (dolphin3@0.7/phi3@0.3)
 │   │       ├── evaluation-processor.js # Results processing and markdown generation
 │   │       └── model-test-results/  # Comprehensive optimization study (42-153% improvement)
-│   ├── generate-resume.js           # Resume/cover letter generation
-│   ├── docx-template.js             # DOCX generation templates
-│   ├── markdown-to-data.js          # Markdown parser and transformer
-│   └── ... (other core files)
+│   ├── generate-resume.js           # CLI entry (compiled from TypeScript)
+│   ├── services/
+│   │   └── document-generation/     # All document generation logic (moved from core/)
+│   │       ├── document-builders/   # Resume/Cover letter/Combined builders
+│   │       ├── sections/            # Resume and cover letter section builders
+│   │       ├── formatting/          # Shared formatting utilities
+│   │       ├── generation-planning.ts
+│   │       ├── path-resolution.ts
+│   │       ├── markdown-processing.ts
+│   │       └── document-orchestration.ts
 │
 └── data/                            # Private data repository
     ├── applications/                # Application-specific folders
@@ -92,9 +109,9 @@ This project uses a two-repo structure to separate code from private data:
     │   │   │   ├── keyword-checklist.md
     │   │   │   └── top5.json
     │   │   └── outputs/
-    │   │       ├── Jon-Amar-Resume-Relay.docx
-    │   │       ├── Jon-Amar-Cover-Letter-Relay.docx
-    │   │       └── Jon-Amar-Cover-Letter-and-Resume-Relay.docx
+    │   │       ├── Resume-Relay.docx
+    │   │       ├── Cover-Letter-Relay.docx
+    │   │       └── Cover-Letter-and-Resume-Relay.docx
     │   │
     │   └── template/                # Template for new applications
     │       ├── inputs/
@@ -130,13 +147,13 @@ Each application must follow this 3-tier folder structure:
 │   ├── evaluation-results.json      # Hiring simulation raw data
 │   └── {candidate}-evaluation.md    # Hiring simulation summary
 └── outputs/               # Generated deliverables (auto-generated)
-    ├── Jon-Amar-Resume-{Company}.docx
-    ├── Jon-Amar-Cover-Letter-{Company}.docx
-    └── Jon-Amar-Combined-{Company}.docx
+    ├── Resume-{Company}.docx
+    ├── Cover-Letter-{Company}.docx
+    └── Cover-Letter-and-Resume-{Company}.docx
 ```
 
 **Benefits:**
-- **HR-Friendly**: Files named `Jon-Amar-Resume-Company.docx` for easy identification
+- **HR-Friendly**: Files named `Resume-Company.docx` for easy identification
 - **Organized**: Each application has its own folder with inputs and outputs
 - **Professional**: Clean file naming that looks professional to HR departments
 - **Scalable**: Easy to manage many applications without file name conflicts
@@ -152,11 +169,33 @@ Each application must follow this 3-tier folder structure:
 ## Prerequisites
 
 - **Node.js** (for document generation)
+- **TypeScript** (for compilation): `npm install -g typescript`
 - **Python 3.8+** (for keyword analysis)
 - **Ollama** (for hiring evaluation service)
   - Install: `curl -fsSL https://ollama.ai/install.sh | sh`
   - Models: `ollama pull dolphin3:latest` (quality) + `ollama pull phi3:mini` (speed)
 - **Virtual environment recommended**
+
+## TypeScript Migration Status
+
+This project has been migrated from JavaScript to TypeScript for better type safety and development experience. You can:
+
+**Option 1: Build and run (recommended for production):**
+```bash
+# Build TypeScript to JavaScript
+npx tsc
+
+# Run compiled JavaScript
+node dist/generate-resume.js [options]
+```
+
+**Option 2: Direct TypeScript execution (development):**
+```bash
+# Run TypeScript directly with ts-node
+npx ts-node generate-resume.ts [options]
+```
+
+All documentation examples use the JavaScript commands (`node generate-resume.js`) but you can substitute with TypeScript equivalents.
 
 ## Core Features
 
@@ -195,6 +234,10 @@ node generate-resume.js company-role --combined
 node generate-resume.js company-role --evaluate       # Documents + hiring evaluation (quality mode)
 node generate-resume.js company-role --evaluate --fast # Documents + hiring evaluation (speed mode)
 node generate-resume.js company-role --all            # Complete workflow: docs + analysis + evaluation
+
+# Canonical outputs (NEW!)
+# Read inputs from data/canonical/inputs and write DOCX to data/canonical/outputs
+node generate-resume.js --canonical-output
 ```
 
 ### Keyword Analysis
@@ -234,9 +277,9 @@ company-role/
 │   ├── keyword-checklist.md     # Optimization checklist
 │   └── top5.json               # Top skills
 └── outputs/
-    ├── Jon-Amar-Resume-Company.docx
-    ├── Jon-Amar-Cover-Letter-Company.docx
-    └── Jon-Amar-Combined-Company.docx
+    ├── Resume-Company.docx
+    ├── Cover-Letter-Company.docx
+    └── Cover-Letter-and-Resume-Company.docx
 ```
 
 ## Troubleshooting
@@ -256,7 +299,7 @@ company-role/
 ../scripts/ci/local-pipeline.sh
 
 # Individual test suites
-npm test                    # JavaScript tests (96 tests)
+npm test                    # JavaScript tests with Vitest (167 tests, ~2x faster)
 npm run test:python        # Python tests (28 tests)
 npm run lint               # ESLint validation
 

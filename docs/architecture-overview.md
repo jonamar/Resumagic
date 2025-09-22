@@ -7,15 +7,18 @@ Resumagic uses a **dual-repository design** for security and modularity:
 ```
 /resumagic/
 ├── app/                    # Code repository (this repo)
-│   ├── generate-resume.js     # Main Node.js entry point
-│   ├── cli-parser.js          # Command-line processing
-│   ├── path-resolver.js       # File system operations
-│   ├── document-orchestrator.js # Generation coordination
-│   ├── docx-template.js       # DOCX creation & formatting
-│   ├── markdown-to-data.js    # Markdown parsing
+│   ├── generate-resume.js     # Main Node.js entry point (compiled)
 │   ├── theme.js               # Styling configuration
 │   ├── docs/                  # Documentation
 │   └── services/
+│       ├── document-generation/ # All document generation logic
+│       │   ├── document-builders/
+│       │   ├── sections/
+│       │   ├── formatting/
+│       │   ├── generation-planning.ts
+│       │   ├── path-resolution.ts
+│       │   ├── markdown-processing.ts
+│       │   └── document-orchestration.ts
 │       ├── keyword-analysis/  # Python microservice
 │       │   ├── kw_rank_modular.py  # Entry point
 │       │   ├── kw_rank/           # Core analysis package
@@ -59,9 +62,9 @@ Each job application in `/data/applications/` follows this **required 3-tier str
 │   ├── keyword-checklist.md   # Human-readable optimization guide
 │   └── top5.json             # Top skills summary
 └── outputs/                   # Final deliverables (auto-generated)
-    ├── Jon-Amar-Resume-{Company}.docx
-    ├── Jon-Amar-Cover-Letter-{Company}.docx
-    └── Jon-Amar-Combined-{Company}.docx
+    ├── Resume-{Company}.docx
+    ├── Cover-Letter-{Company}.docx
+    └── Cover-Letter-and-Resume-{Company}.docx
 ```
 
 ### **How Applications Connect to the System**
@@ -99,8 +102,8 @@ cd /path/to/resumagic/app
 # Document generation (reads from ../data/applications/{company-role}/)
 node generate-resume.js company-role [--resume|--cover-letter|--both|--combined]
 
-# Keyword analysis (reads from ../data/applications/{company-role}/)
-python services/keyword-analysis/kw_rank_modular.py company-role
+# Keyword analysis (single command)
+npm run keywords:run -- company-role
 
 # Hiring simulation (reads from ../data/applications/{company-role}/)
 node services/hiring-evaluation/evaluation-runner.js company-role
@@ -130,7 +133,7 @@ cp -r ../data/applications/template ../data/applications/new-company-role
 5. **ATS Optimization**: Remove compatibility mode, optimize for parsing systems
 
 ### **Keyword Analysis Pipeline**
-1. **Input Loading**: Load keywords and resume data from application folder
+1. **Extraction + Analysis**: Single command orchestrates extracting keywords from `job-posting.md` and running the Python analyzer
 2. **Categorization**: Separate knockouts ("MBA required") from skills ("product management")
 3. **Scoring**: Apply TF-IDF + section weights + role-specific boosts
 4. **Clustering**: Group similar keywords with semantic aliases

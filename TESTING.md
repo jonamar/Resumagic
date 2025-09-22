@@ -2,7 +2,7 @@
 
 ## Overview
 
-This project uses Jest for JavaScript unit and integration testing, with comprehensive coverage reporting and automated quality gates.
+This project uses Vitest for JavaScript unit and integration testing, with comprehensive coverage reporting and automated quality gates. Vitest provides ~2x faster test execution compared to Jest with native ESM support.
 
 ## Quick Start
 
@@ -36,7 +36,7 @@ app/
 │   └── integration/        # Integration tests
 ├── utils/
 │   └── __tests__/          # Unit tests for utilities
-└── jest.config.js          # Jest configuration
+└── vitest.config.js        # Vitest configuration
 ```
 
 ## Writing Tests
@@ -47,8 +47,8 @@ Place unit tests next to the code they test:
 
 ```javascript
 // __tests__/unit/my-module.test.js
-const { myFunction } = require('../../my-module');
-const { MockDataUtils } = require('../helpers/test-utils');
+import { myFunction } from '../../my-module.js';
+import { MockDataUtils } from '../helpers/test-utils.js';
 
 describe('My Module', () => {
   test('should do something', () => {
@@ -65,7 +65,7 @@ Place integration tests in `__tests__/integration/`:
 
 ```javascript
 // __tests__/integration/feature.test.js
-const { execSync } = require('child_process');
+import { execSync } from 'child_process';
 
 describe('Feature Integration', () => {
   test('should work end-to-end', () => {
@@ -80,12 +80,12 @@ describe('Feature Integration', () => {
 ### Available Helpers
 
 ```javascript
-const { 
+import { 
   TestFileUtils,     // File creation and cleanup
   ConsoleUtils,      // Console output capture
   MockDataUtils,     // Mock data generation
   AssertionUtils     // Custom assertions
-} = require('../helpers/test-utils');
+} from '../helpers/test-utils.js';
 ```
 
 ### File Testing
@@ -209,7 +209,7 @@ test('should handle async errors', async () => {
 npm run test:all
 
 # This runs:
-# 1. npm test (Jest for JavaScript)
+# 1. npm test (Vitest for JavaScript)
 # 2. cd services/keyword-analysis && python run_tests.py
 ```
 
@@ -232,13 +232,13 @@ npm run test:all
 
 ```bash
 # Run specific test file
-npm test -- __tests__/unit/my-module.test.js
+npm test __tests__/unit/my-module.test.js
 
 # Run with verbose output
-npm test -- --verbose
+npm test -- --reporter=verbose
 
 # Run single test
-npm test -- --testNamePattern="should do something"
+npm test -- -t "should do something"
 ```
 
 ## Best Practices
@@ -307,11 +307,11 @@ npm run test:coverage      # Coverage reporting
 
 1. **"No tests found"**: Check file naming (*.test.js or *.spec.js)
 2. **"Module not found"**: Check relative paths in require statements
-3. **"Coverage threshold not met"**: Add tests or adjust thresholds in jest.config.js
+3. **"Coverage threshold not met"**: Add tests or adjust thresholds in vitest.config.js
 
 ### Getting Help
 
-- Check Jest documentation: https://jestjs.io/docs/getting-started
+- Check Vitest documentation: https://vitest.dev/guide/
 - Review existing tests for patterns
 - Use `--verbose` flag for detailed output
 
@@ -319,7 +319,7 @@ npm run test:coverage      # Coverage reporting
 
 ## Current Status
 
-**✅ Infrastructure Complete**: Jest setup, coverage reporting, test utilities  
+**✅ Infrastructure Complete**: Vitest setup, coverage reporting, test utilities  
 **✅ Core Tests**: CLI parser, path resolver, markdown parser, error handler  
 **🔄 Ongoing**: Fixing test expectations to match real implementation  
 **📈 Coverage**: 19% overall (growing as tests are refined)  

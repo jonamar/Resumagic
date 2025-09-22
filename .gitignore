@@ -82,3 +82,21 @@ __pycache__/
 coverage/
 *.lcov
 eslint-results.json
+
+# TypeScript compilation output
+dist/
+build/
+
+# Experimental and development files
+*-temp.ts
+*-temp.ts.bak
+**/test-results.json
+**/direct-ollama-results-*.json
+**/qwen-vs-phi3-results/
+**/*_weak.txt
+
+# Experimental scripts and tests
+**/ollama-optimization-experiment/*test*.ts
+**/ollama-optimization-experiment/*test*.sh
+**/ollama-optimization-experiment/*ollama*.sh
+**/ollama-optimization-experiment/run-*.sh
