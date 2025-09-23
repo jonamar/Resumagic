@@ -2,7 +2,7 @@
  * Section building utilities for DOCX document generation
  */
 
-import { Paragraph, TextRun, HeadingLevel } from 'docx';
+import { Paragraph, TextRun } from 'docx';
 import theme from '../../../theme.js';
 import { createFormattedTextRuns } from './text-formatting.js';
 
@@ -232,9 +232,8 @@ export function createSectionHeading(title: string, pageBreak: boolean = false):
         bold: true,
       }),
     ],
-    heading: HeadingLevel.HEADING_2,
     spacing: {
-      before: 400, // 20pt
+      before: theme.spacing.twips.large, // 6pt (was 20pt)
       after: theme.spacing.twips.large,   // 6pt
     },
     keepNext: true, // Prevent section headings from being orphaned on previous page

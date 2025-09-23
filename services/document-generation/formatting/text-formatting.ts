@@ -3,7 +3,7 @@
  */
 
 import { ExternalHyperlink, TextRun, UnderlineType } from 'docx';
-import { parseTextWithFormatting } from '../markdown-processing.js';
+import { parseTextWithFormatting } from '../../../core/markdown-processing.js';
 
 /**
  * Creates formatted TextRun elements from text with markdown-style formatting
@@ -14,7 +14,7 @@ import { parseTextWithFormatting } from '../markdown-processing.js';
 export function createFormattedTextRuns(text: string, baseStyle: Record<string, any> = {}) {
   const parsedParts = parseTextWithFormatting(text);
   
-  return parsedParts.map(part => new TextRun({
+  return parsedParts.map((part: any) => new TextRun({
     text: part.text,
     bold: part.bold,
     italics: part.italic,
@@ -53,7 +53,7 @@ export function createInlineRunsWithLinks(
       const before = text.substring(lastIndex, matchStart);
       if (before) {
         const formattedParts = parseTextWithFormatting(before);
-        formattedParts.forEach(p => {
+        formattedParts.forEach((p: any) => {
           parts.push(new TextRun({
             text: p.text,
             bold: typeof forceBold === 'boolean' ? forceBold : p.bold,
@@ -89,7 +89,7 @@ export function createInlineRunsWithLinks(
     const tail = text.substring(lastIndex);
     if (tail) {
       const formattedParts = parseTextWithFormatting(tail);
-      formattedParts.forEach(p => {
+      formattedParts.forEach((p: any) => {
         parts.push(new TextRun({
           text: p.text,
           bold: typeof forceBold === 'boolean' ? forceBold : p.bold,

@@ -4,7 +4,7 @@
 
 import { Paragraph, TextRun, AlignmentType, ExternalHyperlink, UnderlineType } from 'docx';
 import theme from '../../../../theme.js';
-import { getRegionAbbreviation } from '../../formatting/date-utilities.js';
+import { getRegionAbbreviation } from '../../../../core/formatting/date-utilities.js';
 
 interface Location {
   city?: string;
