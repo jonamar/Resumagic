@@ -20,9 +20,9 @@ interface Skill {
 export function createSkills(skills: Skill[]): Paragraph[] {
   const paragraphs: Paragraph[] = [];
 
-  // Add section heading with page break
+  // Add section heading without forcing a page break
   paragraphs.push(
-    createSectionHeading(theme.ats.sectionTitles.skills, true),
+    createSectionHeading(theme.ats.sectionTitles.skills, false),
   );
 
   // Add each skill category
