@@ -26,42 +26,37 @@ export function createSkills(skills: Skill[]): Paragraph[] {
   );
 
   // Add each skill category
-  skills.forEach(skill => {
-    // Skill name
+  skills.forEach((skill, idx) => {
+    const isLast = idx === skills.length - 1;
+    const keywordText = (skill.keywords && skill.keywords.length > 0)
+      ? skill.keywords.join(', ')
+      : '';
+
+    // Render inline: "Name: keywords"
+    const childrenRuns = [
+      new TextRun({
+        text: keywordText ? `${skill.name}: ` : skill.name,
+        size: theme.typography.fontSize.body * 2,
+        font: theme.typography.fonts.primary,
+        bold: true,
+        color: theme.colors.text,
+      }),
+      ...createFormattedTextRuns(keywordText, {
+        size: theme.typography.fontSize.meta * 2,
+        font: theme.typography.fonts.primary,
+        color: theme.colors.dimText,
+      }),
+    ];
+
     paragraphs.push(
       new Paragraph({
-        children: [
-          new TextRun({
-            text: skill.name,
-            size: theme.typography.fontSize.body * 2, // Convert to half-points
-            font: theme.typography.fonts.primary,
-            bold: true,
-            color: theme.colors.text,
-          }),
-        ],
+        children: childrenRuns,
         spacing: {
-          after: theme.spacing.twips.afterJobTitle, // 3pt
+          after: isLast ? theme.spacing.twips.betweenSections : theme.spacing.twips.large,
           line: theme.spacing.twips.resumeLine,
         },
       }),
     );
-
-    // Keywords if present
-    if (skill.keywords && skill.keywords.length > 0) {
-      paragraphs.push(
-        new Paragraph({
-          children: createFormattedTextRuns(skill.keywords.join(', '), {
-            size: theme.typography.fontSize.meta * 2, // Convert to half-points
-            font: theme.typography.fonts.primary,
-            color: theme.colors.dimText,
-          }),
-          spacing: {
-            after: theme.spacing.twips.xlarge, // 9pt
-            line: theme.spacing.twips.resumeLine,
-          },
-        }),
-      );
-    }
   });
 
   return paragraphs;

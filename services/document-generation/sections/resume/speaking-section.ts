@@ -2,10 +2,11 @@
  * Resume speaking engagements section builder
  */
 
-import { Paragraph } from 'docx';
+import { Paragraph, TextRun } from 'docx';
 import theme from '../../../../theme.js';
 import { formatDate } from '../../../../core/formatting/date-utilities.js';
-import { createItemSection } from '../../formatting/section-utilities.js';
+import { createSectionHeading } from '../../formatting/section-utilities.js';
+import { createFormattedTextRuns } from '../../formatting/text-formatting.js';
 
 interface Publication {
   name: string;
@@ -21,43 +22,69 @@ interface Publication {
  * @returns Array of paragraphs for the speaking engagements section
  */
 export function createSpeakingEngagements(publications: Publication[]): Paragraph[] {
-  const speakingConfig = {
-    sectionTitle: theme.ats.sectionTitles.speakingEngagements,
-    descriptionField: 'summary',
-    highlightsField: 'highlights',
-    descriptionSpacing: theme.spacing.twips.large, // 6pt
-    headerLines: [
-      {
-        // Speaking engagement name/title
-        field: 'name',
-        spacing: theme.spacing.twips.afterJobTitle, // 3pt
-        keepNext: true,
-      },
-      {
-        // Publisher/venue
-        field: 'publisher',
-        spacing: theme.spacing.twips.afterCompanyName, // 3pt
-        keepNext: true,
-      },
-      {
-        // Date
-        field: 'releaseDate',
-        format: formatDate,
-        fontSize: theme.typography.fontSize.meta,
-        color: theme.colors.dimText,
-        bold: false,
-        conditionalSpacing: {
-          withContent: theme.spacing.twips.afterDate, // 4pt if more content
-          standalone: (isLastItem: boolean) => isLastItem ? theme.spacing.twips.large : theme.spacing.twips.afterSectionEntry, // 6pt if last entry, 12pt between entries
-        },
-      },
-    ],
-    // Complex highlight spacing for speaking engagements
-    highlightSpacing: (isLastItem: boolean) => {
-      return isLastItem ? theme.spacing.twips.large : theme.spacing.twips.afterSectionEntry; // 6pt after last entry, 12pt between entries
-    },
-    // No itemSpacing - speaking engagements don't add extra space after each entry
-  };
+  const paragraphs: Paragraph[] = [];
 
-  return createItemSection(publications, speakingConfig);
+  // Section heading
+  paragraphs.push(createSectionHeading(theme.ats.sectionTitles.speakingEngagements));
+
+  publications.forEach((pub, index) => {
+    const isLast = index === publications.length - 1;
+
+    // Line 1: Title (bold)
+    if (pub.name) {
+      paragraphs.push(
+        new Paragraph({
+          children: [
+            new TextRun({
+              text: pub.name,
+              size: theme.typography.fontSize.body * 2,
+              font: theme.typography.fonts.primary,
+              bold: true,
+              color: theme.colors.text,
+            }),
+          ],
+          spacing: { after: theme.spacing.twips.afterJobTitle, line: theme.spacing.twips.resumeLine },
+          keepNext: true,
+        }),
+      );
+    }
+
+    // Line 2: Venue • date (dim)
+    const parts: string[] = [];
+    if (pub.publisher) parts.push(pub.publisher);
+    if (pub.releaseDate) parts.push(formatDate(pub.releaseDate));
+    const meta = parts.join(' • ');
+    if (meta) {
+      paragraphs.push(
+        new Paragraph({
+          children: createFormattedTextRuns(meta, {
+            size: theme.typography.fontSize.meta * 2,
+            font: theme.typography.fonts.primary,
+            color: theme.colors.dimText,
+          }),
+          spacing: { after: isLast ? theme.spacing.twips.afterSectionEntry : theme.spacing.twips.large, line: theme.spacing.twips.resumeLine },
+          keepNext: !!pub.summary,
+        }),
+      );
+    }
+
+    // Optional summary
+    if (pub.summary) {
+      paragraphs.push(
+        new Paragraph({
+          children: createFormattedTextRuns(pub.summary, {
+            size: theme.typography.fontSize.body * 2,
+            font: theme.typography.fonts.primary,
+            color: theme.colors.text,
+          }),
+          spacing: { after: theme.spacing.twips.large, line: theme.spacing.twips.resumeLine },
+          keepLines: true,
+        }),
+      );
+    }
+
+    // No extra spacer; rely purely on per-line spacing above
+  });
+
+  return paragraphs;
 }

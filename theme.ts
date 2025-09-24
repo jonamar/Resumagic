@@ -71,6 +71,8 @@ const spacing = {
     xlarge: 180,          // 9pt - extra large gaps
     section: 240,         // 12pt - section spacing
     page: 480,            // 24pt - page-level spacing
+    // Standardized gap before a new major section heading
+    betweenSections: 320, // 16pt - single line spacing between major sections
     
     // Indentation
     bulletIndent: 360,    // 0.25 inch - bullet indentation

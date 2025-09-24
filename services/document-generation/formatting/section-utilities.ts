@@ -233,8 +233,8 @@ export function createSectionHeading(title: string, pageBreak: boolean = false):
       }),
     ],
     spacing: {
-      before: theme.spacing.twips.large, // 6pt (was 20pt)
-      after: theme.spacing.twips.large,   // 6pt
+      before: theme.spacing.twips.betweenSections, // 16pt spacing before section headings
+      after: theme.spacing.twips.large,
     },
     keepNext: true, // Prevent section headings from being orphaned on previous page
     pageBreakBefore: pageBreak, // Add page break if requested

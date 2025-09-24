@@ -39,69 +39,22 @@ export function createResumeDocx(resumeData: ResumeData, _options: ResumeOptions
     ...createExperience(resumeData.work),
   ];
 
-  // Add spacing before Skills section
-  children.push(
-    new Paragraph({
-      text: '',
-      spacing: {
-        after: 40, // Small spacing before Skills
-      },
-    }),
-  );
-
   children.push(...createSkills(resumeData.skills));
-
-  // Add spacing after Skills section
-  children.push(
-    new Paragraph({
-      text: '',
-      spacing: {
-        after: 40, // Small spacing after Skills
-      },
-    }),
-  );
 
   children.push(...createEducation(resumeData.education));
 
   // Add projects section if present
   if (resumeData.projects && resumeData.projects.length > 0) {
-    // Add spacing before Projects section
-    children.push(
-      new Paragraph({
-        text: '',
-        spacing: {
-          after: 40, // Small spacing before Projects
-        },
-      }),
-    );
     children.push(...createProjects(resumeData.projects));
   }
 
   // Add speaking engagements section if present
   if (resumeData.publications && resumeData.publications.length > 0) {
-    // Add spacing before Speaking section
-    children.push(
-      new Paragraph({
-        text: '',
-        spacing: {
-          after: 40, // Small spacing before Speaking
-        },
-      }),
-    );
     children.push(...createSpeakingEngagements(resumeData.publications));
   }
 
   // Add languages section if present
   if (resumeData.languages && resumeData.languages.length > 0) {
-    // Add spacing before Languages section
-    children.push(
-      new Paragraph({
-        text: '',
-        spacing: {
-          after: 40, // Small spacing before Languages
-        },
-      }),
-    );
     children.push(...createLanguages(resumeData.languages));
   }
 

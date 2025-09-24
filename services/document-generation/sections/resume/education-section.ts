@@ -30,71 +30,50 @@ export function createEducation(education: Education[]): Paragraph[] {
   );
 
   // Add each education entry
-  education.forEach(edu => {
-    // Degree
-    let degreeText = edu.area;
-    if (edu.studyType) {
-      degreeText += ` - ${edu.studyType}`;
-    }
-    
-    paragraphs.push(
-      new Paragraph({
-        children: [
-          new TextRun({
-            text: degreeText,
-            size: theme.typography.fontSize.body * 2, // Convert to half-points
-            font: theme.typography.fonts.primary,
-            bold: true,
-            color: theme.colors.text,
-          }),
-        ],
-        spacing: {
-          after: theme.spacing.twips.afterJobTitle, // 3pt
-          line: theme.spacing.twips.resumeLine,
-        },
-        keepNext: true, // Keep with institution
-      }),
-    );
-
-    // Institution
-    paragraphs.push(
-      new Paragraph({
-        children: [
-          new TextRun({
-            text: edu.institution,
-            size: theme.typography.fontSize.body * 2, // Convert to half-points
-            font: theme.typography.fonts.primary,
-            bold: true,
-            color: theme.colors.text,
-          }),
-        ],
-        spacing: {
-          after: theme.spacing.twips.afterCompanyName, // 3pt
-          line: theme.spacing.twips.resumeLine,
-        },
-        keepNext: true, // Keep with date/location
-      }),
-    );
-
-    // Date and location
-    const dateParts: string[] = [];
-    dateParts.push(`${formatDate(edu.startDate)} - ${edu.endDate ? formatDate(edu.endDate) : 'Present'}`);
-    if (edu.location) {
-      dateParts.push(edu.location);
+  education.forEach((edu, index) => {
+    const isLast = index === education.length - 1;
+    // Line 1: Degree/program (bold)
+    const degreeText = edu.area || edu.studyType ? `${edu.area}${edu.studyType ? '' : ''}` : '';
+    const line1 = degreeText || edu.studyType ? (degreeText || edu.studyType!) : '';
+    if (line1) {
+      paragraphs.push(
+        new Paragraph({
+          children: [
+            new TextRun({
+              text: line1,
+              size: theme.typography.fontSize.body * 2,
+              font: theme.typography.fonts.primary,
+              bold: true,
+              color: theme.colors.text,
+            }),
+          ],
+          spacing: { after: theme.spacing.twips.afterJobTitle, line: theme.spacing.twips.resumeLine },
+          keepNext: true,
+        }),
+      );
     }
 
+    // Line 2: Institution • years • location (dim)
+    const dateRange = `${formatDate(edu.startDate)} - ${edu.endDate ? formatDate(edu.endDate) : 'Present'}`;
+    const parts: string[] = [];
+    parts.push(edu.institution);
+    parts.push(dateRange);
+    if (edu.location) parts.push(edu.location);
+    const meta = parts.join(' • ');
+
     paragraphs.push(
       new Paragraph({
         children: [
           new TextRun({
-            text: dateParts.join(' • '),
-            size: theme.typography.fontSize.meta * 2, // Convert to half-points
+            text: meta,
+            size: theme.typography.fontSize.meta * 2,
             font: theme.typography.fonts.primary,
-            color: theme.colors.dimText,
+            color: theme.colors.dimText, // #555555
           }),
         ],
-        spacing: {
-          after: theme.spacing.twips.afterSectionEntry, // 12pt
+        spacing: { 
+          after: isLast ? theme.spacing.twips.betweenSections : theme.spacing.twips.large, 
+          line: theme.spacing.twips.resumeLine 
         },
       }),
     );

@@ -5,7 +5,7 @@
 import { Paragraph } from 'docx';
 import theme from '../../../../theme.js';
 import { createFormattedTextRuns } from '../../formatting/text-formatting.js';
-import { createSectionHeading } from '../../formatting/section-utilities.js';
+// No section heading; render summary text inline under header
 
 interface Basics {
   summary?: string;
@@ -23,11 +23,6 @@ export function createSummary(basics: Basics): Paragraph[] {
     return paragraphs;
   }
 
-  // Add section heading
-  paragraphs.push(
-    createSectionHeading('Summary'),
-  );
-
   // Add summary text
   paragraphs.push(
     new Paragraph({
@@ -37,7 +32,7 @@ export function createSummary(basics: Basics): Paragraph[] {
         color: theme.colors.text,
       }),
       spacing: {
-        after: theme.spacing.twips.afterSummary, // 4pt
+        after: theme.spacing.twips.betweenSections, // standardized gap before next section
       },
     }),
   );
