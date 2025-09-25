@@ -17,8 +17,8 @@ pip install -r services/keyword-analysis/requirements.txt
 # 2. Scaffold private data repo (non-destructive)
 scripts/setup-data.sh
 
-# 3. Create new application folder (in your private data repo)
-cp -r ../data/applications/template ../data/applications/company-role
+# 3. Create new application folder (via compiled CLI)
+node dist/generate-resume.js --new-app "Company" "Role"
 
 # 4. Edit input files
 # ../data/applications/company-role/inputs/resume.json
@@ -26,15 +26,15 @@ cp -r ../data/applications/template ../data/applications/company-role
 # ../data/applications/company-role/inputs/keywords.json
 
 # 5. Generate documents
-node generate-resume.js company-role
+node dist/generate-resume.js company-role
 
 # 5. Integrated workflows (NEW!)
-node generate-resume.js company-role --evaluate       # Documents + hiring evaluation (quality mode)
-node generate-resume.js company-role --evaluate --fast # Documents + hiring evaluation (speed mode)
-node generate-resume.js company-role --all            # Complete workflow
+node dist/generate-resume.js company-role --evaluate       # Documents + hiring evaluation (quality mode)
+node dist/generate-resume.js company-role --evaluate --fast # Documents + hiring evaluation (speed mode)
+node dist/generate-resume.js company-role --all            # Complete workflow
 
 # 5a. Advanced evaluation configuration (NEW!)
-node generate-resume.js company-role --evaluate --eval-model qwen3:0.6b --eval-parallel 8
+node dist/generate-resume.js company-role --evaluate --eval-model qwen3:0.6b --eval-parallel 8
 
 # 6. Individual services
 python services/keyword-analysis/kw_rank_modular.py company-role
@@ -219,25 +219,25 @@ All documentation examples use the JavaScript commands (`node generate-resume.js
 
 ## Usage Examples
 
-### Document Generation
+### Document Generation (compiled CLI)
 
 ```bash
 # Generate all formats (recommended)
-node generate-resume.js company-role
+node dist/generate-resume.js company-role
 
 # Generate specific formats
-node generate-resume.js company-role --cover-letter
-node generate-resume.js company-role --both
-node generate-resume.js company-role --combined
+node dist/generate-resume.js company-role --cover-letter
+node dist/generate-resume.js company-role --both
+node dist/generate-resume.js company-role --combined
 
 # Integrated workflows (NEW!)
-node generate-resume.js company-role --evaluate       # Documents + hiring evaluation (quality mode)
-node generate-resume.js company-role --evaluate --fast # Documents + hiring evaluation (speed mode)
-node generate-resume.js company-role --all            # Complete workflow: docs + analysis + evaluation
+node dist/generate-resume.js company-role --evaluate       # Documents + hiring evaluation (quality mode)
+node dist/generate-resume.js company-role --evaluate --fast # Documents + hiring evaluation (speed mode)
+node dist/generate-resume.js company-role --all            # Complete workflow: docs + analysis + evaluation
 
 # Canonical outputs (NEW!)
 # Read inputs from data/canonical/inputs and write DOCX to data/canonical/outputs
-node generate-resume.js --canonical-output
+node dist/generate-resume.js --canonical-output
 ```
 
 ### Keyword Analysis
@@ -255,10 +255,10 @@ cd services/keyword-analysis && python run_tests.py --coverage
 ```bash
 # Two-tier optimization: Quality vs Speed (Split Temperature Configuration)
 # Quality mode (default): dolphin3:latest @ temp 0.7 - 188s, excellent differentiation (range 3-5)
-node generate-resume.js company-role --evaluate
+node dist/generate-resume.js company-role --evaluate
 
 # Speed mode: phi3:mini @ temp 0.3 - 148s, good differentiation (range 5+, 76% improvement)
-node generate-resume.js company-role --evaluate --fast
+node dist/generate-resume.js company-role --evaluate --fast
 
 # Direct service calls (if needed)
 node services/hiring-evaluation/evaluation-runner.js company-role "John Smith"
@@ -322,7 +322,7 @@ git commit -m "changes [skip ci]"  # Skip via commit message
 **Manual Testing**
 ```bash
 # Test document generation
-node generate-resume.js relay-director-of-product
+node dist/generate-resume.js relay-director-of-product
 
 # Test keyword analysis
 python services/keyword-analysis/kw_rank_modular.py relay-director-of-product
@@ -355,5 +355,11 @@ See `docs/architecture-overview.md` for complete system architecture, service bo
 - **Layout**: Modify `docx-template.js` for advanced changes
 - **Configuration**: Update `services/keyword-analysis/config/constants.py`
 
-### Template System
-Use the template folder to quickly create new applications: `cp -r ../data/applications/template ../data/applications/new-company-role`
+### New Application (Happy Path)
+Use the compiled CLI to create new applications:
+
+```bash
+node dist/generate-resume.js --new-app "Company" "Role"
+# Example
+node dist/generate-resume.js --new-app "Stocksy" "Product Director"
+```

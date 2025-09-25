@@ -109,7 +109,7 @@ npm run keywords:run -- company-role
 node services/hiring-evaluation/evaluation-runner.js company-role
 
 # Create new application (in data repository)
-cp -r ../data/applications/template ../data/applications/new-company-role
+node dist/generate-resume.js --new-app "Company" "Role"
 ```
 
 ### **File System Contract**
