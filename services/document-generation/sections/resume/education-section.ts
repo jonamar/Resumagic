@@ -71,9 +71,9 @@ export function createEducation(education: Education[]): Paragraph[] {
             color: theme.colors.dimText, // #555555
           }),
         ],
-        spacing: { 
-          after: isLast ? theme.spacing.twips.betweenSections : theme.spacing.twips.large, 
-          line: theme.spacing.twips.resumeLine 
+        spacing: {
+          after: isLast ? theme.spacing.twips.betweenSections : theme.spacing.twips.large,
+          line: theme.spacing.twips.resumeLine,
         },
       }),
     );
