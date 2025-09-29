@@ -4,7 +4,7 @@
 
 import { Paragraph, TextRun } from 'docx';
 import theme from '../../../../theme.js';
-import { formatDate } from '../../../../core/formatting/date-utilities.js';
+import { formatDate } from '../../formatting/date-utilities.js';
 import { createSectionHeading } from '../../formatting/section-utilities.js';
 
 interface Education {

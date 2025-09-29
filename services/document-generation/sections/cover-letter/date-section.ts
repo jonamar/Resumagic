@@ -4,7 +4,7 @@
 
 import { Paragraph, TextRun, AlignmentType } from 'docx';
 import theme from '../../../../theme.js';
-import { formatDate } from '../../../../core/formatting/date-utilities.js';
+import { formatDate } from '../../formatting/date-utilities.js';
 
 interface CoverLetterMetadata {
   date: string;

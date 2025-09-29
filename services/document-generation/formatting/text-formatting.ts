@@ -3,7 +3,7 @@
  */
 
 import { ExternalHyperlink, TextRun, UnderlineType } from 'docx';
-import { parseTextWithFormatting } from '../../../core/markdown-processing.js';
+import { parseTextWithFormatting } from '../markdown-processing.js';
 
 /**
  * Creates formatted TextRun elements from text with markdown-style formatting
