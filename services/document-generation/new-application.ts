@@ -102,6 +102,27 @@ function createNewApplication(company: string, jobTitle: string, baseDir: string
       fs.writeFileSync(jobPostingPath, jobPostingContent);
     }
     
+    // Set today's date in cover-letter front matter
+    const coverLetterPath = path.join(inputsDir, theme.fileNaming.coverLetterFile);
+    if (fs.existsSync(coverLetterPath)) {
+      const today = new Date().toISOString().slice(0, 10);
+      let content = fs.readFileSync(coverLetterPath, 'utf8');
+      const frontMatterMatch = content.match(/^---[\s\S]*?---/);
+      if (frontMatterMatch) {
+        const fm = frontMatterMatch[0];
+        let updatedFm: string;
+        if (/^---[\s\S]*?\bdate:\s*["']?\d{4}-\d{2}-\d{2}["']?/m.test(fm)) {
+          updatedFm = fm.replace(/\bdate:\s*["']?\d{4}-\d{2}-\d{2}["']?/m, `date: "${today}"`);
+        } else {
+          updatedFm = fm.replace(/^---\s*\n/, `---\ndate: "${today}"\n`);
+        }
+        content = content.replace(fm, updatedFm);
+      } else {
+        content = `---\ndate: "${today}"\n---\n\n` + content;
+      }
+      fs.writeFileSync(coverLetterPath, content);
+    }
+    
     const result = {
       applicationName,
       applicationPath: newAppDir,
