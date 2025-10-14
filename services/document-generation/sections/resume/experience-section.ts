@@ -69,9 +69,15 @@ export function createExperience(work: WorkExperience[]): Paragraph[] {
     const end = item.endDate ? formatDate(item.endDate) : 'Present';
     const dateRange = start || end ? `${start} - ${end}` : '';
     const parts: string[] = [];
-    if (item.name) parts.push(item.name);
-    if (dateRange) parts.push(dateRange);
-    if (item.location) parts.push(item.location);
+    if (item.name) {
+      parts.push(item.name);
+    }
+    if (dateRange) {
+      parts.push(dateRange);
+    }
+    if (item.location) {
+      parts.push(item.location);
+    }
     const metaLine = parts.join(' • ');
 
     if (metaLine) {

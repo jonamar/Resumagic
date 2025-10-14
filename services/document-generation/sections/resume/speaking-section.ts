@@ -51,8 +51,12 @@ export function createSpeakingEngagements(publications: Publication[]): Paragrap
 
     // Line 2: Venue • date (dim)
     const parts: string[] = [];
-    if (pub.publisher) parts.push(pub.publisher);
-    if (pub.releaseDate) parts.push(formatDate(pub.releaseDate));
+    if (pub.publisher) {
+      parts.push(pub.publisher);
+    }
+    if (pub.releaseDate) {
+      parts.push(formatDate(pub.releaseDate));
+    }
     const meta = parts.join(' • ');
     if (meta) {
       paragraphs.push(

@@ -58,7 +58,9 @@ export function createEducation(education: Education[]): Paragraph[] {
     const parts: string[] = [];
     parts.push(edu.institution);
     parts.push(dateRange);
-    if (edu.location) parts.push(edu.location);
+    if (edu.location) {
+      parts.push(edu.location);
+    }
     const meta = parts.join(' • ');
 
     paragraphs.push(
