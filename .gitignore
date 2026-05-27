@@ -100,3 +100,13 @@ build/
 **/ollama-optimization-experiment/*test*.sh
 **/ollama-optimization-experiment/*ollama*.sh
 **/ollama-optimization-experiment/run-*.sh
+
+deliverables/reviews/*.log
+
+deliverables/reviews/**/*.log
+
+# Generated agent surfaces owned by product-ops
+/.agents/
+/.claude/
+/AGENTS.md
+/CLAUDE.md
