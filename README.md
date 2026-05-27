@@ -339,6 +339,24 @@ python services/keyword-analysis/kw_rank_modular.py relay-director-of-product
 
 See `docs/architecture-overview.md` for complete system architecture, service boundaries, and integration guidance.
 
+## Runtime Hazards
+
+- **Two-repo structure:** `../data/` is a separate private repo. It is not checked in here. Run `scripts/setup-data.sh` (non-destructive) on a fresh clone to scaffold it.
+- **Generated DOCX files** live in `../data/applications/*/outputs/` and are gitignored in the private repo. Do not commit them.
+- **Compiled CLI:** `dist/` must be built (`npx tsc`) before `node dist/generate-resume.js` works. The directory is gitignored on a fresh clone.
+- **Ollama must be running** locally for the `--evaluate` and `--all` flags. Models are not bundled.
+
+## Security / Data Boundary
+
+- `../data/` contains private resume content (PII-adjacent). Keep it in its own private repo; never copy it into this public repo.
+- No credentials or API keys live in this codebase. Ollama runs fully local.
+- The CI pipeline (`local-pipeline.sh`) does not transmit data off-machine.
+
+## Agent Notes
+
+- Shared agent tooling lives in `.agents/` (propagated from product-ops). Do not edit those surfaces directly.
+- Workflow guides: `.agents/skills/`, shared tools: `.agents/tools/`, risk modes: `.agents/meta/`.
+
 ---
 
 ## Appendix
